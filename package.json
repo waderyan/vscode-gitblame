@@ -1,7 +1,7 @@
 {
-	"name": "git-ignore",
-	"displayName": "Git Ignore",
-	"description": "View the files that are in your gitignore. ",
+	"name": "key-binding-prompts",
+	"displayName": "Key Binding Prompts",
+	"description": "Learn the key bindings by being prompted.",
 	"version": "0.0.1",
 	"publisher": "wadeanderson",
 	"engines": {
