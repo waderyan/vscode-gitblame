@@ -1,24 +1,34 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode'; 
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+import {window, commands, StatusBarItem, ExtensionContext} from 'vscode'; 
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "git-ignore" is now active!'); 
+// Docs: https://www.npmjs.com/package/git-blame
+// Code: https://github.com/alessioalex/git-blame
+var gitBlameShell= require('git-blame');
+var path = require('path');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	var disposable = vscode.commands.registerCommand('extension.sayHello', () => {
-		// The code you place here will be executed every time your command is executed
+var repoPath = path.resolve(process.env.REPO || (__dirname + '/.git'));
 
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World!');
-	});
-	
-	context.subscriptions.push(disposable);
+export function activate(context: ExtensionContext) {
+
+	console.log('Extension is active.'); 
+
+    // On Editor file change, run git blame and store the data in memory
+    // On a line change display the git blame information in the status bar. 
+}
+
+class View {
+    
+    private _statusBarItem: StatusBarItem;
+    
+    constructor(statusBarItem) {
+        this._statusBarItem = statusBarItem;
+        
+    }
+}
+
+class GitBlame {
+    
+    constructor() {
+        
+    }
 }
