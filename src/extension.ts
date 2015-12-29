@@ -1,4 +1,5 @@
-import {window, commands, StatusBarItem, ExtensionContext, Disposable, TextEditor, TextEditorSelectionChangeEvent, StatusBarAlignment} from 'vscode'; 
+import {window, commands, StatusBarItem, ExtensionContext, Disposable, TextEditor,
+     TextEditorSelectionChangeEvent, StatusBarAlignment, TextDocument, Position} from 'vscode'; 
 
 // Docs: https://www.npmjs.com/package/git-blame
 // Code: https://github.com/alessioalex/git-blame
@@ -7,10 +8,10 @@ var path = require('path');
 
 export function activate(context: ExtensionContext) {
 
-	console.log('Extension is active. ', __dirname, __filename); 
 
     var repoPath = path.resolve(process.env.REPO || path.join(__dirname, '.git'));
-    var statusBar = window.createStatusBarItem(StatusBarAlignment.Right);
+    console.log('repoPath', repoPath);
+    var statusBar = window.createStatusBarItem(StatusBarAlignment.Left);
     var view :IView = new StatusBarView(statusBar);
     var gitBlame = new GitBlame(repoPath, gitBlameShell, view);
     var controller = new GitBlameController(gitBlame);
@@ -27,8 +28,9 @@ class GitBlameController {
     constructor(gitBlame: GitBlame) {
         
         var disposables: Disposable[] = [];
-        window.onDidChangeActiveTextEditor(gitBlame.onTextEditorChange, this, disposables);
-        window.onDidChangeTextEditorSelection(gitBlame.onTextEditorSelectionChange, this, disposables);
+        console.log('gitBlameController', this);
+        window.onDidChangeActiveTextEditor(gitBlame.onTextEditorChange, gitBlame, disposables);
+        window.onDidChangeTextEditorSelection(gitBlame.onTextEditorSelectionChange, gitBlame, disposables);
         
         // update git blame for the current file
         gitBlame.onTextEditorChange(window.activeTextEditor);
@@ -50,51 +52,104 @@ class GitBlame {
     private _view: IView;
     
     // possible improvements here. 
-    private _data;
+    private _blamed;
     
     constructor(repoPath: string, gitBlameShell, view: IView) {
         this._repoPath = repoPath;
         this._gitBlameShell = gitBlameShell;
         this._view = view;
+        this._blamed = {};
     }
     
     onTextEditorChange(textEditor: TextEditor): void {
-        // run the git blame shell for the given file
-        let doc = textEditor.document;
-        if (!doc) {
-            return;
-        }
-        
-        var fileName = doc.fileName;
-        
-        // TODO from here. 
-        if (fileName in this._data) {
-            
-        }
-        
-        
-        gitBlameShell(this._repoPath, {
-            file: doc.fileName
-        }).on('data', function(type, data) {
-            console.log('data', type, data);
-            
-        }).on('error', function(err) {
-            console.log('error', err.message);
-        }).on('end', function() {
-            console.log('finished blaming file ' + doc.fileName);
-        });
-
-        // build the data structure
+        console.log('on text editor change');
     }
     
     onTextEditorSelectionChange(textEditorSelection: TextEditorSelectionChangeEvent): void {
         // read the data structure
         // refresh the view
+        console.log('onTextEditorSelectionChange', textEditorSelection, this);
+        const self = this;
+        
+        // TODO refactor
+        // this.blameFile(this._repoPath, textEditorSelection.textEditor.document);
+        
+        // ADD VARIABLES
+        let repoPath: string = self._repoPath;
+        const doc = textEditorSelection.textEditor.document;
+        
+
+        // START PASTE
+        if (doc.isUntitled) {
+            console.log('doc is untitled', doc);
+            return;
+        }
+        
+        repoPath = '/Users/waander/Extension-Sandbox/.git';
+        
+        // TODO its not quite the basename. its the path minus the git repo location. 
+        const fileName = path.basename(doc.fileName);
+        
+        // if (!(fileName in self._blamed)) {
+        //     console.log('no blame needed ' + fileName);
+        //     return;
+        // }
+        
+        console.log('running git blame shell on ' + fileName);
+        
+        let blameInfo = {
+            'lines': {},
+            'commits': {}
+        };
+        
+        // gitBlameShell outputs in Porcelain format.
+        gitBlameShell(repoPath, {
+            file: fileName
+        }).on('data', (type, data) => {
+            console.log('data', type, data);
+            if (type === 'line') {
+                blameInfo['lines'][data.finalLine] = data;
+            } else if (type === 'commit' && !(data.hash in blameInfo['commits'])) {
+                blameInfo['commits'][data.hash] = data;
+            }
+        }).on('error', (err) => {
+            console.log('error', err.message);
+        }).on('end', () => {
+            console.log('finished blaming file ' + fileName);
+            
+            self._blamed[fileName] = blameInfo;
+        
+            let cursorPosition : Position = textEditorSelection.selections[0].active;
+            
+            // line is zero based
+            let lineNumber = cursorPosition.line + 1;
+            
+            const blamed = self._blamed[fileName];
+            
+            if (lineNumber in blamed['lines']) {
+                let hash = blamed['lines'][lineNumber]['hash'];
+                let commitInfo = blamed['commits'][hash];
+                
+                this._view.refresh('Blame: ' + commitInfo['author']['name']);
+            } else {
+                console.log('no line info');
+            }
+            
+        });
+        
         
     }
     
-    private toTextView(lineNumber: number) : string {
-        // look up the line number in data structure
+    private needsBlame(fileName: string): boolean {
+        return !(fileName in this._blamed);
+    }
+    
+    private blameFile(repoPath: string, doc: TextDocument): void {
+
+    }
+    
+    private toTextView(fileName: string, lineNumber: number) : string {
+        // TODO loook in data structure for fileName and lineNumber
         return '';
     }
     
@@ -118,6 +173,7 @@ class StatusBarView implements IView {
     
     refresh(text: string) {
         this._statusBarItem.text = text;
+        this._statusBarItem.show();
     }
 }
 
