@@ -2,7 +2,7 @@
 
 See Git Blame information in the status bar for the currently selected line. 
 
-![Usage](images/GitBlamePreview.git)
+![Feature Usage](https://github.com/wadeanderson7/vscode-gitblame/blob/master/images/GitBlamePreview.gif)
 
 # Install
 
