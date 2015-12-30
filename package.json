@@ -12,7 +12,7 @@
   ],
   "galleryBanner": {
       "color": "#0000FF",
-      "theme": "dark"
+      "theme": "light"
   },
   "icon": "images/git_icon.png",
   "activationEvents": [
