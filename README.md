@@ -2,7 +2,7 @@
 
 See Git Blame information in the status bar for the currently selected line. 
 
-TODO add animated gif
+![Usage](images/GitBlamePreview.git)
 
 # Install
 
