@@ -1,6 +1,8 @@
 import {GitBlame} from './gitblame';
 import {StatusBarView} from './view';
-import {window, ExtensionContext, Disposable, StatusBarAlignment, workspace} from 'vscode';  
+import {GitBlameController} from './controller';
+import {window, ExtensionContext, Disposable, StatusBarAlignment, 
+    workspace, TextEditor, TextEditorSelectionChangeEvent} from 'vscode';  
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -18,33 +20,14 @@ export function activate(context: ExtensionContext) {
         if (err) return; // No access to git repo.
         
         const statusBar = window.createStatusBarItem(StatusBarAlignment.Left);
-        const view = new StatusBarView(statusBar);
-        const gitBlame = new GitBlame(workspace.rootPath, repoPath, gitBlameShell, view);
-        const controller = new GitBlameController(gitBlame);
+        
+        const gitBlame = new GitBlame(repoPath, gitBlameShell);
+        const controller = new GitBlameController(gitBlame, workspace.rootPath, new StatusBarView(statusBar));
         
         context.subscriptions.push(controller);
         context.subscriptions.push(gitBlame);
     });
 }
 
-class GitBlameController {
-    
-    private _disposable: Disposable;
-    
-    constructor(private gitBlame: GitBlame) {
-        
-        const disposables: Disposable[] = [];
-        
-        window.onDidChangeActiveTextEditor(gitBlame.onTextEditorChange, gitBlame, disposables);
-        window.onDidChangeTextEditorSelection(gitBlame.onTextEditorSelectionChange, gitBlame, disposables);
-        
-        gitBlame.onTextEditorChange(window.activeTextEditor);
-        
-        this._disposable = Disposable.from(...disposables);
-    }
-    
-    dispose() {
-        this._disposable.dispose();
-    }
-}
+
 
