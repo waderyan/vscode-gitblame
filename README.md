@@ -1,13 +1,27 @@
-# README
-## This is the README for your extension "git-ignore" 
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+# Git Blame
 
-* Split the editor (`Cmd+\` on OSX or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on OSX or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (OSX) to see a list of Markdown snippets
+See Git Blame information in the status bar for the currently selected line. 
 
-### For more information
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+TODO add animated gif
 
-** Enjoy!**
+# Install
+
+Open up VS Code.
+
+1. Type `F1`
+2. Type `ext` in command palette.
+3. Select "install" and hit enter.
+4. Type "blame"
+5. Select "Git Blame" extension and hit enter. 
+
+# Backlog
+
+* Click on the status bar to see more blame information.
+* View Git History
+
+# Known Issues
+
+None so far. 
+
+# Update Log
+
