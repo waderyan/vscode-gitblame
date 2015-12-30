@@ -9,7 +9,7 @@ export class GitBlameController {
     private _disposable: Disposable;
     private _textDecorator: TextDecorator
     
-    constructor(private gitBlame: GitBlame, private workspaceRoot: string, private view: IView) {
+    constructor(private gitBlame: GitBlame, private workspaceRoot: string, private view) {
         const self = this;
         
         const disposables: Disposable[] = [];
@@ -71,9 +71,6 @@ export class GitBlameController {
 
 export class TextDecorator {
     
-    /**
-     * Converts a commit object to a text representation.
-     */
     toTextView(dateNow: Date, commit: Object) : string {
         const author = commit['author'];
         const dateText = this.toDateText(dateNow, new Date(author['timestamp'] * 1000));

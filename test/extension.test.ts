@@ -29,10 +29,8 @@ suite('GitBlame Tests', () => {
         
         const decorator = new TextDecorator();
         
-        var d1 = new Date(2015, 4);
-        var d2 = new Date(2015, 1);
-        
-        assert.equal('3 months ago', decorator.toDateText(d1, d2));
+        assert.equal('3 months ago', decorator.toDateText(new Date(2015, 4), new Date(2015, 1)));
+        assert.equal('4 days ago', decorator.toDateText(new Date(2015, 1, 5), new Date(2015, 1, 1)));
         
     });
 });

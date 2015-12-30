@@ -9,17 +9,18 @@ export class GitBlame {
     }
     
     getBlameInfo(fileName: string): Thenable<any> {
+        const self = this;
         return new Promise<any>((resolve, reject) => {
             
-            if (this.needsBlame(fileName)) {
-                this.blameFile(this.repoPath, fileName).then((blameInfo) => {
-                    this._blamed[fileName] = blameInfo;
+            if (self.needsBlame(fileName)) {
+                self.blameFile(self.repoPath, fileName).then((blameInfo) => {
+                    self._blamed[fileName] = blameInfo;
                     resolve(blameInfo);
                 }, (err) => {
                     reject();
                 });
             } else {
-                resolve(this._blamed[fileName]);
+                resolve(self._blamed[fileName]);
             }
         });
     }
@@ -30,9 +31,6 @@ export class GitBlame {
     
     blameFile(repo: string, fileName: string): Thenable<Object> {
         const self = this;
-        
-        console.log('running git blame shell on ' + fileName);
-        
         return new Promise<Object>((resolve, reject) => {
             const blameInfo = {
                 'lines': {},
