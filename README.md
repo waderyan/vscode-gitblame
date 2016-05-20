@@ -16,12 +16,14 @@ Open up VS Code.
 
 # Backlog
 
-* Click on the status bar to see more blame information.
-* View Git History
+* Click on the status bar to see more blame info, [including commit SHA](https://github.com/waderyan/vscode-gitblame/issues/3)
+* [Show blame line ranges](https://github.com/waderyan/vscode-gitblame/issues/1)
 
-# Known Issues
-
-None so far. 
+# [Known Issues](https://github.com/waderyan/vscode-gitblame/issues)
 
 # Update Log
 
+Version 1.1
+
+* Reduced text size which was causing the blame info not to show. 
+* Merged in PR (credit to [@fogzot](https://github.com/fogzot)) that searches for .git in parent dirs.

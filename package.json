@@ -41,5 +41,11 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/wadeanderson7/vscode-gitblame"
+  },
+  "contributes": {
+    "commands": [{
+        "command": "extension.blame",
+        "title": "Git Blame"
+    }]
   }
 }

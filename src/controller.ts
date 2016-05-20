@@ -75,7 +75,7 @@ export class TextDecorator {
         const author = commit['author'];
         const dateText = this.toDateText(dateNow, new Date(author['timestamp'] * 1000));
 
-        return 'Last edit made by ' + author['name'] + ' ( ' + dateText + ' )';
+        return 'Blame ' + author['name'] + ' ( ' + dateText + ' )';
     }
 
     toDateText(dateNow: Date, dateThen: Date) : string {

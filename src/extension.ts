@@ -2,7 +2,7 @@ import {GitBlame} from './gitblame';
 import {StatusBarView} from './view';
 import {GitBlameController} from './controller';
 import {window, ExtensionContext, Disposable, StatusBarAlignment,
-    workspace, TextEditor, TextEditorSelectionChangeEvent} from 'vscode';
+    workspace, TextEditor, TextEditorSelectionChangeEvent, commands} from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -14,6 +14,11 @@ export function activate(context: ExtensionContext) {
     if (!workspace.rootPath) {
         return;
     }
+
+    commands.registerCommand('extension.blame', () => {
+        // TODO - add some more info about the blame
+        window.showInformationMessage('Hello World!');
+    });
 
     // Try to find the repo first in the workspace, then in parent directories
     // because sometimes one opens a subdirectory but still wants information
