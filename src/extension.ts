@@ -48,8 +48,7 @@ function lookupRepo(context: ExtensionContext, repoDir: string) {
     });
 }
 
-function showMessage(context: ExtensionContext, repoDir: string)
-{
+function showMessage(context: ExtensionContext, repoDir: string) {
     const repoPath = path.join(repoDir, '.git');
 
     fs.access(repoPath, (err) => {
@@ -76,12 +75,14 @@ function showMessage(context: ExtensionContext, repoDir: string)
 
             gitBlame.getBlameInfo(file).then((info) => {
 
-            if (lineNumber in info['lines']) {
-            
-                const hash = info['lines'][lineNumber]['hash'];
-                const commitInfo = info['commits'][hash];
+                if (lineNumber in info['lines']) {
+                
+                    const hash = info['lines'][lineNumber]['hash'];
+                    const commitInfo = info['commits'][hash];
 
-                window.showInformationMessage(hash + ' ' + commitInfo['summary']);
+                    window.showInformationMessage(hash + ' ' + commitInfo['summary']);
+                }
+            });
         }
     });
 }
