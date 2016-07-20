@@ -26,4 +26,8 @@ Open up VS Code.
 Version 1.1
 
 * Reduced text size which was causing the blame info not to show. 
-* Merged in PR (credit to [@fogzot](https://github.com/fogzot)) that searches for .git in parent dirs.
+* Merged in [PR](https://github.com/waderyan/vscode-gitblame/pull/5) (credit to [@fogzot](https://github.com/fogzot)) that searches for .git in parent dirs.
+
+Version 1.2
+
+* Merged in [PR](https://github.com/waderyan/vscode-gitblame/pull/10) replacing 'Hello World' message with hash and commit message (credit to [@carloscz](https://github.com/carloscz)). 
