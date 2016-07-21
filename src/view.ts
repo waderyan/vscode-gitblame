@@ -16,6 +16,7 @@ export class StatusBarView implements IView {
     
     constructor(statusBarItem: StatusBarItem) {
         this._statusBarItem = statusBarItem;
+        this._statusBarItem.command = "extension.blame"
     };
     
     refresh(text: string) {
