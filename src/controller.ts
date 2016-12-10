@@ -1,5 +1,5 @@
 
-import {Disposable, window, TextEditor, TextEditorSelectionChangeEvent} from 'vscode';
+import {Disposable, window, TextEditor, TextEditorSelectionChangeEvent, workspace} from 'vscode';
 import {GitBlame} from './gitblame';
 import * as path from 'path';
 import * as moment from 'moment';
@@ -75,7 +75,7 @@ export class TextDecorator {
         const author = commit['author'];
         const dateText = this.toDateText(dateNow, new Date(author['timestamp'] * 1000));
 
-        return 'Blame ' + author['name'] + ' ( ' + dateText + ' )';
+        return require('util').format(workspace.getConfiguration('git-blame').get<string>('status-message', 'Blame %s ( %s )'), author['name'], dateText);
     }
 
     toDateText(dateNow: Date, dateThen: Date) : string {

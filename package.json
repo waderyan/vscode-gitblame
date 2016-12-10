@@ -27,7 +27,7 @@
     "compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
   },
   "dependencies": {
-    "git-blame": "^0.1.1",
+    "git-blame": "^1.1.0",
     "moment": "^2.10.6",
     "path": "^0.12.7",
     "typescript": "^1.6.2",
@@ -46,6 +46,26 @@
     "commands": [{
         "command": "extension.blame",
         "title": "Git Blame"
-    }]
+    }],
+    "configuration": {
+        "title": "Git Blame configuration",
+        "properties": {
+            "git-blame.ignore-whitespace-change":{
+                "type": "boolean",
+                "default": true,
+                "description" : "If set to true, git blame command will ignore any whitespace change applied to currently selected line"
+            },
+            "git-blame.status-message":{
+                "type": "string",
+                "default": "Blame %s ( %s )",
+                "description" : "Output message shown in status bar"
+            },
+            "git-blame.popup-message":{
+                "type": "string",
+                "default": "%s %s",
+                "description": "Output message shown in tooltip bar"
+            }
+        }
+    }
   }
 }

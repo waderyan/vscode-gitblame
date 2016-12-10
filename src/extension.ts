@@ -80,7 +80,7 @@ function showMessage(context: ExtensionContext, repoDir: string) {
                     const hash = info['lines'][lineNumber]['hash'];
                     const commitInfo = info['commits'][hash];
 
-                    window.showInformationMessage(hash + ' ' + commitInfo['summary']);
+                    window.showInformationMessage(require('util').format(workspace.getConfiguration('git-blame').get<string>('popup-message', '%s %s'), hash, commitInfo['summary']));
                 }
             });
         }
