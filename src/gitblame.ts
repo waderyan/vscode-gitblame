@@ -38,7 +38,8 @@ export class GitBlame {
             };
             
             self.gitBlameProcess(repo, {
-                file: fileName
+                file: fileName,
+                ignoreWhitespaces: true
             }).on('data', (type, data) => {
                 // outputs in Porcelain format.
                 if (type === 'line') {
