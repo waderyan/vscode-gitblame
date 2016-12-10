@@ -1,4 +1,4 @@
-
+import * as vscode from 'vscode';
 
 export class GitBlame {
     
@@ -39,7 +39,7 @@ export class GitBlame {
             
             self.gitBlameProcess(repo, {
                 file: fileName,
-                ignoreWhitespaces: true
+                ignoreWhitespaces: vscode.workspace.getConfiguration('git-blame').get<boolean>("ignore-whitespace-change", true)
             }).on('data', (type, data) => {
                 // outputs in Porcelain format.
                 if (type === 'line') {

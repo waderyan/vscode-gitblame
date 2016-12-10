@@ -46,6 +46,16 @@
     "commands": [{
         "command": "extension.blame",
         "title": "Git Blame"
-    }]
+    }],
+    "configuration": {
+        "title": "Git Blame configuration",
+        "properties": {
+            "git-blame.ignore-whitespace-change":{
+                "type": "boolean",
+                "default": true,
+                "description" : "If set to true, git blame command will ignore any whitespace change applied to currently selected line"
+            }
+        }
+    }
   }
 }
