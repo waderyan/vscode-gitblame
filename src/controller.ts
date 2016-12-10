@@ -84,18 +84,24 @@ export class TextDecorator {
         const momentThen = moment(dateThen);
 
         const months = momentNow.diff(momentThen, 'months');
-        const days = momentNow.diff(momentThen, 'days');
-
-        if (months <= 1) {
-            if (days == 0) {
-                return 'today';
-            } else if (days == 1) {
-                return 'yesterday';
-            } else {
-                return days + ' days ago';
-            }
-        } else {
+        if(months > 0)
+        {
             return months + ' months ago';
         }
+
+        const days = momentNow.diff(momentThen, 'days');
+        if(days >= 1)
+        {
+            return days == 1 ? 'yesterday' : (days + ' days ago');
+        }
+
+        const hours = momentNow.diff(momentThen, 'hours');
+        if(hours > 0)
+        {
+            return hours + ' hours ago';
+        }
+
+        const minutes = momentNow.diff(momentThen, 'minutes')
+        return minutes + ' minutes ago';
     }
 }
