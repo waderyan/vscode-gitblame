@@ -75,7 +75,11 @@ export class TextDecorator {
         const author = commit['author'];
         const dateText = this.toDateText(dateNow, new Date(author['timestamp'] * 1000));
 
-        return 'Blame ' + author['name'] + ' ( ' + dateText + ' )';
+        if (commit['hash'] === '0000000000000000000000000000000000000000') {
+            return author['name'];
+        } else {
+            return 'Blame ' + author['name'] + ' ( ' + dateText + ' )';
+        }
     }
 
     toDateText(dateNow: Date, dateThen: Date) : string {

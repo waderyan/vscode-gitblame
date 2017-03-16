@@ -1,17 +1,17 @@
-
+import * as path from 'path';
 
 export class GitBlame {
-    
+
     private _blamed: Object;
-    
+
     constructor(private repoPath: string, private gitBlameProcess) {
         this._blamed = {};
     }
-    
+
     getBlameInfo(fileName: string): Thenable<any> {
         const self = this;
         return new Promise<any>((resolve, reject) => {
-            
+
             if (self.needsBlame(fileName)) {
                 self.blameFile(self.repoPath, fileName).then((blameInfo) => {
                     self._blamed[fileName] = blameInfo;
@@ -24,11 +24,11 @@ export class GitBlame {
             }
         });
     }
-    
+
     needsBlame(fileName: string): boolean {
         return !(fileName in this._blamed);
     }
-    
+
     blameFile(repo: string, fileName: string): Thenable<Object> {
         const self = this;
         return new Promise<Object>((resolve, reject) => {
@@ -36,9 +36,11 @@ export class GitBlame {
                 'lines': {},
                 'commits': {}
             };
-            
+
             self.gitBlameProcess(repo, {
-                file: fileName
+                file: fileName,
+                workTree: path.resolve(repo, '..'),
+                rev: false
             }).on('data', (type, data) => {
                 // outputs in Porcelain format.
                 if (type === 'line') {
@@ -53,7 +55,7 @@ export class GitBlame {
             });
         });
     }
-    
+
     dispose() {
         // Nothing to release.
     }

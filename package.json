@@ -19,7 +19,7 @@
     "*"
   ],
   "keywords": [
-    "git", "gitblame", "blame"  
+    "git", "gitblame", "blame"
   ],
   "main": "./out/src/extension",
   "scripts": {
@@ -27,7 +27,7 @@
     "compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
   },
   "dependencies": {
-    "git-blame": "^0.1.1",
+    "git-blame": "^1.2.0",
     "moment": "^2.10.6",
     "path": "^0.12.7",
     "typescript": "^1.6.2",
