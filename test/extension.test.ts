@@ -24,13 +24,11 @@ suite("Extension Tests", () => {
 });
 
 suite('GitBlame Tests', () => {
-    
-    test('Date Calculations', () => {
-        
-        const decorator = new TextDecorator();
-        
-        assert.equal('3 months ago', decorator.toDateText(new Date(2015, 4), new Date(2015, 1)));
-        assert.equal('4 days ago', decorator.toDateText(new Date(2015, 1, 5), new Date(2015, 1, 1)));
-        
-    });
+
+	test('Date Calculations', () => {
+		const decorator = new TextDecorator();
+
+		assert.equal('3 months ago', decorator.toDateText(new Date(2015, 4), new Date(2015, 1)));
+		assert.equal('4 days ago', decorator.toDateText(new Date(2015, 1, 5), new Date(2015, 1, 1)));
+	});
 });

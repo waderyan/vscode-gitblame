@@ -2,7 +2,7 @@
 
 See Git Blame information in the status bar for the currently selected line. 
 
-![Feature Usage](https://github.com/wadeanderson7/vscode-gitblame/raw/master/images/GitBlamePreview.gif)
+![Feature Usage](https://github.com/Sertion/vscode-gitblame/raw/master/images/GitBlamePreview.gif)
 
 # Install
 
@@ -35,3 +35,9 @@ Version 1.2
 Version 1.3
 
 * Merged in [PR](https://github.com/waderyan/vscode-gitblame/pull/12) to make the status bar message interactive (credit to [@j-em](https://github.com/j-em));
+
+Version 1.4
+
+* Now respects changes made in the git working tree when blaming
+* Updating dependencies
+* Updating to new repository
