@@ -1,4 +1,3 @@
-
 import {Disposable, window, TextEditor, TextEditorSelectionChangeEvent} from 'vscode';
 import {GitBlame} from './gitblame';
 import * as path from 'path';

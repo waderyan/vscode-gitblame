@@ -86,6 +86,3 @@ function showMessage(context: ExtensionContext, repoDir: string) {
         }
     });
 }
-
-
-

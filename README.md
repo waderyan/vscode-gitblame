@@ -1,6 +1,6 @@
 # Git Blame
 
-See Git Blame information in the status bar for the currently selected line. 
+See Git Blame information in the status bar for the currently selected line.
 
 ![Feature Usage](https://github.com/Sertion/vscode-gitblame/raw/master/images/GitBlamePreview.gif)
 
@@ -8,11 +8,11 @@ See Git Blame information in the status bar for the currently selected line.
 
 Open up VS Code.
 
-1. Type `F1`
-2. Type `ext` in command palette.
-3. Select "install" and hit enter.
-4. Type "blame"
-5. Select "Git Blame" extension and hit enter. 
+1. Press `F1`
+2. Type `ext` in command palette
+3. Select "install" and hit enter
+4. Type `blame`
+5. Select "Git Blame" extension and hit enter
 
 # Backlog
 
@@ -30,7 +30,7 @@ Version 1.1
 
 Version 1.2
 
-* Merged in [PR](https://github.com/waderyan/vscode-gitblame/pull/10) replacing 'Hello World' message with hash and commit message (credit to [@carloscz](https://github.com/carloscz)). 
+* Merged in [PR](https://github.com/waderyan/vscode-gitblame/pull/10) replacing 'Hello World' message with hash and commit message (credit to [@carloscz](https://github.com/carloscz)).
 
 Version 1.3
 
@@ -41,3 +41,7 @@ Version 1.4
 * Now respects changes made in the git working tree when blaming
 * Updating dependencies
 * Updating to new repository
+
+Version 1.5
+
+* Spring cleaning

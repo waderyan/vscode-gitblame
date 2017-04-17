@@ -60,4 +60,3 @@ export class GitBlame {
         // Nothing to release.
     }
 }
-
