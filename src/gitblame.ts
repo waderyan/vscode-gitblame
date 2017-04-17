@@ -15,11 +15,10 @@ export class GitBlame {
             if (self.needsBlame(fileName)) {
                 self.blameFile(self.repoPath, fileName).then((blameInfo) => {
                     self._blamed[fileName] = blameInfo;
-                    resolve(blameInfo);
-                }, (err) => {
-                    reject();
-                });
-            } else {
+                    resolve(self._blamed[fileName]);
+                }, reject);
+            }
+            else {
                 resolve(self._blamed[fileName]);
             }
         });
@@ -29,9 +28,14 @@ export class GitBlame {
         return !(fileName in this._blamed);
     }
 
+    fileChanged(fileName: string): void {
+        delete this._blamed[fileName];
+    }
+
     blameFile(repo: string, fileName: string): Thenable<Object> {
         const self = this;
         return new Promise<Object>((resolve, reject) => {
+            const workTree = path.resolve(repo, '..');
             const blameInfo = {
                 'lines': {},
                 'commits': {}
@@ -39,13 +43,14 @@ export class GitBlame {
 
             self.gitBlameProcess(repo, {
                 file: fileName,
-                workTree: path.resolve(repo, '..'),
+                workTree: workTree,
                 rev: false
             }).on('data', (type, data) => {
                 // outputs in Porcelain format.
                 if (type === 'line') {
                     blameInfo['lines'][data.finalLine] = data;
-                } else if (type === 'commit' && !(data.hash in blameInfo['commits'])) {
+                }
+                else if (type === 'commit' && !(data.hash in blameInfo['commits'])) {
                     blameInfo['commits'][data.hash] = data;
                 }
             }).on('error', (err) => {

@@ -1,7 +1,7 @@
-import {Disposable, window, TextEditor, TextEditorSelectionChangeEvent} from 'vscode';
+import {Disposable, window, workspace, TextEditor, TextEditorSelectionChangeEvent, TextDocument} from 'vscode';
 import {GitBlame} from './gitblame';
+import {TextDecorator} from '../src/textdecorator';
 import * as path from 'path';
-import * as moment from 'moment';
 
 export class GitBlameController {
 
@@ -13,16 +13,17 @@ export class GitBlameController {
 
         const disposables: Disposable[] = [];
 
-        window.onDidChangeActiveTextEditor(self.onTextEditorChange, self, disposables);
+        window.onDidChangeActiveTextEditor(self.onTextEditorMove, self, disposables);
         window.onDidChangeTextEditorSelection(self.onTextEditorSelectionChange, self, disposables);
+        workspace.onDidSaveTextDocument(self.onTextEditorSave, self, disposables);
 
-        this.onTextEditorChange(window.activeTextEditor);
+        this.onTextEditorMove(window.activeTextEditor);
 
         this._disposable = Disposable.from(...disposables);
         this._textDecorator = new TextDecorator();
     }
 
-    onTextEditorChange(editor: TextEditor) : void {
+    onTextEditorMove(editor: TextEditor) : void {
         this.clear();
 
         if (!editor) return;
@@ -42,8 +43,18 @@ export class GitBlameController {
         });
     }
 
+    onTextEditorSave(document: TextDocument) : void {
+        const file = path.relative(this.gitRoot, document.fileName);
+
+        this.gitBlame.fileChanged(file);
+
+        if (window.activeTextEditor) {
+            this.onTextEditorMove(window.activeTextEditor);
+        }
+    }
+
     onTextEditorSelectionChange(textEditorSelectionChangeEvent: TextEditorSelectionChangeEvent) : void {
-        this.onTextEditorChange(textEditorSelectionChangeEvent.textEditor);
+        this.onTextEditorMove(textEditorSelectionChangeEvent.textEditor);
     }
 
     clear() {
@@ -56,49 +67,14 @@ export class GitBlameController {
             const hash = blameInfo['lines'][lineNumber]['hash'];
             const commitInfo = blameInfo['commits'][hash];
 
-            this.view.refresh(this._textDecorator.toTextView(new Date(), commitInfo));
-        } else {
+            this.view.refresh(this._textDecorator.toTextView(commitInfo));
+        }
+        else {
             // No line info.
         }
     }
 
     dispose() {
         this._disposable.dispose();
-    }
-}
-
-
-export class TextDecorator {
-
-    toTextView(dateNow: Date, commit: Object) : string {
-        const author = commit['author'];
-        const dateText = this.toDateText(dateNow, new Date(author['timestamp'] * 1000));
-
-        if (commit['hash'] === '0000000000000000000000000000000000000000') {
-            return author['name'];
-        } else {
-            return 'Blame ' + author['name'] + ' ( ' + dateText + ' )';
-        }
-    }
-
-    toDateText(dateNow: Date, dateThen: Date) : string {
-
-        const momentNow = moment(dateNow);
-        const momentThen = moment(dateThen);
-
-        const months = momentNow.diff(momentThen, 'months');
-        const days = momentNow.diff(momentThen, 'days');
-
-        if (months <= 1) {
-            if (days == 0) {
-                return 'today';
-            } else if (days == 1) {
-                return 'yesterday';
-            } else {
-                return days + ' days ago';
-            }
-        } else {
-            return months + ' months ago';
-        }
     }
 }

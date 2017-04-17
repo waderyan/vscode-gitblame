@@ -6,7 +6,7 @@ import {window, ExtensionContext, Disposable, StatusBarAlignment,
 import * as fs from 'fs';
 import * as path from 'path';
 
-const gitBlameShell= require('git-blame');
+const gitBlameShell = require('git-blame');
 
 export function activate(context: ExtensionContext) {
 

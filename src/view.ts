@@ -1,9 +1,6 @@
 
 import {StatusBarItem} from 'vscode';
-
-
 export interface IView {
-
     /**
      * Refresh the view.
      */
@@ -16,13 +13,12 @@ export class StatusBarView implements IView {
 
     constructor(statusBarItem: StatusBarItem) {
         this._statusBarItem = statusBarItem;
-        this._statusBarItem.command = "extension.blame"
-    };
+        this._statusBarItem.command = "extension.blame";
+    }
 
     refresh(text: string) {
         this._statusBarItem.text = '$(git-commit) ' + text;
         this._statusBarItem.tooltip = 'git blame';
-        // this._statusBarItem.command = 'extension.blame';
         this._statusBarItem.show();
     }
 }

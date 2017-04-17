@@ -45,3 +45,8 @@ Version 1.4
 Version 1.5
 
 * Spring cleaning
+
+Version 1.6
+
+* More granular time info
+* Adding a re-check of blame info on save
