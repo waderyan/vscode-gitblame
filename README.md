@@ -20,33 +20,3 @@ Open up VS Code.
 * [Show blame line ranges](https://github.com/waderyan/vscode-gitblame/issues/1)
 
 # [Known Issues](https://github.com/waderyan/vscode-gitblame/issues)
-
-# Update Log
-
-Version 1.1
-
-* Reduced text size which was causing the blame info not to show. 
-* Merged in [PR](https://github.com/waderyan/vscode-gitblame/pull/5) (credit to [@fogzot](https://github.com/fogzot)) that searches for .git in parent dirs.
-
-Version 1.2
-
-* Merged in [PR](https://github.com/waderyan/vscode-gitblame/pull/10) replacing 'Hello World' message with hash and commit message (credit to [@carloscz](https://github.com/carloscz)).
-
-Version 1.3
-
-* Merged in [PR](https://github.com/waderyan/vscode-gitblame/pull/12) to make the status bar message interactive (credit to [@j-em](https://github.com/j-em));
-
-Version 1.4
-
-* Now respects changes made in the git working tree when blaming
-* Updating dependencies
-* Updating to new repository
-
-Version 1.5
-
-* Spring cleaning
-
-Version 1.6
-
-* More granular time info
-* Adding a re-check of blame info on save
