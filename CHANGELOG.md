@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.6.2 (April 29, 2017)
+
+* Updating example animation
+* Removing backlog from `README.md`, it is now the [`Planned` label in the issue tracker](https://github.com/Sertion/vscode-gitblame/labels/Planned)
+
 ## 1.6.1 (April 29, 2017)
 
 * Split change log into its own file as per [suggestion from @daniel-white](https://github.com/waderyan/vscode-gitblame/issues/30)
