@@ -1,12 +1,14 @@
 import {GitBlame} from './gitblame';
 import {StatusBarView} from './view';
 import {GitBlameController} from './controller';
+import {TextDecorator} from './textDecorator';
 import {window, ExtensionContext, Disposable, StatusBarAlignment,
-    workspace, TextEditor, TextEditorSelectionChangeEvent, commands} from 'vscode';
+        workspace, TextEditor, TextEditorSelectionChangeEvent,
+        commands, Uri} from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-
-const gitBlameShell = require('git-blame');
+import * as gitBlameShell from 'git-blame';
+import {isWebUri} from 'valid-url';
 
 export function activate(context: ExtensionContext) {
 
@@ -50,6 +52,9 @@ function lookupRepo(context: ExtensionContext, repoDir: string) {
 
 function showMessage(context: ExtensionContext, repoDir: string) {
     const repoPath = path.join(repoDir, '.git');
+    const viewOnlineTitle = 'View';
+    const config = workspace.getConfiguration('gitblame');
+    const commitUrl = <string>config.get('commitUrl');
 
     fs.access(repoPath, (err) => {
         if (err) {
@@ -75,13 +80,40 @@ function showMessage(context: ExtensionContext, repoDir: string) {
 
             gitBlame.getBlameInfo(file).then((info) => {
 
-                if (lineNumber in info['lines']) {
-                
-                    const hash = info['lines'][lineNumber]['hash'];
-                    const commitInfo = info['commits'][hash];
+                if (!info['lines'].hasOwnProperty(lineNumber)) return info;
 
-                    window.showInformationMessage(hash + ' ' + commitInfo['summary']);
+                const hash = info['lines'][lineNumber]['hash'];
+                const commitInfo = info['commits'][hash];
+                let infoMessageArguments = [];
+                let urlToUse = null;
+
+                // Add the message
+                infoMessageArguments.push(hash + ' ' + commitInfo['summary']);
+
+                if (commitUrl) {
+                    // If we have a commitUrl we parse it and add it
+                    let parsedUrl = TextDecorator.parseTokens(commitUrl, {
+                        'hash': hash
+                    });
+
+                    if (isWebUri(parsedUrl)) {
+                        urlToUse = Uri.parse(parsedUrl);
+                    }
+                    else {
+                        window.showErrorMessage('Malformed URL in setting gitblame.commitUrl. Must be a valid web url');
+                    }
+
+                    if (urlToUse) {
+                        infoMessageArguments.push(viewOnlineTitle);
+                    }
                 }
+
+                window.showInformationMessage.apply(this, infoMessageArguments)
+                    .then((item) => {
+                        if (item === viewOnlineTitle) {
+                            return commands.executeCommand('vscode.open', urlToUse);
+                        }
+                    }).then(() => {}, error => console.log(error));
             });
         }
     });

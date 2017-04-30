@@ -1,12 +1,11 @@
 import {Disposable, window, workspace, TextEditor, TextEditorSelectionChangeEvent, TextDocument} from 'vscode';
 import {GitBlame} from './gitblame';
-import {TextDecorator} from '../src/textdecorator';
+import {TextDecorator} from '../src/textDecorator';
 import * as path from 'path';
 
 export class GitBlameController {
 
     private _disposable: Disposable;
-    private _textDecorator: TextDecorator
 
     constructor(private gitBlame: GitBlame, private gitRoot: string, private view) {
         const self = this;
@@ -20,7 +19,6 @@ export class GitBlameController {
         this.onTextEditorMove(window.activeTextEditor);
 
         this._disposable = Disposable.from(...disposables);
-        this._textDecorator = new TextDecorator();
     }
 
     onTextEditorMove(editor: TextEditor) : void {
@@ -30,10 +28,11 @@ export class GitBlameController {
 
         const doc = editor.document;
 
-        if (!doc) return;
-        if (doc.isUntitled) return; // Document hasn't been saved and is not in git.
+        // Document hasn't been saved and is not in git.
+        if (!doc || doc.isUntitled) return;
 
-        const lineNumber = editor.selection.active.line + 1; // line is zero based
+        // line is zero based
+        const lineNumber = editor.selection.active.line + 1;
         const file = path.relative(this.gitRoot, editor.document.fileName);
 
         this.gitBlame.getBlameInfo(file).then((info) => {
@@ -58,7 +57,7 @@ export class GitBlameController {
     }
 
     clear() {
-        this.view.refresh('');
+        this.view.refresh('', false);
     }
 
     show(blameInfo: Object, lineNumber: number) : void {
@@ -66,8 +65,9 @@ export class GitBlameController {
         if (lineNumber in blameInfo['lines']) {
             const hash = blameInfo['lines'][lineNumber]['hash'];
             const commitInfo = blameInfo['commits'][hash];
+            const clickable = hash !== '0000000000000000000000000000000000000000';
 
-            this.view.refresh(this._textDecorator.toTextView(commitInfo));
+            this.view.refresh(TextDecorator.toTextView(commitInfo), clickable);
         }
         else {
             // No line info.

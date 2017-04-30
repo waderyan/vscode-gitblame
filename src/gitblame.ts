@@ -1,11 +1,16 @@
 import * as path from 'path';
+import {workspace, WorkspaceConfiguration} from 'vscode';
 
 export class GitBlame {
 
     private _blamed: Object;
+    private _workingOn: Object;
+    private _properties: WorkspaceConfiguration;
 
     constructor(private repoPath: string, private gitBlameProcess) {
         this._blamed = {};
+        this._workingOn = {};
+        this._properties = workspace.getConfiguration('gitblame');
     }
 
     getBlameInfo(fileName: string): Thenable<any> {
@@ -30,21 +35,26 @@ export class GitBlame {
 
     fileChanged(fileName: string): void {
         delete this._blamed[fileName];
+        delete this._workingOn[fileName];
+    }
+
+    clearCache(): void {
+        this._blamed = {};
     }
 
     blameFile(repo: string, fileName: string): Thenable<Object> {
-        const self = this;
-        return new Promise<Object>((resolve, reject) => {
+        this._workingOn[fileName] = this._workingOn[fileName] || new Promise<Object>((resolve, reject) => {
             const workTree = path.resolve(repo, '..');
             const blameInfo = {
                 'lines': {},
                 'commits': {}
             };
 
-            self.gitBlameProcess(repo, {
+            this.gitBlameProcess(repo, {
                 file: fileName,
                 workTree: workTree,
-                rev: false
+                rev: false,
+                ignoreWhitespace: this._properties.get('ignoreWhitespace')
             }).on('data', (type, data) => {
                 // outputs in Porcelain format.
                 if (type === 'line') {
@@ -56,9 +66,12 @@ export class GitBlame {
             }).on('error', (err) => {
                 reject(err);
             }).on('end', () => {
-                resolve(blameInfo)
+                resolve(blameInfo);
+                delete this._workingOn[fileName];
             });
         });
+
+        return this._workingOn[fileName];
     }
 
     dispose() {

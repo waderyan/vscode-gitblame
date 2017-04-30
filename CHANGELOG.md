@@ -1,5 +1,13 @@
 # Change Log
 
+## 1.7.0 (April 30, 2017)
+
+* Feature: Adding setting to ignore whitespace changes (`gitblame.ignoreWhitespace`) [#1](https://github.com/Sertion/vscode-gitblame/issues/1)
+* Feature: Adding setting to open commit info in online tool (`gitblame.commitUrl`) [#6](https://github.com/Sertion/vscode-gitblame/issues/6)
+* Enhancement: Status bar message no longer clickable when there is no commit associated with the current line
+* Enhancement: Adding info about configuration in `README.md`
+* Bug: Spawn fewer git processes when opening a file [#3](https://github.com/Sertion/vscode-gitblame/issues/3)
+
 ## 1.6.2 (April 29, 2017)
 
 * Updating example animation

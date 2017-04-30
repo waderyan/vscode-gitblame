@@ -2,7 +2,7 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "publisher": "waderyan",
   "engines": {
     "vscode": "^1.10.0"
@@ -19,7 +19,9 @@
     "*"
   ],
   "keywords": [
-    "git", "gitblame", "blame"
+    "git",
+    "gitblame",
+    "blame"
   ],
   "main": "./out/src/extension",
   "scripts": {
@@ -31,12 +33,13 @@
   "dependencies": {
     "git-blame": "^1.2.0",
     "moment": "^2.10.6",
-    "path": "^0.12.7"
+    "object-path": "^0.11.4",
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "typescript": "^2.0.3",
     "vscode": "^1.0.0",
-    "mocha": "^2.3.3", 
+    "mocha": "^2.3.3",
     "@types/node": "^6.0.40",
     "@types/mocha": "^2.2.32"
   },
@@ -50,9 +53,27 @@
     "url": "https://github.com/Sertion/vscode-gitblame"
   },
   "contributes": {
-    "commands": [{
-      "command": "extension.blame",
-      "title": "Git Blame"
-    }]
+    "commands": [
+      {
+        "command": "extension.blame",
+        "title": "Git Blame"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Git blame configuration",
+      "properties": {
+        "gitblame.ignoreWhitespace": {
+          "type": "boolean",
+          "default": false,
+          "description": "Ignore whitespace changes when blaming (-w flag)"
+        },
+        "gitblame.commitUrl": {
+          "type": "string",
+          "default": "",
+          "description": "The link to an online tool to view a commit (use ${hash} for the commit hash)"
+        }
+      }
+    }
   }
 }
