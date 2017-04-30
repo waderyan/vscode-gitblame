@@ -1,5 +1,5 @@
 import {Disposable, window, workspace, TextEditor, TextEditorSelectionChangeEvent, TextDocument} from 'vscode';
-import {GitBlame} from './gitblame';
+import {GitBlameBlamer} from './gitblame';
 import {TextDecorator} from '../src/textDecorator';
 import * as path from 'path';
 
@@ -7,7 +7,7 @@ export class GitBlameController {
 
     private _disposable: Disposable;
 
-    constructor(private gitBlame: GitBlame, private gitRoot: string, private view) {
+    constructor(private gitBlame: GitBlameBlamer, private gitRoot: string, private view) {
         const self = this;
 
         const disposables: Disposable[] = [];

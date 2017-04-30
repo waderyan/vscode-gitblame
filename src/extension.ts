@@ -7,8 +7,9 @@ import {window, ExtensionContext, Disposable, StatusBarAlignment,
         commands, Uri} from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as gitBlameShell from 'git-blame';
 import {isWebUri} from 'valid-url';
+
+const globalBlamer = new GitBlame();
 
 export function activate(context: ExtensionContext) {
 
@@ -41,7 +42,7 @@ function lookupRepo(context: ExtensionContext, repoDir: string) {
         }
         else {
             const statusBar = window.createStatusBarItem(StatusBarAlignment.Left);
-            const gitBlame = new GitBlame(repoPath, gitBlameShell);
+            const gitBlame = globalBlamer.createBlamer(repoPath);
             const controller = new GitBlameController(gitBlame, repoDir, new StatusBarView(statusBar));
 
             context.subscriptions.push(controller);
@@ -74,7 +75,7 @@ function showMessage(context: ExtensionContext, repoDir: string) {
             if (!doc) return;
             if (doc.isUntitled) return; // Document hasn't been saved and is not in git.
 
-            const gitBlame = new GitBlame(repoPath, gitBlameShell);
+            const gitBlame = globalBlamer.createBlamer(repoPath);
             const lineNumber = editor.selection.active.line + 1; // line is zero based
             const file = path.relative(repoDir, editor.document.fileName);
 

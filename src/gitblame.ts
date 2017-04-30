@@ -1,7 +1,26 @@
 import * as path from 'path';
+import * as gitBlameShell from 'git-blame';
 import {workspace, WorkspaceConfiguration} from 'vscode';
 
 export class GitBlame {
+    private blamers: Object;
+
+    constructor() {
+        this.blamers = {};
+    }
+
+    createBlamer(repoPath: string): GitBlameBlamer {
+        if (repoPath in this.blamers) {
+            return this.blamers[repoPath];
+        }
+        else {
+            this.blamers[repoPath] = new GitBlameBlamer(repoPath, gitBlameShell);
+            return this.blamers[repoPath];
+        }
+    }
+}
+
+export class GitBlameBlamer {
 
     private _blamed: Object;
     private _workingOn: Object;
@@ -14,17 +33,15 @@ export class GitBlame {
     }
 
     getBlameInfo(fileName: string): Thenable<any> {
-        const self = this;
         return new Promise<any>((resolve, reject) => {
 
-            if (self.needsBlame(fileName)) {
-                self.blameFile(self.repoPath, fileName).then((blameInfo) => {
-                    self._blamed[fileName] = blameInfo;
-                    resolve(self._blamed[fileName]);
+            if (this.needsBlame(fileName)) {
+                this.blameFile(this.repoPath, fileName).then(() => {
+                    resolve(this._blamed[fileName]);
                 }, reject);
             }
             else {
-                resolve(self._blamed[fileName]);
+                resolve(this._blamed[fileName]);
             }
         });
     }
@@ -66,7 +83,8 @@ export class GitBlame {
             }).on('error', (err) => {
                 reject(err);
             }).on('end', () => {
-                resolve(blameInfo);
+                this._blamed[fileName] = blameInfo;
+                resolve(this._blamed[fileName]);
                 delete this._workingOn[fileName];
             });
         });
