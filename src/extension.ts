@@ -56,6 +56,7 @@ function showMessage(context: ExtensionContext, repoDir: string) {
     const viewOnlineTitle = 'View';
     const config = workspace.getConfiguration('gitblame');
     const commitUrl = <string>config.get('commitUrl');
+    const messageFormat = <string>config.get('infoMessageFormat');
 
     fs.access(repoPath, (err) => {
         if (err) {
@@ -85,11 +86,12 @@ function showMessage(context: ExtensionContext, repoDir: string) {
 
                 const hash = info['lines'][lineNumber]['hash'];
                 const commitInfo = info['commits'][hash];
+                let normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(commitInfo);
                 let infoMessageArguments = [];
                 let urlToUse = null;
 
                 // Add the message
-                infoMessageArguments.push(hash + ' ' + commitInfo['summary']);
+                infoMessageArguments.push(TextDecorator.parseTokens(messageFormat, normalizedCommitInfo));
 
                 if (commitUrl) {
                     // If we have a commitUrl we parse it and add it

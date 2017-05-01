@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.8.0 (May 01, 2017)
+
+* Feature: Customizable status bar message format [#5](https://github.com/Sertion/vscode-gitblame/issues/5)
+* Feature: Customizable `infoMessage` format
+* Enhancement: Updating installation instructions
+
 ## 1.7.1 (April 30, 2017)
 
 * Enhancement: Use the same cache for `showMessage` and `view.refresh`

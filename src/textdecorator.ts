@@ -1,18 +1,19 @@
+import {workspace} from 'vscode';
 import * as moment from 'moment';
 import * as ObjectPath from 'object-path';
 
 export class TextDecorator {
 
     static toTextView(commit: Object) : string {
-        const dateNow = new Date();
-        const author = commit['author'];
-        const dateText = TextDecorator.toDateText(dateNow, new Date(author['timestamp'] * 1000));
+        const config = workspace.getConfiguration('gitblame');
 
         if (commit['hash'] === '0000000000000000000000000000000000000000') {
-            return author['name'];
+            return <string>config.get('statusBarMessageNoCommit');
         }
         else {
-            return 'Blame ' + author['name'] + ' ( ' + dateText + ' )';
+            let normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(commit);
+            let messageFormat = <string>config.get('statusBarMessageFormat');
+            return TextDecorator.parseTokens(messageFormat, normalizedCommitInfo);
         }
     }
 
@@ -44,7 +45,7 @@ export class TextDecorator {
     }
 
     static parseTokens(target: string, tokens: object = {}): string {
-        const tokenRegex = /\$\{([a-z\.\-]{1,})[,]*(|[a-z\-,]{1,})}/gi;
+        const tokenRegex = /\$\{([a-z\.\-]{1,})[,]*(|.{1,}?)(?=\})}/gi;
 
         return target.replace(tokenRegex, (string: string, key: string, value: string): string => {
             let currentToken = ObjectPath.get(tokens, key)
@@ -56,8 +57,7 @@ export class TextDecorator {
                 return currentToken.toString();
             }
             else if (typeof currentToken === 'function') {
-                let values = value.split(',');
-                let newString = currentToken.call(this, key, values);
+                let newString = currentToken.call(this, value, key);
 
                 if (typeof newString === 'string') {
                     return newString;
@@ -69,5 +69,28 @@ export class TextDecorator {
 
             return key;
         });
+    }
+
+    static normalizeCommitInfoTokens(commitInfo) {
+        const now = new Date();
+        const authorTime = moment.unix(commitInfo.author.timestamp);
+        const committerTime = moment.unix(commitInfo.committer.timestamp);
+        return {
+            'commit': {
+                'hash': commitInfo.hash,
+                'summary': commitInfo.summary,
+                'filename': commitInfo.filename
+            },
+            'author': commitInfo.author,
+            'committer': commitInfo.committer,
+            'time': {
+                'ago': () => TextDecorator.toDateText(now, authorTime.toDate()),
+                'from': () => authorTime.fromNow(),
+                'custom': (momentFormat) => authorTime.format(momentFormat),
+                'c_ago': () => TextDecorator.toDateText(now, committerTime.toDate()),
+                'c_from': () => committerTime.fromNow(),
+                'c_custom': (momentFormat) => committerTime.format(momentFormat)
+            }
+        }
     }
 }

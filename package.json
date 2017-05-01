@@ -2,7 +2,7 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "publisher": "waderyan",
   "engines": {
     "vscode": "^1.10.0"
@@ -72,6 +72,21 @@
           "type": "string",
           "default": "",
           "description": "The link to an online tool to view a commit (use ${hash} for the commit hash)"
+        },
+        "gitblame.statusBarMessageNoCommit": {
+          "type": "string",
+          "default": "Not Committed Yet",
+          "description": "Customize the status bar message"
+        },
+        "gitblame.statusBarMessageFormat": {
+          "type": "string",
+          "default": "Blame ${author.name} ( ${time.ago} )",
+          "description": "Customize the status bar message"
+        },
+        "gitblame.infoMessageFormat": {
+          "type": "string",
+          "default": "${commit.hash} ${commit.summary}",
+          "description": "Customize the info message"
         }
       }
     }

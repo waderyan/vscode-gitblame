@@ -30,19 +30,25 @@ suite('GitBlame Tests', () => {
             'replace-word': () => 'replaced'
         }));
         assert.equal('Function value tested', TextDecorator.parseTokens('Function value ${replace,test}', {
-            'replace': (key, value) => value + 'ed'
+            'replace': (value) => value + 'ed'
         }));
         assert.equal('Multiple mixed replacers', TextDecorator.parseTokens('Multiple ${type} ${what,replacer}', {
             'type': 'mixed',
-            'what': (key, value) => value + 's'
+            'what': (value) => value + 's'
         }));
-        assert.equal('Should set to key if array', TextDecorator.parseTokens('Should set to key if ${array}', {
-            'array': []
+        assert.equal('Multiple of the same replacer should yield the same result', TextDecorator.parseTokens('Multiple of the ${replace} replacer should yield the ${replace} result', {
+            'replace': 'same'
+        }));
+        assert.equal('Should set to key if non-valid-value', TextDecorator.parseTokens('Should set to key if ${non-valid-value}', {
+            'non-valid-value': []
         }));
         assert.equal('Uses path', TextDecorator.parseTokens('Uses ${climb.down}', {
             'climb': {
                 'down': 'path'
             }
+        }));
+        assert.equal('😃 should 💦 👌💯👌', TextDecorator.parseTokens('😃 should 💦 ${ok,💯}', {
+            'ok': (value) => '👌' + value + '👌'
         }));
     })
 });
