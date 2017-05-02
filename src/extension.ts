@@ -1,7 +1,7 @@
 import {GitBlame} from './gitblame';
 import {StatusBarView} from './view';
 import {GitBlameController} from './controller';
-import {TextDecorator} from './textDecorator';
+import {TextDecorator} from './textdecorator';
 import {window, ExtensionContext, Disposable, StatusBarAlignment,
         workspace, TextEditor, TextEditorSelectionChangeEvent,
         commands, Uri} from 'vscode';
