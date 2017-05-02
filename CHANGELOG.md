@@ -2,6 +2,10 @@
 
 ## 1.8.0 (May 01, 2017)
 
+* Bug: Fix incorrect file name in imports [#9](https://github.com/Sertion/vscode-gitblame/issues/9) (Thanks to [@pftbest](https://github.com/pftbest))
+
+## 1.8.0 (May 01, 2017)
+
 * Feature: Customizable status bar message format [#5](https://github.com/Sertion/vscode-gitblame/issues/5)
 * Feature: Customizable `infoMessage` format
 * Enhancement: Updating installation instructions
@@ -52,5 +56,5 @@
 
 ## 1.1.0 (May 20, 2016)
 
-* Reduced text size which was causing the blame info not to show. 
+* Reduced text size which was causing the blame info not to show.
 * Merged in [PR](https://github.com/waderyan/vscode-gitblame/pull/5) (credit to [@fogzot](https://github.com/fogzot)) that searches for .git in parent dirs.
