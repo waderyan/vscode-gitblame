@@ -1,6 +1,6 @@
 import {Disposable, window, workspace, TextEditor, TextEditorSelectionChangeEvent, TextDocument} from 'vscode';
 import {GitBlameBlamer} from './gitblame';
-import {TextDecorator} from '../src/textDecorator';
+import {TextDecorator} from '../src/textdecorator';
 import * as path from 'path';
 
 export class GitBlameController {
