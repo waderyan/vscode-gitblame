@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.8.0 (May 01, 2017)
+## 1.8.1 (May 01, 2017)
 
 * Bug: Fix incorrect file name in imports [#9](https://github.com/Sertion/vscode-gitblame/issues/9) (Thanks to [@pftbest](https://github.com/pftbest))
 
