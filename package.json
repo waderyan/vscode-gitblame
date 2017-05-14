@@ -2,7 +2,7 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "1.8.2",
+  "version": "1.9.0",
   "publisher": "waderyan",
   "engines": {
     "vscode": "^1.10.0"
@@ -40,7 +40,7 @@
     "@types/mocha": "^2.2.32",
     "@types/node": "^7.0.18",
     "mocha": "^3.3.0",
-    "typescript": "^2.0.3",
+    "typescript": "^2.1.5",
     "vscode": "^1.0.0"
   },
   "homepage": "https://github.com/Sertion/vscode-gitblame/blob/master/README.md",

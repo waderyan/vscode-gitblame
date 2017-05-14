@@ -1,6 +1,7 @@
+import {handleErrorToLog} from './errorhandler';
 import * as path from 'path';
 import * as gitBlameShell from 'git-blame';
-import {workspace, WorkspaceConfiguration} from 'vscode';
+import {workspace, WorkspaceConfiguration, window} from 'vscode';
 
 export class GitBlame {
     private blamers: Object;
@@ -22,6 +23,13 @@ export class GitBlame {
             return this.blamers[repoPath];
         }
     }
+
+    static newBlameInfo(): Object {
+        return {
+            'lines': {},
+            'commits': {}
+        };
+    }
 }
 
 export class GitBlameBlamer {
@@ -36,18 +44,14 @@ export class GitBlameBlamer {
         this._properties = workspace.getConfiguration('gitblame');
     }
 
-    getBlameInfo(fileName: string): Thenable<any> {
-        return new Promise<any>((resolve, reject) => {
-
-            if (this.needsBlame(fileName)) {
-                this.blameFile(this.repoPath, fileName).then(() => {
-                    resolve(this._blamed[fileName]);
-                }, reject);
-            }
-            else {
-                resolve(this._blamed[fileName]);
-            }
-        });
+    async getBlameInfo(fileName: string): Promise<Object> {
+        try {
+            const blameInfo = await this.blameFile(this.repoPath, fileName);
+            return blameInfo;
+        } catch (err) {
+            handleErrorToLog(err);
+        }
+        return Promise.resolve(GitBlame.newBlameInfo());
     }
 
     needsBlame(fileName: string): boolean {
@@ -63,13 +67,14 @@ export class GitBlameBlamer {
         this._blamed = {};
     }
 
-    blameFile(repo: string, fileName: string): Thenable<Object> {
+    async blameFile(repo: string, fileName: string): Promise<Object> {
+        if (!this.needsBlame(fileName)) {
+            return Promise.resolve(this._blamed[fileName]);
+        }
+
         this._workingOn[fileName] = this._workingOn[fileName] || new Promise<Object>((resolve, reject) => {
             const workTree = path.resolve(repo, '..');
-            const blameInfo = {
-                'lines': {},
-                'commits': {}
-            };
+            const blameInfo = GitBlame.newBlameInfo();
 
             this.gitBlameProcess(repo, {
                 file: fileName,

@@ -4,20 +4,20 @@ import * as ObjectPath from 'object-path';
 
 export class TextDecorator {
 
-    static toTextView(commit: Object) : string {
+    static toTextView(commit: Object): string {
         const config = workspace.getConfiguration('gitblame');
 
         if (commit['hash'] === '0000000000000000000000000000000000000000') {
             return <string>config.get('statusBarMessageNoCommit');
         }
         else {
-            let normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(commit);
-            let messageFormat = <string>config.get('statusBarMessageFormat');
+            const normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(commit);
+            const messageFormat = <string>config.get('statusBarMessageFormat');
             return TextDecorator.parseTokens(messageFormat, normalizedCommitInfo);
         }
     }
 
-    static toDateText(dateNow: Date, dateThen: Date) : string {
+    static toDateText(dateNow: Date, dateThen: Date): string {
 
         const momentNow = moment(dateNow);
         const momentThen = moment(dateThen);
@@ -45,10 +45,11 @@ export class TextDecorator {
     }
 
     static parseTokens(target: string, tokens: object = {}): string {
-        const tokenRegex = /\$\{([a-z\.\-]{1,})[,]*(|.{1,}?)(?=\})}/gi;
+        const tokenRegex = /\$\{([a-z\.\-\_]{1,})[,]*(|.{1,}?)(?=\})}/gi;
 
-        return target.replace(tokenRegex, (string: string, key: string, value: string): string => {
-            let currentToken = ObjectPath.get(tokens, key)
+        return target.replace(tokenRegex, (string: string, key: string, inValue: string): string => {
+            const currentToken = ObjectPath.get(tokens, key)
+            const value = inValue.length > 0 ? inValue : undefined;
 
             if (typeof currentToken === 'string') {
                 return currentToken;

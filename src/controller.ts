@@ -1,5 +1,7 @@
-import {Disposable, window, workspace, TextEditor, TextEditorSelectionChangeEvent, TextDocument} from 'vscode';
+import {Disposable, window, workspace, TextEditor, TextDocument,
+    Uri, TextEditorSelectionChangeEvent} from 'vscode';
 import {GitBlameBlamer} from './gitblame';
+import {validEditor} from './editorvalidator';
 import {TextDecorator} from '../src/textdecorator';
 import * as path from 'path';
 
@@ -14,54 +16,40 @@ export class GitBlameController {
 
         window.onDidChangeActiveTextEditor(self.onTextEditorMove, self, disposables);
         window.onDidChangeTextEditorSelection(self.onTextEditorSelectionChange, self, disposables);
-        workspace.onDidSaveTextDocument(self.onTextEditorSave, self, disposables);
 
         this.onTextEditorMove(window.activeTextEditor);
 
         this._disposable = Disposable.from(...disposables);
     }
 
-    onTextEditorMove(editor: TextEditor) : void {
-        this.clear();
+    async onTextEditorMove(editor: TextEditor): Promise<void> {
+        if (validEditor(editor)) {
+            const file = path.relative(this.gitRoot, editor.document.fileName);
+            const lineNumber = editor.selection.active.line + 1;
+            const blameInfo = await this.gitBlame.getBlameInfo(file);
 
-        if (!editor) return;
-
-        const doc = editor.document;
-
-        // Document hasn't been saved and is not in git.
-        if (!doc || doc.isUntitled) return;
-
-        // line is zero based
-        const lineNumber = editor.selection.active.line + 1;
-        const file = path.relative(this.gitRoot, editor.document.fileName);
-
-        this.gitBlame.getBlameInfo(file).then((info) => {
-            this.show(info, lineNumber);
-        }, () => {
-            // Do nothing.
-        });
-    }
-
-    onTextEditorSave(document: TextDocument) : void {
-        const file = path.relative(this.gitRoot, document.fileName);
-
-        this.gitBlame.fileChanged(file);
-
-        if (window.activeTextEditor) {
-            this.onTextEditorMove(window.activeTextEditor);
+            this.show(blameInfo, lineNumber);
+        }
+        else {
+            this.clear();
         }
     }
 
-    onTextEditorSelectionChange(textEditorSelectionChangeEvent: TextEditorSelectionChangeEvent) : void {
+    onTextEditorSelectionChange(textEditorSelectionChangeEvent: TextEditorSelectionChangeEvent): void {
         this.onTextEditorMove(textEditorSelectionChangeEvent.textEditor);
+    }
+
+    invalidateFile(file: Uri): void {
+        const filePath = file.fsPath.replace(this.gitRoot, '').substr(1);
+
+        this.gitBlame.fileChanged(filePath);
     }
 
     clear() {
         this.view.refresh('', false);
     }
 
-    show(blameInfo: Object, lineNumber: number) : void {
-
+    show(blameInfo: Object, lineNumber: number): void {
         if (lineNumber in blameInfo['lines']) {
             const hash = blameInfo['lines'][lineNumber]['hash'];
             const commitInfo = blameInfo['commits'][hash];
@@ -70,7 +58,7 @@ export class GitBlameController {
             this.view.refresh(TextDecorator.toTextView(commitInfo), clickable);
         }
         else {
-            // No line info.
+            this.clear();
         }
     }
 
