@@ -78,6 +78,7 @@ export class TextDecorator {
         return {
             'commit': {
                 'hash': commitInfo.hash,
+                'hash_short': (length = 7) => commitInfo.hash.substr(0, length),
                 'summary': commitInfo.summary,
                 'filename': commitInfo.filename
             },

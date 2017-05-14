@@ -24,6 +24,7 @@ See Git Blame information in the status bar for the currently selected line.
   - message that appears when the `extension.blame` command executes (when you click the status bar message)
   - available tokens:
     - `${commit.hash}` - 40-bit hash unique to the commit
+    - `${commit.hash_short,length}` - the first `length` characters of the 40-bit hash unique to the commit, defaults to `7` first characters
     - `${commit.summary}` - the first line of the commit message
     - `${commit.filename}` - the file name where the line was committed
     - `${author.name}` - the commit author's name

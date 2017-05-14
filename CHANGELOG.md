@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.8.2 (May 14, 2017)
+
+* Bug: Fix incorrect version number in CHANGELOG.md [#13](https://github.com/Sertion/vscode-gitblame/pull/13) (Thanks to [@zackschuster](https://github.com/zackschuster))
+* Fix: Removing `typings` directory
+* Feature: Now respects `git.path` (Thanks to [@alessioalex](https://github.com/alessioalex)) [#4](https://github.com/Sertion/vscode-gitblame/issues/4)
+* Feature: Adding short hash token to `infoMessageFormat` and `statusBarMessageFormat` [#10]
+
 ## 1.8.1 (May 01, 2017)
 
 * Bug: Fix incorrect file name in imports [#9](https://github.com/Sertion/vscode-gitblame/issues/9) (Thanks to [@pftbest](https://github.com/pftbest))

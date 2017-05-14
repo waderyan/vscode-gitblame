@@ -68,7 +68,7 @@ function showMessage(context: ExtensionContext, repoDir: string) {
         }
         else {
             const editor = window.activeTextEditor;
-            
+
             if (!editor) return;
 
             const doc = editor.document;

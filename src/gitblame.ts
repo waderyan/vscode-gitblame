@@ -4,8 +4,12 @@ import {workspace, WorkspaceConfiguration} from 'vscode';
 
 export class GitBlame {
     private blamers: Object;
+    private gitPath: string;
 
     constructor() {
+        const gitConfig = workspace.getConfiguration('git');
+
+        this.gitPath = <string>gitConfig.get('path', 'git');
         this.blamers = {};
     }
 
@@ -14,7 +18,7 @@ export class GitBlame {
             return this.blamers[repoPath];
         }
         else {
-            this.blamers[repoPath] = new GitBlameBlamer(repoPath, gitBlameShell);
+            this.blamers[repoPath] = new GitBlameBlamer(repoPath, gitBlameShell, this.gitPath);
             return this.blamers[repoPath];
         }
     }
@@ -26,7 +30,7 @@ export class GitBlameBlamer {
     private _workingOn: Object;
     private _properties: WorkspaceConfiguration;
 
-    constructor(private repoPath: string, private gitBlameProcess) {
+    constructor(private repoPath: string, private gitBlameProcess, private gitPath) {
         this._blamed = {};
         this._workingOn = {};
         this._properties = workspace.getConfiguration('gitblame');
@@ -72,7 +76,7 @@ export class GitBlameBlamer {
                 workTree: workTree,
                 rev: false,
                 ignoreWhitespace: this._properties.get('ignoreWhitespace')
-            }).on('data', (type, data) => {
+            }, this.gitPath).on('data', (type, data) => {
                 // outputs in Porcelain format.
                 if (type === 'line') {
                     blameInfo['lines'][data.finalLine] = data;
