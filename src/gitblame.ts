@@ -1,107 +1,80 @@
 import {handleErrorToLog} from './errorhandler';
-import * as path from 'path';
-import * as gitBlameShell from 'git-blame';
-import {workspace, WorkspaceConfiguration, window} from 'vscode';
+import {GitBlameFile} from './gitblamefile';
+import {workspace, window} from 'vscode';
+import {IGitBlameInfo, IGitCommitInfo, IGitCommitLine} from './gitinterfaces';
+import {getGitCommand} from './getgitcommand';
+import * as Path from 'path';
 
 export class GitBlame {
-    private blamers: Object;
-    private gitPath: string;
+
+    private gitCommand: string;
+    private blamed: Object;
+    private files: { [Object: string]: GitBlameFile } = {};
 
     constructor() {
-        const gitConfig = workspace.getConfiguration('git');
-
-        this.gitPath = <string>gitConfig.get('path', 'git');
-        this.blamers = {};
+        this.blamed = {};
     }
 
-    createBlamer(repoPath: string): GitBlameBlamer {
-        if (repoPath in this.blamers) {
-            return this.blamers[repoPath];
-        }
-        else {
-            this.blamers[repoPath] = new GitBlameBlamer(repoPath, gitBlameShell, this.gitPath);
-            return this.blamers[repoPath];
-        }
-    }
-
-    static newBlameInfo(): Object {
-        return {
-            'lines': {},
-            'commits': {}
-        };
-    }
-}
-
-export class GitBlameBlamer {
-
-    private _blamed: Object;
-    private _workingOn: Object;
-    private _properties: WorkspaceConfiguration;
-
-    constructor(private repoPath: string, private gitBlameProcess, private gitPath) {
-        this._blamed = {};
-        this._workingOn = {};
-        this._properties = workspace.getConfiguration('gitblame');
-    }
-
-    async getBlameInfo(fileName: string): Promise<Object> {
+    async getBlameInfo(fileName: string): Promise<IGitBlameInfo> {
+        this.files[fileName] = this.files[fileName] || new GitBlameFile(fileName);
         try {
-            const blameInfo = await this.blameFile(this.repoPath, fileName);
-            return blameInfo;
+            return await this.files[fileName].blame();
         } catch (err) {
             handleErrorToLog(err);
         }
-        return Promise.resolve(GitBlame.newBlameInfo());
+        return Promise.resolve(GitBlame.blankBlameInfo());
     }
 
-    needsBlame(fileName: string): boolean {
-        return !(fileName in this._blamed);
+    async getLineInfo(fileName: string, lineNumber: number): Promise<IGitCommitInfo> {
+        const commitLineNumber = lineNumber + 1;
+        const blameInfo = await this.getBlameInfo(fileName);
+
+        if (blameInfo['lines'][commitLineNumber]) {
+            const hash = blameInfo['lines'][commitLineNumber]['hash'];
+            return blameInfo['commits'][hash];
+        }
+        else {
+            return null;
+        }
     }
 
     fileChanged(fileName: string): void {
-        delete this._blamed[fileName];
-        delete this._workingOn[fileName];
-    }
-
-    clearCache(): void {
-        this._blamed = {};
-    }
-
-    async blameFile(repo: string, fileName: string): Promise<Object> {
-        if (!this.needsBlame(fileName)) {
-            return Promise.resolve(this._blamed[fileName]);
+        const file = this.files[fileName];
+        if (file) {
+            file.changed();
         }
-
-        this._workingOn[fileName] = this._workingOn[fileName] || new Promise<Object>((resolve, reject) => {
-            const workTree = path.resolve(repo, '..');
-            const blameInfo = GitBlame.newBlameInfo();
-
-            this.gitBlameProcess(repo, {
-                file: fileName,
-                workTree: workTree,
-                rev: false,
-                ignoreWhitespace: this._properties.get('ignoreWhitespace')
-            }, this.gitPath).on('data', (type, data) => {
-                // outputs in Porcelain format.
-                if (type === 'line') {
-                    blameInfo['lines'][data.finalLine] = data;
-                }
-                else if (type === 'commit' && !(data.hash in blameInfo['commits'])) {
-                    blameInfo['commits'][data.hash] = data;
-                }
-            }).on('error', (err) => {
-                reject(err);
-            }).on('end', () => {
-                this._blamed[fileName] = blameInfo;
-                resolve(this._blamed[fileName]);
-                delete this._workingOn[fileName];
-            });
-        });
-
-        return this._workingOn[fileName];
     }
 
-    dispose() {
+    fileDeleted(fileName: string): void {
+        delete this.files[fileName];
+        this.fileChanged(fileName);
+    }
+
+    dispose(): void {
         // Nothing to release.
+    }
+
+    static blankBlameInfo(): IGitBlameInfo {
+        return {
+            'commits': {},
+            'lines': {}
+        };
+    }
+
+    static blankCommitInfo(): IGitCommitInfo {
+        const emptyAuthor = {
+            name: '',
+            mail: '',
+            timestamp: 0,
+            tz: ''
+        };
+
+        return {
+            hash: '0000000000000000000000000000000000000000',
+            author: emptyAuthor,
+            committer: emptyAuthor,
+            summary: '',
+            filename: ''
+        }
     }
 }

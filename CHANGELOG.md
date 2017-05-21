@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.10.0 (May 21, 2017)
+
+* Feature: Adding support for git submodules [#12](https://github.com/Sertion/vscode-gitblame/issues/12)
+
 ## 1.9.0 (May 15, 2017)
 
 * Bug: Fix link in CHANGELOG.md

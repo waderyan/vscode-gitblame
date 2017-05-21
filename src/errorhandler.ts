@@ -3,7 +3,7 @@ import {window} from 'vscode';
 const showLog = 'Show Log';
 const outputStream = window.createOutputChannel('Extension: gitblame');
 
-export async function handleErrorWithShowMessage(error: Error, message: string) {
+export async function handleErrorWithShowMessage(error: Error, message: string): Promise<void> {
     outputStream.append(error.toString());
 
     const selectedItem = await window.showErrorMessage(message, showLog);
@@ -13,6 +13,6 @@ export async function handleErrorWithShowMessage(error: Error, message: string) 
     }
 }
 
-export function handleErrorToLog(error: Error) {
+export function handleErrorToLog(error: Error): void {
     outputStream.append(error.toString());
 }

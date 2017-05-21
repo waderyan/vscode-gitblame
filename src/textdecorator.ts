@@ -1,10 +1,11 @@
 import {workspace} from 'vscode';
 import * as moment from 'moment';
 import * as ObjectPath from 'object-path';
+import {IGitBlameInfo, IGitCommitInfo} from './gitinterfaces';
 
 export class TextDecorator {
 
-    static toTextView(commit: Object): string {
+    static toTextView(commit: IGitCommitInfo): string {
         const config = workspace.getConfiguration('gitblame');
 
         if (commit['hash'] === '0000000000000000000000000000000000000000') {
@@ -72,7 +73,7 @@ export class TextDecorator {
         });
     }
 
-    static normalizeCommitInfoTokens(commitInfo) {
+    static normalizeCommitInfoTokens(commitInfo: IGitCommitInfo): Object {
         const now = new Date();
         const authorTime = moment.unix(commitInfo.author.timestamp);
         const committerTime = moment.unix(commitInfo.committer.timestamp);

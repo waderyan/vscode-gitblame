@@ -1,35 +1,33 @@
+import {handleErrorToLog} from './errorhandler';
 import {GitBlame} from './gitblame';
 import {StatusBarView} from './view';
 import {GitBlameController} from './controller';
-import {findGitPath} from './gitpath';
 import {validEditor} from './editorvalidator';
 import {TextDecorator} from './textdecorator';
 import {window, ExtensionContext, Disposable, StatusBarAlignment,
         workspace, TextEditor, TextEditorSelectionChangeEvent,
         commands, Uri} from 'vscode';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as Path from 'path';
 import {isWebUri} from 'valid-url';
 
 const globalBlamer = new GitBlame();
 
-export async function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext): Promise<void> {
 
     // Workspace not using a folder. No access to git repo.
     if (!workspace.rootPath) {
         return;
     }
 
-    const workspaceRoot = workspace.rootPath;
     commands.registerCommand('extension.blame', () => {
-        showMessage(context, workspaceRoot);
+        showMessage(context);
     });
 
     // Try to find the repo first in the workspace, then in parent directories
     // because sometimes one opens a subdirectory but still wants information
     // about the full repo.
     try {
-        const controller = await lookupRepo(context, workspaceRoot);
+        const controller = await lookupRepo(context);
 
         // Listen to file changes and invalidate files when they change
         let fsw = workspace.createFileSystemWatcher('**/*', true);
@@ -38,46 +36,43 @@ export async function activate(context: ExtensionContext) {
             controller.invalidateFile(uri);
         });
         fsw.onDidDelete((uri) => {
-            controller.invalidateFile(uri);
+            controller.removedFile(uri);
         });
     } catch (err) {
         return;
     }
 }
 
-async function lookupRepo(context: ExtensionContext, repositoryDirectory: string): Promise<GitBlameController> {
-    const repo = await findGitPath(repositoryDirectory);
+async function lookupRepo(context: ExtensionContext): Promise<GitBlameController> {
     const statusBar = window.createStatusBarItem(StatusBarAlignment.Left);
-    const gitBlame = globalBlamer.createBlamer(repo.path);
-    const controller = new GitBlameController(gitBlame, repo.dir, new StatusBarView(statusBar));
+    const controller = new GitBlameController(globalBlamer, new StatusBarView(statusBar));
 
     context.subscriptions.push(controller);
-    context.subscriptions.push(gitBlame);
+    context.subscriptions.push(globalBlamer);
 
     return Promise.resolve(controller);
 }
 
-async function showMessage(context: ExtensionContext, repositoryDirectory: string) {
-    const repo = await findGitPath(repositoryDirectory);
+async function showMessage(context: ExtensionContext): Promise<void> {
     const viewOnlineTitle = 'View';
     const config = workspace.getConfiguration('gitblame');
     const commitUrl = <string>config.get('commitUrl');
     const messageFormat = <string>config.get('infoMessageFormat');
     const editor = window.activeTextEditor;
+    let commitInfo = null;
 
     if (!validEditor(editor)) return;
 
-    const gitBlame = globalBlamer.createBlamer(repo.path);
-    const lineNumber = editor.selection.active.line + 1; // line is zero based
-    const file = path.relative(repo.dir, editor.document.fileName);
+    try {
+        commitInfo = await globalBlamer.getLineInfo(editor.document.fileName, editor.selection.active.line);
+    } catch (err) {
+        handleErrorToLog(err);
+        return;
+    }
 
-    const blameInfo = await gitBlame.getBlameInfo(file);
+    if (commitInfo === null) return;
 
-    if (!blameInfo['lines'].hasOwnProperty(lineNumber)) return;
-
-    const hash = blameInfo['lines'][lineNumber]['hash'];
-    const commitInfo = blameInfo['commits'][hash];
-    let normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(commitInfo);
+    const normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(commitInfo);
     let infoMessageArguments = [];
     let urlToUse = null;
 
@@ -87,7 +82,7 @@ async function showMessage(context: ExtensionContext, repositoryDirectory: strin
     if (commitUrl) {
         // If we have a commitUrl we parse it and add it
         let parsedUrl = TextDecorator.parseTokens(commitUrl, {
-            'hash': hash
+            'hash': commitInfo.hash
         });
 
         if (isWebUri(parsedUrl)) {

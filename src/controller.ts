@@ -1,15 +1,17 @@
+import {handleErrorToLog} from './errorhandler';
 import {Disposable, window, workspace, TextEditor, TextDocument,
     Uri, TextEditorSelectionChangeEvent} from 'vscode';
-import {GitBlameBlamer} from './gitblame';
+import {GitBlame} from './gitblame';
 import {validEditor} from './editorvalidator';
 import {TextDecorator} from '../src/textdecorator';
-import * as path from 'path';
+import {IGitBlameInfo, IGitCommitInfo} from './gitinterfaces';
+
 
 export class GitBlameController {
 
-    private _disposable: Disposable;
+    private disposable: Disposable;
 
-    constructor(private gitBlame: GitBlameBlamer, private gitRoot: string, private view) {
+    constructor(private gitBlame: GitBlame, private view) {
         const self = this;
 
         const disposables: Disposable[] = [];
@@ -19,16 +21,19 @@ export class GitBlameController {
 
         this.onTextEditorMove(window.activeTextEditor);
 
-        this._disposable = Disposable.from(...disposables);
+        this.disposable = Disposable.from(...disposables);
     }
 
     async onTextEditorMove(editor: TextEditor): Promise<void> {
         if (validEditor(editor)) {
-            const file = path.relative(this.gitRoot, editor.document.fileName);
-            const lineNumber = editor.selection.active.line + 1;
-            const blameInfo = await this.gitBlame.getBlameInfo(file);
+            try {
+                const lineInfo = await this.gitBlame.getLineInfo(editor.document.fileName, editor.selection.active.line);
 
-            this.show(blameInfo, lineNumber);
+                this.show(lineInfo);
+            } catch (err) {
+                handleErrorToLog(err);
+                this.clear();
+            }
         }
         else {
             this.clear();
@@ -39,21 +44,21 @@ export class GitBlameController {
         this.onTextEditorMove(textEditorSelectionChangeEvent.textEditor);
     }
 
-    invalidateFile(file: Uri): void {
-        const filePath = file.fsPath.replace(this.gitRoot, '').substr(1);
+    removedFile(file: Uri): void {
+        this.gitBlame.fileDeleted(file.fsPath);
+    }
 
-        this.gitBlame.fileChanged(filePath);
+    invalidateFile(file: Uri): void {
+        this.gitBlame.fileChanged(file.fsPath);
     }
 
     clear() {
         this.view.refresh('', false);
     }
 
-    show(blameInfo: Object, lineNumber: number): void {
-        if (lineNumber in blameInfo['lines']) {
-            const hash = blameInfo['lines'][lineNumber]['hash'];
-            const commitInfo = blameInfo['commits'][hash];
-            const clickable = hash !== '0000000000000000000000000000000000000000';
+    show(commitInfo: IGitCommitInfo): void {
+        if (commitInfo) {
+            const clickable = commitInfo.hash !== '0000000000000000000000000000000000000000';
 
             this.view.refresh(TextDecorator.toTextView(commitInfo), clickable);
         }
@@ -62,7 +67,7 @@ export class GitBlameController {
         }
     }
 
-    dispose() {
-        this._disposable.dispose();
+    dispose(): void {
+        this.disposable.dispose();
     }
 }
