@@ -41,7 +41,7 @@ export class TextDecorator {
             return days + ' days ago';
         }
         else {
-            return months + ' months ago';
+            return months + ' ' + (months === 1 ? 'month' : 'months') + ' ago';
         }
     }
 

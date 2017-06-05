@@ -1,4 +1,4 @@
-// 
+//
 // Note: This example test is leveraging the Mocha test framework.
 // Please refer to their documentation on https://mochajs.org/ for help.
 //
@@ -15,10 +15,15 @@ suite('GitBlame Tests', () => {
 
     test('Date Calculations', () => {
         assert.equal('3 months ago', TextDecorator.toDateText(new Date(2015, 4), new Date(2015, 1)));
+        assert.equal('1 month ago', TextDecorator.toDateText(new Date(2015, 2, 20), new Date(2015, 1)));
         assert.equal('4 days ago', TextDecorator.toDateText(new Date(2015, 1, 5), new Date(2015, 1, 1)));
         assert.equal('2 hours ago', TextDecorator.toDateText(new Date(2015, 1, 1, 3, 0, 0), new Date(2015, 1, 1, 1, 0, 0)));
         assert.equal('30 minutes ago', TextDecorator.toDateText(new Date(2015, 1, 1, 1, 30, 0), new Date(2015, 1, 1, 1, 0, 0)));
         assert.equal('right now', TextDecorator.toDateText(new Date(2015, 1, 1, 1, 1, 0), new Date(2015, 1, 1, 1, 0, 0)));
+
+        assert.notEqual('1 days ago', TextDecorator.toDateText(new Date(2015, 1, 2), new Date(2015, 1, 1)));
+        assert.notEqual('1 hours ago', TextDecorator.toDateText(new Date(2015, 1, 1, 1, 0, 0), new Date(2015, 1, 1, 0, 0, 0)));
+        assert.notEqual('1 minutes ago', TextDecorator.toDateText(new Date(2015, 1, 1, 1, 1, 0), new Date(2015, 1, 1, 1, 0, 0)));
     });
 
     test('Token Parser', () => {
