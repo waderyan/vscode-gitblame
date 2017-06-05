@@ -6,7 +6,6 @@ import {getGitCommand} from './getgitcommand';
 import * as Path from 'path';
 
 export class GitBlame {
-
     private gitCommand: string;
     private blamed: Object;
     private files: { [Object: string]: GitBlameFile } = {};
@@ -16,7 +15,10 @@ export class GitBlame {
     }
 
     async getBlameInfo(fileName: string): Promise<IGitBlameInfo> {
-        this.files[fileName] = this.files[fileName] || new GitBlameFile(fileName);
+        if (typeof this.files[fileName] === 'undefined') {
+            this.files[fileName] = new GitBlameFile(fileName, this.generateDisposeFunction(fileName));
+        }
+
         try {
             return await this.files[fileName].blame();
         } catch (err) {
@@ -34,24 +36,20 @@ export class GitBlame {
             return blameInfo['commits'][hash];
         }
         else {
-            return null;
+            throw new Error(`No blame info can be found for ${fileName}:${lineNumber}`);
         }
     }
 
-    fileChanged(fileName: string): void {
-        const file = this.files[fileName];
-        if (file) {
-            file.changed();
+    generateDisposeFunction(fileName) {
+        return () => {
+            delete this.files[fileName];
         }
-    }
-
-    fileDeleted(fileName: string): void {
-        delete this.files[fileName];
-        this.fileChanged(fileName);
     }
 
     dispose(): void {
-        // Nothing to release.
+        for (let fileName in this.files) {
+            this.files[fileName].dispose();
+        }
     }
 
     static blankBlameInfo(): IGitBlameInfo {

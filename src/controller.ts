@@ -44,14 +44,6 @@ export class GitBlameController {
         this.onTextEditorMove(textEditorSelectionChangeEvent.textEditor);
     }
 
-    removedFile(file: Uri): void {
-        this.gitBlame.fileDeleted(file.fsPath);
-    }
-
-    invalidateFile(file: Uri): void {
-        this.gitBlame.fileChanged(file.fsPath);
-    }
-
     clear() {
         this.view.refresh('', false);
     }

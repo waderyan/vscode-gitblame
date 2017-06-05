@@ -6,6 +6,7 @@ import {IGitBlameInfo, IGitRepositoryInformation, IGitCommitInfo, IGitCommitLine
 import {getGitCommand} from './getgitcommand';
 import * as gitBlameShell from 'git-blame';
 import * as Path from 'path';
+import * as FS from 'fs';
 
 export class GitBlameFile {
     public fileName: Uri;
@@ -15,13 +16,18 @@ export class GitBlameFile {
     private repository: string = null;
     private workingOn: Promise<IGitBlameInfo> = null;
     private properties: WorkspaceConfiguration;
+    private fileSystemWatcher: FS.FSWatcher;
 
     private workTreePromise: Promise<string> = null;
     private repositoryPromise: Promise<string> = null;
 
-    constructor(fileName: string) {
+    static REMOVE:string = 'rename';
+    static CHANGE:string = 'change';
+
+    constructor(fileName: string, private disposeCallback: Function = () => {}) {
         this.fileName = Uri.file(fileName);
         this.properties = workspace.getConfiguration('gitblame');
+        this.fileSystemWatcher = this.setupWatcher();
     }
 
     async getGitInfo(): Promise<IGitRepositoryInformation> {
@@ -44,7 +50,6 @@ export class GitBlameFile {
         } catch (err) {
             handleErrorToLog(err);
         }
-
     }
 
     hasBlameInfo(): boolean {
@@ -53,6 +58,22 @@ export class GitBlameFile {
 
     changed(): void {
         this.blameInfo = null;
+    }
+
+    private setupWatcher() {
+        const fileWatcherOptions = {
+            "persistent": false
+        };
+        return FS.watch(this.fileName.fsPath, fileWatcherOptions, this.handleFileWatchEvent.bind(this))
+    }
+
+    private handleFileWatchEvent(eventType, fileName) {
+        if (eventType === GitBlameFile.REMOVE) {
+            this.dispose();
+        }
+        else if (eventType === GitBlameFile.CHANGE) {
+            this.changed();
+        }
     }
 
     private async findRepository(path: Uri): Promise<string> {
@@ -99,20 +120,32 @@ export class GitBlameFile {
                 if (type === 'line') {
                     blameInfo['lines'][data.finalLine] = <IGitCommitLine>data;
                 }
-                else if (type === 'commit' && !(data.hash in blameInfo['commits'])) {
+                else if (type === 'commit') {
                     blameInfo['commits'][data.hash] = <IGitCommitInfo>data;
                 }
-            }).on('end', () => {
-                this.blameInfo = blameInfo;
-                this.workingOn = null;
-                resolve(this.blameInfo);
-            }).on('error', (err) => {
-                this.workingOn = null;
+            });
+
+            gitStream.on('error', (err) => {
                 this.blameInfo = GitBlame.blankBlameInfo();
                 reject(err);
+            });
+
+            gitStream.on('end', () => {
+                this.blameInfo = blameInfo;
+                resolve(this.blameInfo);
+            });
+
+            gitStream.on(['error', 'end'], (err) => {
+                gitStream.removeAllListeners();
+                this.workingOn = null;
             });
         });
 
         return this.workingOn;
+    }
+
+    dispose() {
+        this.fileSystemWatcher.close();
+        this.disposeCallback();
     }
 }

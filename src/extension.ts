@@ -27,17 +27,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     // because sometimes one opens a subdirectory but still wants information
     // about the full repo.
     try {
-        const controller = await lookupRepo(context);
-
-        // Listen to file changes and invalidate files when they change
-        let fsw = workspace.createFileSystemWatcher('**/*', true);
-
-        fsw.onDidChange((uri) => {
-            controller.invalidateFile(uri);
-        });
-        fsw.onDidDelete((uri) => {
-            controller.removedFile(uri);
-        });
+        await lookupRepo(context);
     } catch (err) {
         return;
     }
@@ -69,8 +59,6 @@ async function showMessage(context: ExtensionContext): Promise<void> {
         handleErrorToLog(err);
         return;
     }
-
-    if (commitInfo === null) return;
 
     const normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(commitInfo);
     let infoMessageArguments = [];
