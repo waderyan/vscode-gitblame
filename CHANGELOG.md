@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.11.0 (June 05, 2017)
+
+* Bug: Singular for single number months [#16](https://github.com/Sertion/vscode-gitblame/issues/12) (Thanks to [@adambowles](https://github.com/adambowles))
+* Fix: Adding additional tests for checking `toDateText`
+* Fix: Watching only blamed files
+
 ## 1.10.0 (May 21, 2017)
 
 * Feature: Adding support for git submodules [#12](https://github.com/Sertion/vscode-gitblame/issues/12)
