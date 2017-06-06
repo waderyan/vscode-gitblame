@@ -2,11 +2,11 @@
 
 ## 1.11.1 (June 05, 2017)
 
-* Bug: Singular for single number minutes, hours, and days [#18](https://github.com/Sertion/vscode-gitblame/issues/12) (Thanks to [@adambowles](https://github.com/adambowles))
+* Bug: Singular for single number minutes, hours, and days [#18](https://github.com/Sertion/vscode-gitblame/issues/18) (Thanks to [@adambowles](https://github.com/adambowles))
 
 ## 1.11.0 (June 05, 2017)
 
-* Bug: Singular for single number months [#16](https://github.com/Sertion/vscode-gitblame/issues/12) (Thanks to [@adambowles](https://github.com/adambowles))
+* Bug: Singular for single number months [#16](https://github.com/Sertion/vscode-gitblame/issues/16) (Thanks to [@adambowles](https://github.com/adambowles))
 * Fix: Adding additional tests for checking `toDateText`
 * Fix: Watching only blamed files
 
