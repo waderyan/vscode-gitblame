@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.11.2 (June 06, 2017)
+
+* Bug: Updating issue link in change log [#19](https://github.com/Sertion/vscode-gitblame/issues/19) (Thanks to [@adambowles](https://github.com/adambowles))
+* Fix: Updating dependencies
+
 ## 1.11.1 (June 05, 2017)
 
 * Bug: Singular for single number minutes, hours, and days [#18](https://github.com/Sertion/vscode-gitblame/issues/18) (Thanks to [@adambowles](https://github.com/adambowles))
