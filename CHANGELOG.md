@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.11.3 (June 15, 2017)
+
+* Bug: Blaming the wrong line [#20](https://github.com/Sertion/vscode-gitblame/issues/20) (Thanks to [@gucong3000](https://github.com/gucong3000))
+
 ## 1.11.2 (June 06, 2017)
 
 * Bug: Updating issue link in change log [#19](https://github.com/Sertion/vscode-gitblame/issues/19) (Thanks to [@adambowles](https://github.com/adambowles))

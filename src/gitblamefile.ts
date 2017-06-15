@@ -115,33 +115,42 @@ export class GitBlameFile {
                 ignoreWhitespace: this.properties.get('ignoreWhitespace')
             };
             const gitStream = gitBlameShell(repositoryInfo.repository, gitBlameOptions, getGitCommand());
+            const gitOver = this.gitStreamOver(gitStream, reject, resolve, blameInfo);
+            const gitData = this.gitStreamData(blameInfo);
 
-            gitStream.on('data', (type, data) => {
-                if (type === 'line') {
-                    blameInfo['lines'][data.finalLine] = <IGitCommitLine>data;
-                }
-                else if (type === 'commit') {
-                    blameInfo['commits'][data.hash] = <IGitCommitInfo>data;
-                }
-            });
-
-            gitStream.on('error', (err) => {
-                this.blameInfo = GitBlame.blankBlameInfo();
-                reject(err);
-            });
-
-            gitStream.on('end', () => {
-                this.blameInfo = blameInfo;
-                resolve(this.blameInfo);
-            });
-
-            gitStream.on(['error', 'end'], (err) => {
-                gitStream.removeAllListeners();
-                this.workingOn = null;
-            });
+            gitStream.on('data', gitData);
+            gitStream.on('error', gitOver);
+            gitStream.on('end', gitOver);
         });
 
         return this.workingOn;
+    }
+
+    private gitStreamData(blameInfo: IGitBlameInfo): (type: string, data: any) => void {
+        return (type: string, data: any) => {
+            if (type === 'line') {
+                blameInfo['lines'][data.finalLine] = <IGitCommitLine>data;
+            }
+            else if (type === 'commit') {
+                blameInfo['commits'][data.hash] = <IGitCommitInfo>data;
+            }
+        }
+    }
+
+    private gitStreamOver(gitStream, reject: (err: Error) => void, resolve: (val: any) => void, blameInfo: IGitBlameInfo): (err: Error) => void {
+        return (err: Error) => {
+            gitStream.removeAllListeners();
+            this.workingOn = null;
+
+            if (err) {
+                this.blameInfo = GitBlame.blankBlameInfo();
+                reject(err);
+            }
+            else {
+                this.blameInfo = blameInfo;
+                resolve(this.blameInfo);
+            }
+        }
     }
 
     dispose() {

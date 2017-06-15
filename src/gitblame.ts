@@ -8,7 +8,7 @@ import * as Path from 'path';
 export class GitBlame {
     private gitCommand: string;
     private blamed: Object;
-    private files: { [Object: string]: GitBlameFile } = {};
+    private files: { [fileName: string]: GitBlameFile } = {};
 
     constructor() {
         this.blamed = {};
