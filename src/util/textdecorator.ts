@@ -1,25 +1,28 @@
-import {workspace} from 'vscode';
-import * as moment from 'moment';
-import * as ObjectPath from 'object-path';
-import {IGitBlameInfo, IGitCommitInfo} from './gitinterfaces';
+import moment = require('moment');
+
+import { workspace } from 'vscode';
+
+import { GitBlame } from '../git/blame';
+import { walkObject } from './objectpath';
+import { GitCommitInfo } from '../interfaces';
+import {
+    getProperty,
+    Properties } from './configuration';
+
 
 export class TextDecorator {
-
-    static toTextView(commit: IGitCommitInfo): string {
-        const config = workspace.getConfiguration('gitblame');
-
-        if (commit['hash'] === '0000000000000000000000000000000000000000') {
-            return <string>config.get('statusBarMessageNoCommit');
+    static toTextView(commit: GitCommitInfo): string {
+        if (GitBlame.isBlankCommit(commit)) {
+            return <string>getProperty(Properties.StatusBarMessageNoCommit);
         }
-        else {
-            const normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(commit);
-            const messageFormat = <string>config.get('statusBarMessageFormat');
-            return TextDecorator.parseTokens(messageFormat, normalizedCommitInfo);
-        }
+
+        const normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(commit);
+        const messageFormat = <string>getProperty(Properties.StatusBarMessageFormat);
+
+        return TextDecorator.parseTokens(messageFormat, normalizedCommitInfo);
     }
 
     static toDateText(dateNow: Date, dateThen: Date): string {
-
         const momentNow = moment(dateNow);
         const momentThen = moment(dateThen);
 
@@ -48,23 +51,29 @@ export class TextDecorator {
     static parseTokens(target: string, tokens: object = {}): string {
         const tokenRegex = /\$\{([a-z\.\-\_]{1,})[,]*(|.{1,}?)(?=\})}/gi;
 
-        return target.replace(tokenRegex, (string: string, key: string, inValue: string): string => {
-            const currentToken = ObjectPath.get(tokens, key)
-            const value = inValue.length > 0 ? inValue : undefined;
+        if (typeof target !== 'string') {
+            return '';
+        }
 
-            if (typeof currentToken === 'string') {
+        return target.replace(tokenRegex, (string: string, key: string, inValue: string): string => {
+            const currentToken = walkObject(tokens, key)
+            const value = inValue.length > 0 ? inValue : undefined;
+            const currentTokenType = typeof currentToken;
+
+            if (currentTokenType === 'string') {
                 return currentToken;
             }
-            else if (typeof currentToken === 'number') {
+            else if (currentTokenType === 'number') {
                 return currentToken.toString();
             }
-            else if (typeof currentToken === 'function') {
-                let newString = currentToken.call(this, value, key);
+            else if (currentTokenType === 'function') {
+                const newString = currentToken.call(this, value, key);
+                const newStringType = typeof newString;
 
-                if (typeof newString === 'string') {
+                if (newStringType === 'string') {
                     return newString;
                 }
-                else if (typeof newString === 'number') {
+                else if (newStringType === 'number') {
                     return newString.toString();
                 }
             }
@@ -73,10 +82,11 @@ export class TextDecorator {
         });
     }
 
-    static normalizeCommitInfoTokens(commitInfo: IGitCommitInfo): Object {
+    static normalizeCommitInfoTokens(commitInfo: GitCommitInfo): Object {
         const now = new Date();
         const authorTime = moment.unix(commitInfo.author.timestamp);
         const committerTime = moment.unix(commitInfo.committer.timestamp);
+
         return {
             'commit': {
                 'hash': commitInfo.hash,
@@ -94,6 +104,6 @@ export class TextDecorator {
                 'c_from': () => committerTime.fromNow(),
                 'c_custom': (momentFormat) => committerTime.format(momentFormat)
             }
-        }
+        };
     }
 }

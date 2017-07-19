@@ -21,7 +21,7 @@ See Git Blame information in the status bar for the currently selected line.
 - `gitblame.ignoreWhitespace` (`boolean`, default `false`)
   - use the git blame `-w` flag
 - `gitblame.infoMessageFormat` (`string`, default `"${commit.hash} ${commit.summary}"`)
-  - message that appears when the `extension.blame` command executes (when you click the status bar message)
+  - message that appears when the `gitblame.quickInfo` command executes (when you click the status bar message)
   - available tokens:
     - `${commit.hash}` - 40-bit hash unique to the commit
     - `${commit.hash_short,length}` - the first `length` characters of the 40-bit hash unique to the commit, defaults to `7` first characters
@@ -49,7 +49,23 @@ See Git Blame information in the status bar for the currently selected line.
   - message in the status bar about the current line when no commit can be found
   - available tokens:
     - _No available tokens_
+- `gitblame.progressSpinner` (`array` of `string`, default `["$(sync~spin)"]`)
+  - an array of strings that will be displayed in sequence to denote progress while blaming files in larger repositories
+  - supports [Octoicons](https://octicons.github.com/) with the `~spin` suffix for spin action
+  - when the array only contains one item that item is rendered once instead of every 100ms
+  - Some suggested values:
+    - `["－", "／", "｜", "＼"]`
+    - `["⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"]`
+    - `["[Loading ]", "[oading L]", "[ading Lo]", "[ding Loa]", "[ing Load]", "[ng Loadi]", "[g Loadin]", "[ Loading]"]`
+    - `["🕐", "🕑", "🕒", "🕓", "🕔", "🕕", "🕖", "🕗", "🕘", "🕙", "🕚", "🕛"]`
+- `gitblame.logLevel` (`array` of `string`, default `["info", "error", "command", "critical"]`)
+  - an array of levels to log to the extension log
+  - available levels:
+    - `"info"`,
+    - `"error"`,
+    - `"command"`,
+    - `"critical"`
 
 # [Planned Features](https://github.com/Sertion/vscode-gitblame/labels/Planned)
 
-# [Known Issues](https://github.com/waderyan/vscode-gitblame/issues)
+# [Known Issues](https://github.com/Sertion/vscode-gitblame/issues)

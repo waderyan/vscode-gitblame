@@ -1,5 +1,29 @@
 # Change Log
 
+## 2.0.0 (July 20, 2017)
+
+This will be updating the major version as we are changing what the exposed command is called.
+
+* Fix: Change name of the command to `gitblame.quickInfo` (was `extension.blame`)
+* Fix: Updating the _Known issues_ link to the new issue tracker as all old issuer are resolved
+* Fix: Moved to TypeScript 2.4.1
+* Fix: Cleaning imports
+* Fix: Remove Q&A-section from vscode marketplace
+* Fix: No more `null`
+* Fix: Renamed all interfaces (removed the `I`-prefix)
+* Bug: Only try to blame files in our `workspace.rootPath`
+* Bug: Adding missing _the_ in tooltip
+* Bug: Adding better `dispose` handling
+* Feature: Adding command (`gitblame.blameLink`) for online blame
+* Feature: Adding a fancy _loading spinner_ when waiting for blaming information
+* Feature: Clear the cache of closed files from time to time
+* Feature: Replacing [git-blame](https://github.com/alessioalex/git-blame) with our own `--incremental` based solution
+* Feature: Killing the `git blame` process when requesting a re-blame
+* Feature: Logging when we run commands and what command it was
+* Feature: More informative logging
+* Feature: Time stamps in the log
+* Feature: Adding setting to limit what log levels gets logged
+
 ## 1.11.3 (June 15, 2017)
 
 * Bug: Blaming the wrong line [#20](https://github.com/Sertion/vscode-gitblame/issues/20) (Thanks to [@gucong3000](https://github.com/gucong3000))

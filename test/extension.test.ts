@@ -4,11 +4,12 @@
 //
 
 // The module 'assert' provides assertion methods from node
-import * as assert from 'assert';
+import assert = require('assert');
 
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
-import {TextDecorator} from '../src/textdecorator';
+import { TextDecorator } from '../src/util/textdecorator';
+import { walkObject } from '../src/util/objectpath';
 
 // Defines a Mocha test suite to group tests of similar kind together
 suite('GitBlame Tests', () => {
@@ -55,5 +56,18 @@ suite('GitBlame Tests', () => {
         assert.equal('😃 should 💦 👌💯👌', TextDecorator.parseTokens('😃 should 💦 ${ok,💯}', {
             'ok': (value) => '👌' + value + '👌'
         }));
-    })
+
+        // If we get something that isn't a string we should give nothing back
+        assert.equal('', TextDecorator.parseTokens(null));
+    });
+
+    test('Object Walker', () => {
+        assert.equal(10, walkObject({'oneStep': 10}, 'oneStep'));
+        assert.equal('a string', walkObject({10: 'a string'}, '10'));
+        assert.equal('far down', walkObject({many:{many:{many:{many:{steps: 'far down'}}}}}, 'many.many.many.many.steps'));
+        assert.equal('not there', walkObject({theKey: 20}, 'no_key', 'not there'));
+        assert.equal('numbers', walkObject({2:{3:{4:'numbers'}}}, '2.3.4'));
+        assert.equal('array', walkObject([[['array']]], '0.0.0'));
+        assert.deepEqual({return:'an object'}, walkObject({'try to':{return:'an object'}}, 'try to'));
+    });
 });

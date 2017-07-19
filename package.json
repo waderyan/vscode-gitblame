@@ -2,7 +2,7 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "1.11.3",
+  "version": "2.0.0",
   "publisher": "waderyan",
   "engines": {
     "vscode": "^1.10.0"
@@ -23,7 +23,8 @@
     "gitblame",
     "blame"
   ],
-  "main": "./out/src/extension",
+  "qna": false,
+  "main": "./out/src/index",
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -watch -p ./",
@@ -31,17 +32,15 @@
     "test": "node ./node_modules/vscode/bin/test"
   },
   "dependencies": {
-    "git-blame": "^1.4.0",
     "moment": "^2.18.1",
-    "object-path": "^0.11.4",
     "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.41",
     "@types/node": "^7.0.27",
     "mocha": "^3.4.2",
-    "typescript": "^2.3.4",
-    "vscode": "^1.1.0"
+    "typescript": "^2.4.1",
+    "vscode": "^1.1.4"
   },
   "homepage": "https://github.com/Sertion/vscode-gitblame/blob/master/README.md",
   "bugs": {
@@ -55,8 +54,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.blame",
-        "title": "Git Blame"
+        "command": "gitblame.quickInfo",
+        "title": "Git Blame: Show quick info"
+      },
+      {
+        "command": "gitblame.online",
+        "title": "Git Blame: View last change online"
       }
     ],
     "configuration": {
@@ -87,6 +90,32 @@
           "type": "string",
           "default": "${commit.hash} ${commit.summary}",
           "description": "Customize the info message"
+        },
+        "gitblame.progressSpinner": {
+          "type": "array",
+          "default": [
+            "$(sync~spin)"
+          ],
+          "description": "A series of string that denotes progress"
+        },
+        "gitblame.logLevel": {
+          "type": "array",
+          "default": [
+            "info",
+            "error",
+            "command",
+            "critical"
+          ],
+          "description": "Limit what levels of log message get sent to the log",
+          "items": {
+            "type": "string",
+            "enum": [
+              "info",
+              "error",
+              "command",
+              "critical"
+            ]
+          }
         }
       }
     }
