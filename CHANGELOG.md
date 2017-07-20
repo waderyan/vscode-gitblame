@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.0.1 (July 20, 2017)
+
+* Fix: Moving `git.path` message from `critical` to `error`
+
 ## 2.0.0 (July 20, 2017)
 
 This will be updating the major version as we are changing what the exposed command is called.

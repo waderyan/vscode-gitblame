@@ -23,7 +23,7 @@ export function getGitCommand(): string {
         return commandPath;
     }
     else {
-        ErrorHandler.getInstance().logCritical(new Error(`Can not execute "${commandPath}"`), 'The "git.path" property is not an executable');
+        ErrorHandler.getInstance().logError(new Error(`Can not execute "${commandPath}" (your git.path property) falling back to "${GIT_COMMAND_IN_PATH}"`));
         return GIT_COMMAND_IN_PATH;
     }
 }
