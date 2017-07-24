@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.0.2 (July, 24, 2017)
+
+* Bug: Spinner will spin forever when there is no repo to be found
+
 ## 2.0.1 (July 20, 2017)
 
 * Fix: Moving `git.path` message from `critical` to `error`

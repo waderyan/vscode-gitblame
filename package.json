@@ -39,7 +39,7 @@
     "@types/mocha": "^2.2.41",
     "@types/node": "^7.0.27",
     "mocha": "^3.4.2",
-    "typescript": "^2.4.1",
+    "typescript": "^2.4.2",
     "vscode": "^1.1.4"
   },
   "homepage": "https://github.com/Sertion/vscode-gitblame/blob/master/README.md",

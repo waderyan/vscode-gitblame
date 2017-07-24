@@ -9,7 +9,7 @@ export function execute(command: string, options: child_process.ExecOptions = {}
         child_process.exec(command, options, (error, stdout, stderr) => {
             if (error) {
                 ErrorHandler.getInstance().logError(new Error(stderr));
-                resolve();
+                resolve('');
             }
             else {
                 resolve(stdout);

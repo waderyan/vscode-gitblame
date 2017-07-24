@@ -77,7 +77,10 @@ export class GitBlameFile extends GitBlameFileBase {
         const gitRev = await execute(`${gitCommand} rev-parse ${command}`, gitExecOptions);
         const cleanGitRev = gitRev.trim();
 
-        if (cleanGitRev === '.git') {
+        if (cleanGitRev === '') {
+            return '';
+        }
+        else if (cleanGitRev === '.git') {
             return Path.join(currentDirectory, '.git');
         }
         else {
@@ -104,14 +107,22 @@ export class GitBlameFile extends GitBlameFileBase {
     private async findBlameInfo(): Promise<GitBlameInfo> {
         return this.blameInfoPromise = new Promise<GitBlameInfo>(async (resolve, reject) => {
             const workTree = await this.getGitWorkTree();
-            const blameInfo = GitBlame.blankBlameInfo();
-            this.gitBlameStream = new GitBlameStream(this.fileName, workTree);
-            const gitOver = this.gitStreamOver(this.gitBlameStream, reject, resolve, blameInfo);
+            if (workTree) {
+                const blameInfo = GitBlame.blankBlameInfo();
+                this.gitBlameStream = new GitBlameStream(this.fileName, workTree);
+                const gitOver = this.gitStreamOver(this.gitBlameStream, reject, resolve, blameInfo);
 
-            this.gitBlameStream.on('commit', this.gitAddCommit(blameInfo));
-            this.gitBlameStream.on('line', this.gitAddLine(blameInfo));
-            this.gitBlameStream.on('error', gitOver);
-            this.gitBlameStream.on('end', gitOver);
+                this.gitBlameStream.on('commit', this.gitAddCommit(blameInfo));
+                this.gitBlameStream.on('line', this.gitAddLine(blameInfo));
+                this.gitBlameStream.on('error', gitOver);
+                this.gitBlameStream.on('end', gitOver);
+            }
+            else {
+                StatusBarView.getInstance().stopProgress();
+                this.startCacheInterval();
+                ErrorHandler.getInstance().logInfo(`File "${this.fileName.fsPath}" is not a decendant of a git repository`);
+                resolve(GitBlame.blankBlameInfo());
+            }
         });
     }
 
