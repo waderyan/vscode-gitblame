@@ -7,6 +7,9 @@ import { GitBlameFileBase } from './blamefilebase';
 import { GitBlameFileFactory } from './blamefilefactory';
 import { isActiveEditorValid } from '../util/editorvalidator';
 import {
+    Property,
+    Properties } from '../util/property';
+import {
     GitBlameInfo,
     GitCommitInfo } from '../interfaces';
 import { HASH_NO_COMMIT_GIT } from '../constants';
@@ -37,7 +40,7 @@ export class GitBlame {
         const blameInfo = await this.getBlameInfo(fileName);
 
         if (blameInfo['lines'][commitLineNumber]) {
-            const hash = blameInfo['lines'][commitLineNumber]['hash'];
+            const hash = blameInfo['lines'][commitLineNumber];
             return blameInfo['commits'][hash];
         }
         else {
@@ -86,5 +89,9 @@ export class GitBlame {
 
     static isGeneratedCommit(commit: GitCommitInfo): boolean {
         return commit.generated;
+    }
+
+    static internalHash(hash: string): string {
+        return hash.substr(0, Property.get(Properties.InternalHashLength));
     }
 }

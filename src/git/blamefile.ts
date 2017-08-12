@@ -11,12 +11,8 @@ import { GitBlameFileBase } from './blamefilebase';
 import { GitBlameStream } from './stream';
 import { StatusBarView } from '../view';
 import {
-    getProperty,
-    Properties } from '../util/configuration';
-import {
     GitBlameInfo,
-    GitCommitInfo,
-    GitCommitLine } from '../interfaces';
+    GitCommitInfo } from '../interfaces';
 import {
     FS_EVENT_TYPE_CHANGE,
     FS_EVENT_TYPE_REMOVE } from '../constants';
@@ -70,11 +66,12 @@ export class GitBlameFile extends GitBlameFileBase {
 
     private async executeGitRevParseCommandInPath(command: string, path: Uri): Promise<string> {
         const currentDirectory = Path.dirname(path.fsPath);
-        const gitCommand = getGitCommand();
+        const gitCommand = await getGitCommand();
+        const gitExecArguments = ['rev-parse', command];
         const gitExecOptions = {
             cwd: currentDirectory
         };
-        const gitRev = await execute(`${gitCommand} rev-parse ${command}`, gitExecOptions);
+        const gitRev = await execute(gitCommand, gitExecArguments, gitExecOptions);
         const cleanGitRev = gitRev.trim();
 
         if (cleanGitRev === '') {
@@ -126,15 +123,15 @@ export class GitBlameFile extends GitBlameFileBase {
         });
     }
 
-    private gitAddCommit(blameInfo: GitBlameInfo): (data: GitCommitInfo) => void {
-        return (data) => {
-            blameInfo['commits'][data.hash] = data;
+    private gitAddCommit(blameInfo: GitBlameInfo): (internalHash: string, data: GitCommitInfo) => void {
+        return (internalHash, data) => {
+            blameInfo['commits'][internalHash] = data;
         }
     }
 
-    private gitAddLine(blameInfo: GitBlameInfo): (data: GitCommitLine) => void {
-        return (data) => {
-            blameInfo['lines'][data.lineNumber] = data;
+    private gitAddLine(blameInfo: GitBlameInfo): (line: number, gitCommitHash: string) => void {
+        return (line: number, gitCommitHash: string) => {
+            blameInfo['lines'][line] = gitCommitHash;
         }
     }
 

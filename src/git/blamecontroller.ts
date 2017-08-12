@@ -12,8 +12,8 @@ import { TextDecorator } from '../util/textdecorator';
 import { GitBlame } from './blame';
 import { StatusBarView } from '../view';
 import {
-    getProperty,
-    Properties } from '../util/configuration';
+    Property,
+    Properties } from '../util/property';
 import { GitCommitInfo } from '../interfaces';
 import { TITLE_VIEW_ONLINE } from '../constants';
 
@@ -40,7 +40,9 @@ export class GitBlameController {
         // is responsible for keeping it disposable
         const errorHandler = ErrorHandler.getInstance();
 
-        this.disposable = Disposable.from(this.statusBarView, this.gitBlame, errorHandler);
+        const propertyHolder = Property.getInstance();
+
+        this.disposable = Disposable.from(this.statusBarView, this.gitBlame, errorHandler, propertyHolder);
     }
 
     setupListeners(): void {
@@ -62,16 +64,9 @@ export class GitBlameController {
         const beforeBlameLineNumber = this.getCurrentActiveLineNumber();
         const commitInfo = await this.gitBlame.getCurrentLineInfo();
 
-        // We might have moved to a different file since we started blaming
-        if (beforeBlameOpenFile !== this.getCurrentActiveFileName() || beforeBlameLineNumber !== this.getCurrentActiveLineNumber()) {
-            return;
-        }
-
-        if (GitBlame.isGeneratedCommit(commitInfo)) {
-            this.statusBarView.clear();
-        }
-        else {
-            this.statusBarView.update(commitInfo);
+        // Only update if we haven't moved since we started blaming
+        if (beforeBlameOpenFile === this.getCurrentActiveFileName() && beforeBlameLineNumber === this.getCurrentActiveLineNumber()) {
+            this.updateView(commitInfo);
         }
 
     }
@@ -87,10 +82,12 @@ export class GitBlameController {
     async showMessage(): Promise<void> {
         const commitInfo = await this.getCommitInfo();
         const commitToolUrl = this.getToolUrl(commitInfo);
-        const messageFormat = getProperty(Properties.InfoMessageFormat);
+        const messageFormat = Property.get(Properties.InfoMessageFormat);
         const normalizedTokens = TextDecorator.normalizeCommitInfoTokens(commitInfo);
         const message = TextDecorator.parseTokens(messageFormat, normalizedTokens);
         const extraAction = commitToolUrl ? TITLE_VIEW_ONLINE : '';
+
+        this.updateView(commitInfo);
 
         const item = await window.showInformationMessage(message, extraAction);
 
@@ -126,7 +123,7 @@ export class GitBlameController {
             return;
         }
 
-        const parsedUrl = TextDecorator.parseTokens(getProperty(Properties.CommitUrl), {
+        const parsedUrl = TextDecorator.parseTokens(Property.get(Properties.CommitUrl), {
             'hash': commitInfo.hash
         });
 
@@ -135,6 +132,15 @@ export class GitBlameController {
         }
         else if (parsedUrl) {
             window.showErrorMessage('Malformed URL in setting gitblame.commitUrl. Must be a valid web url.');
+        }
+    }
+
+    private updateView(commitInfo: GitCommitInfo): void {
+        if (GitBlame.isGeneratedCommit(commitInfo)) {
+            this.statusBarView.clear();
+        }
+        else {
+            this.statusBarView.update(commitInfo);
         }
     }
 

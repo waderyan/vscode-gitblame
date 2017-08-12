@@ -5,8 +5,8 @@ import {
     OutputChannel } from 'vscode';
 
 import {
-    getProperty,
-    Properties } from './configuration';
+    Property,
+    Properties } from './property';
 import { TITLE_SHOW_LOG } from '../constants';
 
 
@@ -72,7 +72,7 @@ export class ErrorHandler {
     }
 
     private logCategoryAllowed(level: LogCategory): boolean {
-        const enabledLevels = <string[]>getProperty(Properties.LogLevel, []);
+        const enabledLevels = <string[]>Property.get(Properties.LogLevel, []);
 
         return enabledLevels.includes(level);
     }

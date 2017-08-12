@@ -6,18 +6,18 @@ import { GitBlame } from '../git/blame';
 import { walkObject } from './objectpath';
 import { GitCommitInfo } from '../interfaces';
 import {
-    getProperty,
-    Properties } from './configuration';
+    Property,
+    Properties } from './property';
 
 
 export class TextDecorator {
     static toTextView(commit: GitCommitInfo): string {
         if (GitBlame.isBlankCommit(commit)) {
-            return <string>getProperty(Properties.StatusBarMessageNoCommit);
+            return <string>Property.get(Properties.StatusBarMessageNoCommit);
         }
 
         const normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(commit);
-        const messageFormat = <string>getProperty(Properties.StatusBarMessageFormat);
+        const messageFormat = <string>Property.get(Properties.StatusBarMessageFormat);
 
         return TextDecorator.parseTokens(messageFormat, normalizedCommitInfo);
     }

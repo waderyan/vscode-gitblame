@@ -2,7 +2,7 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "publisher": "waderyan",
   "engines": {
     "vscode": "^1.10.0"
@@ -66,37 +66,27 @@
       "type": "object",
       "title": "Git blame configuration",
       "properties": {
-        "gitblame.ignoreWhitespace": {
-          "type": "boolean",
-          "default": false,
-          "description": "Ignore whitespace changes when blaming (-w flag)"
-        },
         "gitblame.commitUrl": {
           "type": "string",
           "default": "",
           "description": "The link to an online tool to view a commit (use ${hash} for the commit hash)"
         },
-        "gitblame.statusBarMessageNoCommit": {
-          "type": "string",
-          "default": "Not Committed Yet",
-          "description": "Customize the status bar message"
-        },
-        "gitblame.statusBarMessageFormat": {
-          "type": "string",
-          "default": "Blame ${author.name} ( ${time.ago} )",
-          "description": "Customize the status bar message"
+        "gitblame.ignoreWhitespace": {
+          "type": "boolean",
+          "default": false,
+          "description": "Ignore whitespace changes when blaming (-w flag)"
         },
         "gitblame.infoMessageFormat": {
           "type": "string",
           "default": "${commit.hash} ${commit.summary}",
           "description": "Customize the info message"
         },
-        "gitblame.progressSpinner": {
-          "type": "array",
-          "default": [
-            "$(sync~spin)"
-          ],
-          "description": "A series of string that denotes progress"
+        "gitblame.internalHashLength": {
+          "type": "number",
+          "default": 10,
+          "description": "How long git hashes gitblame will use for indexes internaly",
+          "minimum": 7,
+          "maximum": 40
         },
         "gitblame.logLevel": {
           "type": "array",
@@ -116,6 +106,23 @@
               "critical"
             ]
           }
+        },
+        "gitblame.progressSpinner": {
+          "type": "array",
+          "default": [
+            "$(sync~spin)"
+          ],
+          "description": "A series of string that denotes progress"
+        },
+        "gitblame.statusBarMessageFormat": {
+          "type": "string",
+          "default": "Blame ${author.name} ( ${time.ago} )",
+          "description": "Customize the status bar message"
+        },
+        "gitblame.statusBarMessageNoCommit": {
+          "type": "string",
+          "default": "Not Committed Yet",
+          "description": "Customize the status bar message"
         }
       }
     }

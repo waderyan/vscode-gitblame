@@ -1,6 +1,13 @@
 # Change Log
 
-## 2.0.2 (July, 24, 2017)
+## 2.1.0 (August 12, 2017)
+
+* Bug: Keep current line blame info when opening `gitblame.quickInfo`
+* Bug: No longer tells you that your custom git path is incorrect
+* Bug: Supports git paths with spaces in them
+* Feature: Allow for shorter internal git hash storage (`gitblame.internalHashLength`)
+
+## 2.0.2 (July 24, 2017)
 
 * Bug: Spinner will spin forever when there is no repo to be found
 

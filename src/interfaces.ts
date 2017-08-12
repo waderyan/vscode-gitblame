@@ -14,29 +14,17 @@ export interface GitCommitInfo {
     generated?: true
 }
 
-export interface GitCommitLine {
-    hash: string,
-    lineNumber: number
-}
-
 export interface GitCommitInfoArray {
     [hash: string]: GitCommitInfo
 }
 
 export interface GitCommitLineArray {
-    [lineNumber: number]: GitCommitLine
+    [lineNumber: number]: string
 }
 
 export interface GitBlameInfo {
     commits: GitCommitInfoArray,
     lines: GitCommitLineArray
-}
-
-export interface GitStreamLine {
-    hash: string,
-    originalLine: number,
-    finalLine: number,
-    lines: number
 }
 
 export interface GitIncrementLine {

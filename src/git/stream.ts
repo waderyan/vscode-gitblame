@@ -4,15 +4,14 @@ import { EventEmitter } from 'events';
 import { Uri } from 'vscode';
 
 import { getGitCommand } from '../util/gitcommand';
+import { GitBlame } from './blame';
 import { ErrorHandler } from '../util/errorhandler';
 import {
-    getProperty,
-    Properties } from '../util/configuration';
+    Property,
+    Properties } from '../util/property';
 import {
     GitCommitInfo,
     GitCommitAuthor,
-    GitCommitLine,
-    GitStreamLine,
     GitIncrementLine } from '../interfaces';
 
 
@@ -28,25 +27,26 @@ export class GitBlameStream extends EventEmitter {
         this.file = file;
         this.workTree = workTree;
 
-        const args = this.generateArguments();
-        const gitCommand = getGitCommand();
-        const spawnOptions = {
-            cwd: workTree
-        }
+        getGitCommand().then((gitCommand) => {
+            const args = this.generateArguments();
+            const spawnOptions = {
+                cwd: workTree
+            }
 
-        ErrorHandler.getInstance().logCommand(`${gitCommand} ${args.join(' ')}`);
+            ErrorHandler.getInstance().logCommand(`${gitCommand} ${args.join(' ')}`);
 
-        this.process = child_process.spawn(gitCommand, args, spawnOptions);
+            this.process = child_process.spawn(gitCommand, args, spawnOptions);
 
-        this.setupListeners();
+            this.setupListeners();
+        });
     }
 
     private generateArguments(): string[] {
         const processArguments = [];
 
-        processArguments.push(`blame`);
+        processArguments.push('blame');
 
-        if (getProperty(Properties.IgnoreWhitespace)) {
+        if (Property.get(Properties.IgnoreWhitespace)) {
             processArguments.push('-w');
         }
 
@@ -121,23 +121,22 @@ export class GitBlameStream extends EventEmitter {
             const hash = line.key;
             const [originalLine, finalLine, lines] = line.value.split(' ').map((a) => parseInt(a, 10));
 
-            this.lineGroupToLineEmit({hash, originalLine, finalLine, lines});
+            this.lineGroupToLineEmit(hash, lines, finalLine);
         }
     }
 
-    private lineGroupToLineEmit(lineGroup: GitStreamLine): void {
-        for (let i = 0; i < lineGroup.lines; i++) {
-            this.emit('line', <GitCommitLine>{
-                hash: lineGroup.hash,
-                lineNumber: lineGroup.finalLine + i
-            });
+    private lineGroupToLineEmit(hash: string, lines: number, finalLine: number): void {
+        for (let i = 0; i < lines; i++) {
+            this.emit('line', finalLine + i, GitBlame.internalHash(hash));
         }
     }
 
-    private commitInfoToCommitEmit(commitInfo): void {
-        if (!this.emittedCommits[commitInfo.hash]) {
-            this.emittedCommits[commitInfo.hash] = true;
-            this.emit('commit', commitInfo);
+    private commitInfoToCommitEmit(commitInfo: GitCommitInfo): void {
+        const internalHash = GitBlame.internalHash(commitInfo.hash);
+
+        if (!this.emittedCommits[internalHash]) {
+            this.emittedCommits[internalHash] = true;
+            this.emit('commit', internalHash, commitInfo);
         }
     }
 
