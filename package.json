@@ -2,10 +2,10 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "publisher": "waderyan",
   "engines": {
-    "vscode": "^1.10.0"
+    "vscode": "^1.16.0"
   },
   "categories": [
     "Other"
@@ -36,11 +36,11 @@
     "valid-url": "^1.0.9"
   },
   "devDependencies": {
-    "@types/mocha": "^2.2.41",
+    "@types/mocha": "^2.2.42",
     "@types/node": "^7.0.27",
-    "mocha": "^3.4.2",
-    "typescript": "^2.4.2",
-    "vscode": "^1.1.4"
+    "mocha": "^3.5.0",
+    "typescript": "^2.5.2",
+    "vscode": "^1.1.5"
   },
   "homepage": "https://github.com/Sertion/vscode-gitblame/blob/master/README.md",
   "bugs": {

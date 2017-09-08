@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.2.0 (September 07, 2017)
+
+* Feature: Multiple workspace support [#23](https://github.com/Sertion/vscode-gitblame/issues/23) (Thanks to [@IgorNovozhilov](https://github.com/IgorNovozhilov))
+* Fix: Updating dependencies
+
 ## 2.1.0 (August 12, 2017)
 
 * Bug: Keep current line blame info when opening `gitblame.quickInfo`

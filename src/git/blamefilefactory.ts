@@ -1,4 +1,6 @@
-import { workspace } from 'vscode';
+import {
+    Uri,
+    workspace } from 'vscode';
 
 import { GitBlameFile } from './blamefile';
 import { GitBlameFileDummy } from './blamefiledummy';
@@ -15,7 +17,9 @@ export class GitBlameFileFactory {
         }
     }
 
-    private static inWorkspace(fileName: string):boolean {
-        return fileName.indexOf(workspace.rootPath) === 0;
+    private static inWorkspace(fileName: string): boolean {
+        const uriFileName = Uri.file(fileName);
+
+        return typeof workspace.getWorkspaceFolder(uriFileName) !== 'undefined';
     }
 }
