@@ -1,5 +1,7 @@
 # Git Blame
 
+[![Build Status](https://travis-ci.org/Sertion/vscode-gitblame.svg?branch=master)](https://travis-ci.org/Sertion/vscode-gitblame)
+
 See Git Blame information in the status bar for the currently selected line.
 
 ![Feature Usage](https://github.com/Sertion/vscode-gitblame/raw/master/images/GitBlamePreview.gif)
