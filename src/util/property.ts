@@ -1,7 +1,4 @@
-import {
-    Disposable,
-    workspace } from 'vscode';
-
+import { Disposable, workspace } from 'vscode';
 
 export enum Properties {
     CommitUrl = 'commitUrl',
@@ -43,10 +40,12 @@ export class Property {
     getProperty(name: Properties, defaultValue?: any): any {
         const potentialPropertyValue = this.properties[name];
 
-        if (potentialPropertyValue === null && typeof defaultValue !== 'undefined') {
+        if (
+            potentialPropertyValue === null &&
+            typeof defaultValue !== 'undefined'
+        ) {
             return defaultValue;
-        }
-        else {
+        } else {
             return potentialPropertyValue;
         }
     }
@@ -62,15 +61,27 @@ export class Property {
 
     private getProperties(): void {
         const properties = {
-            'commitUrl': this.getPropertyFromConfiguration(Properties.CommitUrl),
-            'ignoreWhitespace': this.getPropertyFromConfiguration(Properties.IgnoreWhitespace),
-            'infoMessageFormat': this.getPropertyFromConfiguration(Properties.InfoMessageFormat),
-            'internalHashLength': this.getPropertyFromConfiguration(Properties.InternalHashLength),
-            'logLevel': this.getPropertyFromConfiguration(Properties.LogLevel),
-            'progressSpinner': this.getPropertyFromConfiguration(Properties.ProgressSpinner),
-            'statusBarMessageFormat': this.getPropertyFromConfiguration(Properties.StatusBarMessageFormat),
-            'statusBarMessageNoCommit': this.getPropertyFromConfiguration(Properties.StatusBarMessageNoCommit)
-        }
+            commitUrl: this.getPropertyFromConfiguration(Properties.CommitUrl),
+            ignoreWhitespace: this.getPropertyFromConfiguration(
+                Properties.IgnoreWhitespace
+            ),
+            infoMessageFormat: this.getPropertyFromConfiguration(
+                Properties.InfoMessageFormat
+            ),
+            internalHashLength: this.getPropertyFromConfiguration(
+                Properties.InternalHashLength
+            ),
+            logLevel: this.getPropertyFromConfiguration(Properties.LogLevel),
+            progressSpinner: this.getPropertyFromConfiguration(
+                Properties.ProgressSpinner
+            ),
+            statusBarMessageFormat: this.getPropertyFromConfiguration(
+                Properties.StatusBarMessageFormat
+            ),
+            statusBarMessageNoCommit: this.getPropertyFromConfiguration(
+                Properties.StatusBarMessageNoCommit
+            )
+        };
 
         this.properties = properties;
     }

@@ -7,6 +7,7 @@
 * Fix: Renaming `GitBlameFile*` to `GitFile*`
 * Fix: Rewrote all the tests
 * Fix: Updating dependencies
+* Enhancment: Prettifying with [Prettier](https://prettier.io/)
 
 ## 2.2.0 (September 07, 2017)
 

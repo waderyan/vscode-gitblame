@@ -1,14 +1,9 @@
 import moment = require('moment');
 
-import {
-    window,
-    OutputChannel } from 'vscode';
+import { window, OutputChannel } from 'vscode';
 
-import {
-    Property,
-    Properties } from './property';
+import { Property, Properties } from './property';
 import { TITLE_SHOW_LOG } from '../constants';
-
 
 enum LogCategory {
     Info = 'info',
@@ -52,7 +47,10 @@ export class ErrorHandler {
     }
 
     private async showErrorMessage(message: string): Promise<void> {
-        const selectedItem = await window.showErrorMessage(message, TITLE_SHOW_LOG);
+        const selectedItem = await window.showErrorMessage(
+            message,
+            TITLE_SHOW_LOG
+        );
 
         if (selectedItem === TITLE_SHOW_LOG) {
             this.outputChannel.show();
@@ -65,7 +63,9 @@ export class ErrorHandler {
         if (allowCategory) {
             const trimmedMessage = message.trim();
             const timestamp = moment().format('HH:mm:ss');
-            this.outputChannel.appendLine(`[ ${timestamp} | ${category} ] ${trimmedMessage}`);
+            this.outputChannel.appendLine(
+                `[ ${timestamp} | ${category} ] ${trimmedMessage}`
+            );
         }
 
         return allowCategory;

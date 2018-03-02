@@ -12,7 +12,9 @@ suite('Git Platform Detector', () => {
         );
 
         assert.equal(
-            GitPlatformDetector.cleanUrl('https://gitexample.com/repository.git'),
+            GitPlatformDetector.cleanUrl(
+                'https://gitexample.com/repository.git'
+            ),
             'https://gitexample.com/repository/'
         );
 
@@ -22,12 +24,16 @@ suite('Git Platform Detector', () => {
         );
 
         assert.equal(
-            GitPlatformDetector.cleanUrl('git@gitexample.com:433:repository.git'),
+            GitPlatformDetector.cleanUrl(
+                'git@gitexample.com:433:repository.git'
+            ),
             'http://gitexample.com:433/repository/'
         );
 
         assert.equal(
-            GitPlatformDetector.cleanUrl('http://gitexample.com:repository.git'),
+            GitPlatformDetector.cleanUrl(
+                'http://gitexample.com:repository.git'
+            ),
             'http://gitexample.com/repository/'
         );
     });
@@ -37,7 +43,9 @@ suite('Git Platform Detector', () => {
             .get('/')
             .reply(200, 'OK');
 
-        const message = await GitPlatformDetector.request('http://gitexample.com/');
+        const message = await GitPlatformDetector.request(
+            'http://gitexample.com/'
+        );
         let responseContent = '';
 
         message.on('data', (chunk) => {
@@ -54,7 +62,9 @@ suite('Git Platform Detector', () => {
             .get('/')
             .reply(200, 'OK');
 
-        const message = await GitPlatformDetector.request('https://gitexample.com/');
+        const message = await GitPlatformDetector.request(
+            'https://gitexample.com/'
+        );
         let responseContent = '';
 
         message.on('data', (chunk) => {
@@ -73,7 +83,9 @@ suite('Git Platform Detector', () => {
             .get('/')
             .reply(statusCode, `${statusCode} response`);
 
-        const responseCode = await GitPlatformDetector.requestStatusCode('http://gitexample.com/');
+        const responseCode = await GitPlatformDetector.requestStatusCode(
+            'http://gitexample.com/'
+        );
 
         assert.strictEqual(responseCode, statusCode);
     });
@@ -83,7 +95,9 @@ suite('Git Platform Detector', () => {
             .get('/')
             .reply(200, 'OK');
 
-        const testStatus = await GitPlatformDetector.testUrl('http://gitexample.com/');
+        const testStatus = await GitPlatformDetector.testUrl(
+            'http://gitexample.com/'
+        );
 
         assert.strictEqual(testStatus, true);
     });
@@ -93,7 +107,9 @@ suite('Git Platform Detector', () => {
             .get('/')
             .reply(400, 'OK');
 
-        const testStatus = await GitPlatformDetector.testUrl('http://gitexample.com/');
+        const testStatus = await GitPlatformDetector.testUrl(
+            'http://gitexample.com/'
+        );
 
         assert.strictEqual(testStatus, false);
     });

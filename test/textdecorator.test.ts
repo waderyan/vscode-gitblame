@@ -4,7 +4,6 @@ import { TextDecorator } from '../src/util/textdecorator';
 
 // Defines a Mocha test suite to group tests of similar kind together
 suite('Date Calculations', () => {
-
     test('Time ago', () => {
         assert.equal(
             TextDecorator.toDateText(new Date(2015, 4), new Date(2015, 1)),
@@ -17,42 +16,62 @@ suite('Date Calculations', () => {
         );
 
         assert.equal(
-            TextDecorator.toDateText(new Date(2015, 1, 5), new Date(2015, 1, 1)),
+            TextDecorator.toDateText(
+                new Date(2015, 1, 5),
+                new Date(2015, 1, 1)
+            ),
             '4 days ago'
         );
 
         assert.equal(
-            TextDecorator.toDateText(new Date(2015, 1, 1, 3, 0, 0), new Date(2015, 1, 1, 1, 0, 0)),
+            TextDecorator.toDateText(
+                new Date(2015, 1, 1, 3, 0, 0),
+                new Date(2015, 1, 1, 1, 0, 0)
+            ),
             '2 hours ago'
         );
 
         assert.equal(
-            TextDecorator.toDateText(new Date(2015, 1, 1, 1, 30, 0), new Date(2015, 1, 1, 1, 0, 0)),
+            TextDecorator.toDateText(
+                new Date(2015, 1, 1, 1, 30, 0),
+                new Date(2015, 1, 1, 1, 0, 0)
+            ),
             '30 minutes ago'
         );
-
     });
 
     test('Right now', () => {
         assert.equal(
-            TextDecorator.toDateText(new Date(2015, 1, 1, 1, 1, 0), new Date(2015, 1, 1, 1, 0, 0)),
+            TextDecorator.toDateText(
+                new Date(2015, 1, 1, 1, 1, 0),
+                new Date(2015, 1, 1, 1, 0, 0)
+            ),
             'right now'
         );
     });
 
     test('Correct pluralisation', () => {
         assert.notEqual(
-            TextDecorator.toDateText(new Date(2015, 1, 2), new Date(2015, 1, 1)),
+            TextDecorator.toDateText(
+                new Date(2015, 1, 2),
+                new Date(2015, 1, 1)
+            ),
             '1 days ago'
         );
 
         assert.notEqual(
-            TextDecorator.toDateText(new Date(2015, 1, 1, 1, 0, 0), new Date(2015, 1, 1, 0, 0, 0)),
+            TextDecorator.toDateText(
+                new Date(2015, 1, 1, 1, 0, 0),
+                new Date(2015, 1, 1, 0, 0, 0)
+            ),
             '1 hours ago'
         );
 
         assert.notEqual(
-            TextDecorator.toDateText(new Date(2015, 1, 1, 1, 1, 0), new Date(2015, 1, 1, 1, 0, 0)),
+            TextDecorator.toDateText(
+                new Date(2015, 1, 1, 1, 1, 0),
+                new Date(2015, 1, 1, 1, 0, 0)
+            ),
             '1 minutes ago'
         );
     });
@@ -60,10 +79,7 @@ suite('Date Calculations', () => {
 
 suite('Token Parser', () => {
     test('No tokens', () => {
-        assert.equal(
-            TextDecorator.parseTokens('No ${tokens}'),
-            'No tokens'
-        );
+        assert.equal(TextDecorator.parseTokens('No ${tokens}'), 'No tokens');
     });
 
     test('Simple example', () => {
@@ -87,7 +103,7 @@ suite('Token Parser', () => {
     test('Function as token value with parameter', () => {
         assert.equal(
             TextDecorator.parseTokens('Function value ${replace,test}', {
-                'replace': (value) => value + 'ed'
+                replace: (value) => value + 'ed'
             }),
             'Function value tested'
         );
@@ -96,8 +112,8 @@ suite('Token Parser', () => {
     test('Mixed token types', () => {
         assert.equal(
             TextDecorator.parseTokens('Multiple ${type} ${what,replacer}', {
-                'type': 'mixed',
-                'what': (value) => value + 's'
+                type: 'mixed',
+                what: (value) => value + 's'
             }),
             'Multiple mixed replacers'
         );
@@ -106,7 +122,7 @@ suite('Token Parser', () => {
     test('Repeated token usage', () => {
         assert.equal(
             TextDecorator.parseTokens('${token} ${token} ${token}', {
-                'token': 'value'
+                token: 'value'
             }),
             'value value value'
         );
@@ -124,8 +140,8 @@ suite('Token Parser', () => {
     test('Walk down in token object', () => {
         assert.equal(
             TextDecorator.parseTokens('${climb.far}', {
-                'climb': {
-                    'far': 'down'
+                climb: {
+                    far: 'down'
                 }
             }),
             'down'
@@ -135,7 +151,7 @@ suite('Token Parser', () => {
     test('Unicode string', () => {
         assert.equal(
             TextDecorator.parseTokens('${ok,💯}', {
-                'ok': (value) => '👌' + value + '👌'
+                ok: (value) => '👌' + value + '👌'
             }),
             '👌💯👌'
         );
@@ -151,10 +167,7 @@ suite('Token Parser', () => {
     });
 
     test('No tokens', () => {
-        assert.equal(
-            TextDecorator.parseTokens(null),
-            ''
-        );
+        assert.equal(TextDecorator.parseTokens(null), '');
     });
 });
 
@@ -167,9 +180,9 @@ suite('Normalize Commit Info Tokens', () => {
     };
     const dummyGitCommitInfo = {
         hash: '2cde51fbd0f310c8a2c5f977e665c0ac3945b46d',
-        author: {...dummyGitCommitAuthor},
-        committer: {...dummyGitCommitAuthor},
+        author: { ...dummyGitCommitAuthor },
+        committer: { ...dummyGitCommitAuthor },
         summary: 'Dummy commit',
         filename: 'file.dummy'
-    }
-})
+    };
+});

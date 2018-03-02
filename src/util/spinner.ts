@@ -1,6 +1,5 @@
 import { workspace } from 'vscode';
 
-
 export class Spinner {
     private state: number = 0;
 
