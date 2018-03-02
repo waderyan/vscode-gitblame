@@ -2,15 +2,15 @@ import {
     ExtensionContext,
     workspace,
     commands } from 'vscode';
-import { GitBlameController } from './git/blamecontroller';
+import { GitBlame } from './git/blame';
 
 
 export async function activate(context: ExtensionContext): Promise<void> {
     if (workspace.workspaceFolders) {
-        const controller = new GitBlameController();
-        const blameCommand = commands.registerCommand('gitblame.quickInfo', controller.showMessage, controller);
-        const linkCommand = commands.registerCommand('gitblame.online', controller.blameLink, controller);
+        const app = new GitBlame();
+        const blameCommand = commands.registerCommand('gitblame.quickInfo', app.showMessage, app);
+        const linkCommand = commands.registerCommand('gitblame.online', app.blameLink, app);
 
-        context.subscriptions.push(controller, blameCommand, linkCommand);
+        context.subscriptions.push(app, blameCommand, linkCommand);
     }
 }

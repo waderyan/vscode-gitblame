@@ -9,7 +9,7 @@ import { GitBlameInfo } from '../interfaces';
 import { TIME_CACHE_LIFETIME } from '../constants';
 
 
-export class GitBlameFileBase {
+export class GitFile {
     private cacheClearInterval: NodeJS.Timer;
 
     public fileName: Uri;

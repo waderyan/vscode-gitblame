@@ -1,8 +1,8 @@
-import { GitBlameFileBase } from './blamefilebase';
+import { GitFile } from './file';
 import { ErrorHandler } from '../util/errorhandler';
 
 
-export class GitBlameFileDummy extends GitBlameFileBase {
+export class GitFileDummy extends GitFile {
     constructor(fileName: string, disposeCallback: Function = () => {}) {
         super(fileName, disposeCallback);
         this.startCacheInterval();

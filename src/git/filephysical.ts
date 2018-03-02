@@ -7,7 +7,7 @@ import { execute } from '../util/execcommand';
 import { ErrorHandler } from '../util/errorhandler';
 import { getGitCommand } from '../util/gitcommand';
 import { GitBlame } from './blame';
-import { GitBlameFileBase } from './blamefilebase';
+import { GitFile } from './file';
 import { GitBlameStream } from './stream';
 import { StatusBarView } from '../view';
 import {
@@ -18,7 +18,7 @@ import {
     FS_EVENT_TYPE_REMOVE } from '../constants';
 
 
-export class GitBlameFile extends GitBlameFileBase {
+export class GitFilePhysical extends GitFile {
     private blameInfoPromise: Promise<GitBlameInfo>;
     private fileSystemWatcher: FS.FSWatcher;
     private workTreePromise: Promise<string>;
