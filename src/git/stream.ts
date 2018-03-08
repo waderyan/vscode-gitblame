@@ -1,4 +1,4 @@
-import child_process = require('child_process');
+import { spawn, ChildProcess } from 'child_process';
 import { EventEmitter } from 'events';
 
 import { Uri } from 'vscode';
@@ -7,12 +7,12 @@ import { getGitCommand } from '../util/gitcommand';
 import { GitBlame } from './blame';
 import { ErrorHandler } from '../util/errorhandler';
 import { Property, Properties } from '../util/property';
-import { GitCommitInfo, GitCommitAuthor, GitIncrementLine } from '../interfaces';
+import { GitCommitInfo, GitCommitAuthor } from '../interfaces';
 
 export class GitBlameStream extends EventEmitter {
     private file: Uri;
     private workTree: string;
-    private process: child_process.ChildProcess;
+    private process: ChildProcess;
     private emittedCommits: { [hash: string]: true } = {};
 
     constructor(file: Uri, workTree: string) {
@@ -31,7 +31,7 @@ export class GitBlameStream extends EventEmitter {
                 `${gitCommand} ${args.join(' ')}`
             );
 
-            this.process = child_process.spawn(gitCommand, args, spawnOptions);
+            this.process = spawn(gitCommand, args, spawnOptions);
 
             this.setupListeners();
         });
@@ -53,22 +53,22 @@ export class GitBlameStream extends EventEmitter {
         return processArguments;
     }
 
-    private setupListeners() {
-        this.process.addListener('close', (code) => this.close(code));
-        this.process.stdout.addListener('data', (chunk) => this.data(chunk));
+    private setupListeners(): void {
+        this.process.addListener('close', (code) => this.close());
+        this.process.stdout.addListener('data', (chunk) => {
+            this.data(chunk.toString());
+        });
         this.process.stderr.addListener('data', (error: Error) =>
-            this.errorData(error)
+            this.close(error)
         );
     }
 
-    private close(code: number): void {
-        if (code === 0 || code === null) {
-            this.emit('end');
-        }
+    private close(err: Error = null): void {
+        this.emit('end', err);
     }
 
-    private data(dataChunk: Buffer | string): void {
-        const lines = dataChunk.toString().split('\n');
+    private data(dataChunk: string): void {
+        const lines = dataChunk.split('\n');
         let commitInfo = this.getCommitTemplate();
 
         lines.forEach((line, index) => {
@@ -83,7 +83,7 @@ export class GitBlameStream extends EventEmitter {
                     this.commitInfoToCommitEmit(commitInfo);
                     commitInfo = this.getCommitTemplate();
                 }
-                this.processLine({ key, value }, commitInfo);
+                this.processLine(key, value, commitInfo);
             }
         });
 
@@ -91,32 +91,33 @@ export class GitBlameStream extends EventEmitter {
     }
 
     private processLine(
-        line: GitIncrementLine,
+        key: string,
+        value: string,
         commitInfo: GitCommitInfo
     ): void {
-        if (line.key === 'author') {
-            commitInfo.author.name = line.value;
-        } else if (line.key === 'author-mail') {
-            commitInfo.author.mail = line.value;
-        } else if (line.key === 'author-time') {
-            commitInfo.author.timestamp = parseInt(line.value, 10);
-        } else if (line.key === 'author-tz') {
-            commitInfo.author.tz = line.value;
-        } else if (line.key === 'committer') {
-            commitInfo.committer.name = line.value;
-        } else if (line.key === 'committer-mail') {
-            commitInfo.committer.mail = line.value;
-        } else if (line.key === 'committer-time') {
-            commitInfo.committer.timestamp = parseInt(line.value, 10);
-        } else if (line.key === 'committer-tz') {
-            commitInfo.committer.tz = line.value;
-        } else if (line.key === 'summary') {
-            commitInfo.summary = line.value;
-        } else if (line.key.length === 40) {
-            commitInfo.hash = line.key;
+        if (key === 'author') {
+            commitInfo.author.name = value;
+        } else if (key === 'author-mail') {
+            commitInfo.author.mail = value;
+        } else if (key === 'author-time') {
+            commitInfo.author.timestamp = parseInt(value, 10);
+        } else if (key === 'author-tz') {
+            commitInfo.author.tz = value;
+        } else if (key === 'committer') {
+            commitInfo.committer.name = value;
+        } else if (key === 'committer-mail') {
+            commitInfo.committer.mail = value;
+        } else if (key === 'committer-time') {
+            commitInfo.committer.timestamp = parseInt(value, 10);
+        } else if (key === 'committer-tz') {
+            commitInfo.committer.tz = value;
+        } else if (key === 'summary') {
+            commitInfo.summary = value;
+        } else if (key.length === 40) {
+            commitInfo.hash = key;
 
-            const hash = line.key;
-            const [originalLine, finalLine, lines] = line.value
+            const hash = key;
+            const [originalLine, finalLine, lines] = value
                 .split(' ')
                 .map((a) => parseInt(a, 10));
 
@@ -141,10 +142,6 @@ export class GitBlameStream extends EventEmitter {
             this.emittedCommits[internalHash] = true;
             this.emit('commit', internalHash, commitInfo);
         }
-    }
-
-    private errorData(error: Error): void {
-        this.emit('error', error);
     }
 
     private getCommitTemplate(): GitCommitInfo {

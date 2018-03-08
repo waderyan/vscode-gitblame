@@ -26,8 +26,3 @@ export interface GitBlameInfo {
     commits: GitCommitInfoArray;
     lines: GitCommitLineArray;
 }
-
-export interface GitIncrementLine {
-    key: string;
-    value: string;
-}

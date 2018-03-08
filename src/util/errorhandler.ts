@@ -1,5 +1,3 @@
-import moment = require('moment');
-
 import { window, OutputChannel } from 'vscode';
 
 import { Property, Properties } from './property';
@@ -41,7 +39,7 @@ export class ErrorHandler {
         this.writeToLog(LogCategory.Error, error.toString());
     }
 
-    async logCritical(error: Error, message: string): Promise<void> {
+    logCritical(error: Error, message: string): void {
         this.writeToLog(LogCategory.Critical, error.toString());
         this.showErrorMessage(message);
     }
@@ -62,7 +60,7 @@ export class ErrorHandler {
 
         if (allowCategory) {
             const trimmedMessage = message.trim();
-            const timestamp = moment().format('HH:mm:ss');
+            const timestamp = ErrorHandler.timestamp();
             this.outputChannel.appendLine(
                 `[ ${timestamp} | ${category} ] ${trimmedMessage}`
             );
@@ -75,6 +73,24 @@ export class ErrorHandler {
         const enabledLevels = <string[]>Property.get(Properties.LogLevel, []);
 
         return enabledLevels.includes(level);
+    }
+
+    private static timestamp(): string {
+        const now = new Date();
+        const hour = now
+            .getHours()
+            .toString()
+            .padStart(2, '0');
+        const minute = now
+            .getMinutes()
+            .toString()
+            .padStart(2, '0');
+        const second = now
+            .getSeconds()
+            .toString()
+            .padStart(2, '0');
+
+        return `${hour}:${minute}:${second}`;
     }
 
     dispose() {

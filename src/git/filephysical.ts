@@ -1,7 +1,6 @@
-import Path = require('path');
-import FS = require('fs');
+import { dirname, join, normalize, relative } from 'path';
 
-import { Uri } from 'vscode';
+import { Uri, workspace, FileSystemWatcher } from 'vscode';
 
 import { execute } from '../util/execcommand';
 import { ErrorHandler } from '../util/errorhandler';
@@ -15,9 +14,9 @@ import { FS_EVENT_TYPE_CHANGE, FS_EVENT_TYPE_REMOVE } from '../constants';
 
 export class GitFilePhysical extends GitFile {
     private blameInfoPromise: Promise<GitBlameInfo>;
-    private fileSystemWatcher: FS.FSWatcher;
+    private fileSystemWatcher: FileSystemWatcher;
     private workTreePromise: Promise<string>;
-    private gitBlameStream: GitBlameStream;
+    private blameProcess: GitBlameStream;
 
     constructor(fileName: string, disposeCallback: Function = () => {}) {
         super(fileName, disposeCallback);
@@ -30,44 +29,48 @@ export class GitFilePhysical extends GitFile {
             return this.workTree;
         }
 
-        this.workTreePromise =
-            this.workTreePromise || this.findWorkTree(this.fileName);
+        if (!this.workTreePromise) {
+            this.workTreePromise = this.findWorkTree();
+        }
 
         this.workTree = await this.workTreePromise;
 
         return this.workTree;
     }
 
-    private setupWatcher(): FS.FSWatcher {
-        const fileWatcherOptions = {
-            persistent: false
-        };
-        return FS.watch(
-            this.fileName.fsPath,
-            fileWatcherOptions,
-            this.makeHandleFileWatchEvent()
+    private setupWatcher(): FileSystemWatcher {
+        const relativePath = workspace.asRelativePath(this.fileName);
+        const fsWatcher = workspace.createFileSystemWatcher(
+            relativePath,
+            true,
+            false,
+            false
         );
+
+        fsWatcher.onDidChange(() => {
+            this.changed();
+        });
+        fsWatcher.onDidDelete(() => {
+            this.dispose();
+        });
+
+        return fsWatcher;
     }
 
-    private makeHandleFileWatchEvent(): (eventType, fileName) => void {
-        return (eventType, fileName) => {
-            if (eventType === FS_EVENT_TYPE_REMOVE) {
-                this.dispose();
-            } else if (eventType === FS_EVENT_TYPE_CHANGE) {
-                this.changed();
-            }
-        };
+    private async findWorkTree(): Promise<string> {
+        const workTree = await this.executeGitRevParseCommand(
+            '--show-toplevel'
+        );
+
+        if (workTree === '') {
+            return '';
+        } else {
+            return normalize(workTree);
+        }
     }
 
-    private async findWorkTree(path: Uri): Promise<string> {
-        return this.executeGitRevParseCommandInPath('--show-toplevel', path);
-    }
-
-    private async executeGitRevParseCommandInPath(
-        command: string,
-        path: Uri
-    ): Promise<string> {
-        const currentDirectory = Path.dirname(path.fsPath);
+    private async executeGitRevParseCommand(command: string): Promise<string> {
+        const currentDirectory = dirname(this.fileName.fsPath);
         const gitCommand = await getGitCommand();
         const gitExecArguments = ['rev-parse', command];
         const gitExecOptions = {
@@ -78,15 +81,8 @@ export class GitFilePhysical extends GitFile {
             gitExecArguments,
             gitExecOptions
         );
-        const cleanGitRev = gitRev.trim();
 
-        if (cleanGitRev === '') {
-            return '';
-        } else if (cleanGitRev === '.git') {
-            return Path.join(currentDirectory, '.git');
-        } else {
-            return Path.normalize(cleanGitRev);
-        }
+        return gitRev.trim();
     }
 
     changed(): void {
@@ -105,41 +101,45 @@ export class GitFilePhysical extends GitFile {
     }
 
     private async findBlameInfo(): Promise<GitBlameInfo> {
-        return (this.blameInfoPromise = new Promise<GitBlameInfo>(
-            async (resolve, reject) => {
-                const workTree = await this.getGitWorkTree();
-                if (workTree) {
-                    const blameInfo = GitBlame.blankBlameInfo();
-                    this.gitBlameStream = new GitBlameStream(
+        const workTree = await this.getGitWorkTree();
+        const blameInfo = GitBlame.blankBlameInfo();
+
+        if (workTree) {
+            this.blameInfoPromise = new Promise<GitBlameInfo>(
+                (resolve, reject) => {
+                    this.blameProcess = new GitBlameStream(
                         this.fileName,
                         workTree
                     );
-                    const gitOver = this.gitStreamOver(
-                        this.gitBlameStream,
-                        reject,
-                        resolve,
-                        blameInfo
-                    );
 
-                    this.gitBlameStream.on(
+                    this.blameProcess.on(
                         'commit',
                         this.gitAddCommit(blameInfo)
                     );
-                    this.gitBlameStream.on('line', this.gitAddLine(blameInfo));
-                    this.gitBlameStream.on('error', gitOver);
-                    this.gitBlameStream.on('end', gitOver);
-                } else {
-                    StatusBarView.getInstance().stopProgress();
-                    this.startCacheInterval();
-                    ErrorHandler.getInstance().logInfo(
-                        `File "${
-                            this.fileName.fsPath
-                        }" is not a decendant of a git repository`
+                    this.blameProcess.on('line', this.gitAddLine(blameInfo));
+                    this.blameProcess.on(
+                        'end',
+                        this.gitStreamOver(
+                            this.blameProcess,
+                            reject,
+                            resolve,
+                            blameInfo
+                        )
                     );
-                    resolve(GitBlame.blankBlameInfo());
                 }
-            }
-        ));
+            );
+        } else {
+            StatusBarView.getInstance().stopProgress();
+            this.startCacheInterval();
+            ErrorHandler.getInstance().logInfo(
+                `File "${
+                    this.fileName.fsPath
+                }" is not a decendant of a git repository`
+            );
+            this.blameInfoPromise = Promise.resolve(blameInfo);
+        }
+
+        return this.blameInfoPromise;
     }
 
     private gitAddCommit(
@@ -185,10 +185,10 @@ export class GitFilePhysical extends GitFile {
 
     dispose(): void {
         super.dispose();
-        if (this.gitBlameStream) {
-            this.gitBlameStream.terminate();
-            delete this.gitBlameStream;
+        if (this.blameProcess) {
+            this.blameProcess.terminate();
+            delete this.blameProcess;
         }
-        this.fileSystemWatcher.close();
+        this.fileSystemWatcher.dispose();
     }
 }

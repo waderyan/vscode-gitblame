@@ -1,6 +1,6 @@
 import { isWebUri } from 'valid-url';
 
-import { Disposable, commands, window, workspace, Uri } from 'vscode';
+import { Disposable, commands, window, workspace, Uri, MessageItem } from 'vscode';
 
 import { ErrorHandler } from '../util/errorhandler';
 import { TextDecorator } from '../util/textdecorator';
@@ -97,7 +97,6 @@ export class GitBlame {
 
     async showMessage(): Promise<void> {
         const commitInfo = await this.getCommitInfo();
-        const commitToolUrl = this.getToolUrl(commitInfo);
         const messageFormat = Property.get(Properties.InfoMessageFormat);
         const normalizedTokens = TextDecorator.normalizeCommitInfoTokens(
             commitInfo
@@ -106,15 +105,32 @@ export class GitBlame {
             messageFormat,
             normalizedTokens
         );
-        const extraAction = commitToolUrl ? TITLE_VIEW_ONLINE : '';
+        const extraActions = this.generateMessageActions(commitInfo);
 
         this.updateView(commitInfo);
 
-        const item = await window.showInformationMessage(message, extraAction);
+        const actionedItem = await window.showInformationMessage(message, ...extraActions);
 
-        if (item === TITLE_VIEW_ONLINE) {
-            commands.executeCommand('vscode.open', commitToolUrl);
+        if (actionedItem) {
+            actionedItem.takeAction();
         }
+    }
+
+    private generateMessageActions(commitInfo: GitCommitInfo): ActionableMessageItem[] {
+        const commitToolUrl = this.getToolUrl(commitInfo);
+        const extraActions:ActionableMessageItem[] = [];
+
+        if (commitToolUrl) {
+            let viewOnlineAction = new ActionableMessageItem(TITLE_VIEW_ONLINE);
+
+            viewOnlineAction.setAction(() => {
+                commands.executeCommand('vscode.open', commitToolUrl);
+            });
+
+            extraActions.push(viewOnlineAction);
+        }
+
+        return extraActions;
     }
 
     async blameLink(): Promise<void> {
@@ -254,5 +270,27 @@ export class GitBlame {
 
     static internalHash(hash: string): string {
         return hash.substr(0, Property.get(Properties.InternalHashLength));
+    }
+}
+
+/**
+ * Helper class for window.showInformationMessage
+ */
+class ActionableMessageItem implements MessageItem {
+    public title: string;
+    private action: () => void;
+
+    constructor(title) {
+        this.title = title;
+    }
+
+    setAction(action) {
+        this.action = action;
+    }
+
+    takeAction() {
+        if (this.action) {
+            this.action();
+        }
     }
 }
