@@ -1,26 +1,12 @@
-import { StatusBarItem, StatusBarAlignment, window } from 'vscode';
+import { StatusBarAlignment, StatusBarItem, window } from "vscode";
 
-import { TextDecorator } from './util/textdecorator';
-import { Spinner } from './util/spinner';
-import { GitCommitInfo } from './interfaces';
-import { GitBlame } from './git/blame';
+import { GitBlame } from "./git/blame";
+import { IGitCommitInfo } from "./interfaces";
+import { Spinner } from "./util/spinner";
+import { TextDecorator } from "./util/textdecorator";
 
 export class StatusBarView {
-    private static instance: StatusBarView;
-    private statusBarItem: StatusBarItem;
-    private progressInterval: NodeJS.Timer;
-    private spinner: Spinner;
-    private spinnerActive: boolean = false;
-    private prefix: string = '$(git-commit)';
-
-    private constructor() {
-        this.statusBarItem = window.createStatusBarItem(
-            StatusBarAlignment.Left
-        );
-        this.spinner = new Spinner();
-    }
-
-    static getInstance(): StatusBarView {
+    public static getInstance(): StatusBarView {
         if (!this.instance) {
             this.instance = new StatusBarView();
         }
@@ -28,21 +14,35 @@ export class StatusBarView {
         return this.instance;
     }
 
-    setText(text: string, hasCommand: boolean = true): void {
+    private static instance: StatusBarView;
+    private statusBarItem: StatusBarItem;
+    private progressInterval: NodeJS.Timer;
+    private spinner: Spinner;
+    private spinnerActive: boolean = false;
+    private prefix: string = "$(git-commit)";
+
+    private constructor() {
+        this.statusBarItem = window.createStatusBarItem(
+            StatusBarAlignment.Left,
+        );
+        this.spinner = new Spinner();
+    }
+
+    public setText(text: string, hasCommand: boolean = true): void {
         this.statusBarItem.text = text ? `${this.prefix} ${text}` : this.prefix;
         this.statusBarItem.tooltip = hasCommand
-            ? 'git blame'
-            : 'git blame - No info about the current line';
-        this.statusBarItem.command = hasCommand ? 'gitblame.quickInfo' : '';
+            ? "git blame"
+            : "git blame - No info about the current line";
+        this.statusBarItem.command = hasCommand ? "gitblame.quickInfo" : "";
         this.statusBarItem.show();
     }
 
-    clear(): void {
+    public clear(): void {
         this.stopProgress();
-        this.setText('', false);
+        this.setText("", false);
     }
 
-    update(commitInfo: GitCommitInfo): void {
+    public update(commitInfo: IGitCommitInfo): void {
         this.stopProgress();
 
         if (commitInfo && !GitBlame.isGeneratedCommit(commitInfo)) {
@@ -54,12 +54,12 @@ export class StatusBarView {
         }
     }
 
-    stopProgress(): void {
+    public stopProgress(): void {
         clearInterval(this.progressInterval);
         this.spinnerActive = false;
     }
 
-    startProgress(): void {
+    public startProgress(): void {
         if (this.spinnerActive) {
             return;
         }
@@ -77,12 +77,12 @@ export class StatusBarView {
         this.spinnerActive = true;
     }
 
-    private setSpinner(): void {
-        this.setText(`${this.spinner} Waiting for git blame response`, false);
-    }
-
-    dispose(): void {
+    public dispose(): void {
         this.stopProgress();
         this.statusBarItem.dispose();
+    }
+
+    private setSpinner(): void {
+        this.setText(`${this.spinner} Waiting for git blame response`, false);
     }
 }

@@ -1,17 +1,29 @@
-import { Disposable, workspace } from 'vscode';
+import { Disposable, workspace } from "vscode";
 
 export enum Properties {
-    CommitUrl = 'commitUrl',
-    IgnoreWhitespace = 'ignoreWhitespace',
-    InfoMessageFormat = 'infoMessageFormat',
-    InternalHashLength = 'internalHashLength',
-    LogLevel = 'logLevel',
-    ProgressSpinner = 'progressSpinner',
-    StatusBarMessageFormat = 'statusBarMessageFormat',
-    StatusBarMessageNoCommit = 'statusBarMessageNoCommit'
+    CommitUrl = "commitUrl",
+    IgnoreWhitespace = "ignoreWhitespace",
+    InfoMessageFormat = "infoMessageFormat",
+    InternalHashLength = "internalHashLength",
+    LogLevel = "logLevel",
+    ProgressSpinner = "progressSpinner",
+    StatusBarMessageFormat = "statusBarMessageFormat",
+    StatusBarMessageNoCommit = "statusBarMessageNoCommit",
 }
 
 export class Property {
+    public static getInstance(): Property {
+        if (!Property.instance) {
+            Property.instance = new Property();
+        }
+
+        return Property.instance;
+    }
+
+    public static get(name: Properties, defaultValue?: any): any {
+        return Property.getInstance().getProperty(name, defaultValue);
+    }
+
     private static instance: Property;
     private properties: { [property: string]: any } = {};
     private disposable: Disposable;
@@ -21,15 +33,7 @@ export class Property {
         this.getProperties();
     }
 
-    static getInstance(): Property {
-        if (!Property.instance) {
-            Property.instance = new Property();
-        }
-
-        return Property.instance;
-    }
-
-    setupListeners(): void {
+    public setupListeners(): void {
         const disposables: Disposable[] = [];
 
         workspace.onDidSaveTextDocument(this.getProperties, this, disposables);
@@ -37,12 +41,12 @@ export class Property {
         this.disposable = Disposable.from(this.disposable, ...disposables);
     }
 
-    getProperty(name: Properties, defaultValue?: any): any {
+    public getProperty(name: Properties, defaultValue?: any): any {
         const potentialPropertyValue = this.properties[name];
 
         if (
             potentialPropertyValue === null &&
-            typeof defaultValue !== 'undefined'
+            typeof defaultValue !== "undefined"
         ) {
             return defaultValue;
         } else {
@@ -50,12 +54,12 @@ export class Property {
         }
     }
 
-    static get(name: Properties, defaultValue?: any): any {
-        return Property.getInstance().getProperty(name, defaultValue);
+    public dispose(): void {
+        this.disposable.dispose();
     }
 
     private getPropertyFromConfiguration(name: Properties): any {
-        const properties = workspace.getConfiguration('gitblame');
+        const properties = workspace.getConfiguration("gitblame");
         return properties.get(name);
     }
 
@@ -63,30 +67,26 @@ export class Property {
         const properties = {
             commitUrl: this.getPropertyFromConfiguration(Properties.CommitUrl),
             ignoreWhitespace: this.getPropertyFromConfiguration(
-                Properties.IgnoreWhitespace
+                Properties.IgnoreWhitespace,
             ),
             infoMessageFormat: this.getPropertyFromConfiguration(
-                Properties.InfoMessageFormat
+                Properties.InfoMessageFormat,
             ),
             internalHashLength: this.getPropertyFromConfiguration(
-                Properties.InternalHashLength
+                Properties.InternalHashLength,
             ),
             logLevel: this.getPropertyFromConfiguration(Properties.LogLevel),
             progressSpinner: this.getPropertyFromConfiguration(
-                Properties.ProgressSpinner
+                Properties.ProgressSpinner,
             ),
             statusBarMessageFormat: this.getPropertyFromConfiguration(
-                Properties.StatusBarMessageFormat
+                Properties.StatusBarMessageFormat,
             ),
             statusBarMessageNoCommit: this.getPropertyFromConfiguration(
-                Properties.StatusBarMessageNoCommit
-            )
+                Properties.StatusBarMessageNoCommit,
+            ),
         };
 
         this.properties = properties;
-    }
-
-    dispose(): void {
-        this.disposable.dispose();
     }
 }

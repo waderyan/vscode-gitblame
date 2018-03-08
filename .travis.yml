@@ -4,6 +4,10 @@ os:
   - osx
   - linux
 
+cache:
+  directories:
+    - "node_modules"
+
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
       export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
@@ -17,3 +21,4 @@ install:
 
 script:
   - npm test --silent
+  - npm run lint --silent

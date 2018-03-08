@@ -1,9 +1,9 @@
 export function walkObject(
     object: object,
     keyPath: string,
-    defaultValue: any = undefined
+    defaultValue: any = null,
 ): any {
-    const pathParts = keyPath.split('.');
+    const pathParts = keyPath.split(".");
     const currentStep = pathParts.shift();
 
     if (pathParts.length === 0) {
@@ -13,8 +13,8 @@ export function walkObject(
     } else if (object.hasOwnProperty(currentStep)) {
         return walkObject(
             object[currentStep],
-            pathParts.join('.'),
-            defaultValue
+            pathParts.join("."),
+            defaultValue,
         );
     } else {
         return defaultValue;

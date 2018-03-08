@@ -1,13 +1,13 @@
-import { Uri, workspace } from 'vscode';
+import { Uri, workspace } from "vscode";
 
-import { GitFilePhysical } from './filephysical';
-import { GitFileDummy } from './filedummy';
-import { GitFile } from './file';
+import { GitFile } from "./file";
+import { GitFileDummy } from "./filedummy";
+import { GitFilePhysical } from "./filephysical";
 
 export class GitFileFactory {
-    static create(
+    public static create(
         fileName: string,
-        disposeCallback: Function = () => {}
+        disposeCallback: () => void,
     ): GitFile {
         if (GitFileFactory.inWorkspace(fileName)) {
             return new GitFilePhysical(fileName, disposeCallback);
@@ -19,6 +19,6 @@ export class GitFileFactory {
     private static inWorkspace(fileName: string): boolean {
         const uriFileName = Uri.file(fileName);
 
-        return typeof workspace.getWorkspaceFolder(uriFileName) !== 'undefined';
+        return typeof workspace.getWorkspaceFolder(uriFileName) !== "undefined";
     }
 }

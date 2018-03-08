@@ -1,30 +1,30 @@
-import { dirname, join, normalize, relative } from 'path';
+import { dirname, join, normalize, relative } from "path";
 
-import { Uri, workspace, FileSystemWatcher } from 'vscode';
+import { FileSystemWatcher, Uri, workspace } from "vscode";
 
-import { execute } from '../util/execcommand';
-import { ErrorHandler } from '../util/errorhandler';
-import { getGitCommand } from '../util/gitcommand';
-import { GitBlame } from './blame';
-import { GitFile } from './file';
-import { GitBlameStream } from './stream';
-import { StatusBarView } from '../view';
-import { GitBlameInfo, GitCommitInfo } from '../interfaces';
-import { FS_EVENT_TYPE_CHANGE, FS_EVENT_TYPE_REMOVE } from '../constants';
+import { FS_EVENT_TYPE_CHANGE, FS_EVENT_TYPE_REMOVE } from "../constants";
+import { IGitBlameInfo, IGitCommitInfo } from "../interfaces";
+import { ErrorHandler } from "../util/errorhandler";
+import { execute } from "../util/execcommand";
+import { getGitCommand } from "../util/gitcommand";
+import { StatusBarView } from "../view";
+import { GitBlame } from "./blame";
+import { GitFile } from "./file";
+import { GitBlameStream } from "./stream";
 
 export class GitFilePhysical extends GitFile {
-    private blameInfoPromise: Promise<GitBlameInfo>;
+    private blameInfoPromise: Promise<IGitBlameInfo>;
     private fileSystemWatcher: FileSystemWatcher;
     private workTreePromise: Promise<string>;
     private blameProcess: GitBlameStream;
 
-    constructor(fileName: string, disposeCallback: Function = () => {}) {
+    constructor(fileName: string, disposeCallback: () => void) {
         super(fileName, disposeCallback);
 
         this.fileSystemWatcher = this.setupWatcher();
     }
 
-    async getGitWorkTree(): Promise<string> {
+    public async getGitWorkTree(): Promise<string> {
         if (this.workTree) {
             return this.workTree;
         }
@@ -38,13 +38,37 @@ export class GitFilePhysical extends GitFile {
         return this.workTree;
     }
 
+    public changed(): void {
+        super.changed();
+        delete this.blameInfoPromise;
+    }
+
+    public async blame(): Promise<IGitBlameInfo> {
+        StatusBarView.getInstance().startProgress();
+
+        if (this.blameInfoPromise) {
+            return this.blameInfoPromise;
+        } else {
+            return this.findBlameInfo();
+        }
+    }
+
+    public dispose(): void {
+        super.dispose();
+        if (this.blameProcess) {
+            this.blameProcess.terminate();
+            delete this.blameProcess;
+        }
+        this.fileSystemWatcher.dispose();
+    }
+
     private setupWatcher(): FileSystemWatcher {
         const relativePath = workspace.asRelativePath(this.fileName);
         const fsWatcher = workspace.createFileSystemWatcher(
             relativePath,
             true,
             false,
-            false
+            false,
         );
 
         fsWatcher.onDidChange(() => {
@@ -59,11 +83,11 @@ export class GitFilePhysical extends GitFile {
 
     private async findWorkTree(): Promise<string> {
         const workTree = await this.executeGitRevParseCommand(
-            '--show-toplevel'
+            "--show-toplevel",
         );
 
-        if (workTree === '') {
-            return '';
+        if (workTree === "") {
+            return "";
         } else {
             return normalize(workTree);
         }
@@ -72,61 +96,46 @@ export class GitFilePhysical extends GitFile {
     private async executeGitRevParseCommand(command: string): Promise<string> {
         const currentDirectory = dirname(this.fileName.fsPath);
         const gitCommand = await getGitCommand();
-        const gitExecArguments = ['rev-parse', command];
+        const gitExecArguments = ["rev-parse", command];
         const gitExecOptions = {
-            cwd: currentDirectory
+            cwd: currentDirectory,
         };
         const gitRev = await execute(
             gitCommand,
             gitExecArguments,
-            gitExecOptions
+            gitExecOptions,
         );
 
         return gitRev.trim();
     }
 
-    changed(): void {
-        super.changed();
-        delete this.blameInfoPromise;
-    }
-
-    async blame(): Promise<GitBlameInfo> {
-        StatusBarView.getInstance().startProgress();
-
-        if (this.blameInfoPromise) {
-            return this.blameInfoPromise;
-        } else {
-            return this.findBlameInfo();
-        }
-    }
-
-    private async findBlameInfo(): Promise<GitBlameInfo> {
+    private async findBlameInfo(): Promise<IGitBlameInfo> {
         const workTree = await this.getGitWorkTree();
         const blameInfo = GitBlame.blankBlameInfo();
 
         if (workTree) {
-            this.blameInfoPromise = new Promise<GitBlameInfo>(
+            this.blameInfoPromise = new Promise<IGitBlameInfo>(
                 (resolve, reject) => {
                     this.blameProcess = new GitBlameStream(
                         this.fileName,
-                        workTree
+                        workTree,
                     );
 
                     this.blameProcess.on(
-                        'commit',
-                        this.gitAddCommit(blameInfo)
+                        "commit",
+                        this.gitAddCommit(blameInfo),
                     );
-                    this.blameProcess.on('line', this.gitAddLine(blameInfo));
+                    this.blameProcess.on("line", this.gitAddLine(blameInfo));
                     this.blameProcess.on(
-                        'end',
+                        "end",
                         this.gitStreamOver(
                             this.blameProcess,
                             reject,
                             resolve,
-                            blameInfo
-                        )
+                            blameInfo,
+                        ),
                     );
-                }
+                },
             );
         } else {
             StatusBarView.getInstance().stopProgress();
@@ -134,7 +143,7 @@ export class GitFilePhysical extends GitFile {
             ErrorHandler.getInstance().logInfo(
                 `File "${
                     this.fileName.fsPath
-                }" is not a decendant of a git repository`
+                }" is not a decendant of a git repository`,
             );
             this.blameInfoPromise = Promise.resolve(blameInfo);
         }
@@ -143,18 +152,18 @@ export class GitFilePhysical extends GitFile {
     }
 
     private gitAddCommit(
-        blameInfo: GitBlameInfo
-    ): (internalHash: string, data: GitCommitInfo) => void {
+        blameInfo: IGitBlameInfo,
+    ): (internalHash: string, data: IGitCommitInfo) => void {
         return (internalHash, data) => {
-            blameInfo['commits'][internalHash] = data;
+            blameInfo.commits[internalHash] = data;
         };
     }
 
     private gitAddLine(
-        blameInfo: GitBlameInfo
+        blameInfo: IGitBlameInfo,
     ): (line: number, gitCommitHash: string) => void {
         return (line: number, gitCommitHash: string) => {
-            blameInfo['lines'][line] = gitCommitHash;
+            blameInfo.lines[line] = gitCommitHash;
         };
     }
 
@@ -162,7 +171,7 @@ export class GitFilePhysical extends GitFile {
         gitStream,
         reject: (err: Error) => void,
         resolve: (val: any) => void,
-        blameInfo: GitBlameInfo
+        blameInfo: IGitBlameInfo,
     ): (err: Error) => void {
         return (err: Error) => {
             gitStream.removeAllListeners();
@@ -176,19 +185,10 @@ export class GitFilePhysical extends GitFile {
                 ErrorHandler.getInstance().logInfo(
                     `Blamed file "${this.fileName.fsPath}" and found ${
                         Object.keys(blameInfo.commits).length
-                    } commits`
+                    } commits`,
                 );
                 resolve(blameInfo);
             }
         };
-    }
-
-    dispose(): void {
-        super.dispose();
-        if (this.blameProcess) {
-            this.blameProcess.terminate();
-            delete this.blameProcess;
-        }
-        this.fileSystemWatcher.dispose();
     }
 }

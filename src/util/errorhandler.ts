@@ -1,25 +1,18 @@
-import { window, OutputChannel } from 'vscode';
+import { OutputChannel, window } from "vscode";
 
-import { Property, Properties } from './property';
-import { TITLE_SHOW_LOG } from '../constants';
+import { TITLE_SHOW_LOG } from "../constants";
+import { Properties, Property } from "./property";
 
 enum LogCategory {
-    Info = 'info',
-    Error = 'error',
-    Command = 'command',
-    Critical = 'critical'
+    Info = "info",
+    Error = "error",
+    Command = "command",
+    Critical = "critical",
 }
 
 export class ErrorHandler {
-    private static instance: ErrorHandler;
 
-    private outputChannel: OutputChannel;
-
-    private constructor() {
-        this.outputChannel = window.createOutputChannel('Extension: gitblame');
-    }
-
-    static getInstance(): ErrorHandler {
+    public static getInstance(): ErrorHandler {
         if (!ErrorHandler.instance) {
             ErrorHandler.instance = new ErrorHandler();
         }
@@ -27,27 +20,57 @@ export class ErrorHandler {
         return ErrorHandler.instance;
     }
 
-    logInfo(message: string) {
+    private static instance: ErrorHandler;
+
+    private static timestamp(): string {
+        const now = new Date();
+        const hour = now
+            .getHours()
+            .toString()
+            .padStart(2, "0");
+        const minute = now
+            .getMinutes()
+            .toString()
+            .padStart(2, "0");
+        const second = now
+            .getSeconds()
+            .toString()
+            .padStart(2, "0");
+
+        return `${hour}:${minute}:${second}`;
+    }
+
+    private outputChannel: OutputChannel;
+
+    private constructor() {
+        this.outputChannel = window.createOutputChannel("Extension: gitblame");
+    }
+
+    public logInfo(message: string) {
         this.writeToLog(LogCategory.Info, message);
     }
 
-    logCommand(message: string): void {
+    public logCommand(message: string): void {
         this.writeToLog(LogCategory.Command, message);
     }
 
-    logError(error: Error): void {
+    public logError(error: Error): void {
         this.writeToLog(LogCategory.Error, error.toString());
     }
 
-    logCritical(error: Error, message: string): void {
+    public logCritical(error: Error, message: string): void {
         this.writeToLog(LogCategory.Critical, error.toString());
         this.showErrorMessage(message);
+    }
+
+    public dispose() {
+        this.outputChannel.dispose();
     }
 
     private async showErrorMessage(message: string): Promise<void> {
         const selectedItem = await window.showErrorMessage(
             message,
-            TITLE_SHOW_LOG
+            TITLE_SHOW_LOG,
         );
 
         if (selectedItem === TITLE_SHOW_LOG) {
@@ -62,7 +85,7 @@ export class ErrorHandler {
             const trimmedMessage = message.trim();
             const timestamp = ErrorHandler.timestamp();
             this.outputChannel.appendLine(
-                `[ ${timestamp} | ${category} ] ${trimmedMessage}`
+                `[ ${timestamp} | ${category} ] ${trimmedMessage}`,
             );
         }
 
@@ -70,30 +93,8 @@ export class ErrorHandler {
     }
 
     private logCategoryAllowed(level: LogCategory): boolean {
-        const enabledLevels = <string[]>Property.get(Properties.LogLevel, []);
+        const enabledLevels = Property.get(Properties.LogLevel, []) as string[];
 
         return enabledLevels.includes(level);
-    }
-
-    private static timestamp(): string {
-        const now = new Date();
-        const hour = now
-            .getHours()
-            .toString()
-            .padStart(2, '0');
-        const minute = now
-            .getMinutes()
-            .toString()
-            .padStart(2, '0');
-        const second = now
-            .getSeconds()
-            .toString()
-            .padStart(2, '0');
-
-        return `${hour}:${minute}:${second}`;
-    }
-
-    dispose() {
-        this.outputChannel.dispose();
     }
 }

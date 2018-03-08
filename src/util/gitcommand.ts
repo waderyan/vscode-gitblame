@@ -1,29 +1,33 @@
-import Path = require('path');
-import FS = require('fs');
+import { access, constants as FSConstant } from "fs";
+import { normalize } from "path";
 
-import { workspace } from 'vscode';
+import { workspace } from "vscode";
 
-import { ErrorHandler } from './errorhandler';
-import { GIT_COMMAND_IN_PATH } from '../constants';
+import { GIT_COMMAND_IN_PATH } from "../constants";
+import { ErrorHandler } from "./errorhandler";
 
 export function getGitCommand(): Promise<string> {
-    const gitConfig = workspace.getConfiguration('git');
+    const gitConfig = workspace.getConfiguration("git");
     const command =
-        <string>gitConfig.get('path', GIT_COMMAND_IN_PATH) ||
+        gitConfig.get("path", GIT_COMMAND_IN_PATH) as string ||
         GIT_COMMAND_IN_PATH;
     const promise = new Promise<string>((resolve, reject) => {
         if (command === GIT_COMMAND_IN_PATH) {
             resolve(command);
         }
 
-        const commandPath = Path.normalize(command);
+        const commandPath = normalize(command);
 
-        FS.access(commandPath, FS.constants.X_OK, (err) => {
+        access(commandPath, FSConstant.X_OK, (err) => {
             if (err) {
                 ErrorHandler.getInstance().logError(
                     new Error(
-                        `Can not execute "${commandPath}" (your git.path property) falling back to "${GIT_COMMAND_IN_PATH}"`
-                    )
+                        `Can not execute "${
+                            commandPath
+                        }" (your git.path property) falling back to "${
+                            GIT_COMMAND_IN_PATH
+                        }"`,
+                    ),
                 );
                 resolve(GIT_COMMAND_IN_PATH);
             } else {

@@ -1,53 +1,53 @@
-import { workspace, window, Uri } from 'vscode';
+import { Uri, window, workspace } from "vscode";
 
-import { GitBlame } from './blame';
-import { ErrorHandler } from '../util/errorhandler';
-import { GitBlameInfo } from '../interfaces';
-import { TIME_CACHE_LIFETIME } from '../constants';
+import { TIME_CACHE_LIFETIME } from "../constants";
+import { IGitBlameInfo } from "../interfaces";
+import { ErrorHandler } from "../util/errorhandler";
+import { GitBlame } from "./blame";
 
 export class GitFile {
-    private cacheClearInterval: NodeJS.Timer;
-
     public fileName: Uri;
     public workTree: string;
-    public disposeCallback: Function;
+    public disposeCallback: () => void;
 
-    constructor(fileName: string, disposeCallback: Function = () => {}) {
+    private cacheClearInterval: NodeJS.Timer;
+
+    constructor(fileName: string, disposeCallback: () => void) {
         this.fileName = Uri.file(fileName);
         this.disposeCallback = disposeCallback;
     }
 
-    startCacheInterval(): void {
+    public startCacheInterval(): void {
         clearInterval(this.cacheClearInterval);
         this.cacheClearInterval = setInterval(() => {
             const isOpen = window.visibleTextEditors.some(
-                (editor) => editor.document.uri.fsPath === this.fileName.fsPath
+                (editor) => editor.document.uri.fsPath === this.fileName.fsPath,
             );
 
             if (!isOpen) {
                 ErrorHandler.getInstance().logInfo(
                     `Clearing the file "${
                         this.fileName.fsPath
-                    }" from the internal cache`
+                    }" from the internal cache`,
                 );
                 this.dispose();
             }
         }, TIME_CACHE_LIFETIME);
     }
 
-    async getGitWorkTree(): Promise<string> {
+    public async getGitWorkTree(): Promise<string> {
         return this.workTree;
     }
 
-    changed(): void {
+    public changed(): void {
         delete this.workTree;
     }
 
-    async blame(): Promise<GitBlameInfo> {
+    public async blame(): Promise<IGitBlameInfo> {
         return GitBlame.blankBlameInfo();
     }
 
-    dispose(): void {
+    public dispose(): void {
         clearInterval(this.cacheClearInterval);
         this.disposeCallback();
         delete this.disposeCallback;

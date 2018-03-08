@@ -1,27 +1,27 @@
-import assert = require('assert');
+import assert = require("assert");
 
-import { walkObject } from '../src/util/objectpath';
+import { walkObject } from "../src/util/objectpath";
 
-suite('Object Walker', () => {
-    test('Object Walker', () => {
+suite("Object Walker", () => {
+    test("Object Walker", () => {
         assert.equal(
             walkObject(
                 {
-                    oneStep: 10
+                    oneStep: 10,
                 },
-                'oneStep'
+                "oneStep",
             ),
-            10
+            10,
         );
 
         assert.equal(
             walkObject(
                 {
-                    10: 'a string'
+                    10: "a string",
                 },
-                '10'
+                "10",
             ),
-            'a string'
+            "a string",
         );
 
         assert.equal(
@@ -29,24 +29,24 @@ suite('Object Walker', () => {
                 {
                     many: {
                         many: {
-                            steps: 'far down'
-                        }
-                    }
+                            steps: "far down",
+                        },
+                    },
                 },
-                'many.many.steps'
+                "many.many.steps",
             ),
-            'far down'
+            "far down",
         );
 
         assert.equal(
             walkObject(
                 {
-                    theKey: 20
+                    theKey: 20,
                 },
-                'no_key',
-                'not there'
+                "no_key",
+                "not there",
             ),
-            'not there'
+            "not there",
         );
 
         assert.equal(
@@ -54,29 +54,29 @@ suite('Object Walker', () => {
                 {
                     2: {
                         3: {
-                            4: 'numbers'
-                        }
-                    }
+                            4: "numbers",
+                        },
+                    },
                 },
-                '2.3.4'
+                "2.3.4",
             ),
-            'numbers'
+            "numbers",
         );
 
-        assert.equal(walkObject([[['array']]], '0.0.0'), 'array');
+        assert.equal(walkObject([[["array"]]], "0.0.0"), "array");
 
         assert.deepEqual(
             walkObject(
                 {
-                    'try to': {
-                        return: 'an object'
-                    }
+                    "try to": {
+                        return: "an object",
+                    },
                 },
-                'try to'
+                "try to",
             ),
             {
-                return: 'an object'
-            }
+                return: "an object",
+            },
         );
     });
 });

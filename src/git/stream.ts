@@ -1,13 +1,13 @@
-import { spawn, ChildProcess } from 'child_process';
-import { EventEmitter } from 'events';
+import { ChildProcess, spawn } from "child_process";
+import { EventEmitter } from "events";
 
-import { Uri } from 'vscode';
+import { Uri } from "vscode";
 
-import { getGitCommand } from '../util/gitcommand';
-import { GitBlame } from './blame';
-import { ErrorHandler } from '../util/errorhandler';
-import { Property, Properties } from '../util/property';
-import { GitCommitInfo, GitCommitAuthor } from '../interfaces';
+import { IGitCommitAuthor, IGitCommitInfo } from "../interfaces";
+import { ErrorHandler } from "../util/errorhandler";
+import { getGitCommand } from "../util/gitcommand";
+import { Properties, Property } from "../util/property";
+import { GitBlame } from "./blame";
 
 export class GitBlameStream extends EventEmitter {
     private file: Uri;
@@ -24,11 +24,11 @@ export class GitBlameStream extends EventEmitter {
         getGitCommand().then((gitCommand) => {
             const args = this.generateArguments();
             const spawnOptions = {
-                cwd: workTree
+                cwd: workTree,
             };
 
             ErrorHandler.getInstance().logCommand(
-                `${gitCommand} ${args.join(' ')}`
+                `${gitCommand} ${args.join(" ")}`,
             );
 
             this.process = spawn(gitCommand, args, spawnOptions);
@@ -37,48 +37,57 @@ export class GitBlameStream extends EventEmitter {
         });
     }
 
+    public terminate(): void {
+        this.dispose();
+    }
+
+    public dispose(): void {
+        this.process.kill("SIGKILL");
+        this.process.removeAllListeners();
+    }
+
     private generateArguments(): string[] {
         const processArguments = [];
 
-        processArguments.push('blame');
+        processArguments.push("blame");
 
         if (Property.get(Properties.IgnoreWhitespace)) {
-            processArguments.push('-w');
+            processArguments.push("-w");
         }
 
-        processArguments.push('--incremental');
-        processArguments.push('--');
+        processArguments.push("--incremental");
+        processArguments.push("--");
         processArguments.push(this.file.fsPath);
 
         return processArguments;
     }
 
     private setupListeners(): void {
-        this.process.addListener('close', (code) => this.close());
-        this.process.stdout.addListener('data', (chunk) => {
+        this.process.addListener("close", (code) => this.close());
+        this.process.stdout.addListener("data", (chunk) => {
             this.data(chunk.toString());
         });
-        this.process.stderr.addListener('data', (error: Error) =>
-            this.close(error)
+        this.process.stderr.addListener("data", (error: Error) =>
+            this.close(error),
         );
     }
 
     private close(err: Error = null): void {
-        this.emit('end', err);
+        this.emit("end", err);
     }
 
     private data(dataChunk: string): void {
-        const lines = dataChunk.split('\n');
+        const lines = dataChunk.split("\n");
         let commitInfo = this.getCommitTemplate();
 
         lines.forEach((line, index) => {
-            if (line && line != 'boundary') {
+            if (line && line !== "boundary") {
                 const [all, key, value] = Array.from(line.match(/(.*?) (.*)/));
                 if (
                     /[a-z0-9]{40}/.test(key) &&
                     lines.hasOwnProperty(index + 1) &&
                     /^(author|committer)/.test(lines[index + 1]) &&
-                    commitInfo.hash !== ''
+                    commitInfo.hash !== ""
                 ) {
                     this.commitInfoToCommitEmit(commitInfo);
                     commitInfo = this.getCommitTemplate();
@@ -93,32 +102,32 @@ export class GitBlameStream extends EventEmitter {
     private processLine(
         key: string,
         value: string,
-        commitInfo: GitCommitInfo
+        commitInfo: IGitCommitInfo,
     ): void {
-        if (key === 'author') {
+        if (key === "author") {
             commitInfo.author.name = value;
-        } else if (key === 'author-mail') {
+        } else if (key === "author-mail") {
             commitInfo.author.mail = value;
-        } else if (key === 'author-time') {
+        } else if (key === "author-time") {
             commitInfo.author.timestamp = parseInt(value, 10);
-        } else if (key === 'author-tz') {
+        } else if (key === "author-tz") {
             commitInfo.author.tz = value;
-        } else if (key === 'committer') {
+        } else if (key === "committer") {
             commitInfo.committer.name = value;
-        } else if (key === 'committer-mail') {
+        } else if (key === "committer-mail") {
             commitInfo.committer.mail = value;
-        } else if (key === 'committer-time') {
+        } else if (key === "committer-time") {
             commitInfo.committer.timestamp = parseInt(value, 10);
-        } else if (key === 'committer-tz') {
+        } else if (key === "committer-tz") {
             commitInfo.committer.tz = value;
-        } else if (key === 'summary') {
+        } else if (key === "summary") {
             commitInfo.summary = value;
         } else if (key.length === 40) {
             commitInfo.hash = key;
 
             const hash = key;
             const [originalLine, finalLine, lines] = value
-                .split(' ')
+                .split(" ")
                 .map((a) => parseInt(a, 10));
 
             this.lineGroupToLineEmit(hash, lines, finalLine);
@@ -128,48 +137,39 @@ export class GitBlameStream extends EventEmitter {
     private lineGroupToLineEmit(
         hash: string,
         lines: number,
-        finalLine: number
+        finalLine: number,
     ): void {
         for (let i = 0; i < lines; i++) {
-            this.emit('line', finalLine + i, GitBlame.internalHash(hash));
+            this.emit("line", finalLine + i, GitBlame.internalHash(hash));
         }
     }
 
-    private commitInfoToCommitEmit(commitInfo: GitCommitInfo): void {
+    private commitInfoToCommitEmit(commitInfo: IGitCommitInfo): void {
         const internalHash = GitBlame.internalHash(commitInfo.hash);
 
         if (!this.emittedCommits[internalHash]) {
             this.emittedCommits[internalHash] = true;
-            this.emit('commit', internalHash, commitInfo);
+            this.emit("commit", internalHash, commitInfo);
         }
     }
 
-    private getCommitTemplate(): GitCommitInfo {
+    private getCommitTemplate(): IGitCommitInfo {
         return {
-            hash: '',
             author: {
-                name: '',
-                mail: '',
+                mail: "",
+                name: "",
                 timestamp: 0,
-                tz: ''
+                tz: "",
             },
             committer: {
-                name: '',
-                mail: '',
+                mail: "",
+                name: "",
                 timestamp: 0,
-                tz: ''
+                tz: "",
             },
-            summary: '',
-            filename: this.file.fsPath.replace(this.workTree, '')
+            filename: this.file.fsPath.replace(this.workTree, ""),
+            hash: "",
+            summary: "",
         };
-    }
-
-    terminate(): void {
-        this.dispose();
-    }
-
-    dispose(): void {
-        this.process.kill('SIGKILL');
-        this.process.removeAllListeners();
     }
 }

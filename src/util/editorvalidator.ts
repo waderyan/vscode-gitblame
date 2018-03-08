@@ -1,4 +1,4 @@
-import { TextEditor, window } from 'vscode';
+import { TextEditor, window } from "vscode";
 
 export function validEditor(editor: TextEditor): boolean {
     const doc = editor && editor.document;

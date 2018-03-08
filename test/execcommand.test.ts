@@ -1,17 +1,17 @@
-import assert = require('assert');
+import assert = require("assert");
 
-import { execute } from '../src/util/execcommand';
+import { execute } from "../src/util/execcommand";
 
-suite('Execute Command', () => {
-    test('Simple command', async () => {
-        const commandResult = await execute('echo', ['response']);
+suite("Execute Command", () => {
+    test("Simple command", async () => {
+        const commandResult = await execute("node", ["--version"]);
 
-        assert.equal(commandResult, 'response\n');
+        assert.ok(commandResult);
     });
 
-    test('Unavalible command', async () => {
-        const commandResult = await execute('not-a-real-command', []);
+    test("Unavalible command", async () => {
+        const commandResult = await execute("not-a-real-command", []);
 
-        assert.equal(commandResult, '');
+        assert.equal(commandResult, "");
     });
 });
