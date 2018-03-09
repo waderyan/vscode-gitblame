@@ -1,12 +1,13 @@
 # Change Log
 
-## 2.3.0 (February xx, 2018) [WIP]
+## 2.3.0 (March xx, 2018) [WIP]
 
 * Feature: Atempting to auto detect if you use a known git web interface [#15](https://github.com/Sertion/vscode-gitblame/issues/15) (Thanks to [@Fidge123](https://github.com/Fidge123), [@sabrehagen](https://github.com/sabrehagen), [@henvic](https://github.com/henvic), and [@neerolyte](https://github.com/neerolyte))
 * Fix: Merging `GitBlame` and `GitBlameController` to `GitBlame`
 * Fix: Renaming `GitBlameFile*` to `GitFile*`
 * Fix: Rewrote all the tests
 * Fix: Updating dependencies
+* Fix: Updating preview video/image
 * Enhancment: Prettifying with [Prettier](https://prettier.io/)
 
 ## 2.2.0 (September 07, 2017)
