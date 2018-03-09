@@ -4,7 +4,8 @@ import { execute } from "../src/util/execcommand";
 
 suite("Execute Command", () => {
     test("Simple command", async () => {
-        const commandResult = await execute("node", ["--version"]);
+        const command = process.platform === "win32" ? "cd" : "pwd";
+        const commandResult = await execute(command, []);
 
         assert.ok(commandResult);
     });
