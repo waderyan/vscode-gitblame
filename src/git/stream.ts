@@ -29,7 +29,7 @@ export class GitBlameStream extends EventEmitter {
                 cwd: workTree,
             };
 
-            ErrorHandler.getInstance().logCommand(
+            ErrorHandler.logCommand(
                 `${gitCommand} ${args.join(" ")}`,
             );
 

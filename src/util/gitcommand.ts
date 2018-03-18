@@ -18,7 +18,7 @@ export function getGitCommand(): Promise<string> {
 
         access(commandPath, FSConstant.X_OK, (err) => {
             if (err) {
-                ErrorHandler.getInstance().logError(
+                ErrorHandler.logError(
                     new Error(
                         `Can not execute "${
                             commandPath

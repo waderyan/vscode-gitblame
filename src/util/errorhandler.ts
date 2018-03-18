@@ -11,6 +11,28 @@ enum LogCategory {
 }
 
 export class ErrorHandler {
+    public static logInfo(message: string) {
+        ErrorHandler.getInstance().writeToLog(LogCategory.Info, message);
+    }
+
+    public static logCommand(message: string): void {
+        ErrorHandler.getInstance().writeToLog(LogCategory.Command, message);
+    }
+
+    public static logError(error: Error): void {
+        ErrorHandler.getInstance().writeToLog(
+            LogCategory.Error,
+            error.toString(),
+        );
+    }
+
+    public static logCritical(error: Error, message: string): void {
+        ErrorHandler.getInstance().writeToLog(
+            LogCategory.Critical,
+            error.toString(),
+        );
+        ErrorHandler.getInstance().showErrorMessage(message);
+    }
 
     public static getInstance(): ErrorHandler {
         if (!ErrorHandler.instance) {
@@ -44,23 +66,6 @@ export class ErrorHandler {
 
     private constructor() {
         this.outputChannel = window.createOutputChannel("Extension: gitblame");
-    }
-
-    public logInfo(message: string) {
-        this.writeToLog(LogCategory.Info, message);
-    }
-
-    public logCommand(message: string): void {
-        this.writeToLog(LogCategory.Command, message);
-    }
-
-    public logError(error: Error): void {
-        this.writeToLog(LogCategory.Error, error.toString());
-    }
-
-    public logCritical(error: Error, message: string): void {
-        this.writeToLog(LogCategory.Critical, error.toString());
-        this.showErrorMessage(message);
     }
 
     public dispose() {

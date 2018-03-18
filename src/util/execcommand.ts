@@ -8,14 +8,14 @@ export function execute(
     options: ExecOptions = {},
 ): Promise<string> {
     return new Promise((resolve, reject) => {
-        ErrorHandler.getInstance().logCommand(`${command} ${args.join(" ")}`);
+        ErrorHandler.logCommand(`${command} ${args.join(" ")}`);
         execFile(
             command,
             args,
             options,
             (error, stdout, stderr) => {
                 if (error) {
-                    ErrorHandler.getInstance().logError(new Error(stderr));
+                    ErrorHandler.logError(new Error(stderr));
                     resolve("");
                 } else {
                     resolve(stdout);

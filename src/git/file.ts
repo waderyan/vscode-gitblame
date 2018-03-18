@@ -25,7 +25,7 @@ export class GitFile {
             );
 
             if (!isOpen) {
-                ErrorHandler.getInstance().logInfo(
+                ErrorHandler.logInfo(
                     `Clearing the file "${
                         this.fileName.fsPath
                     }" from the internal cache`,

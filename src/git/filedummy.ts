@@ -5,7 +5,7 @@ export class GitFileDummy extends GitFile {
     constructor(fileName: string, disposeCallback: () => void) {
         super(fileName, disposeCallback);
         this.startCacheInterval();
-        ErrorHandler.getInstance().logInfo(
+        ErrorHandler.logInfo(
             `Will not try to blame file "${
                 this.fileName.fsPath
             }" as it is outside of the current workspace`,

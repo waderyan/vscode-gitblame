@@ -140,7 +140,7 @@ export class GitFilePhysical extends GitFile {
         } else {
             StatusBarView.getInstance().stopProgress();
             this.startCacheInterval();
-            ErrorHandler.getInstance().logInfo(
+            ErrorHandler.logInfo(
                 `File "${
                     this.fileName.fsPath
                 }" is not a decendant of a git repository`,
@@ -179,10 +179,10 @@ export class GitFilePhysical extends GitFile {
             this.startCacheInterval();
 
             if (err) {
-                ErrorHandler.getInstance().logError(err);
+                ErrorHandler.logError(err);
                 resolve(GitBlame.blankBlameInfo());
             } else {
-                ErrorHandler.getInstance().logInfo(
+                ErrorHandler.logInfo(
                     `Blamed file "${this.fileName.fsPath}" and found ${
                         Object.keys(blameInfo.commits).length
                     } commits`,
