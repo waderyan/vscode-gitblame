@@ -1,9 +1,9 @@
 import { Uri, window, workspace } from "vscode";
 
-import { TIME_CACHE_LIFETIME } from "../constants";
-import { IGitBlameInfo } from "../interfaces";
-import { ErrorHandler } from "../util/errorhandler";
-import { GitBlame } from "./blame";
+import { TIME_CACHE_LIFETIME } from "@/constants";
+import { IGitBlameInfo } from "@/interfaces";
+import { GitBlame } from "git/blame";
+import { ErrorHandler } from "util/errorhandler";
 
 export class GitFile {
     public fileName: Uri;

@@ -1,10 +1,10 @@
 import { StatusBarAlignment, StatusBarItem, window } from "vscode";
 
-import { GitBlame } from "./git/blame";
-import { IGitCommitInfo } from "./interfaces";
-import { Properties, Property } from "./util/property";
-import { Spinner } from "./util/spinner";
-import { TextDecorator } from "./util/textdecorator";
+import { IGitCommitInfo } from "@/interfaces";
+import { GitBlame } from "git/blame";
+import { Properties, Property } from "util/property";
+import { Spinner } from "util/spinner";
+import { TextDecorator } from "util/textdecorator";
 
 export class StatusBarView {
     public static getInstance(): StatusBarView {

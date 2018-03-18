@@ -9,16 +9,16 @@ import {
     workspace,
 } from "vscode";
 
-import { HASH_NO_COMMIT_GIT, TITLE_VIEW_ONLINE } from "../constants";
-import { IGitBlameInfo, IGitCommitInfo } from "../interfaces";
-import { ActionableMessageItem } from "../util/actionablemessageitem";
-import { isActiveEditorValid } from "../util/editorvalidator";
-import { ErrorHandler } from "../util/errorhandler";
-import { Properties, Property } from "../util/property";
-import { TextDecorator } from "../util/textdecorator";
-import { StatusBarView } from "../view";
-import { GitFile } from "./file";
-import { GitFileFactory } from "./filefactory";
+import { HASH_NO_COMMIT_GIT, TITLE_VIEW_ONLINE } from "@/constants";
+import { IGitBlameInfo, IGitCommitInfo } from "@/interfaces";
+import { StatusBarView } from "@/view";
+import { GitFile } from "git/file";
+import { GitFileFactory } from "git/filefactory";
+import { ActionableMessageItem } from "util/actionablemessageitem";
+import { isActiveEditorValid } from "util/editorvalidator";
+import { ErrorHandler } from "util/errorhandler";
+import { Properties, Property } from "util/property";
+import { TextDecorator } from "util/textdecorator";
 
 export class GitBlame {
     public static blankBlameInfo(): IGitBlameInfo {
@@ -156,12 +156,19 @@ export class GitBlame {
 
         const actionedItem = await window.showInformationMessage(
             message,
-            ...extraActions,
+            ...(await extraActions),
         );
 
         if (actionedItem) {
             actionedItem.takeAction();
         }
+    }
+
+    public defaultWebPath(url: string, hash: string): string {
+        return url.replace(
+            /^(git@|https:\/\/)([^:\/]+)[:\/](.*)\.git$/,
+            `https://$2/$3/commit/${ hash }`,
+        );
     }
 
     public dispose(): void {
@@ -182,9 +189,9 @@ export class GitBlame {
         );
     }
 
-    private generateMessageActions(
+    private async generateMessageActions(
         commitInfo: IGitCommitInfo,
-    ): ActionableMessageItem[] {
+    ): Promise<ActionableMessageItem[]> {
         const commitToolUrl = this.getToolUrl(commitInfo);
         const extraActions: ActionableMessageItem[] = [];
 
@@ -281,7 +288,7 @@ export class GitBlame {
         }
     }
 
-    private generateDisposeFunction(fileName) {
+    private generateDisposeFunction(fileName): () => void {
         return () => {
             delete this.files[fileName];
         };

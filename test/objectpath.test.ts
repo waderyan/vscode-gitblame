@@ -1,6 +1,6 @@
 import * as assert from "assert";
 
-import { walkObject } from "../src/util/objectpath";
+import { walkObject } from "util/objectpath";
 
 suite("Object Walker", () => {
     test("Object Walker", () => {

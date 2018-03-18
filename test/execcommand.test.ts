@@ -1,6 +1,6 @@
 import * as assert from "assert";
 
-import { execute } from "../src/util/execcommand";
+import { execute } from "util/execcommand";
 
 suite("Execute Command", () => {
     test("Simple command", async () => {

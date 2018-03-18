@@ -5,12 +5,18 @@
         "outDir": "out",
         "lib": [
             "es2016",
-            "es2017"
+            "es2017",
         ],
         "sourceMap": true,
-        "rootDir": "."
+        "rootDir": ".",
+        "baseUrl": "src",
+        "paths": {
+            "util/*": [ "utilities/*" ],
+            "git/*": [ "git/*" ],
+            "@/*": [ "*" ],
+        }
     },
     "exclude": [
-        "node_modules"
-    ]
+        "node_modules",
+    ],
 }

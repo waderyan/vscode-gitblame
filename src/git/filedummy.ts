@@ -1,5 +1,5 @@
-import { ErrorHandler } from "../util/errorhandler";
-import { GitFile } from "./file";
+import { GitFile } from "git/file";
+import { ErrorHandler } from "util/errorhandler";
 
 export class GitFileDummy extends GitFile {
     constructor(fileName: string, disposeCallback: () => void) {

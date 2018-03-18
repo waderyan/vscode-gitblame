@@ -1,6 +1,6 @@
 import * as assert from "assert";
 
-import { TextDecorator } from "../src/util/textdecorator";
+import { TextDecorator } from "util/textdecorator";
 
 // Defines a Mocha test suite to group tests of similar kind together
 suite("Date Calculations", () => {
@@ -154,7 +154,7 @@ suite("Token Parser", () => {
     test("Unicode string", () => {
         assert.equal(
             TextDecorator.parseTokens("${ok,💯}", {
-                ok: (value) => "👌" + value + "👌",
+                ok: (value) => `👌${ value }👌`,
             }),
             "👌💯👌",
         );

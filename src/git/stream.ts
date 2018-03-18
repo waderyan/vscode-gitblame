@@ -3,11 +3,11 @@ import { EventEmitter } from "events";
 
 import { Uri } from "vscode";
 
-import { IGitCommitAuthor, IGitCommitInfo } from "../interfaces";
-import { ErrorHandler } from "../util/errorhandler";
-import { getGitCommand } from "../util/gitcommand";
-import { Properties, Property } from "../util/property";
-import { GitBlame } from "./blame";
+import { IGitCommitAuthor, IGitCommitInfo } from "@/interfaces";
+import { GitBlame } from "git/blame";
+import { ErrorHandler } from "util/errorhandler";
+import { getGitCommand } from "util/gitcommand";
+import { Properties, Property } from "util/property";
 
 export class GitBlameStream extends EventEmitter {
     private static readonly HASH_PATTERN: RegExp = /[a-z0-9]{40}/;

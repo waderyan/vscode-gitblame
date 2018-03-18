@@ -2,7 +2,7 @@
 
 ## 2.3.0 (March xx, 2018) [WIP]
 
-* Feature: Atempting to auto detect if you use a known git web interface [#15](https://github.com/Sertion/vscode-gitblame/issues/15) (Thanks to [@Fidge123](https://github.com/Fidge123), [@sabrehagen](https://github.com/sabrehagen), [@henvic](https://github.com/henvic), and [@neerolyte](https://github.com/neerolyte))
+* Feature: Atempting to auto detect if you use a known git web interface [#15](https://github.com/Sertion/vscode-gitblame/issues/15) (Thanks to [@Fidge123](https://github.com/Fidge123), [@sabrehagen](https://github.com/sabrehagen), [@henvic](https://github.com/henvic), and an extra thanks to [@neerolyte](https://github.com/neerolyte))
 * Feature: Added `gitblame.statusBarPositionPriority` for moving the status bar view [#25](https://github.com/Sertion/vscode-gitblame/issues/25) (Thanks to [@jvoigt](https://github.com/jvoigt))
 * Fix: Merging `GitBlame` and `GitBlameController` to `GitBlame`
 * Fix: Renaming `GitBlameFile*` to `GitFile*`

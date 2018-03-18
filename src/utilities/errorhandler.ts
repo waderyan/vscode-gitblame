@@ -1,7 +1,7 @@
 import { OutputChannel, window } from "vscode";
 
-import { TITLE_SHOW_LOG } from "../constants";
-import { Properties, Property } from "./property";
+import { TITLE_SHOW_LOG } from "@/constants";
+import { Properties, Property } from "util/property";
 
 enum LogCategory {
     Info = "info",

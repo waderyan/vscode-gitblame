@@ -2,15 +2,15 @@ import { dirname, join, normalize, relative } from "path";
 
 import { FileSystemWatcher, Uri, workspace } from "vscode";
 
-import { FS_EVENT_TYPE_CHANGE, FS_EVENT_TYPE_REMOVE } from "../constants";
-import { IGitBlameInfo, IGitCommitInfo } from "../interfaces";
-import { ErrorHandler } from "../util/errorhandler";
-import { execute } from "../util/execcommand";
-import { getGitCommand } from "../util/gitcommand";
-import { StatusBarView } from "../view";
-import { GitBlame } from "./blame";
-import { GitFile } from "./file";
-import { GitBlameStream } from "./stream";
+import { FS_EVENT_TYPE_CHANGE, FS_EVENT_TYPE_REMOVE } from "@/constants";
+import { IGitBlameInfo, IGitCommitInfo } from "@/interfaces";
+import { StatusBarView } from "@/view";
+import { GitBlame } from "git/blame";
+import { GitFile } from "git/file";
+import { GitBlameStream } from "git/stream";
+import { ErrorHandler } from "util/errorhandler";
+import { execute } from "util/execcommand";
+import { getGitCommand } from "util/gitcommand";
 
 export class GitFilePhysical extends GitFile {
     private blameInfoPromise: Promise<IGitBlameInfo>;
@@ -125,7 +125,10 @@ export class GitFilePhysical extends GitFile {
                         "commit",
                         this.gitAddCommit(blameInfo),
                     );
-                    this.blameProcess.on("line", this.gitAddLine(blameInfo));
+                    this.blameProcess.on(
+                        "line",
+                        this.gitAddLine(blameInfo),
+                    );
                     this.blameProcess.on(
                         "end",
                         this.gitStreamOver(
@@ -183,7 +186,9 @@ export class GitFilePhysical extends GitFile {
                 resolve(GitBlame.blankBlameInfo());
             } else {
                 ErrorHandler.logInfo(
-                    `Blamed file "${this.fileName.fsPath}" and found ${
+                    `Blamed file "${
+                        this.fileName.fsPath
+                    }" and found ${
                         Object.keys(blameInfo.commits).length
                     } commits`,
                 );
