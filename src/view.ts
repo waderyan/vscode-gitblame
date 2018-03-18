@@ -2,6 +2,7 @@ import { StatusBarAlignment, StatusBarItem, window } from "vscode";
 
 import { GitBlame } from "./git/blame";
 import { IGitCommitInfo } from "./interfaces";
+import { Properties, Property } from "./util/property";
 import { Spinner } from "./util/spinner";
 import { TextDecorator } from "./util/textdecorator";
 
@@ -24,6 +25,7 @@ export class StatusBarView {
     private constructor() {
         this.statusBarItem = window.createStatusBarItem(
             StatusBarAlignment.Left,
+            Property.get(Properties.StatusBarPositionPriority),
         );
         this.spinner = new Spinner();
     }

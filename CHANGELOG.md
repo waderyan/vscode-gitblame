@@ -3,6 +3,7 @@
 ## 2.3.0 (March xx, 2018) [WIP]
 
 * Feature: Atempting to auto detect if you use a known git web interface [#15](https://github.com/Sertion/vscode-gitblame/issues/15) (Thanks to [@Fidge123](https://github.com/Fidge123), [@sabrehagen](https://github.com/sabrehagen), [@henvic](https://github.com/henvic), and [@neerolyte](https://github.com/neerolyte))
+* Feature: Added `gitblame.statusBarPositionPriority` for moving the status bar view [#25](https://github.com/Sertion/vscode-gitblame/issues/25) (Thanks to [@jvoigt](https://github.com/jvoigt))
 * Fix: Merging `GitBlame` and `GitBlameController` to `GitBlame`
 * Fix: Renaming `GitBlameFile*` to `GitFile*`
 * Fix: Rewrote all the tests
@@ -36,7 +37,7 @@
 This will be updating the major version as we are changing what the exposed command is called.
 
 * Fix: Change name of the command to `gitblame.quickInfo` (was `extension.blame`)
-* Fix: Updating the _Known issues_ link to the new issue tracker as all old issuer are resolved
+* Fix: Updating the _Known issues_ link to the new issue tracker as all old issues are resolved
 * Fix: Moved to TypeScript 2.4.1
 * Fix: Cleaning imports
 * Fix: Remove Q&A-section from vscode marketplace

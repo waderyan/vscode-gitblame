@@ -128,6 +128,10 @@
           "type": "string",
           "default": "Not Committed Yet",
           "description": "Customize the status bar message"
+        },
+        "gitblame.statusBarPositionPriority": {
+          "type": "number",
+          "description": "Priority where the status bar view should be placed"
         }
       }
     }

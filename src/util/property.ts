@@ -9,6 +9,7 @@ export enum Properties {
     ProgressSpinner = "progressSpinner",
     StatusBarMessageFormat = "statusBarMessageFormat",
     StatusBarMessageNoCommit = "statusBarMessageNoCommit",
+    StatusBarPositionPriority = "statusBarPositionPriority",
 }
 
 export class Property {
@@ -65,7 +66,9 @@ export class Property {
 
     private getProperties(): void {
         const properties = {
-            commitUrl: this.getPropertyFromConfiguration(Properties.CommitUrl),
+            commitUrl: this.getPropertyFromConfiguration(
+                Properties.CommitUrl,
+            ),
             ignoreWhitespace: this.getPropertyFromConfiguration(
                 Properties.IgnoreWhitespace,
             ),
@@ -75,7 +78,9 @@ export class Property {
             internalHashLength: this.getPropertyFromConfiguration(
                 Properties.InternalHashLength,
             ),
-            logLevel: this.getPropertyFromConfiguration(Properties.LogLevel),
+            logLevel: this.getPropertyFromConfiguration(
+                Properties.LogLevel,
+            ),
             progressSpinner: this.getPropertyFromConfiguration(
                 Properties.ProgressSpinner,
             ),
@@ -84,6 +89,9 @@ export class Property {
             ),
             statusBarMessageNoCommit: this.getPropertyFromConfiguration(
                 Properties.StatusBarMessageNoCommit,
+            ),
+            statusBarPositionPriority: this.getPropertyFromConfiguration(
+                Properties.StatusBarPositionPriority,
             ),
         };
 

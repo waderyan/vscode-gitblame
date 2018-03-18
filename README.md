@@ -51,6 +51,9 @@ See Git Blame information in the status bar for the currently selected line.
   - message in the status bar about the current line when no commit can be found
   - available tokens:
     - _No available tokens_
+- `gitblame.statusBarPositionPriority` (`number`)
+  - priority where the status bar view should be placed
+  - Higher value should be placed further to the left
 - `gitblame.progressSpinner` (`array` of `string`, default `["$(sync~spin)"]`)
   - an array of strings that will be displayed in sequence to denote progress while blaming files in larger repositories
   - supports [Octoicons](https://octicons.github.com/) with the `~spin` suffix for spin action
