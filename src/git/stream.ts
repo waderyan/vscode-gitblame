@@ -12,10 +12,10 @@ import { GitBlame } from "./blame";
 export class GitBlameStream extends EventEmitter {
     private static readonly HASH_PATTERN: RegExp = /[a-z0-9]{40}/;
 
-    private file: Uri;
-    private workTree: string;
+    private readonly file: Uri;
+    private readonly workTree: string;
     private process: ChildProcess;
-    private emittedCommits: { [hash: string]: true } = {};
+    private readonly emittedCommits: { [hash: string]: true } = {};
 
     constructor(file: Uri, workTree: string) {
         super();

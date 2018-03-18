@@ -40,7 +40,7 @@ export class ErrorHandler {
         return `${hour}:${minute}:${second}`;
     }
 
-    private outputChannel: OutputChannel;
+    private readonly outputChannel: OutputChannel;
 
     private constructor() {
         this.outputChannel = window.createOutputChannel("Extension: gitblame");

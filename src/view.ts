@@ -16,11 +16,11 @@ export class StatusBarView {
     }
 
     private static instance: StatusBarView;
-    private statusBarItem: StatusBarItem;
+    private readonly statusBarItem: StatusBarItem;
     private progressInterval: NodeJS.Timer;
-    private spinner: Spinner;
+    private readonly spinner: Spinner;
     private spinnerActive: boolean = false;
-    private prefix: string = "$(git-commit)";
+    private readonly prefix: string = "$(git-commit)";
 
     private constructor() {
         this.statusBarItem = window.createStatusBarItem(

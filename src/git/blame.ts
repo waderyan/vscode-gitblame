@@ -59,8 +59,8 @@ export class GitBlame {
     }
 
     private disposable: Disposable;
-    private statusBarView: StatusBarView;
-    private files: { [fileName: string]: GitFile } = {};
+    private readonly statusBarView: StatusBarView;
+    private readonly files: { [fileName: string]: GitFile } = {};
 
     constructor() {
         this.statusBarView = StatusBarView.getInstance();

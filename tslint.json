@@ -9,7 +9,7 @@
         "max-line-length": {
             "options": [80]
         },
-        "prefer-readonly": true,
+        "prefer-readonly": [true],
         "no-require-imports": true,
         "no-duplicate-imports": true
     },

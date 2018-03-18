@@ -14,7 +14,7 @@ import { GitBlameStream } from "./stream";
 
 export class GitFilePhysical extends GitFile {
     private blameInfoPromise: Promise<IGitBlameInfo>;
-    private fileSystemWatcher: FileSystemWatcher;
+    private readonly fileSystemWatcher: FileSystemWatcher;
     private workTreePromise: Promise<string>;
     private blameProcess: GitBlameStream;
 
