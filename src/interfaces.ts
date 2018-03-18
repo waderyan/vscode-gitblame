@@ -3,6 +3,7 @@ export interface IGitCommitAuthor {
     mail: string;
     timestamp: number;
     tz: string;
+    temporary?: true;
 }
 
 export interface IGitCommitInfo {

@@ -3,7 +3,11 @@ import * as moment from "moment";
 import { workspace } from "vscode";
 
 import { GitBlame } from "../git/blame";
-import { IGitCommitInfo, IInfoTokenHash, IInfoTokenNormalizedCommitInfo } from "../interfaces";
+import {
+    IGitCommitInfo,
+    IInfoTokenHash,
+    IInfoTokenNormalizedCommitInfo,
+} from "../interfaces";
 import { walkObject } from "./objectpath";
 import { Properties, Property } from "./property";
 
@@ -84,7 +88,9 @@ export class TextDecorator {
         );
     }
 
-    public static normalizeCommitInfoTokens(commitInfo: IGitCommitInfo): IInfoTokenNormalizedCommitInfo {
+    public static normalizeCommitInfoTokens(
+        commitInfo: IGitCommitInfo,
+    ): IInfoTokenNormalizedCommitInfo {
         const now = new Date();
         const authorTime = moment.unix(commitInfo.author.timestamp);
         const committerTime = moment.unix(commitInfo.committer.timestamp);
@@ -100,7 +106,8 @@ export class TextDecorator {
             committer: commitInfo.committer,
             time: {
                 ago: () => TextDecorator.toDateText(now, authorTime.toDate()),
-                c_ago: () => TextDecorator.toDateText(now, committerTime.toDate()),
+                c_ago: () =>
+                    TextDecorator.toDateText(now, committerTime.toDate()),
                 c_custom: (momentFormat) => committerTime.format(momentFormat),
                 c_from: () => committerTime.fromNow(),
                 custom: (momentFormat) => authorTime.format(momentFormat),

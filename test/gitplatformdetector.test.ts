@@ -1,6 +1,6 @@
-import assert = require("assert");
+import * as assert from "assert";
 // Nock is a library for mocking network requests
-import nock = require("nock");
+import * as nock from "nock";
 
 import { GitPlatformDetector } from "../src/util/gitplatformdetector";
 

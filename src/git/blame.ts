@@ -1,6 +1,13 @@
 import { isWebUri } from "valid-url";
 
-import { commands, Disposable, MessageItem, Uri, window, workspace } from "vscode";
+import {
+    commands,
+    Disposable,
+    MessageItem,
+    Uri,
+    window,
+    workspace,
+} from "vscode";
 
 import { HASH_NO_COMMIT_GIT, TITLE_VIEW_ONLINE } from "../constants";
 import { IGitBlameInfo, IGitCommitInfo } from "../interfaces";
@@ -147,7 +154,10 @@ export class GitBlame {
 
         this.updateView(commitInfo);
 
-        const actionedItem = await window.showInformationMessage(message, ...extraActions);
+        const actionedItem = await window.showInformationMessage(
+            message,
+            ...extraActions,
+        );
 
         if (actionedItem) {
             actionedItem.takeAction();
@@ -172,12 +182,16 @@ export class GitBlame {
         );
     }
 
-    private generateMessageActions(commitInfo: IGitCommitInfo): ActionableMessageItem[] {
+    private generateMessageActions(
+        commitInfo: IGitCommitInfo,
+    ): ActionableMessageItem[] {
         const commitToolUrl = this.getToolUrl(commitInfo);
         const extraActions: ActionableMessageItem[] = [];
 
         if (commitToolUrl) {
-            const viewOnlineAction = new ActionableMessageItem(TITLE_VIEW_ONLINE);
+            const viewOnlineAction = new ActionableMessageItem(
+                TITLE_VIEW_ONLINE,
+            );
 
             viewOnlineAction.setAction(() => {
                 commands.executeCommand("vscode.open", commitToolUrl);
@@ -217,7 +231,7 @@ export class GitBlame {
             return Uri.parse(parsedUrl);
         } else if (parsedUrl) {
             window.showErrorMessage(
-                "Malformed URL in setting gitblame.commitUrl. Must be a valid web url.",
+                "Malformed URL in gitblame.commitUrl. Must be a valid web url.",
             );
         }
     }

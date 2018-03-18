@@ -10,6 +10,8 @@ import { Properties, Property } from "../util/property";
 import { GitBlame } from "./blame";
 
 export class GitBlameStream extends EventEmitter {
+    private static readonly HASH_PATTERN: RegExp = /[a-z0-9]{40}/;
+
     private file: Uri;
     private workTree: string;
     private process: ChildProcess;
@@ -78,19 +80,25 @@ export class GitBlameStream extends EventEmitter {
 
     private data(dataChunk: string): void {
         const lines = dataChunk.split("\n");
-        let commitInfo = this.getCommitTemplate();
+        let commitInfo = GitBlame.blankCommitInfo();
+
+        commitInfo.filename = this.file.fsPath.replace(this.workTree, "");
 
         lines.forEach((line, index) => {
             if (line && line !== "boundary") {
                 const [all, key, value] = Array.from(line.match(/(.*?) (.*)/));
                 if (
-                    /[a-z0-9]{40}/.test(key) &&
+                    GitBlameStream.HASH_PATTERN.test(key) &&
                     lines.hasOwnProperty(index + 1) &&
                     /^(author|committer)/.test(lines[index + 1]) &&
                     commitInfo.hash !== ""
                 ) {
                     this.commitInfoToCommitEmit(commitInfo);
-                    commitInfo = this.getCommitTemplate();
+                    commitInfo = GitBlame.blankCommitInfo();
+                    commitInfo.filename = this.file.fsPath.replace(
+                        this.workTree,
+                        "",
+                    );
                 }
                 this.processLine(key, value, commitInfo);
             }
@@ -104,25 +112,32 @@ export class GitBlameStream extends EventEmitter {
         value: string,
         commitInfo: IGitCommitInfo,
     ): void {
+        const [keyPrefix, keySuffix] = key.split(" ");
+        let owner: IGitCommitAuthor = {
+            mail: "",
+            name: "",
+            temporary: true,
+            timestamp: 0,
+            tz: "",
+        };
+
         if (key === "author") {
-            commitInfo.author.name = value;
-        } else if (key === "author-mail") {
-            commitInfo.author.mail = value;
-        } else if (key === "author-time") {
-            commitInfo.author.timestamp = parseInt(value, 10);
-        } else if (key === "author-tz") {
-            commitInfo.author.tz = value;
+            owner = commitInfo.author;
         } else if (key === "committer") {
-            commitInfo.committer.name = value;
-        } else if (key === "committer-mail") {
-            commitInfo.committer.mail = value;
-        } else if (key === "committer-time") {
-            commitInfo.committer.timestamp = parseInt(value, 10);
-        } else if (key === "committer-tz") {
-            commitInfo.committer.tz = value;
+            owner = commitInfo.committer;
+        }
+
+        if (!owner.temporary && !keySuffix) {
+            owner.name = value;
+        } else if (keySuffix === "mail") {
+            owner.mail = value;
+        } else if (keySuffix === "time") {
+            owner.timestamp = parseInt(value, 10);
+        } else if (keySuffix === "tz") {
+            owner.tz = value;
         } else if (key === "summary") {
             commitInfo.summary = value;
-        } else if (key.length === 40) {
+        } else if (GitBlameStream.HASH_PATTERN.test(key)) {
             commitInfo.hash = key;
 
             const hash = key;
@@ -151,25 +166,5 @@ export class GitBlameStream extends EventEmitter {
             this.emittedCommits[internalHash] = true;
             this.emit("commit", internalHash, commitInfo);
         }
-    }
-
-    private getCommitTemplate(): IGitCommitInfo {
-        return {
-            author: {
-                mail: "",
-                name: "",
-                timestamp: 0,
-                tz: "",
-            },
-            committer: {
-                mail: "",
-                name: "",
-                timestamp: 0,
-                tz: "",
-            },
-            filename: this.file.fsPath.replace(this.workTree, ""),
-            hash: "",
-            summary: "",
-        };
     }
 }

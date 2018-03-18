@@ -8,15 +8,13 @@ import { ErrorHandler } from "./errorhandler";
 
 export function getGitCommand(): Promise<string> {
     const gitConfig = workspace.getConfiguration("git");
-    const command =
-        gitConfig.get("path", GIT_COMMAND_IN_PATH) as string ||
-        GIT_COMMAND_IN_PATH;
+    const pathCommand = gitConfig.get("path") as string;
     const promise = new Promise<string>((resolve, reject) => {
-        if (command === GIT_COMMAND_IN_PATH) {
-            resolve(command);
+        if (!pathCommand) {
+            resolve(GIT_COMMAND_IN_PATH);
         }
 
-        const commandPath = normalize(command);
+        const commandPath = normalize(pathCommand);
 
         access(commandPath, FSConstant.X_OK, (err) => {
             if (err) {

@@ -1,4 +1,4 @@
-import assert = require("assert");
+import * as assert from "assert";
 
 import { TextDecorator } from "../src/util/textdecorator";
 
@@ -79,7 +79,10 @@ suite("Date Calculations", () => {
 
 suite("Token Parser", () => {
     test("No tokens", () => {
-        assert.equal(TextDecorator.parseTokens("No ${tokens}", {}), "No tokens");
+        assert.equal(
+            TextDecorator.parseTokens("No ${tokens}", {}),
+            "No tokens",
+        );
     });
 
     test("Simple example", () => {
