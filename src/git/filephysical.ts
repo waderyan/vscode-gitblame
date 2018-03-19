@@ -15,6 +15,7 @@ import { getGitCommand } from "util/gitcommand";
 export class GitFilePhysical extends GitFile {
     private blameInfoPromise: Promise<IGitBlameInfo>;
     private readonly fileSystemWatcher: FileSystemWatcher;
+    private workTree: string;
     private workTreePromise: Promise<string>;
     private blameProcess: GitBlameStream;
 
@@ -22,25 +23,6 @@ export class GitFilePhysical extends GitFile {
         super(fileName, disposeCallback);
 
         this.fileSystemWatcher = this.setupWatcher();
-    }
-
-    public async getGitWorkTree(): Promise<string> {
-        if (this.workTree) {
-            return this.workTree;
-        }
-
-        if (!this.workTreePromise) {
-            this.workTreePromise = this.findWorkTree();
-        }
-
-        this.workTree = await this.workTreePromise;
-
-        return this.workTree;
-    }
-
-    public changed(): void {
-        super.changed();
-        delete this.blameInfoPromise;
     }
 
     public async blame(): Promise<IGitBlameInfo> {
@@ -79,6 +61,25 @@ export class GitFilePhysical extends GitFile {
         });
 
         return fsWatcher;
+    }
+
+    private changed(): void {
+        delete this.workTree;
+        delete this.blameInfoPromise;
+    }
+
+    private async getGitWorkTree(): Promise<string> {
+        if (this.workTree) {
+            return this.workTree;
+        }
+
+        if (!this.workTreePromise) {
+            this.workTreePromise = this.findWorkTree();
+        }
+
+        this.workTree = await this.workTreePromise;
+
+        return this.workTree;
     }
 
     private async findWorkTree(): Promise<string> {

@@ -9,7 +9,7 @@
 * Fix: Rewrote all the tests
 * Fix: Updating dependencies
 * Fix: Updating preview video/image
-* Enhancment: Prettifying with [Prettier](https://prettier.io/)
+* Enhancement: Prettifying with [Prettier](https://prettier.io/)
 * Enhancement: Tslintifying with [TSLint](https://palantir.github.io/tslint/)
 
 ## 2.2.0 (September 07, 2017)

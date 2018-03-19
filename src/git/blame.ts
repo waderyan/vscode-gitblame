@@ -50,10 +50,6 @@ export class GitBlame {
         return commit.hash === HASH_NO_COMMIT_GIT;
     }
 
-    public static isGeneratedCommit(commit: IGitCommitInfo): boolean {
-        return commit.generated;
-    }
-
     public static internalHash(hash: string): string {
         return hash.substr(0, Property.get(Properties.InternalHashLength));
     }
@@ -69,62 +65,6 @@ export class GitBlame {
         this.setupListeners();
 
         this.init();
-    }
-
-    public setupDisposables(): void {
-        const disposables: Disposable[] = [];
-
-        // The blamer does not use the ErrorHandler but
-        // is responsible for keeping it disposable
-        const errorHandler = ErrorHandler.getInstance();
-
-        const propertyHolder = Property.getInstance();
-
-        this.disposable = Disposable.from(
-            this.statusBarView,
-            errorHandler,
-            propertyHolder,
-        );
-    }
-
-    public setupListeners(): void {
-        const disposables: Disposable[] = [];
-
-        window.onDidChangeActiveTextEditor(
-            this.onTextEditorMove,
-            this,
-            disposables,
-        );
-        window.onDidChangeTextEditorSelection(
-            this.onTextEditorMove,
-            this,
-            disposables,
-        );
-        workspace.onDidSaveTextDocument(
-            this.onTextEditorMove,
-            this,
-            disposables,
-        );
-
-        this.disposable = Disposable.from(this.disposable, ...disposables);
-    }
-
-    public init(): void {
-        this.onTextEditorMove();
-    }
-
-    public async onTextEditorMove(): Promise<void> {
-        const beforeBlameOpenFile = this.getCurrentActiveFileName();
-        const beforeBlameLineNumber = this.getCurrentActiveLineNumber();
-        const commitInfo = await this.getCurrentLineInfo();
-
-        // Only update if we haven"t moved since we started blaming
-        if (
-            beforeBlameOpenFile === this.getCurrentActiveFileName() &&
-            beforeBlameLineNumber === this.getCurrentActiveLineNumber()
-        ) {
-            this.updateView(commitInfo);
-        }
     }
 
     public async blameLink(): Promise<void> {
@@ -176,6 +116,62 @@ export class GitBlame {
         this.disposable.dispose();
     }
 
+    private setupDisposables(): void {
+        const disposables: Disposable[] = [];
+
+        // The blamer does not use the ErrorHandler but
+        // is responsible for keeping it disposable
+        const errorHandler = ErrorHandler.getInstance();
+
+        const propertyHolder = Property.getInstance();
+
+        this.disposable = Disposable.from(
+            this.statusBarView,
+            errorHandler,
+            propertyHolder,
+        );
+    }
+
+    private setupListeners(): void {
+        const disposables: Disposable[] = [];
+
+        window.onDidChangeActiveTextEditor(
+            this.onTextEditorMove,
+            this,
+            disposables,
+        );
+        window.onDidChangeTextEditorSelection(
+            this.onTextEditorMove,
+            this,
+            disposables,
+        );
+        workspace.onDidSaveTextDocument(
+            this.onTextEditorMove,
+            this,
+            disposables,
+        );
+
+        this.disposable = Disposable.from(this.disposable, ...disposables);
+    }
+
+    private init(): void {
+        this.onTextEditorMove();
+    }
+
+    private async onTextEditorMove(): Promise<void> {
+        const beforeBlameOpenFile = this.getCurrentActiveFileName();
+        const beforeBlameLineNumber = this.getCurrentActiveLineNumber();
+        const commitInfo = await this.getCurrentLineInfo();
+
+        // Only update if we haven't moved since we started blaming
+        if (
+            beforeBlameOpenFile === this.getCurrentActiveFileName() &&
+            beforeBlameLineNumber === this.getCurrentActiveLineNumber()
+        ) {
+            this.updateView(commitInfo);
+        }
+    }
+
     private getCurrentActiveFileName(): string {
         return (
             window.activeTextEditor && window.activeTextEditor.document.fileName
@@ -213,7 +209,7 @@ export class GitBlame {
     private async getCommitInfo(): Promise<IGitCommitInfo> {
         const commitInfo = await this.getCurrentLineInfo();
 
-        if (GitBlame.isGeneratedCommit(commitInfo)) {
+        if (commitInfo.generated) {
             window.showErrorMessage(
                 "The current file and line can not be blamed.",
             );
@@ -244,7 +240,7 @@ export class GitBlame {
     }
 
     private updateView(commitInfo: IGitCommitInfo): void {
-        if (GitBlame.isGeneratedCommit(commitInfo)) {
+        if (commitInfo.generated) {
             this.statusBarView.clear();
         } else {
             this.statusBarView.update(commitInfo);

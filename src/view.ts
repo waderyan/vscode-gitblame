@@ -30,15 +30,6 @@ export class StatusBarView {
         this.spinner = new Spinner();
     }
 
-    public setText(text: string, hasCommand: boolean = true): void {
-        this.statusBarItem.text = text ? `${this.prefix} ${text}` : this.prefix;
-        this.statusBarItem.tooltip = hasCommand
-            ? "git blame"
-            : "git blame - No info about the current line";
-        this.statusBarItem.command = hasCommand ? "gitblame.quickInfo" : "";
-        this.statusBarItem.show();
-    }
-
     public clear(): void {
         this.stopProgress();
         this.setText("", false);
@@ -47,7 +38,7 @@ export class StatusBarView {
     public update(commitInfo: IGitCommitInfo): void {
         this.stopProgress();
 
-        if (commitInfo && !GitBlame.isGeneratedCommit(commitInfo)) {
+        if (commitInfo && !commitInfo.generated) {
             const clickable = !GitBlame.isBlankCommit(commitInfo);
 
             this.setText(TextDecorator.toTextView(commitInfo), clickable);
@@ -82,6 +73,15 @@ export class StatusBarView {
     public dispose(): void {
         this.stopProgress();
         this.statusBarItem.dispose();
+    }
+
+    private setText(text: string, hasCommand: boolean = true): void {
+        this.statusBarItem.text = text ? `${this.prefix} ${text}` : this.prefix;
+        this.statusBarItem.tooltip = hasCommand
+            ? "git blame"
+            : "git blame - No info about the current line";
+        this.statusBarItem.command = hasCommand ? "gitblame.quickInfo" : "";
+        this.statusBarItem.show();
     }
 
     private setSpinner(): void {

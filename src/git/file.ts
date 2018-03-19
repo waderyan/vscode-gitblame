@@ -6,8 +6,7 @@ import { GitBlame } from "git/blame";
 import { ErrorHandler } from "util/errorhandler";
 
 export class GitFile {
-    public fileName: Uri;
-    public workTree: string;
+    public readonly fileName: Uri;
     public disposeCallback: () => void;
 
     private cacheClearInterval: NodeJS.Timer;
@@ -33,14 +32,6 @@ export class GitFile {
                 this.dispose();
             }
         }, TIME_CACHE_LIFETIME);
-    }
-
-    public async getGitWorkTree(): Promise<string> {
-        return this.workTree;
-    }
-
-    public changed(): void {
-        delete this.workTree;
     }
 
     public async blame(): Promise<IGitBlameInfo> {
