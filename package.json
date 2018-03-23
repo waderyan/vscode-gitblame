@@ -2,7 +2,7 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "publisher": "waderyan",
   "engines": {
     "vscode": "^1.16.0"
@@ -39,13 +39,13 @@
   },
   "devDependencies": {
     "@types/mocha": "^2.2.48",
-    "@types/node": "^9.4.6",
-    "mocha": "^5.0.1",
+    "@types/node": "^9.6.0",
+    "mocha": "^5.0.5",
     "nock": "^9.2.3",
     "prettify": "^0.1.7",
     "tslint": "^5.9.1",
     "typescript": "^2.7.2",
-    "vscode": "^1.1.10"
+    "vscode": "^1.1.14"
   },
   "homepage": "https://github.com/Sertion/vscode-gitblame/blob/master/README.md",
   "bugs": {
@@ -73,8 +73,8 @@
       "properties": {
         "gitblame.commitUrl": {
           "type": "string",
-          "default": "",
-          "description": "The link to an online tool to view a commit (use ${hash} for the commit hash)"
+          "default": "guess",
+          "description": "The link to an online tool to view a commit (use ${hash} for the commit hash). \"no\" will disable this feature."
         },
         "gitblame.ignoreWhitespace": {
           "type": "boolean",

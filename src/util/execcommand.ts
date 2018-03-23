@@ -1,6 +1,6 @@
 import { execFile, ExecOptions } from "child_process";
 
-import { ErrorHandler } from "util/errorhandler";
+import { ErrorHandler } from "./errorhandler";
 
 export function execute(
     command: string,

@@ -2,15 +2,15 @@ import { dirname, join, normalize, relative } from "path";
 
 import { FileSystemWatcher, Uri, workspace } from "vscode";
 
-import { FS_EVENT_TYPE_CHANGE, FS_EVENT_TYPE_REMOVE } from "@/constants";
-import { IGitBlameInfo, IGitCommitInfo } from "@/interfaces";
-import { StatusBarView } from "@/view";
-import { GitBlame } from "git/blame";
-import { GitFile } from "git/file";
-import { GitBlameStream } from "git/stream";
-import { ErrorHandler } from "util/errorhandler";
-import { execute } from "util/execcommand";
-import { getGitCommand } from "util/gitcommand";
+import { FS_EVENT_TYPE_CHANGE, FS_EVENT_TYPE_REMOVE } from "../constants";
+import { IGitBlameInfo, IGitCommitInfo } from "../interfaces";
+import { ErrorHandler } from "../util/errorhandler";
+import { execute } from "../util/execcommand";
+import { getGitCommand } from "../util/gitcommand";
+import { StatusBarView } from "../view";
+import { GitBlame } from "./blame";
+import { GitFile } from "./file";
+import { GitBlameStream } from "./stream";
 
 export class GitFilePhysical extends GitFile {
     private blameInfoPromise: Promise<IGitBlameInfo>;

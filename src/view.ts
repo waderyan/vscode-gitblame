@@ -1,10 +1,10 @@
 import { StatusBarAlignment, StatusBarItem, window } from "vscode";
 
-import { IGitCommitInfo } from "@/interfaces";
-import { GitBlame } from "git/blame";
-import { Properties, Property } from "util/property";
-import { Spinner } from "util/spinner";
-import { TextDecorator } from "util/textdecorator";
+import { GitBlame } from "./git/blame";
+import { IGitCommitInfo } from "./interfaces";
+import { Properties, Property } from "./util/property";
+import { Spinner } from "./util/spinner";
+import { TextDecorator } from "./util/textdecorator";
 
 export class StatusBarView {
     public static getInstance(): StatusBarView {
@@ -20,7 +20,6 @@ export class StatusBarView {
     private progressInterval: NodeJS.Timer;
     private readonly spinner: Spinner;
     private spinnerActive: boolean = false;
-    private readonly prefix: string = "$(git-commit)";
 
     private constructor() {
         this.statusBarItem = window.createStatusBarItem(
@@ -76,7 +75,9 @@ export class StatusBarView {
     }
 
     private setText(text: string, hasCommand: boolean = true): void {
-        this.statusBarItem.text = text ? `${this.prefix} ${text}` : this.prefix;
+        this.statusBarItem.text = text
+            ? `$(git-commit) ${text}`
+            : "$(git-commit)";
         this.statusBarItem.tooltip = hasCommand
             ? "git blame"
             : "git blame - No info about the current line";

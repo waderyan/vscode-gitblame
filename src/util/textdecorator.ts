@@ -2,14 +2,14 @@ import * as moment from "moment";
 
 import { workspace } from "vscode";
 
+import { GitBlame } from "../git/blame";
 import {
     IGitCommitInfo,
     IInfoTokenHash,
     IInfoTokenNormalizedCommitInfo,
-} from "@/interfaces";
-import { GitBlame } from "git/blame";
-import { walkObject } from "util/objectpath";
-import { Properties, Property } from "util/property";
+} from "../interfaces";
+import { walkObject } from "./objectpath";
+import { Properties, Property } from "./property";
 
 export class TextDecorator {
     public static toTextView(commit: IGitCommitInfo): string {

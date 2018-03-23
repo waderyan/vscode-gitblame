@@ -1,6 +1,6 @@
 import * as assert from "assert";
 
-import { TextDecorator } from "util/textdecorator";
+import { TextDecorator } from "../src/util/textdecorator";
 
 // Defines a Mocha test suite to group tests of similar kind together
 suite("Date Calculations", () => {

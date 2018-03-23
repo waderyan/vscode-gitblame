@@ -15,8 +15,13 @@ See Git Blame information in the status bar for the currently selected line.
 
 # Configuration
 
-- `gitblame.commitUrl` (`string`, default `""`)
+- `gitblame.commitUrl` (`string`, default `"guess"`)
   - url where you can see the commit by hash
+  - `"guess"` will try to guess the URL based on your remote origin
+    - Can only support servers that fulfill the following requirements:
+      - Url has https
+      - No auth or port required
+  - `"no"` will not guess and will not show a link
   - available tokens:
     - `${hash}` - the commit hash
   - _Example:_ `https://github.com/Sertion/vscode-gitblame/commit/${hash}`

@@ -1,5 +1,6 @@
-import { isWebUri } from "valid-url";
+import { parse } from "path";
 
+import { isWebUri } from "valid-url";
 import {
     commands,
     Disposable,
@@ -9,16 +10,18 @@ import {
     workspace,
 } from "vscode";
 
-import { HASH_NO_COMMIT_GIT, TITLE_VIEW_ONLINE } from "@/constants";
-import { IGitBlameInfo, IGitCommitInfo } from "@/interfaces";
-import { StatusBarView } from "@/view";
-import { GitFile } from "git/file";
-import { GitFileFactory } from "git/filefactory";
-import { ActionableMessageItem } from "util/actionablemessageitem";
-import { isActiveEditorValid } from "util/editorvalidator";
-import { ErrorHandler } from "util/errorhandler";
-import { Properties, Property } from "util/property";
-import { TextDecorator } from "util/textdecorator";
+import { HASH_NO_COMMIT_GIT, TITLE_VIEW_ONLINE } from "../constants";
+import { IGitBlameInfo, IGitCommitAuthor, IGitCommitInfo } from "../interfaces";
+import { ActionableMessageItem } from "../util/actionablemessageitem";
+import { isActiveEditorValid } from "../util/editorvalidator";
+import { ErrorHandler } from "../util/errorhandler";
+import { execute } from "../util/execcommand";
+import { getGitCommand } from "../util/gitcommand";
+import { Properties, Property } from "../util/property";
+import { TextDecorator } from "../util/textdecorator";
+import { StatusBarView } from "../view";
+import { GitFile } from "./file";
+import { GitFileFactory } from "./filefactory";
 
 export class GitBlame {
     public static blankBlameInfo(): IGitBlameInfo {
@@ -28,22 +31,28 @@ export class GitBlame {
         };
     }
 
-    public static blankCommitInfo(): IGitCommitInfo {
+    public static blankCommitInfo(real: boolean = false): IGitCommitInfo {
         const emptyAuthor = {
             mail: "",
             name: "",
             timestamp: 0,
             tz: "",
-        };
+        } as IGitCommitAuthor;
 
-        return {
+        const commitInfo = {
             author: emptyAuthor,
             committer: emptyAuthor,
             filename: "",
             generated: true,
             hash: HASH_NO_COMMIT_GIT,
             summary: "",
-        };
+        } as IGitCommitInfo;
+
+        if (real) {
+            delete commitInfo.generated;
+        }
+
+        return commitInfo;
     }
 
     public static isBlankCommit(commit: IGitCommitInfo): boolean {
@@ -107,7 +116,7 @@ export class GitBlame {
     public defaultWebPath(url: string, hash: string): string {
         return url.replace(
             /^(git@|https:\/\/)([^:\/]+)[:\/](.*)\.git$/,
-            `https://$2/$3/commit/${ hash }`,
+            `https://$2/$3/commit/${hash}`,
         );
     }
 
@@ -188,7 +197,7 @@ export class GitBlame {
     private async generateMessageActions(
         commitInfo: IGitCommitInfo,
     ): Promise<ActionableMessageItem[]> {
-        const commitToolUrl = this.getToolUrl(commitInfo);
+        const commitToolUrl = await this.getToolUrl(commitInfo);
         const extraActions: ActionableMessageItem[] = [];
 
         if (commitToolUrl) {
@@ -218,13 +227,13 @@ export class GitBlame {
         return commitInfo;
     }
 
-    private getToolUrl(commitInfo: IGitCommitInfo): Uri {
+    private async getToolUrl(commitInfo: IGitCommitInfo): Promise<Uri> {
         if (GitBlame.isBlankCommit(commitInfo)) {
             return;
         }
 
         const parsedUrl = TextDecorator.parseTokens(
-            Property.get(Properties.CommitUrl),
+            Property.get(Properties.CommitUrl, "guess"),
             {
                 hash: commitInfo.hash,
             },
@@ -232,9 +241,18 @@ export class GitBlame {
 
         if (isWebUri(parsedUrl)) {
             return Uri.parse(parsedUrl);
-        } else if (parsedUrl) {
+        } else if (parsedUrl === "guess") {
+            const origin = await this.getOriginOfActiveFile();
+            if (origin) {
+                const uri = this.defaultWebPath(origin, commitInfo.hash);
+                return Uri.parse(uri);
+            } else {
+                return;
+            }
+        } else if (parsedUrl !== "no") {
             window.showErrorMessage(
-                "Malformed URL in gitblame.commitUrl. Must be a valid web url.",
+                `Malformed URL in gitblame.commitUrl. ` +
+                    `Must be a valid web url, "guess", or "no".`,
             );
         }
     }
@@ -282,6 +300,25 @@ export class GitBlame {
         } else {
             return GitBlame.blankCommitInfo();
         }
+    }
+
+    private async getOriginOfActiveFile(): Promise<string> {
+        if (!isActiveEditorValid()) {
+            return;
+        }
+
+        const gitCommand = await getGitCommand();
+        const activeFile = window.activeTextEditor.document.fileName;
+        const activeFileFolder = parse(activeFile).dir;
+        const originUrl = await execute(gitCommand, [
+            "ls-remote",
+            "--get-url",
+            "origin",
+        ], {
+            cwd: activeFileFolder,
+        });
+
+        return originUrl.trim();
     }
 
     private generateDisposeFunction(fileName): () => void {

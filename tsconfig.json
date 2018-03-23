@@ -10,11 +10,6 @@
         "sourceMap": true,
         "rootDir": ".",
         "baseUrl": "src",
-        "paths": {
-            "util/*": [ "utilities/*" ],
-            "git/*": [ "git/*" ],
-            "@/*": [ "*" ],
-        }
     },
     "exclude": [
         "node_modules",

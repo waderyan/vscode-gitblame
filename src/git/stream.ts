@@ -3,11 +3,11 @@ import { EventEmitter } from "events";
 
 import { Uri } from "vscode";
 
-import { IGitCommitAuthor, IGitCommitInfo } from "@/interfaces";
-import { GitBlame } from "git/blame";
-import { ErrorHandler } from "util/errorhandler";
-import { getGitCommand } from "util/gitcommand";
-import { Properties, Property } from "util/property";
+import { IGitCommitAuthor, IGitCommitInfo } from "../interfaces";
+import { ErrorHandler } from "../util/errorhandler";
+import { getGitCommand } from "../util/gitcommand";
+import { Properties, Property } from "../util/property";
+import { GitBlame } from "./blame";
 
 export class GitBlameStream extends EventEmitter {
     private static readonly HASH_PATTERN: RegExp = /[a-z0-9]{40}/;
@@ -94,7 +94,7 @@ export class GitBlameStream extends EventEmitter {
                     commitInfo.hash !== ""
                 ) {
                     this.commitInfoToCommitEmit(commitInfo);
-                    commitInfo = GitBlame.blankCommitInfo();
+                    commitInfo = GitBlame.blankCommitInfo(true);
                     commitInfo.filename = this.file.fsPath.replace(
                         this.workTree,
                         "",
@@ -112,7 +112,7 @@ export class GitBlameStream extends EventEmitter {
         value: string,
         commitInfo: IGitCommitInfo,
     ): void {
-        const [keyPrefix, keySuffix] = key.split(" ");
+        const [keyPrefix, keySuffix] = key.split("-");
         let owner: IGitCommitAuthor = {
             mail: "",
             name: "",
@@ -121,9 +121,9 @@ export class GitBlameStream extends EventEmitter {
             tz: "",
         };
 
-        if (key === "author") {
+        if (keyPrefix === "author") {
             owner = commitInfo.author;
-        } else if (key === "committer") {
+        } else if (keyPrefix === "committer") {
             owner = commitInfo.committer;
         }
 

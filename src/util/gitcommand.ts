@@ -3,8 +3,8 @@ import { normalize } from "path";
 
 import { workspace } from "vscode";
 
-import { GIT_COMMAND_IN_PATH } from "@/constants";
-import { ErrorHandler } from "util/errorhandler";
+import { GIT_COMMAND_IN_PATH } from "../constants";
+import { ErrorHandler } from "./errorhandler";
 
 export function getGitCommand(): Promise<string> {
     const gitConfig = workspace.getConfiguration("git");

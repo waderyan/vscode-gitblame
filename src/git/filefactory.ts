@@ -1,8 +1,8 @@
 import { Uri, workspace } from "vscode";
 
-import { GitFile } from "git/file";
-import { GitFileDummy } from "git/filedummy";
-import { GitFilePhysical } from "git/filephysical";
+import { GitFile } from "./file";
+import { GitFileDummy } from "./filedummy";
+import { GitFilePhysical } from "./filephysical";
 
 export class GitFileFactory {
     public static create(
