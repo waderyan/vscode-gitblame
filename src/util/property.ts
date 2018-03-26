@@ -5,6 +5,7 @@ export enum Properties {
     IgnoreWhitespace = "ignoreWhitespace",
     InfoMessageFormat = "infoMessageFormat",
     InternalHashLength = "internalHashLength",
+    IsWebPathPlural = "isWebPathPlural",
     LogLevel = "logLevel",
     ProgressSpinner = "progressSpinner",
     StatusBarMessageFormat = "statusBarMessageFormat",
@@ -77,6 +78,9 @@ export class Property {
             ),
             internalHashLength: this.getPropertyFromConfiguration(
                 Properties.InternalHashLength,
+            ),
+            isWebPathPlural: this.getPropertyFromConfiguration(
+                Properties.IsWebPathPlural,
             ),
             logLevel: this.getPropertyFromConfiguration(
                 Properties.LogLevel,

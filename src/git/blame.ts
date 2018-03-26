@@ -113,10 +113,14 @@ export class GitBlame {
         }
     }
 
-    public defaultWebPath(url: string, hash: string): string {
+    public defaultWebPath(
+        url: string,
+        hash: string,
+        isPlural: boolean,
+    ): string {
         return url.replace(
             /^(git@|https:\/\/)([^:\/]+)[:\/](.*)\.git$/,
-            `https://$2/$3/commit/${hash}`,
+            `https://$2/$3/${isPlural ? "commit" : "commits"}/${hash}`,
         );
     }
 
@@ -239,12 +243,18 @@ export class GitBlame {
             },
         );
 
+        const isWebPathPlural = Property.get(Properties.IsWebPathPlural, false);
+
         if (isWebUri(parsedUrl)) {
             return Uri.parse(parsedUrl);
         } else if (parsedUrl === "guess") {
             const origin = await this.getOriginOfActiveFile();
             if (origin) {
-                const uri = this.defaultWebPath(origin, commitInfo.hash);
+                const uri = this.defaultWebPath(
+                    origin,
+                    commitInfo.hash,
+                    isWebPathPlural,
+                );
                 return Uri.parse(uri);
             } else {
                 return;
