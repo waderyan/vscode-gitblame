@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.4.0 (March 26, 2018)
+
+* Feature: Added `gitblame.isWebPathPlural`. Setting for GitBucket users to help the new auto detect feature. [PR#28](https://github.com/Sertion/vscode-gitblame/pull/28) (Thanks to [dimitarnestorov](https://github.com/dimitarnestorov)) 
+
 ## 2.3.1 (March 24, 2018)
 
 * Fix: Updating Readme

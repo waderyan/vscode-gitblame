@@ -55,6 +55,16 @@ See Git Blame information in the status bar for the currently selected line.
       </ul>
     </tr>
     <tr>
+      <td><code>gitblame.isWebPathPlural</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        Recomended if you mostly use GitBucket for your git repositories. Will only impact `gitblame.commitUrl` when it is set to `"guess"`.
+      </td>
+    </tr>
+    <tr>
       <td><code>gitblame.ignoreWhitespace</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>

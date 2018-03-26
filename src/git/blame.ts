@@ -243,11 +243,13 @@ export class GitBlame {
             },
         );
 
-        const isWebPathPlural = Property.get(Properties.IsWebPathPlural, false);
-
         if (isWebUri(parsedUrl)) {
             return Uri.parse(parsedUrl);
         } else if (parsedUrl === "guess") {
+            const isWebPathPlural = Property.get(
+                Properties.IsWebPathPlural,
+                false,
+            );
             const origin = await this.getOriginOfActiveFile();
             if (origin) {
                 const uri = this.defaultWebPath(
