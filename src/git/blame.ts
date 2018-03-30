@@ -120,7 +120,7 @@ export class GitBlame {
     ): string {
         return url.replace(
             /^(git@|https:\/\/)([^:\/]+)[:\/](.*)\.git$/,
-            `https://$2/$3/${isPlural ? "commit" : "commits"}/${hash}`,
+            `https://$2/$3/${isPlural ? "commits" : "commit"}/${hash}`,
         );
     }
 
