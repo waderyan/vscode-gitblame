@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.4.2 (April 5, 2018)
+
+* Bug: Blame uses committer not author [#29](https://github.com/Sertion/vscode-gitblame/issues/29), [#32](https://github.com/Sertion/vscode-gitblame/issues/32), and [#33](https://github.com/Sertion/vscode-gitblame/issues/33) (Thanks to [HCoban](https://github.com/HCoban), [richardscarrott](https://github.com/richardscarrott), and [KenCoder](https://github.com/KenCoder))
+
 ## 2.4.1 (March 30, 2018)
 
 * Bug: defaultWebPath handles plural not correctly [#30](https://github.com/Sertion/vscode-gitblame/issues/30) (Thanks to [HCoban](https://github.com/HCoban))

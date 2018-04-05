@@ -38,10 +38,16 @@ export class GitBlame {
             timestamp: 0,
             tz: "",
         } as IGitCommitAuthor;
+        const emptyCommitter = {
+            mail: "",
+            name: "",
+            timestamp: 0,
+            tz: "",
+        } as IGitCommitAuthor;
 
         const commitInfo = {
             author: emptyAuthor,
-            committer: emptyAuthor,
+            committer: emptyCommitter,
             filename: "",
             generated: true,
             hash: HASH_NO_COMMIT_GIT,
