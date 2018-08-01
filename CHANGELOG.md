@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.4.4 (August 1, 2018)
+
+* Fix: Updating dependencies
+
 ## 2.4.3 (August 1, 2018)
 
 * Bug: Showing unedited gitblame info template when running *Show quick Info* on unblameable line (Thanks to [BerndErnst](https://github.com/BerndErnst))
