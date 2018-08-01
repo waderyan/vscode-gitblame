@@ -1,8 +1,7 @@
-import { dirname, join, normalize, relative } from "path";
+import { dirname, normalize } from "path";
 
-import { FileSystemWatcher, Uri, workspace } from "vscode";
+import { FileSystemWatcher, workspace } from "vscode";
 
-import { FS_EVENT_TYPE_CHANGE, FS_EVENT_TYPE_REMOVE } from "../constants";
 import { IGitBlameInfo, IGitCommitInfo } from "../interfaces";
 import { ErrorHandler } from "../util/errorhandler";
 import { execute } from "../util/execcommand";

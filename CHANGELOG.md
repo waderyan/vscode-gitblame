@@ -3,6 +3,7 @@
 ## 2.4.3 (August 1, 2018)
 
 * Bug: Showing unedited gitblame info template when running *Show quick Info* on unblameable line (Thanks to [BerndErnst](https://github.com/BerndErnst))
+* Bug: Using a map instead of an object for storing git blame file cache. Now we can blame files named `__proto__` etc.
 
 ## 2.4.2 (April 5, 2018)
 

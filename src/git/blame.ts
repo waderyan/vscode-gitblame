@@ -4,7 +4,6 @@ import { isWebUri } from "valid-url";
 import {
     commands,
     Disposable,
-    MessageItem,
     Uri,
     window,
     workspace,
@@ -71,7 +70,7 @@ export class GitBlame {
 
     private disposable: Disposable;
     private readonly statusBarView: StatusBarView;
-    private readonly files: { [fileName: string]: GitFile } = {};
+    private readonly files: Map<string, GitFile> = new Map();
 
     constructor() {
         this.statusBarView = StatusBarView.getInstance();
@@ -137,13 +136,11 @@ export class GitBlame {
     }
 
     public dispose(): void {
-        Disposable.from(...Object.values(this.files)).dispose();
+        Disposable.from(...this.files.values()).dispose();
         this.disposable.dispose();
     }
 
     private setupDisposables(): void {
-        const disposables: Disposable[] = [];
-
         // The blamer does not use the ErrorHandler but
         // is responsible for keeping it disposable
         const errorHandler = ErrorHandler.getInstance();
@@ -294,14 +291,17 @@ export class GitBlame {
     }
 
     private async getBlameInfo(fileName: string): Promise<IGitBlameInfo> {
-        if (!this.files[fileName]) {
-            this.files[fileName] = GitFileFactory.create(
+        if (!this.files.has(fileName)) {
+            this.files.set(
                 fileName,
-                this.generateDisposeFunction(fileName),
+                GitFileFactory.create(
+                    fileName,
+                    this.generateDisposeFunction(fileName),
+                ),
             );
         }
 
-        return this.files[fileName].blame();
+        return this.files.get(fileName).blame();
     }
 
     private async getCurrentLineInfo(): Promise<IGitCommitInfo> {
@@ -351,7 +351,7 @@ export class GitBlame {
 
     private generateDisposeFunction(fileName): () => void {
         return () => {
-            delete this.files[fileName];
+            this.files.delete(fileName);
         };
     }
 }
