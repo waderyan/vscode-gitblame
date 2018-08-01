@@ -97,6 +97,12 @@ export class GitBlame {
 
     public async showMessage(): Promise<void> {
         const commitInfo = await this.getCommitInfo();
+
+        if (commitInfo.hash === HASH_NO_COMMIT_GIT) {
+            this.clearView();
+            return;
+        }
+
         const messageFormat = Property.get(Properties.InfoMessageFormat);
         const normalizedTokens = TextDecorator.normalizeCommitInfoTokens(
             commitInfo,
@@ -277,10 +283,14 @@ export class GitBlame {
 
     private updateView(commitInfo: IGitCommitInfo): void {
         if (commitInfo.generated) {
-            this.statusBarView.clear();
+            this.clearView();
         } else {
             this.statusBarView.update(commitInfo);
         }
+    }
+
+    private clearView() {
+        this.statusBarView.clear();
     }
 
     private async getBlameInfo(fileName: string): Promise<IGitBlameInfo> {

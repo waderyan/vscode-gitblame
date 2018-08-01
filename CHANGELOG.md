@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.4.3 (August 1, 2018)
+
+* Bug: Showing unedited gitblame info template when running *Show quick Info* on unblameable line (Thanks to [BerndErnst](https://github.com/BerndErnst))
+
 ## 2.4.2 (April 5, 2018)
 
 * Bug: Blame uses committer not author [#29](https://github.com/Sertion/vscode-gitblame/issues/29), [#32](https://github.com/Sertion/vscode-gitblame/issues/32), and [#33](https://github.com/Sertion/vscode-gitblame/issues/33) (Thanks to [HCoban](https://github.com/HCoban), [richardscarrott](https://github.com/richardscarrott), and [KenCoder](https://github.com/KenCoder))
