@@ -13,14 +13,24 @@ export function execute(
             command,
             args,
             options,
-            (error, stdout, stderr) => {
-                if (error) {
-                    ErrorHandler.logError(new Error(stderr));
-                    resolve("");
-                } else {
-                    resolve(stdout);
-                }
-            },
+            execFileCallback(command, resolve, reject),
         );
     });
+}
+
+function execFileCallback(command, resolve, reject) {
+    return (error: NodeJS.ErrnoException, stdout, stderr) => {
+        if (!error) {
+            return resolve(stdout);
+        }
+
+        if (error.code === "ENOENT") {
+            const message = `${command}: No such file or directory. (ENOENT)`;
+            ErrorHandler.logCritical(error, message);
+            return resolve("");
+        }
+
+        ErrorHandler.logError(new Error(stderr));
+        return resolve("");
+    };
 }
