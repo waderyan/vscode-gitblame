@@ -61,7 +61,11 @@ See Git Blame information in the status bar for the currently selected line.
     </tr>
     <tr>
       <td colspan="3">
-        Recomended if you mostly use GitBucket for your git repositories. Will only impact `gitblame.commitUrl` when it is set to `"guess"`.
+        <ul>
+          <li>Recommended for BitBucket users.
+          <li>Will only impact <code>gitblame.commitUrl</code> when it is set to <code>"guess"</code>.
+          <li>When set to <code>true</code> it will set the url will point to <code>commits</code> instead of commit.
+        </ul>
       </td>
     </tr>
     <tr>
