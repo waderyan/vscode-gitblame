@@ -119,10 +119,13 @@ export class TextDecorator {
             "author.tz": () => commit.author.tz,
             "commit.filename": () => commit.filename,
             "commit.hash": () => commit.hash,
-            "commit.hash_short": (length = "7") => commit.hash.substr(
-                0,
-                parseInt(length, 10),
-            ),
+            "commit.hash_short": (length = "7") => {
+                const cutoffPoint = length.toString();
+                return commit.hash.substr(
+                    0,
+                    parseInt(cutoffPoint, 10),
+                );
+            },
             "commit.summary": () => commit.summary,
             "committer.mail": () => commit.committer.mail,
             "committer.name": () => commit.committer.name,

@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.5.0 (October 20, 2018)
+
+* Fix: Change the default info message format to be prefixed by the date instead of the commit hash. It is in ISO 8601 with dashes for separator.
+* Fix: Updating Readme to better guide Bitbucket users to the `isWebPathPlural` setting
+* Fix: Better handling of ENOENT in git command runner. [#41](https://github.com/Sertion/vscode-gitblame/pull/41) (Thanks to [Yottster](https://github.com/Yottster))
+* Fix: Moved to strict TypeScript
+* Fix: Updating dependencies
+
 ## 2.4.4 (August 1, 2018)
 
 * Fix: Updating dependencies
