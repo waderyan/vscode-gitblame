@@ -16,7 +16,7 @@ import { isActiveEditorValid } from "../util/editorvalidator";
 import { ErrorHandler } from "../util/errorhandler";
 import { execute } from "../util/execcommand";
 import { getGitCommand } from "../util/gitcommand";
-import { Properties, Property } from "../util/property";
+import { Property } from "../util/property";
 import { TextDecorator } from "../util/textdecorator";
 import { StatusBarView } from "../view";
 import { GitFile } from "./file";
@@ -65,7 +65,7 @@ export class GitBlame {
     }
 
     public static internalHash(hash: string): string {
-        return hash.substr(0, Property.get(Properties.InternalHashLength));
+        return hash.substr(0, Property.get("internalHashLength"));
     }
 
     private disposable: Disposable;
@@ -75,7 +75,7 @@ export class GitBlame {
     constructor() {
         this.statusBarView = StatusBarView.getInstance();
 
-        this.setupDisposables();
+        this.disposable = this.setupDisposables();
         this.setupListeners();
 
         this.init();
@@ -83,7 +83,7 @@ export class GitBlame {
 
     public async blameLink(): Promise<void> {
         const commitInfo = await this.getCommitInfo();
-        const commitToolUrl = this.getToolUrl(commitInfo);
+        const commitToolUrl = await this.getToolUrl(commitInfo);
 
         if (commitToolUrl) {
             commands.executeCommand("vscode.open", commitToolUrl);
@@ -102,7 +102,7 @@ export class GitBlame {
             return;
         }
 
-        const messageFormat = Property.get(Properties.InfoMessageFormat);
+        const messageFormat = Property.get("infoMessageFormat") || "";
         const normalizedTokens = TextDecorator.normalizeCommitInfoTokens(
             commitInfo,
         );
@@ -140,17 +140,14 @@ export class GitBlame {
         this.disposable.dispose();
     }
 
-    private setupDisposables(): void {
+    private setupDisposables(): Disposable {
         // The blamer does not use the ErrorHandler but
         // is responsible for keeping it disposable
         const errorHandler = ErrorHandler.getInstance();
 
-        const propertyHolder = Property.getInstance();
-
-        this.disposable = Disposable.from(
+        return Disposable.from(
             this.statusBarView,
             errorHandler,
-            propertyHolder,
         );
     }
 
@@ -195,16 +192,28 @@ export class GitBlame {
     }
 
     private getCurrentActiveFileName(): string {
-        return (
-            window.activeTextEditor && window.activeTextEditor.document.fileName
-        );
+        if (
+            window
+            && window.activeTextEditor
+            && window.activeTextEditor.document
+        ) {
+            return window.activeTextEditor.document.fileName;
+        } else {
+            return "no-file";
+        }
     }
 
     private getCurrentActiveLineNumber(): number {
-        return (
-            window.activeTextEditor &&
-            window.activeTextEditor.selection.active.line
-        );
+        if (
+            window
+            && window.activeTextEditor
+            && window.activeTextEditor.selection
+            && window.activeTextEditor.selection.active
+        ) {
+            return window.activeTextEditor.selection.active.line;
+        } else {
+            return -1;
+        }
     }
 
     private async generateMessageActions(
@@ -240,25 +249,20 @@ export class GitBlame {
         return commitInfo;
     }
 
-    private async getToolUrl(commitInfo: IGitCommitInfo): Promise<Uri> {
+    private async getToolUrl(
+        commitInfo: IGitCommitInfo,
+    ): Promise<Uri | undefined> {
         if (GitBlame.isBlankCommit(commitInfo)) {
             return;
         }
 
-        const parsedUrl = TextDecorator.parseTokens(
-            Property.get(Properties.CommitUrl, "guess"),
-            {
-                hash: commitInfo.hash,
-            },
-        );
+        const commitUrl = Property.get("commitUrl") || "";
+        const parsedUrl = commitUrl.replace(/\$\{hash\}/g, commitInfo.hash);
 
         if (isWebUri(parsedUrl)) {
             return Uri.parse(parsedUrl);
         } else if (parsedUrl === "guess") {
-            const isWebPathPlural = Property.get(
-                Properties.IsWebPathPlural,
-                false,
-            );
+            const isWebPathPlural = !!Property.get("isWebPathPlural");
             const origin = await this.getOriginOfActiveFile();
             if (origin) {
                 const uri = this.defaultWebPath(
@@ -301,11 +305,24 @@ export class GitBlame {
             );
         }
 
-        return this.files.get(fileName).blame();
+        const blameFile = this.files.get(fileName);
+
+        if (blameFile) {
+            return blameFile.blame();
+        } else {
+            return {
+                commits: {},
+                lines: {},
+            };
+        }
     }
 
     private async getCurrentLineInfo(): Promise<IGitCommitInfo> {
-        if (isActiveEditorValid()) {
+        if (
+            isActiveEditorValid()
+            && window
+            && window.activeTextEditor
+        ) {
             return this.getLineInfo(
                 window.activeTextEditor.document.fileName,
                 window.activeTextEditor.selection.active.line,
@@ -331,8 +348,14 @@ export class GitBlame {
     }
 
     private async getOriginOfActiveFile(): Promise<string> {
-        if (!isActiveEditorValid()) {
-            return;
+        if (
+            !isActiveEditorValid()
+            || !(
+                window
+                && window.activeTextEditor
+            )
+        ) {
+            return "";
         }
 
         const gitCommand = await getGitCommand();
@@ -349,7 +372,7 @@ export class GitBlame {
         return originUrl.trim();
     }
 
-    private generateDisposeFunction(fileName): () => void {
+    private generateDisposeFunction(fileName: string): () => void {
         return () => {
             this.files.delete(fileName);
         };

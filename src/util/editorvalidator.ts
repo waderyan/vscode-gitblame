@@ -7,5 +7,9 @@ export function validEditor(editor: TextEditor): boolean {
 }
 
 export function isActiveEditorValid(): boolean {
-    return validEditor(window.activeTextEditor);
+    if (window && window.activeTextEditor) {
+        return validEditor(window.activeTextEditor);
+    } else {
+        return false;
+    }
 }

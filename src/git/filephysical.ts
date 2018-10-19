@@ -12,11 +12,11 @@ import { GitFile } from "./file";
 import { GitBlameStream } from "./stream";
 
 export class GitFilePhysical extends GitFile {
-    private blameInfoPromise: Promise<IGitBlameInfo>;
     private readonly fileSystemWatcher: FileSystemWatcher;
-    private workTree: string;
-    private workTreePromise: Promise<string>;
-    private blameProcess: GitBlameStream;
+    private blameInfoPromise: Promise<IGitBlameInfo> | undefined;
+    private workTree: string | undefined;
+    private workTreePromise: Promise<string> | undefined;
+    private blameProcess: GitBlameStream | undefined;
 
     constructor(fileName: string, disposeCallback: () => void) {
         super(fileName, disposeCallback);
@@ -171,7 +171,7 @@ export class GitFilePhysical extends GitFile {
     }
 
     private gitStreamOver(
-        gitStream,
+        gitStream: GitBlameStream,
         reject: (err: Error) => void,
         resolve: (val: any) => void,
         blameInfo: IGitBlameInfo,

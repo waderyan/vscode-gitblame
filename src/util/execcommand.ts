@@ -7,7 +7,7 @@ export function execute(
     args: string[],
     options: ExecOptions = {},
 ): Promise<string> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         ErrorHandler.logCommand(`${command} ${args.join(" ")}`);
         execFile(
             command,

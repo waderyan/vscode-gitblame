@@ -1,4 +1,5 @@
 import { workspace } from "vscode";
+import { Property } from "./property";
 
 export class Spinner {
     private state: number = 0;
@@ -25,7 +26,12 @@ export class Spinner {
     }
 
     private getStates(): string[] {
-        const properties = workspace.getConfiguration("gitblame");
-        return properties.get("progressSpinner") as string[];
+        const states = Property.get("progressSpinner");
+
+        if (states) {
+            return states;
+        } else {
+            return ["$(sync~spin)"];
+        }
     }
 }

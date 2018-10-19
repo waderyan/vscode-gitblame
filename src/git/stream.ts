@@ -6,7 +6,7 @@ import { Uri } from "vscode";
 import { IGitCommitAuthor, IGitCommitInfo } from "../interfaces";
 import { ErrorHandler } from "../util/errorhandler";
 import { getGitCommand } from "../util/gitcommand";
-import { Properties, Property } from "../util/property";
+import { Property } from "../util/property";
 import { GitBlame } from "./blame";
 
 export class GitBlameStream extends EventEmitter {
@@ -14,7 +14,7 @@ export class GitBlameStream extends EventEmitter {
 
     private readonly file: Uri;
     private readonly workTree: string;
-    private process: ChildProcess;
+    private process: ChildProcess | undefined;
     private readonly emittedCommits: { [hash: string]: true } = {};
 
     constructor(file: Uri, workTree: string) {
@@ -44,8 +44,10 @@ export class GitBlameStream extends EventEmitter {
     }
 
     public dispose(): void {
-        this.process.kill("SIGKILL");
-        this.process.removeAllListeners();
+        if (this.process) {
+            this.process.kill("SIGKILL");
+            this.process.removeAllListeners();
+        }
     }
 
     private generateArguments(): string[] {
@@ -53,7 +55,7 @@ export class GitBlameStream extends EventEmitter {
 
         processArguments.push("blame");
 
-        if (Property.get(Properties.IgnoreWhitespace)) {
+        if (Property.get("ignoreWhitespace")) {
             processArguments.push("-w");
         }
 
@@ -65,16 +67,18 @@ export class GitBlameStream extends EventEmitter {
     }
 
     private setupListeners(): void {
-        this.process.addListener("close", (code) => this.close());
-        this.process.stdout.addListener("data", (chunk) => {
-            this.data(chunk.toString());
-        });
-        this.process.stderr.addListener("data", (error: Error) =>
-            this.close(error),
-        );
+        if (this.process) {
+            this.process.addListener("close", (code) => this.close());
+            this.process.stdout.addListener("data", (chunk) => {
+                this.data(chunk.toString());
+            });
+            this.process.stderr.addListener("data", (error: Error) =>
+               this.close(error),
+            );
+        }
     }
 
-    private close(err: Error = null): void {
+    private close(err?: Error): void {
         this.emit("end", err);
     }
 
@@ -86,7 +90,12 @@ export class GitBlameStream extends EventEmitter {
 
         lines.forEach((line, index) => {
             if (line && line !== "boundary") {
-                const [all, key, value] = Array.from(line.match(/(.*?) (.*)/));
+                const match = line.match(/(.*?) (.*)/);
+                if (match === null) {
+                    return;
+                }
+
+                const [, key, value] = Array.from(match);
                 if (
                     GitBlameStream.HASH_PATTERN.test(key) &&
                     lines.hasOwnProperty(index + 1) &&

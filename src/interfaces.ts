@@ -29,24 +29,22 @@ export interface IGitBlameInfo {
 }
 
 export interface IInfoTokenNormalizedCommitInfo {
-    author: IGitCommitAuthor;
-    commit: {
-        filename: string;
-        hash: string;
-        hash_short: (length: number) => string;
-        summary: string;
-    };
-    committer: IGitCommitAuthor;
-    time: {
-        ago: () => string;
-        c_ago: () => string;
-        c_custom: (momentFormat: string) => string;
-        c_from: () => string;
-        custom: (momentFormat: string) => string;
-        from: () => string;
-    };
-}
-
-export interface IInfoTokenHash {
-    hash: string;
+    "author.mail": () => string;
+    "author.name": () => string;
+    "author.timestamp": () => string;
+    "author.tz": () => string;
+    "commit.filename": () => string;
+    "commit.hash": () => string;
+    "commit.hash_short": (length?: string) => string;
+    "commit.summary": () => string;
+    "committer.mail": () => string;
+    "committer.name": () => string;
+    "committer.timestamp": () => string;
+    "committer.tz": () => string;
+    "time.ago": () => string;
+    "time.c_ago": () => string;
+    "time.c_custom": (format?: string) => string;
+    "time.c_from": () => string;
+    "time.custom": (format?: string) => string;
+    "time.from": () => string;
 }

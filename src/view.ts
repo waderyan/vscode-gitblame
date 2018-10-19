@@ -2,7 +2,7 @@ import { StatusBarAlignment, StatusBarItem, window } from "vscode";
 
 import { GitBlame } from "./git/blame";
 import { IGitCommitInfo } from "./interfaces";
-import { Properties, Property } from "./util/property";
+import { Property } from "./util/property";
 import { Spinner } from "./util/spinner";
 import { TextDecorator } from "./util/textdecorator";
 
@@ -17,14 +17,14 @@ export class StatusBarView {
 
     private static instance: StatusBarView;
     private readonly statusBarItem: StatusBarItem;
-    private progressInterval: NodeJS.Timer;
+    private progressInterval: NodeJS.Timer | undefined;
     private readonly spinner: Spinner;
     private spinnerActive: boolean = false;
 
     private constructor() {
         this.statusBarItem = window.createStatusBarItem(
             StatusBarAlignment.Left,
-            Property.get(Properties.StatusBarPositionPriority),
+            Property.get("statusBarPositionPriority"),
         );
         this.spinner = new Spinner();
     }
@@ -47,8 +47,10 @@ export class StatusBarView {
     }
 
     public stopProgress(): void {
-        clearInterval(this.progressInterval);
-        this.spinnerActive = false;
+        if (typeof this.progressInterval !== "undefined") {
+            clearInterval(this.progressInterval);
+            this.spinnerActive = false;
+        }
     }
 
     public startProgress(): void {
@@ -75,13 +77,17 @@ export class StatusBarView {
     }
 
     private setText(text: string, hasCommand: boolean = true): void {
-        this.statusBarItem.text = text
-            ? `$(git-commit) ${text}`
-            : "$(git-commit)";
-        this.statusBarItem.tooltip = hasCommand
-            ? "git blame"
-            : "git blame - No info about the current line";
-        this.statusBarItem.command = hasCommand ? "gitblame.quickInfo" : "";
+        this.statusBarItem.text = `$(git-commit) ${text}`.trim();
+
+        if (hasCommand) {
+            this.statusBarItem.tooltip = "git blame";
+            this.statusBarItem.command = "gitblame.quickInfo";
+        } else {
+            this.statusBarItem.tooltip =
+                "git blame - No info about the current line";
+            this.statusBarItem.command = "";
+        }
+
         this.statusBarItem.show();
     }
 

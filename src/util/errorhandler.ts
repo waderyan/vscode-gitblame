@@ -1,9 +1,9 @@
 import { OutputChannel, window } from "vscode";
 
 import { TITLE_SHOW_LOG } from "../constants";
-import { Properties, Property } from "./property";
+import { Property } from "./property";
 
-enum LogCategory {
+export enum LogCategory {
     Info = "info",
     Error = "error",
     Command = "command",
@@ -98,8 +98,12 @@ export class ErrorHandler {
     }
 
     private logCategoryAllowed(level: LogCategory): boolean {
-        const enabledLevels = Property.get(Properties.LogLevel, []) as string[];
+        const enabledLevels = Property.get("logLevel");
 
-        return enabledLevels.includes(level);
+        if (enabledLevels) {
+            return enabledLevels.includes(level);
+        } else {
+            return false;
+        }
     }
 }

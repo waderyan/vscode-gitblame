@@ -1,8 +1,8 @@
 import * as assert from "assert";
 
+import { IInfoTokenNormalizedCommitInfo } from "interfaces";
 import { TextDecorator } from "../src/util/textdecorator";
 
-// Defines a Mocha test suite to group tests of similar kind together
 suite("Date Calculations", () => {
     test("Time ago", () => {
         assert.equal(
@@ -78,114 +78,38 @@ suite("Date Calculations", () => {
 });
 
 suite("Token Parser", () => {
-    test("No tokens", () => {
-        assert.equal(
-            TextDecorator.parseTokens("No ${tokens}", {}),
-            "No tokens",
-        );
-    });
-
-    test("Simple example", () => {
-        assert.equal(
-            TextDecorator.parseTokens("Simple ${replace-word}", {
-                "replace-word": "replace",
-            }),
-            "Simple replace",
-        );
-    });
-
-    test("Function as token value", () => {
-        assert.equal(
-            TextDecorator.parseTokens("Function ${replace-word}", {
-                "replace-word": () => "replaced",
-            }),
-            "Function replaced",
-        );
-    });
-
-    test("Function as token value with parameter", () => {
-        assert.equal(
-            TextDecorator.parseTokens("Function value ${replace,test}", {
-                replace: (value) => value + "ed",
-            }),
-            "Function value tested",
-        );
-    });
-
-    test("Mixed token types", () => {
-        assert.equal(
-            TextDecorator.parseTokens("Multiple ${type} ${what,replacer}", {
-                type: "mixed",
-                what: (value) => value + "s",
-            }),
-            "Multiple mixed replacers",
-        );
-    });
-
-    test("Repeated token usage", () => {
-        assert.equal(
-            TextDecorator.parseTokens("${token} ${token} ${token}", {
-                token: "value",
-            }),
-            "value value value",
-        );
-    });
-
-    test("Invalid token value", () => {
-        assert.equal(
-            TextDecorator.parseTokens("${non-valid-value}", {
-                "non-valid-value": [],
-            }),
-            "non-valid-value",
-        );
-    });
-
-    test("Walk down in token object", () => {
-        assert.equal(
-            TextDecorator.parseTokens("${climb.far}", {
-                climb: {
-                    far: "down",
-                },
-            }),
-            "down",
-        );
-    });
-
-    test("Unicode string", () => {
-        assert.equal(
-            TextDecorator.parseTokens("${ok,💯}", {
-                ok: (value) => `👌${ value }👌`,
-            }),
-            "👌💯👌",
-        );
-    });
-
-    test("Unicode tokens unsupported", () => {
-        assert.notEqual(
-            TextDecorator.parseTokens("${👌}", {
-                "👌": "ok-hand",
-            }),
-            "ok-hand",
-        );
-    });
-
-    test("No tokens", () => {
-        assert.equal(TextDecorator.parseTokens(null, null), "");
-    });
-});
-
-suite("Normalize Commit Info Tokens", () => {
-    const dummyGitCommitAuthor = {
-        mail: "dummy@mail.ad",
-        name: "Dummy Name",
-        timestamp: 0,
-        tz: "+0000",
+    const normalizedInfo: IInfoTokenNormalizedCommitInfo = {
+        "author.mail": () => "value-author.mail",
+        "author.name": () => "value-author.name",
+        "author.timestamp": () => "value-author.timestamp",
+        "author.tz": () => "value-author.tz",
+        "commit.filename": () => "value-commit.filename",
+        "commit.hash": () => "value-commit.hash",
+        "commit.hash_short": (length?: string) => "value-commit.hash_short",
+        "commit.summary": () => "value-commit.summary",
+        "committer.mail": () => "value-committer.mail",
+        "committer.name": () => "value-committer.name",
+        "committer.timestamp": () => "value-committer.timestamp",
+        "committer.tz": () => "value-committer.tz",
+        "time.ago": () => "value-time.ago",
+        "time.c_ago": () => "value-time.c_ago",
+        "time.c_custom": (format?: string) => "value-time.c_custom",
+        "time.c_from": () => "value-time.c_from",
+        "time.custom": (format?: string) => "value-time.custom",
+        "time.from": () => "value-time.from",
     };
-    const dummyGitCommitInfo = {
-        author: { ...dummyGitCommitAuthor },
-        committer: { ...dummyGitCommitAuthor },
-        filename: "file.dummy",
-        hash: "2cde51fbd0f310c8a2c5f977e665c0ac3945b46d",
-        summary: "Dummy commit",
-    };
+
+    test("Invalid token", () => {
+        assert.equal(
+            TextDecorator.parseTokens("Invalid ${token}", normalizedInfo),
+            "Invalid token",
+        );
+    });
+
+    test("Simple replace", () => {
+        assert.equal(
+            TextDecorator.parseTokens("Simple ${author.mail}", normalizedInfo),
+            "Simple value-author.mail",
+        );
+    });
 });

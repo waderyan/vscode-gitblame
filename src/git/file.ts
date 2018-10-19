@@ -9,7 +9,7 @@ export class GitFile {
     public readonly fileName: Uri;
     public disposeCallback: () => void;
 
-    private cacheClearInterval: NodeJS.Timer;
+    private cacheClearInterval: NodeJS.Timer | undefined;
 
     constructor(fileName: string, disposeCallback: () => void) {
         this.fileName = Uri.file(fileName);
@@ -17,7 +17,8 @@ export class GitFile {
     }
 
     public startCacheInterval(): void {
-        clearInterval(this.cacheClearInterval);
+        this.clearCacheInterval();
+
         this.cacheClearInterval = setInterval(() => {
             const isOpen = window.visibleTextEditors.some(
                 (editor) => editor.document.uri.fsPath === this.fileName.fsPath,
@@ -39,8 +40,15 @@ export class GitFile {
     }
 
     public dispose(): void {
-        clearInterval(this.cacheClearInterval);
+        this.clearCacheInterval();
+
         this.disposeCallback();
         delete this.disposeCallback;
+    }
+
+    private clearCacheInterval(): void {
+        if (typeof this.cacheClearInterval !== "undefined") {
+            clearInterval(this.cacheClearInterval);
+        }
     }
 }
