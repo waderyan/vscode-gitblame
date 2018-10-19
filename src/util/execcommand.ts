@@ -7,7 +7,7 @@ export function execute(
     args: string[],
     options: ExecOptions = {},
 ): Promise<string> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         ErrorHandler.logCommand(`${command} ${args.join(" ")}`);
         execFile(
             command,
@@ -18,19 +18,34 @@ export function execute(
     });
 }
 
-function execFileCallback(command, resolve, reject) {
-    return (error: NodeJS.ErrnoException, stdout, stderr) => {
+function execFileCallback(
+    command: string,
+    resolve: (result: string) => void,
+    reject: (err: Error) => void,
+): (
+    error: NodeJS.ErrnoException | null,
+    stdout: string,
+    stderr: string,
+) => void {
+    return (
+        error: NodeJS.ErrnoException | null,
+        stdout: string,
+        stderr: string,
+    ): void => {
         if (!error) {
-            return resolve(stdout);
+            resolve(stdout);
+            return;
         }
 
         if (error.code === "ENOENT") {
             const message = `${command}: No such file or directory. (ENOENT)`;
             ErrorHandler.logCritical(error, message);
-            return resolve("");
+            resolve("");
+            return;
         }
 
         ErrorHandler.logError(new Error(stderr));
-        return resolve("");
+        resolve("");
+        return;
     };
 }
