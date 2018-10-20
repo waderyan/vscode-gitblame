@@ -1,6 +1,5 @@
+import { FSWatcher, watch } from "fs";
 import { dirname, normalize } from "path";
-
-import { FileSystemWatcher, workspace } from "vscode";
 
 import { IGitBlameInfo, IGitCommitInfo } from "../interfaces";
 import { ErrorHandler } from "../util/errorhandler";
@@ -12,7 +11,7 @@ import { GitFile } from "./file";
 import { GitBlameStream } from "./stream";
 
 export class GitFilePhysical extends GitFile {
-    private readonly fileSystemWatcher: FileSystemWatcher;
+    private readonly fileSystemWatcher: FSWatcher;
     private blameInfoPromise: Promise<IGitBlameInfo> | undefined;
     private workTree: string | undefined;
     private workTreePromise: Promise<string> | undefined;
@@ -40,23 +39,16 @@ export class GitFilePhysical extends GitFile {
             this.blameProcess.terminate();
             delete this.blameProcess;
         }
-        this.fileSystemWatcher.dispose();
+        this.fileSystemWatcher.close();
     }
 
-    private setupWatcher(): FileSystemWatcher {
-        const relativePath = workspace.asRelativePath(this.fileName);
-        const fsWatcher = workspace.createFileSystemWatcher(
-            relativePath,
-            true,
-            false,
-            false,
-        );
-
-        fsWatcher.onDidChange(() => {
-            this.changed();
-        });
-        fsWatcher.onDidDelete(() => {
-            this.dispose();
+    private setupWatcher(): FSWatcher {
+        const fsWatcher = watch(this.fileName.fsPath, (event: string) => {
+            if (event === "rename") {
+                this.dispose();
+            } else if (event === "change") {
+                this.changed();
+            }
         });
 
         return fsWatcher;

@@ -3,10 +3,11 @@
 ## 2.5.0 (October 20, 2018)
 
 * Fix: Change the default info message format to be prefixed by the date instead of the commit hash. It is in ISO 8601 with dashes for separator.
-* Fix: Updating Readme to better guide Bitbucket users to the `isWebPathPlural` setting
+* Fix: Updating Readme to better guide Bitbucket users to the `isWebPathPlural` setting.
 * Fix: Removed `internalHashLength` setting. We now alsways use the whole hash.
+* Fix: Moved back to using [`fs.watch`](https://nodejs.org/api/fs.html#fs_fs_watch_filename_options_listener) from [`workspace.FileSystemWatcher`](https://code.visualstudio.com/docs/extensionAPI/vscode-api#workspace.createFileSystemWatcher) after getting reposts that file watching is having issues.
 * Fix: Better handling of ENOENT in git command runner. [#41](https://github.com/Sertion/vscode-gitblame/pull/41) (Thanks to [Yottster](https://github.com/Yottster))
-* Fix: Moved to strict TypeScript
+* Fix: Moved to strict TypeScript.
 * Fix: Updating dependencies
 
 ## 2.4.4 (August 1, 2018)
