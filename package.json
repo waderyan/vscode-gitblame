@@ -85,13 +85,6 @@
           "default": "${time.custom,YYYY-MM-DD} ${commit.summary}",
           "description": "Customize the info message"
         },
-        "gitblame.internalHashLength": {
-          "type": "number",
-          "default": 10,
-          "description": "How long git hashes gitblame will use for indexes internaly",
-          "minimum": 7,
-          "maximum": 40
-        },
         "gitblame.isWebPathPlural": {
           "type": "boolean",
           "default": false,

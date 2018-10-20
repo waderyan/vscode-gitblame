@@ -5,7 +5,6 @@ interface IPropertiesMap {
     "commitUrl": string;
     "ignoreWhitespace": boolean;
     "infoMessageFormat": string;
-    "internalHashLength": number;
     "isWebPathPlural": boolean;
     "logLevel": LogCategory[];
     "progressSpinner": string[];

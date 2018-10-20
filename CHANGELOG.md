@@ -4,6 +4,7 @@
 
 * Fix: Change the default info message format to be prefixed by the date instead of the commit hash. It is in ISO 8601 with dashes for separator.
 * Fix: Updating Readme to better guide Bitbucket users to the `isWebPathPlural` setting
+* Fix: Removed `internalHashLength` setting. We now alsways use the whole hash.
 * Fix: Better handling of ENOENT in git command runner. [#41](https://github.com/Sertion/vscode-gitblame/pull/41) (Thanks to [Yottster](https://github.com/Yottster))
 * Fix: Moved to strict TypeScript
 * Fix: Updating dependencies

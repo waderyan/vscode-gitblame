@@ -64,10 +64,6 @@ export class GitBlame {
         return commit.hash === HASH_NO_COMMIT_GIT;
     }
 
-    public static internalHash(hash: string): string {
-        return hash.substr(0, Property.get("internalHashLength"));
-    }
-
     private disposable: Disposable;
     private readonly statusBarView: StatusBarView;
     private readonly files: Map<string, GitFile> = new Map();

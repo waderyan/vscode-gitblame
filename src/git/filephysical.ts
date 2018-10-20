@@ -156,9 +156,9 @@ export class GitFilePhysical extends GitFile {
 
     private gitAddCommit(
         blameInfo: IGitBlameInfo,
-    ): (internalHash: string, data: IGitCommitInfo) => void {
-        return (internalHash, data) => {
-            blameInfo.commits[internalHash] = data;
+    ): (hash: string, data: IGitCommitInfo) => void {
+        return (hash, data) => {
+            blameInfo.commits[hash] = data;
         };
     }
 

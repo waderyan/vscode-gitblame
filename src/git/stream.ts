@@ -150,7 +150,7 @@ export class GitBlameStream extends EventEmitter {
             commitInfo.hash = key;
 
             const hash = key;
-            const [originalLine, finalLine, lines] = value
+            const [, finalLine, lines] = value
                 .split(" ")
                 .map((a) => parseInt(a, 10));
 
@@ -164,16 +164,14 @@ export class GitBlameStream extends EventEmitter {
         finalLine: number,
     ): void {
         for (let i = 0; i < lines; i++) {
-            this.emit("line", finalLine + i, GitBlame.internalHash(hash));
+            this.emit("line", finalLine + i, hash);
         }
     }
 
     private commitInfoToCommitEmit(commitInfo: IGitCommitInfo): void {
-        const internalHash = GitBlame.internalHash(commitInfo.hash);
-
-        if (!this.emittedCommits[internalHash]) {
-            this.emittedCommits[internalHash] = true;
-            this.emit("commit", internalHash, commitInfo);
+        if (!this.emittedCommits[commitInfo.hash]) {
+            this.emittedCommits[commitInfo.hash] = true;
+            this.emit("commit", commitInfo.hash, commitInfo);
         }
     }
 }
