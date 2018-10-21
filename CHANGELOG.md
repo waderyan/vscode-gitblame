@@ -1,6 +1,6 @@
 # Change Log
 
-## 2.5.0 (October 20, 2018)
+## 2.5.0 (October 21, 2018)
 
 * Bug: Sometimes gitblame blamed the same file multiple time in parallel. This is no longer the case.
 * Feature: We now use `vscode.git` to find your git binary.
