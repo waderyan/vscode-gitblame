@@ -1,38 +1,21 @@
-import { access, constants as FSConstant } from "fs";
-import { normalize } from "path";
-
-import { workspace } from "vscode";
+import { extensions } from "vscode";
 
 import { GIT_COMMAND_IN_PATH } from "../constants";
-import { ErrorHandler } from "./errorhandler";
+import { IVscodeGitExtension } from "../git.api.interface";
 
-export function getGitCommand(): Promise<string> {
-    const gitConfig = workspace.getConfiguration("git");
-    const pathCommand = gitConfig.get("path") as string;
-    const promise = new Promise<string>((resolve, reject) => {
-        if (!pathCommand) {
-            resolve(GIT_COMMAND_IN_PATH);
-        }
+export function getGitCommand(): string {
+    const vscodeGit = extensions.getExtension<IVscodeGitExtension>(
+        "vscode.git",
+    );
 
-        const commandPath = normalize(pathCommand);
-
-        access(commandPath, FSConstant.X_OK, (err) => {
-            if (err) {
-                ErrorHandler.logError(
-                    new Error(
-                        `Can not execute "${
-                            commandPath
-                        }" (your git.path property) falling back to "${
-                            GIT_COMMAND_IN_PATH
-                        }"`,
-                    ),
-                );
-                resolve(GIT_COMMAND_IN_PATH);
-            } else {
-                resolve(commandPath);
-            }
-        });
-    });
-
-    return promise;
+    if (
+        vscodeGit
+        && vscodeGit.exports
+        && vscodeGit.exports.git
+        && vscodeGit.exports.git.path
+    ) {
+        return vscodeGit.exports.git.path;
+    } else {
+        return GIT_COMMAND_IN_PATH;
+    }
 }

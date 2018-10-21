@@ -14,7 +14,7 @@ export class GitBlameStream extends EventEmitter {
 
     private readonly file: Uri;
     private readonly workTree: string;
-    private process: ChildProcess | undefined;
+    private readonly process: ChildProcess | undefined;
     private readonly emittedCommits: { [hash: string]: true } = {};
 
     constructor(file: Uri, workTree: string) {
@@ -23,20 +23,19 @@ export class GitBlameStream extends EventEmitter {
         this.file = file;
         this.workTree = workTree;
 
-        getGitCommand().then((gitCommand) => {
-            const args = this.generateArguments();
-            const spawnOptions = {
-                cwd: workTree,
-            };
+        const gitCommand = getGitCommand();
+        const args = this.generateArguments();
+        const spawnOptions = {
+            cwd: workTree,
+        };
 
-            ErrorHandler.logCommand(
-                `${gitCommand} ${args.join(" ")}`,
-            );
+        ErrorHandler.logCommand(
+            `${gitCommand} ${args.join(" ")}`,
+        );
 
-            this.process = spawn(gitCommand, args, spawnOptions);
+        this.process = spawn(gitCommand, args, spawnOptions);
 
-            this.setupListeners();
-        });
+        this.setupListeners();
     }
 
     public terminate(): void {

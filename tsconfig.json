@@ -11,6 +11,7 @@
         "sourceMap": true,
         "rootDir": ".",
         "baseUrl": "src",
+        "experimentalDecorators": true,
     },
     "exclude": [
         "node_modules",

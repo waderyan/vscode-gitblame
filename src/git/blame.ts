@@ -18,6 +18,7 @@ import { execute } from "../util/execcommand";
 import { getGitCommand } from "../util/gitcommand";
 import { Property } from "../util/property";
 import { TextDecorator } from "../util/textdecorator";
+import { throttleFunction } from "../util/throttle.function";
 import { StatusBarView } from "../view";
 import { GitFile } from "./file";
 import { GitFileFactory } from "./filefactory";
@@ -173,6 +174,7 @@ export class GitBlame {
         this.onTextEditorMove();
     }
 
+    @throttleFunction(16)
     private async onTextEditorMove(): Promise<void> {
         const beforeBlameOpenFile = this.getCurrentActiveFileName();
         const beforeBlameLineNumber = this.getCurrentActiveLineNumber();
@@ -354,7 +356,7 @@ export class GitBlame {
             return "";
         }
 
-        const gitCommand = await getGitCommand();
+        const gitCommand = getGitCommand();
         const activeFile = window.activeTextEditor.document.fileName;
         const activeFileFolder = parse(activeFile).dir;
         const originUrl = await execute(gitCommand, [

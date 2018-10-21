@@ -68,7 +68,12 @@ export class GitFilePhysical extends GitFile {
             this.workTreePromise = this.findWorkTree();
         }
 
-        this.workTree = await this.workTreePromise;
+        try {
+            this.workTree = await this.workTreePromise;
+        } catch (err) {
+            delete this.workTreePromise;
+            throw new Error("Unable to get git work tree");
+        }
 
         return this.workTree;
     }
@@ -87,7 +92,7 @@ export class GitFilePhysical extends GitFile {
 
     private async executeGitRevParseCommand(command: string): Promise<string> {
         const currentDirectory = dirname(this.fileName.fsPath);
-        const gitCommand = await getGitCommand();
+        const gitCommand = getGitCommand();
         const gitExecArguments = ["rev-parse", command];
         const gitExecOptions = {
             cwd: currentDirectory,
@@ -102,12 +107,18 @@ export class GitFilePhysical extends GitFile {
     }
 
     private async findBlameInfo(): Promise<IGitBlameInfo> {
-        const workTree = await this.getGitWorkTree();
-        const blameInfo = GitBlame.blankBlameInfo();
+        let workTree: string;
+
+        try {
+            workTree = await this.getGitWorkTree();
+        } catch (err) {
+            return GitBlame.blankBlameInfo();
+        }
 
         if (workTree) {
             this.blameInfoPromise = new Promise<IGitBlameInfo>(
                 (resolve, reject) => {
+                    const blameInfo = GitBlame.blankBlameInfo();
                     this.blameProcess = new GitBlameStream(
                         this.fileName,
                         workTree,
@@ -140,7 +151,7 @@ export class GitFilePhysical extends GitFile {
                     this.fileName.fsPath
                 }" is not a decendant of a git repository`,
             );
-            this.blameInfoPromise = Promise.resolve(blameInfo);
+            this.blameInfoPromise = Promise.resolve(GitBlame.blankBlameInfo());
         }
 
         return this.blameInfoPromise;

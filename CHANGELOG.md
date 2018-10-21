@@ -2,6 +2,8 @@
 
 ## 2.5.0 (October 20, 2018)
 
+* Bug: Sometimes gitblame blamed the same file multiple time in parallel. This is no longer the case.
+* Feature: We now use `vscode.git` to find your git binary.
 * Fix: Change the default info message format to be prefixed by the date instead of the commit hash. It is in ISO 8601 with dashes for separator.
 * Fix: Updating Readme to better guide Bitbucket users to the `isWebPathPlural` setting.
 * Fix: Removed `internalHashLength` setting. We now alsways use the whole hash.
