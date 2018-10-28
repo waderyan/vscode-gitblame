@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.5.1 (October 28, 2018)
+
+* Bug: Remote URLs without `.git` are now handled correctly [#44](https://github.com/Sertion/vscode-gitblame/pull/44) (Thanks to [dewe](https://github.com/dewe))
+
 ## 2.5.0 (October 21, 2018)
 
 * Bug: Sometimes gitblame blamed the same file multiple time in parallel. This is no longer the case.
