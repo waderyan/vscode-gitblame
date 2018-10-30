@@ -1,4 +1,5 @@
 import { parse } from "path";
+import { URL } from "url";
 
 import { isWebUri } from "valid-url";
 import {
@@ -126,10 +127,32 @@ export class GitBlame {
         hash: string,
         isPlural: boolean,
     ): string {
-        return url.replace(
-            /^(git@|https:\/\/)([^:\/]+)[:\/](.*?)(\.git)?$/,
-            `https://$2/$3/${isPlural ? "commits" : "commit"}/${hash}`,
-        );
+        const httplessUrl = url.replace(/^[a-z]+:\/\//i, "");
+        const colonlessUrl = httplessUrl.replace(/:([a-z]+)\/?/ig, "/$1/");
+        const gitlessUrl = colonlessUrl.replace(".git", "");
+
+        let uri: URL;
+
+        try {
+            uri = new URL(`https://${ gitlessUrl }`);
+        } catch (err) {
+            return "";
+        }
+
+        const host = uri.hostname;
+        const path = uri.pathname;
+        const commit = isPlural ? "commits" : "commit";
+
+        return `https://${ host }${ path }/${ commit }/${ hash }`;
+    }
+
+    public projectNameFromOrigin(origin: string): string {
+        const match = /([a-zA-Z0-9]*)(\.git)?$/.exec(origin);
+        if (!match) {
+            return "";
+        }
+
+        return match[1];
     }
 
     public dispose(): void {
@@ -255,13 +278,15 @@ export class GitBlame {
         }
 
         const commitUrl = Property.get("commitUrl") || "";
-        const parsedUrl = commitUrl.replace(/\$\{hash\}/g, commitInfo.hash);
+        const origin = await this.getOriginOfActiveFile();
+        const parsedUrl = commitUrl
+            .replace(/\$\{hash\}/g, commitInfo.hash)
+            .replace(/\$\{project-name\}/g, origin);
 
         if (isWebUri(parsedUrl)) {
             return Uri.parse(parsedUrl);
         } else if (parsedUrl === "guess") {
             const isWebPathPlural = !!Property.get("isWebPathPlural");
-            const origin = await this.getOriginOfActiveFile();
             if (origin) {
                 const uri = this.defaultWebPath(
                     origin,
