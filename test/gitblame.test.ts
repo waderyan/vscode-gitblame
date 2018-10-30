@@ -87,6 +87,25 @@ suite("Web URL formatting", () => {
     );
   });
 
+  test("ssh:// short host no user", () => {
+    assert.equal(
+      blame.defaultWebPath(
+        "ssh://user@host:8080/SomeProject.git",
+        "hash",
+        false,
+      ),
+      "https://host/SomeProject/commit/hash",
+    );
+    assert.equal(
+      blame.defaultWebPath(
+        "ssh://user@host:8080/SomeProject",
+        "hash",
+        false,
+      ),
+      "https://host/SomeProject/commit/hash",
+    );
+  });
+
 });
 
 suite("Origin to project name", () => {

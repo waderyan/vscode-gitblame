@@ -128,7 +128,7 @@ export class GitBlame {
         isPlural: boolean,
     ): string {
         const httplessUrl = url.replace(/^[a-z]+:\/\//i, "");
-        const colonlessUrl = httplessUrl.replace(/:([a-z]+)\/?/ig, "/$1/");
+        const colonlessUrl = httplessUrl.replace(/:([a-z]+)\/?/i, "/$1/");
         const gitlessUrl = colonlessUrl.replace(".git", "");
 
         let uri: URL;
