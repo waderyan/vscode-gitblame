@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.6.0 (November 5, 2018)
+
+* Feature: We can now parse a wider variety of git origin formats [#46](https://github.com/Sertion/vscode-gitblame/pull/46)
+* Feature: You can now use your project name in `vscode.commitUrl` [#46](https://github.com/Sertion/vscode-gitblame/pull/46)
+* Fix: Updating dependencies
+
 ## 2.5.1 (October 28, 2018)
 
 * Bug: Remote URLs without `.git` are now handled correctly [#44](https://github.com/Sertion/vscode-gitblame/pull/44) (Thanks to [dewe](https://github.com/dewe))
