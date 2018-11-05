@@ -279,9 +279,10 @@ export class GitBlame {
 
         const commitUrl = Property.get("commitUrl") || "";
         const origin = await this.getOriginOfActiveFile();
+        const projectName = this.projectNameFromOrigin(origin);
         const parsedUrl = commitUrl
             .replace(/\$\{hash\}/g, commitInfo.hash)
-            .replace(/\$\{project-name\}/g, origin);
+            .replace(/\$\{project.name\}/g, projectName);
 
         if (isWebUri(parsedUrl)) {
             return Uri.parse(parsedUrl);
