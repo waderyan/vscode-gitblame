@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.6.1 (November 15, 2018)
+
+* Bug: Dot in username generates wrong repository URL [#48](https://github.com/Sertion/vscode-gitblame/pull/48) (Thanks to [bolduz](https://github.com/bolduz))
+
 ## 2.6.0 (November 5, 2018)
 
 * Feature: We can now parse a wider variety of git origin formats [#46](https://github.com/Sertion/vscode-gitblame/pull/46)
