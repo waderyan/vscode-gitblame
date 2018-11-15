@@ -128,7 +128,10 @@ export class GitBlame {
         isPlural: boolean,
     ): string {
         const httplessUrl = url.replace(/^[a-z]+:\/\//i, "");
-        const colonlessUrl = httplessUrl.replace(/:([a-z]+)\/?/i, "/$1/");
+        const colonlessUrl = httplessUrl.replace(
+            /:([a-z_\.~+%-][a-z0-9_\.~+%-]+)\/?/i,
+            "/$1/",
+        );
         const gitlessUrl = colonlessUrl.replace(".git", "");
 
         let uri: URL;
@@ -147,12 +150,12 @@ export class GitBlame {
     }
 
     public projectNameFromOrigin(origin: string): string {
-        const match = /([a-zA-Z0-9]*)(\.git)?$/.exec(origin);
+        const match = /([a-zA-Z0-9_~%+\.-]*?(\.git)?)$/.exec(origin);
         if (!match) {
             return "";
         }
 
-        return match[1];
+        return match[1].replace(".git", "");
     }
 
     public dispose(): void {
