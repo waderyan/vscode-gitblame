@@ -130,6 +130,41 @@ suite("Web URL formatting", () => {
         );
     });
 
+    test("non-alphanumeric in path", () => {
+        assert.equal(
+            blame.defaultWebPath(
+                "https://example.com/us.er/repo.git",
+                "hash",
+                false,
+            ),
+            "https://example.com/us.er/repo/commit/hash",
+        );
+        assert.equal(
+            blame.defaultWebPath(
+                "https://example.com/user/re-po.git",
+                "hash",
+                false,
+            ),
+            "https://example.com/user/re-po/commit/hash",
+        );
+        assert.equal(
+            blame.defaultWebPath(
+                "https://example.com/user/re%20po.git",
+                "hash",
+                false,
+            ),
+            "https://example.com/user/re%20po/commit/hash",
+        );
+        assert.equal(
+            blame.defaultWebPath(
+                "ssh://user@example.com:us.er/repo.git",
+                "hash",
+                false,
+            ),
+            "https://example.com/us.er/repo/commit/hash",
+        );
+    });
+
 });
 
 suite("Origin to project name", () => {
@@ -169,6 +204,33 @@ suite("Origin to project name", () => {
                 "git@example.com/company/group/user/repo",
             ),
             "repo",
+        );
+    });
+
+    test("non-alphanumeric in path", () => {
+        assert.equal(
+            blame.projectNameFromOrigin(
+                "https://example.com/user/re-po.git",
+            ),
+            "re-po",
+        );
+        assert.equal(
+            blame.projectNameFromOrigin(
+                "https://example.com/us.er/repo.git",
+            ),
+            "repo",
+        );
+        assert.equal(
+            blame.projectNameFromOrigin(
+                "https://example.com/user/re.po.git",
+            ),
+            "re.po",
+        );
+        assert.equal(
+            blame.projectNameFromOrigin(
+                "https://example.com/user/re.po",
+            ),
+            "re.po",
         );
     });
 });
