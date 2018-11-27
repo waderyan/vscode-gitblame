@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.6.2 (November 27, 2018)
+
+* Fix: Updating dependencies
+
 ## 2.6.1 (November 15, 2018)
 
 * Bug: Dot in username generates wrong repository URL [#48](https://github.com/Sertion/vscode-gitblame/pull/48) (Thanks to [bolduz](https://github.com/bolduz))
