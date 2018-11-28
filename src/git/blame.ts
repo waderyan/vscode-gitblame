@@ -127,12 +127,7 @@ export class GitBlame {
         hash: string,
         isPlural: boolean,
     ): string {
-        const httplessUrl = url.replace(/^[a-z]+:\/\//i, "");
-        const colonlessUrl = httplessUrl.replace(
-            /:([a-z_\.~+%-][a-z0-9_\.~+%-]+)\/?/i,
-            "/$1/",
-        );
-        const gitlessUrl = colonlessUrl.replace(".git", "");
+        const gitlessUrl = GitBlame.stripGitRemoteUrl(url);
 
         let uri: URL;
 
@@ -273,6 +268,15 @@ export class GitBlame {
         return commitInfo;
     }
 
+    private static stripGitRemoteUrl(rawUrl: string): string {
+        const httplessUrl = rawUrl.replace(/^[a-z-]+:\/\//i, "");
+        const colonlessUrl = httplessUrl.replace(
+            /:([a-z_\.~+%-][a-z0-9_\.~+%-]+)\/?/i,
+            "/$1/",
+        );
+        return colonlessUrl.replace(/\.git$/i, "");
+    }
+
     private async getToolUrl(
         commitInfo: IGitCommitInfo,
     ): Promise<Uri | undefined> {
@@ -283,8 +287,10 @@ export class GitBlame {
         const commitUrl = Property.get("commitUrl") || "";
         const origin = await this.getOriginOfActiveFile();
         const projectName = this.projectNameFromOrigin(origin);
+        const remoteUrl = GitBlame.stripGitRemoteUrl(await this.getRemoteUrl());
         const parsedUrl = commitUrl
             .replace(/\$\{hash\}/g, commitInfo.hash)
+            .replace(/\$\{project.remote\}/g, remoteUrl)
             .replace(/\$\{project.name\}/g, projectName);
 
         if (isWebUri(parsedUrl)) {
@@ -304,7 +310,8 @@ export class GitBlame {
         } else if (parsedUrl !== "no") {
             window.showErrorMessage(
                 `Malformed URL in gitblame.commitUrl. ` +
-                    `Must be a valid web url, "guess", or "no".`,
+                    `Must be a valid web url, "guess", or "no". ` +
+                    `Currently expands to: '${ parsedUrl }'`,
             );
         }
     }
@@ -372,6 +379,46 @@ export class GitBlame {
         } else {
             return GitBlame.blankCommitInfo();
         }
+    }
+
+    private async getRemoteUrl(): Promise<string> {
+        if (
+            !isActiveEditorValid()
+            || !(
+                window
+                && window.activeTextEditor
+            )
+        ) {
+            return "";
+        }
+        const gitCommand = getGitCommand();
+        const activeFile = window.activeTextEditor.document.fileName;
+        const activeFileFolder = parse(activeFile).dir;
+        const currentBranch = await execute(gitCommand, [
+            "symbolic-ref",
+            "-q",
+            "--short",
+            "HEAD"
+        ], {
+            cwd: activeFileFolder,
+        });
+        const curRemote = await execute(gitCommand, [
+            "config",
+            "--worktree",
+            "--get",
+            `branch.${ currentBranch.trim() }.remote`
+        ], {
+            cwd: activeFileFolder,
+        });
+        const remoteUrl = await execute(gitCommand, [
+            "config",
+            "--worktree",
+            "--get",
+            `remote.${ curRemote.trim() }.url`
+        ], {
+            cwd: activeFileFolder,
+        });
+        return remoteUrl.trim();
     }
 
     private async getOriginOfActiveFile(): Promise<string> {
