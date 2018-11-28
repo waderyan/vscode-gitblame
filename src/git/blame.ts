@@ -66,6 +66,15 @@ export class GitBlame {
         return commit.hash === HASH_NO_COMMIT_GIT;
     }
 
+    private static stripGitRemoteUrl(rawUrl: string): string {
+        const httplessUrl = rawUrl.replace(/^[a-z-]+:\/\//i, "");
+        const colonlessUrl = httplessUrl.replace(
+            /:([a-z_\.~+%-][a-z0-9_\.~+%-]+)\/?/i,
+            "/$1/",
+        );
+        return colonlessUrl.replace(/\.git$/i, "");
+    }
+
     private disposable: Disposable;
     private readonly statusBarView: StatusBarView;
     private readonly files: Map<string, GitFile> = new Map();
@@ -268,15 +277,6 @@ export class GitBlame {
         return commitInfo;
     }
 
-    private static stripGitRemoteUrl(rawUrl: string): string {
-        const httplessUrl = rawUrl.replace(/^[a-z-]+:\/\//i, "");
-        const colonlessUrl = httplessUrl.replace(
-            /:([a-z_\.~+%-][a-z0-9_\.~+%-]+)\/?/i,
-            "/$1/",
-        );
-        return colonlessUrl.replace(/\.git$/i, "");
-    }
-
     private async getToolUrl(
         commitInfo: IGitCommitInfo,
     ): Promise<Uri | undefined> {
@@ -398,7 +398,7 @@ export class GitBlame {
             "symbolic-ref",
             "-q",
             "--short",
-            "HEAD"
+            "HEAD",
         ], {
             cwd: activeFileFolder,
         });
@@ -406,7 +406,7 @@ export class GitBlame {
             "config",
             "--worktree",
             "--get",
-            `branch.${ currentBranch.trim() }.remote`
+            `branch.${ currentBranch.trim() }.remote`,
         ], {
             cwd: activeFileFolder,
         });
@@ -414,7 +414,7 @@ export class GitBlame {
             "config",
             "--worktree",
             "--get",
-            `remote.${ curRemote.trim() }.url`
+            `remote.${ curRemote.trim() }.url`,
         ], {
             cwd: activeFileFolder,
         });
