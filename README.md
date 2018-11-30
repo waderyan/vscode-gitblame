@@ -50,9 +50,13 @@ See Git Blame information in the status bar for the currently selected line.
             <ul>
               <li><code>${hash}</code> - the commit hash</li>
               <li><code>${project.name}</code> - your project name (e.g. <code>https://github.com/user/<strong>project_name</strong>.git</code>)</li>
+              <li><code>${project.remote}</code> - the current default remote's URL with the
+              protocol, port-specifiers, and trailing <code>.git</code> stripped. (e.g.
+              <code>https://<strong>github.com/user/project_name</strong>.git</code>)</li>
             </ul>
           </li>
           <li><em>Example:</em> <code>https://github.com/Sertion/vscode-gitblame/commit/${hash}</code></li>
+          <li><em>Example:</em> <code>https://${project.remote}/+/${hash}</code></li>
       </ul>
     </tr>
     <tr>
