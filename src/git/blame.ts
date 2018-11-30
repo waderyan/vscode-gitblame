@@ -284,10 +284,11 @@ export class GitBlame {
             return;
         }
 
+        const remote = this.getRemoteUrl();
         const commitUrl = Property.get("commitUrl") || "";
         const origin = await this.getOriginOfActiveFile();
         const projectName = this.projectNameFromOrigin(origin);
-        const remoteUrl = GitBlame.stripGitRemoteUrl(await this.getRemoteUrl());
+        const remoteUrl = GitBlame.stripGitRemoteUrl(await remote);
         const parsedUrl = commitUrl
             .replace(/\$\{hash\}/g, commitInfo.hash)
             .replace(/\$\{project.remote\}/g, remoteUrl)
@@ -404,7 +405,7 @@ export class GitBlame {
         });
         const curRemote = await execute(gitCommand, [
             "config",
-            "--worktree",
+            "--local",
             "--get",
             `branch.${ currentBranch.trim() }.remote`,
         ], {
@@ -412,7 +413,7 @@ export class GitBlame {
         });
         const remoteUrl = await execute(gitCommand, [
             "config",
-            "--worktree",
+            "--local",
             "--get",
             `remote.${ curRemote.trim() }.url`,
         ], {
