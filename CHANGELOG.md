@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.6.3 (November 30, 2018)
+
+* Feature: Add support for using remote URL in blame link expansion [#50](https://github.com/Sertion/vscode-gitblame/pull/50) (Thanks to [allight](https://github.com/allight))
+
 ## 2.6.2 (November 27, 2018)
 
 * Fix: Updating dependencies
