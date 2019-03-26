@@ -5,7 +5,7 @@
   "version": "2.6.3",
   "publisher": "waderyan",
   "engines": {
-    "vscode": "^1.28.0"
+    "vscode": "^1.32.0"
   },
   "categories": [
     "Other"
@@ -34,17 +34,16 @@
     "test": "node ./node_modules/vscode/bin/test"
   },
   "dependencies": {
-    "moment": "^2.22.2",
+    "moment": "^2.24.0",
     "valid-url": "^1.0.9"
   },
   "devDependencies": {
-    "@types/mocha": "^5.2.5",
-    "@types/node": "^10.12.10",
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^10.14.4",
     "@types/valid-url": "^1.0.2",
-    "mocha": "^5.2.0",
-    "tslint": "^5.11.0",
-    "typescript": "^3.1.6",
-    "vscode": "^1.1.22"
+    "tslint": "^5.14.0",
+    "typescript": "^3.3.4000",
+    "vscode": "^1.1.33"
   },
   "homepage": "https://github.com/Sertion/vscode-gitblame/blob/master/README.md",
   "bugs": {
@@ -64,6 +63,14 @@
       {
         "command": "gitblame.online",
         "title": "Git Blame: View last change online"
+      },
+      {
+        "command": "gitblame.addCommitHashToClipboard",
+        "title": "Git Blame: Copy hash to clipboard"
+      },
+      {
+        "command": "gitblame.addToolUrlToClipboard",
+        "title": "Git Blame: Copy tool URL to clipboard"
       }
     ],
     "configuration": {

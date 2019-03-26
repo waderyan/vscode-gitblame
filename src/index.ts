@@ -15,7 +15,23 @@ export async function activate(context: ExtensionContext): Promise<void> {
             app.blameLink,
             app,
         );
+        const copyHashCommand = commands.registerCommand(
+            "gitblame.addCommitHashToClipboard",
+            app.copyHash,
+            app,
+        );
+        const copyToolUrl = commands.registerCommand(
+            "gitblame.addToolUrlToClipboard",
+            app.copyToolUrl,
+            app,
+        );
 
-        context.subscriptions.push(app, blameCommand, linkCommand);
+        context.subscriptions.push(
+            app,
+            blameCommand,
+            linkCommand,
+            copyHashCommand,
+            copyToolUrl,
+        );
     }
 }

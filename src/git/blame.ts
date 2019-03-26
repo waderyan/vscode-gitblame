@@ -5,6 +5,7 @@ import { isWebUri } from "valid-url";
 import {
     commands,
     Disposable,
+    env,
     Uri,
     window,
     workspace,
@@ -128,6 +129,45 @@ export class GitBlame {
 
         if (actionedItem) {
             actionedItem.takeAction();
+        }
+    }
+
+    public async copyHash(): Promise<void> {
+        const commitInfo = await this.getCommitInfo();
+
+        try {
+            await env.clipboard.writeText(commitInfo.hash);
+            window.showInformationMessage("Copied hash to clipboard");
+        } catch (err) {
+            ErrorHandler.logCritical(
+                err,
+                `Unable to copy hash to clipboard. hash: ${
+                    commitInfo.hash
+                }`,
+            );
+        }
+    }
+
+    public async copyToolUrl(): Promise<void> {
+        const commitInfo = await this.getCommitInfo();
+        const commitToolUrl = await this.getToolUrl(commitInfo);
+
+        if (commitToolUrl) {
+            try {
+                await env.clipboard.writeText(commitToolUrl.toString());
+                window.showInformationMessage("Copied tool URL to clipboard");
+            } catch (err) {
+                ErrorHandler.logCritical(
+                    err,
+                    `Unable to copy tool URL to clipboard. URL: ${
+                        commitToolUrl
+                    }`,
+                );
+            }
+        } else {
+            window.showErrorMessage(
+                "Missing gitblame.commitUrl configuration value.",
+            );
         }
     }
 

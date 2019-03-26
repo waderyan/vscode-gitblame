@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.7.0 (March 27, 2019)
+
+* Feature: Copy tool URL or hash to your clipboard with `gitblame.addToolUrlToClipboard` and `gitblame.addCommitHashToClipboard`! (Thanks to [tombusby](https://github.com/tombusby) for the suggestion)
+* Fix: Updating dependencies
+
 ## 2.6.3 (November 30, 2018)
 
 * Feature: Add support for using remote URL in blame link expansion [#50](https://github.com/Sertion/vscode-gitblame/pull/50) (Thanks to [allight](https://github.com/allight))
