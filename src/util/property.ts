@@ -11,6 +11,7 @@ interface IPropertiesMap {
     "statusBarMessageFormat": string;
     "statusBarMessageNoCommit": string;
     "statusBarPositionPriority": number;
+    "pluralWebPathSubstrings": string[];
 }
 
 export class Property {

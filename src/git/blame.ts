@@ -337,7 +337,7 @@ export class GitBlame {
         if (isWebUri(parsedUrl)) {
             return Uri.parse(parsedUrl);
         } else if (parsedUrl === "guess") {
-            const isWebPathPlural = !!Property.get("isWebPathPlural");
+            const isWebPathPlural = this.isToolUrlPlural(origin);
             if (origin) {
                 const uri = this.defaultWebPath(
                     origin,
@@ -491,5 +491,21 @@ export class GitBlame {
         return () => {
             this.files.delete(fileName);
         };
+    }
+
+    private isToolUrlPlural(origin: string): boolean {
+        const isWebPathPlural = Property.get("isWebPathPlural");
+
+        if (isWebPathPlural === true) {
+            return true;
+        }
+
+        const urlParts = Property.get("pluralWebPathSubstrings");
+
+        if (urlParts === undefined) {
+            return false;
+        }
+
+        return urlParts.some((substring) => origin.includes(substring));
     }
 }
