@@ -80,7 +80,7 @@
         "gitblame.commitUrl": {
           "type": "string",
           "default": "guess",
-          "description": "The link to an online tool to view a commit (use ${hash} for the commit hash). \"no\" will disable this feature."
+          "markdownDescription": "The link to an online tool to view a commit (use `${hash}` for the commit hash). `\"no\"` will disable this feature."
         },
         "gitblame.ignoreWhitespace": {
           "type": "boolean",
@@ -96,6 +96,14 @@
           "type": "boolean",
           "default": false,
           "description": "BitBucket uses commits instead of commit in their web interface. Turn this on if you want the View button to work for BitBucket."
+        },
+        "gitblame.pluralWebPathSubstrings": {
+          "type": "array",
+          "default": [
+            "bitbucket",
+            "atlassian"
+          ],
+          "markdownDescription": "An array of substrings that, when present in the git origin URL, activates `gitblame.isWebPathPlural`"
         },
         "gitblame.logLevel": {
           "type": "array",
