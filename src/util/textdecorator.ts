@@ -5,6 +5,7 @@ import {
     IGitCommitInfo,
     IInfoTokenNormalizedCommitInfo,
 } from "../interfaces";
+import { pluralText } from "./plural-text";
 import { Property } from "./property";
 
 export class TextDecorator {
@@ -29,7 +30,6 @@ export class TextDecorator {
         }
     }
 
-    /* tslint:disable:cyclomatic-complexity */
     public static toDateText(dateNow: Date, dateThen: Date): string {
         const momentNow = moment(dateNow);
         const momentThen = moment(dateThen);
@@ -41,22 +41,19 @@ export class TextDecorator {
         const minutes = momentNow.diff(momentThen, "minutes");
 
         if (years >= 1) {
-            return years + " " + (years === 1 ? "year" : "years") + " ago";
+            return pluralText(years, "year", "years") + " ago";
         } else if (months >= 1) {
-            return months + " " + (months === 1 ? "month" : "months") + " ago";
+            return pluralText(months, "month", "months") + " ago";
         } else if (days >= 1) {
-            return days + " " + (days === 1 ? "day" : "days") + " ago";
+            return pluralText(days, "day", "days") + " ago";
         } else if (hours >= 1) {
-            return hours + " " + (hours === 1 ? "hour" : "hours") + " ago";
+            return pluralText(hours, "hour", "hours") + " ago";
         } else if (minutes >= 5) {
-            return (
-                minutes + " " + (minutes === 1 ? "minute" : "minutes") + " ago"
-            );
+            return pluralText(minutes, "minute", "minutes") + " ago";
         } else {
             return "right now";
         }
     }
-    /* tslint:enable:cyclomatic-complexity */
 
     public static parseTokens(
         target: string,
