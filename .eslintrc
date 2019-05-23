@@ -14,7 +14,7 @@
         "max-len": ["error", {
             "code": 80
         }],
-        "@typescript-eslint/no-require-imports": true,
+        "@typescript-eslint/no-require-imports": 2,
         "no-duplicate-imports": ["error"],
         "comma-dangle": [
             "error",
