@@ -2,10 +2,10 @@ import * as assert from "assert";
 
 import { GitBlame } from "../src/git/blame";
 
-suite("Web URL formatting", () => {
+suite("Web URL formatting", (): void => {
     const blame = new GitBlame();
 
-    test("https://", () => {
+    test("https://", (): void => {
         assert.equal(
             blame.defaultWebPath(
                 "https://example.com/user/repo.git",
@@ -24,7 +24,7 @@ suite("Web URL formatting", () => {
         );
     });
 
-    test("git@", () => {
+    test("git@", (): void => {
         assert.equal(
             blame.defaultWebPath(
                 "git@example.com:user/repo.git",
@@ -39,7 +39,7 @@ suite("Web URL formatting", () => {
         );
     });
 
-    test("username@", () => {
+    test("username@", (): void => {
         assert.equal(
             blame.defaultWebPath(
                 "username@example.com:user/repo.git",
@@ -58,7 +58,7 @@ suite("Web URL formatting", () => {
         );
     });
 
-    test("https:// with port", () => {
+    test("https:// with port", (): void => {
         assert.equal(
             blame.defaultWebPath(
                 "https://example.com:8080/user/repo.git",
@@ -77,7 +77,7 @@ suite("Web URL formatting", () => {
         );
     });
 
-    test("git@ with port", () => {
+    test("git@ with port", (): void => {
         assert.equal(
             blame.defaultWebPath(
                 "git@example.com:8080/user/repo.git",
@@ -96,7 +96,7 @@ suite("Web URL formatting", () => {
         );
     });
 
-    test("https:// plural", () => {
+    test("https:// plural", (): void => {
         assert.equal(
             blame.defaultWebPath(
                 "https://example.com/user/repo.git",
@@ -111,7 +111,7 @@ suite("Web URL formatting", () => {
         );
     });
 
-    test("ssh:// short host no user", () => {
+    test("ssh:// short host no user", (): void => {
         assert.equal(
             blame.defaultWebPath(
                 "ssh://user@host:8080/SomeProject.git",
@@ -130,7 +130,7 @@ suite("Web URL formatting", () => {
         );
     });
 
-    test("non-alphanumeric in path", () => {
+    test("non-alphanumeric in path", (): void => {
         assert.equal(
             blame.defaultWebPath(
                 "https://example.com/us.er/repo.git",
@@ -167,10 +167,10 @@ suite("Web URL formatting", () => {
 
 });
 
-suite("Origin to project name", () => {
+suite("Origin to project name", (): void => {
     const blame = new GitBlame();
 
-    test("https://", () => {
+    test("https://", (): void => {
         assert.equal(
             blame.projectNameFromOrigin("https://example.com/user/repo.git"),
             "repo",
@@ -181,7 +181,7 @@ suite("Origin to project name", () => {
         );
     });
 
-    test("git@", () => {
+    test("git@", (): void => {
         assert.equal(
             blame.projectNameFromOrigin("git@example.com/user/repo.git"),
             "repo",
@@ -192,7 +192,7 @@ suite("Origin to project name", () => {
         );
     });
 
-    test("longer than normal path", () => {
+    test("longer than normal path", (): void => {
         assert.equal(
             blame.projectNameFromOrigin(
                 "git@example.com/company/group/user/repo.git",
@@ -207,7 +207,7 @@ suite("Origin to project name", () => {
         );
     });
 
-    test("non-alphanumeric in path", () => {
+    test("non-alphanumeric in path", (): void => {
         assert.equal(
             blame.projectNameFromOrigin(
                 "https://example.com/user/re-po.git",
