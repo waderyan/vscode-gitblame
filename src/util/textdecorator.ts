@@ -29,29 +29,34 @@ export class TextDecorator {
         }
     }
 
+    /* tslint:disable:cyclomatic-complexity */
     public static toDateText(dateNow: Date, dateThen: Date): string {
         const momentNow = moment(dateNow);
         const momentThen = moment(dateThen);
 
+        const years = momentNow.diff(momentThen, "years");
         const months = momentNow.diff(momentThen, "months");
         const days = momentNow.diff(momentThen, "days");
         const hours = momentNow.diff(momentThen, "hours");
         const minutes = momentNow.diff(momentThen, "minutes");
 
-        if (minutes <= 4) {
-            return "right now";
-        } else if (minutes <= 70) {
+        if (years >= 1) {
+            return years + " " + (years === 1 ? "year" : "years") + " ago";
+        } else if (months >= 1) {
+            return months + " " + (months === 1 ? "month" : "months") + " ago";
+        } else if (days >= 1) {
+            return days + " " + (days === 1 ? "day" : "days") + " ago";
+        } else if (hours >= 1) {
+            return hours + " " + (hours === 1 ? "hour" : "hours") + " ago";
+        } else if (minutes >= 5) {
             return (
                 minutes + " " + (minutes === 1 ? "minute" : "minutes") + " ago"
             );
-        } else if (hours <= 47) {
-            return hours + " " + (hours === 1 ? "hour" : "hours") + " ago";
-        } else if (days <= 40) {
-            return days + " " + (days === 1 ? "day" : "days") + " ago";
         } else {
-            return months + " " + (months === 1 ? "month" : "months") + " ago";
+            return "right now";
         }
     }
+    /* tslint:enable:cyclomatic-complexity */
 
     public static parseTokens(
         target: string,

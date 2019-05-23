@@ -4,7 +4,14 @@ import { IInfoTokenNormalizedCommitInfo } from "interfaces";
 import { TextDecorator } from "../src/util/textdecorator";
 
 suite("Date Calculations", () => {
-    test("Time ago", () => {
+    test("Time ago in years", () => {
+        assert.equal(
+            TextDecorator.toDateText(new Date(2015, 1), new Date(2014, 1)),
+            "1 year ago",
+        );
+    });
+
+    test("Time ago in months", () => {
         assert.equal(
             TextDecorator.toDateText(new Date(2015, 4), new Date(2015, 1)),
             "3 months ago",
@@ -14,7 +21,9 @@ suite("Date Calculations", () => {
             TextDecorator.toDateText(new Date(2015, 2, 20), new Date(2015, 1)),
             "1 month ago",
         );
+    });
 
+    test("Time ago in days", () => {
         assert.equal(
             TextDecorator.toDateText(
                 new Date(2015, 1, 5),
@@ -22,7 +31,9 @@ suite("Date Calculations", () => {
             ),
             "4 days ago",
         );
+    });
 
+    test("Time ago in hours", () => {
         assert.equal(
             TextDecorator.toDateText(
                 new Date(2015, 1, 1, 3, 0, 0),
@@ -30,7 +41,9 @@ suite("Date Calculations", () => {
             ),
             "2 hours ago",
         );
+    });
 
+    test("Time ago in minutes", () => {
         assert.equal(
             TextDecorator.toDateText(
                 new Date(2015, 1, 1, 1, 30, 0),
