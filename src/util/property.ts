@@ -1,7 +1,7 @@
 import { workspace } from "vscode";
 import { LogCategory } from "./errorhandler";
 
-interface IPropertiesMap {
+interface PropertiesMap {
     "commitUrl": string;
     "ignoreWhitespace": boolean;
     "infoMessageFormat": string;
@@ -15,9 +15,9 @@ interface IPropertiesMap {
 }
 
 export class Property {
-    public static get<K extends keyof IPropertiesMap>(
+    public static get<K extends keyof PropertiesMap>(
         name: K,
-    ): IPropertiesMap[K] | undefined {
+    ): PropertiesMap[K] | undefined {
         const properties = workspace.getConfiguration("gitblame");
         return properties.get(name);
     }

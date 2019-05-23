@@ -1,4 +1,4 @@
-export interface IGitCommitAuthor {
+export interface GitCommitAuthor {
     name: string;
     mail: string;
     timestamp: number;
@@ -6,29 +6,29 @@ export interface IGitCommitAuthor {
     temporary?: true;
 }
 
-export interface IGitCommitInfo {
+export interface GitCommitInfo {
     hash: string;
-    author: IGitCommitAuthor;
-    committer: IGitCommitAuthor;
+    author: GitCommitAuthor;
+    committer: GitCommitAuthor;
     summary: string;
     filename: string;
     generated?: true;
 }
 
-export interface IGitCommitInfoArray {
-    [hash: string]: IGitCommitInfo;
+export interface GitCommitInfoArray {
+    [hash: string]: GitCommitInfo;
 }
 
-export interface IGitCommitLineArray {
+export interface GitCommitLineArray {
     [lineNumber: number]: string;
 }
 
-export interface IGitBlameInfo {
-    commits: IGitCommitInfoArray;
-    lines: IGitCommitLineArray;
+export interface GitBlameInfo {
+    commits: GitCommitInfoArray;
+    lines: GitCommitLineArray;
 }
 
-export interface IInfoTokenNormalizedCommitInfo {
+export interface InfoTokenNormalizedCommitInfo {
     "author.mail": () => string;
     "author.name": () => string;
     "author.timestamp": () => string;

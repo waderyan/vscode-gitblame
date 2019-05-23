@@ -1,7 +1,7 @@
-import { Uri, window, workspace } from "vscode";
+import { Uri, window } from "vscode";
 
 import { TIME_CACHE_LIFETIME } from "../constants";
-import { IGitBlameInfo } from "../interfaces";
+import { GitBlameInfo } from "../interfaces";
 import { ErrorHandler } from "../util/errorhandler";
 import { GitBlame } from "./blame";
 
@@ -11,7 +11,7 @@ export class GitFile {
 
     private cacheClearInterval: NodeJS.Timer | undefined;
 
-    constructor(fileName: string, disposeCallback: () => void) {
+    public constructor(fileName: string, disposeCallback: () => void) {
         this.fileName = Uri.file(fileName);
         this.disposeCallback = disposeCallback;
     }
@@ -19,9 +19,11 @@ export class GitFile {
     public startCacheInterval(): void {
         this.clearCacheInterval();
 
-        this.cacheClearInterval = setInterval(() => {
+        this.cacheClearInterval = setInterval((): void => {
             const isOpen = window.visibleTextEditors.some(
-                (editor) => editor.document.uri.fsPath === this.fileName.fsPath,
+                (editor): boolean => (
+                    editor.document.uri.fsPath === this.fileName.fsPath
+                ),
             );
 
             if (!isOpen) {
@@ -35,7 +37,7 @@ export class GitFile {
         }, TIME_CACHE_LIFETIME);
     }
 
-    public async blame(): Promise<IGitBlameInfo> {
+    public async blame(): Promise<GitBlameInfo> {
         return GitBlame.blankBlameInfo();
     }
 

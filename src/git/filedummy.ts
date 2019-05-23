@@ -2,7 +2,7 @@ import { ErrorHandler } from "../util/errorhandler";
 import { GitFile } from "./file";
 
 export class GitFileDummy extends GitFile {
-    constructor(fileName: string, disposeCallback: () => void) {
+    public constructor(fileName: string, disposeCallback: () => void) {
         super(fileName, disposeCallback);
         this.startCacheInterval();
         ErrorHandler.logInfo(

@@ -4,18 +4,18 @@ export class ActionableMessageItem implements MessageItem {
     public title: string;
     private action: () => void;
 
-    constructor(title: string) {
+    public constructor(title: string) {
         this.title = title;
-        this.action = () => {
+        this.action = (): void => {
             return;
         };
     }
 
-    public setAction(action: () => void) {
+    public setAction(action: () => void): void {
         this.action = action;
     }
 
-    public takeAction() {
+    public takeAction(): void {
         if (this.action) {
             this.action();
         }

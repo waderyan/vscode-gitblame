@@ -2,14 +2,14 @@ import * as moment from "moment";
 
 import { GitBlame } from "../git/blame";
 import {
-    IGitCommitInfo,
-    IInfoTokenNormalizedCommitInfo,
+    GitCommitInfo,
+    InfoTokenNormalizedCommitInfo,
 } from "../interfaces";
 import { pluralText } from "./plural-text";
 import { Property } from "./property";
 
 export class TextDecorator {
-    public static toTextView(commit: IGitCommitInfo): string {
+    public static toTextView(commit: GitCommitInfo): string {
         if (GitBlame.isBlankCommit(commit)) {
             return Property.get("statusBarMessageNoCommit")
                 || "Not Committed Yet";
@@ -57,7 +57,7 @@ export class TextDecorator {
 
     public static parseTokens(
         target: string,
-        tokens: IInfoTokenNormalizedCommitInfo,
+        tokens: InfoTokenNormalizedCommitInfo,
     ): string {
         const tokenRegex = /\$\{([a-z\.\-\_]{1,})[,]*(|.{1,}?)(?=\})}/gi;
 
@@ -67,7 +67,7 @@ export class TextDecorator {
 
         return target.replace(
             tokenRegex,
-            <K extends keyof IInfoTokenNormalizedCommitInfo>(
+            <K extends keyof InfoTokenNormalizedCommitInfo>(
                 path: string,
                 key: K,
                 inValue: string,
@@ -81,8 +81,8 @@ export class TextDecorator {
         );
     }
 
-    public static runKey<K extends keyof IInfoTokenNormalizedCommitInfo>(
-        tokens: IInfoTokenNormalizedCommitInfo,
+    public static runKey<K extends keyof InfoTokenNormalizedCommitInfo>(
+        tokens: InfoTokenNormalizedCommitInfo,
         key: K,
         value: string,
     ): string {
@@ -108,43 +108,49 @@ export class TextDecorator {
     }
 
     public static normalizeCommitInfoTokens(
-        commit: IGitCommitInfo,
-    ): IInfoTokenNormalizedCommitInfo {
+        commit: GitCommitInfo,
+    ): InfoTokenNormalizedCommitInfo {
         const now = new Date();
         const authorTime = moment.unix(commit.author.timestamp);
         const committerTime = moment.unix(commit.committer.timestamp);
 
         return {
-            "author.mail": () => commit.author.mail,
-            "author.name": () => commit.author.name,
-            "author.timestamp": () => commit.author.timestamp.toString(),
-            "author.tz": () => commit.author.tz,
-            "commit.filename": () => commit.filename,
-            "commit.hash": () => commit.hash,
-            "commit.hash_short": (length = "7") => {
+            "author.mail": (): string => commit.author.mail,
+            "author.name": (): string => commit.author.name,
+            "author.timestamp": (): string => (
+                commit.author.timestamp.toString()
+            ),
+            "author.tz": (): string => commit.author.tz,
+            "commit.filename": (): string => commit.filename,
+            "commit.hash": (): string => commit.hash,
+            "commit.hash_short": (length = "7"): string => {
                 const cutoffPoint = length.toString();
                 return commit.hash.substr(
                     0,
                     parseInt(cutoffPoint, 10),
                 );
             },
-            "commit.summary": () => commit.summary,
-            "committer.mail": () => commit.committer.mail,
-            "committer.name": () => commit.committer.name,
-            "committer.timestamp": () => commit.committer.timestamp.toString(),
-            "committer.tz": () => commit.committer.tz,
-            "time.ago": () => TextDecorator.toDateText(
+            "commit.summary": (): string => commit.summary,
+            "committer.mail": (): string => commit.committer.mail,
+            "committer.name": (): string => commit.committer.name,
+            "committer.timestamp": (): string => (
+                commit.committer.timestamp.toString()
+            ),
+            "committer.tz": (): string => commit.committer.tz,
+            "time.ago": (): string => TextDecorator.toDateText(
                 now,
                 authorTime.toDate(),
             ),
-            "time.c_ago": () => TextDecorator.toDateText(
+            "time.c_ago": (): string => TextDecorator.toDateText(
                 now,
                 committerTime.toDate(),
             ),
-            "time.c_custom": (format = "") => committerTime.format(format),
-            "time.c_from": () => committerTime.fromNow(),
-            "time.custom": (format = "") => authorTime.format(format),
-            "time.from": () => authorTime.fromNow(),
+            "time.c_custom": (format = ""): string => (
+                committerTime.format(format)
+            ),
+            "time.c_from": (): string => committerTime.fromNow(),
+            "time.custom": (format = ""): string => authorTime.format(format),
+            "time.from": (): string => authorTime.fromNow(),
         };
     }
 }

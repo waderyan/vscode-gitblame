@@ -1,7 +1,7 @@
 import { FSWatcher, watch } from "fs";
 import { dirname, normalize } from "path";
 
-import { IGitBlameInfo, IGitCommitInfo } from "../interfaces";
+import { GitBlameInfo, GitCommitInfo } from "../interfaces";
 import { ErrorHandler } from "../util/errorhandler";
 import { execute } from "../util/execcommand";
 import { getGitCommand } from "../util/gitcommand";
@@ -12,18 +12,18 @@ import { GitBlameStream } from "./stream";
 
 export class GitFilePhysical extends GitFile {
     private readonly fileSystemWatcher: FSWatcher;
-    private blameInfoPromise: Promise<IGitBlameInfo> | undefined;
+    private blameInfoPromise: Promise<GitBlameInfo> | undefined;
     private workTree: string | undefined;
     private workTreePromise: Promise<string> | undefined;
     private blameProcess: GitBlameStream | undefined;
 
-    constructor(fileName: string, disposeCallback: () => void) {
+    public constructor(fileName: string, disposeCallback: () => void) {
         super(fileName, disposeCallback);
 
         this.fileSystemWatcher = this.setupWatcher();
     }
 
-    public async blame(): Promise<IGitBlameInfo> {
+    public async blame(): Promise<GitBlameInfo> {
         StatusBarView.getInstance().startProgress();
 
         if (this.blameInfoPromise) {
@@ -43,7 +43,7 @@ export class GitFilePhysical extends GitFile {
     }
 
     private setupWatcher(): FSWatcher {
-        const fsWatcher = watch(this.fileName.fsPath, (event: string) => {
+        const fsWatcher = watch(this.fileName.fsPath, (event: string): void => {
             if (event === "rename") {
                 this.dispose();
             } else if (event === "change") {
@@ -106,7 +106,7 @@ export class GitFilePhysical extends GitFile {
         return gitRev.trim();
     }
 
-    private async findBlameInfo(): Promise<IGitBlameInfo> {
+    private async findBlameInfo(): Promise<GitBlameInfo> {
         let workTree: string;
 
         try {
@@ -116,8 +116,8 @@ export class GitFilePhysical extends GitFile {
         }
 
         if (workTree) {
-            this.blameInfoPromise = new Promise<IGitBlameInfo>(
-                (resolve, reject) => {
+            this.blameInfoPromise = new Promise<GitBlameInfo>(
+                (resolve, reject): void => {
                     const blameInfo = GitBlame.blankBlameInfo();
                     this.blameProcess = new GitBlameStream(
                         this.fileName,
@@ -158,28 +158,28 @@ export class GitFilePhysical extends GitFile {
     }
 
     private gitAddCommit(
-        blameInfo: IGitBlameInfo,
-    ): (hash: string, data: IGitCommitInfo) => void {
-        return (hash, data) => {
+        blameInfo: GitBlameInfo,
+    ): (hash: string, data: GitCommitInfo) => void {
+        return (hash, data): void => {
             blameInfo.commits[hash] = data;
         };
     }
 
     private gitAddLine(
-        blameInfo: IGitBlameInfo,
+        blameInfo: GitBlameInfo,
     ): (line: number, gitCommitHash: string) => void {
-        return (line: number, gitCommitHash: string) => {
+        return (line: number, gitCommitHash: string): void => {
             blameInfo.lines[line] = gitCommitHash;
         };
     }
 
     private gitStreamOver(
         gitStream: GitBlameStream,
-        reject: (err: Error) => void,
-        resolve: (val: any) => void,
-        blameInfo: IGitBlameInfo,
+        _reject: (err: Error) => void,
+        resolve: (val: GitBlameInfo) => void,
+        blameInfo: GitBlameInfo,
     ): (err: Error) => void {
-        return (err: Error) => {
+        return (err: Error): void => {
             gitStream.removeAllListeners();
             StatusBarView.getInstance().stopProgress();
             this.startCacheInterval();

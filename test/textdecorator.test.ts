@@ -1,6 +1,6 @@
 import * as assert from "assert";
 
-import { IInfoTokenNormalizedCommitInfo } from "interfaces";
+import { InfoTokenNormalizedCommitInfo } from "interfaces";
 import { TextDecorator } from "../src/util/textdecorator";
 
 suite("Date Calculations", () => {
@@ -91,7 +91,7 @@ suite("Date Calculations", () => {
 });
 
 suite("Token Parser", () => {
-    const normalizedInfo: IInfoTokenNormalizedCommitInfo = {
+    const normalizedInfo: InfoTokenNormalizedCommitInfo = {
         "author.mail": () => "value-author.mail",
         "author.name": () => "value-author.name",
         "author.timestamp": () => "value-author.timestamp",

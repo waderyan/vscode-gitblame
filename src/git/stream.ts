@@ -3,7 +3,7 @@ import { EventEmitter } from "events";
 
 import { Uri } from "vscode";
 
-import { IGitCommitAuthor, IGitCommitInfo } from "../interfaces";
+import { GitCommitAuthor, GitCommitInfo } from "../interfaces";
 import { ErrorHandler } from "../util/errorhandler";
 import { getGitCommand } from "../util/gitcommand";
 import { Property } from "../util/property";
@@ -17,7 +17,7 @@ export class GitBlameStream extends EventEmitter {
     private readonly process: ChildProcess | undefined;
     private readonly emittedCommits: { [hash: string]: true } = {};
 
-    constructor(file: Uri, workTree: string) {
+    public constructor(file: Uri, workTree: string) {
         super();
 
         this.file = file;
@@ -67,13 +67,13 @@ export class GitBlameStream extends EventEmitter {
 
     private setupListeners(): void {
         if (this.process) {
-            this.process.addListener("close", (code) => this.close());
-            this.process.stdout.addListener("data", (chunk) => {
+            this.process.addListener("close", (): void => this.close());
+            this.process.stdout.addListener("data", (chunk): void => {
                 this.data(chunk.toString());
             });
-            this.process.stderr.addListener("data", (error: Error) =>
-               this.close(error),
-            );
+            this.process.stderr.addListener("data", (error: Error): void => {
+                this.close(error);
+            });
         }
     }
 
@@ -87,7 +87,7 @@ export class GitBlameStream extends EventEmitter {
 
         commitInfo.filename = this.file.fsPath.replace(this.workTree, "");
 
-        lines.forEach((line, index) => {
+        lines.forEach((line, index): void => {
             if (line && line !== "boundary") {
                 const match = line.match(/(.*?) (.*)/);
                 if (match === null) {
@@ -118,10 +118,10 @@ export class GitBlameStream extends EventEmitter {
     private processLine(
         key: string,
         value: string,
-        commitInfo: IGitCommitInfo,
+        commitInfo: GitCommitInfo,
     ): void {
         const [keyPrefix, keySuffix] = key.split("-");
-        let owner: IGitCommitAuthor = {
+        let owner: GitCommitAuthor = {
             mail: "",
             name: "",
             temporary: true,
@@ -151,7 +151,7 @@ export class GitBlameStream extends EventEmitter {
             const hash = key;
             const [, finalLine, lines] = value
                 .split(" ")
-                .map((a) => parseInt(a, 10));
+                .map((a): number => parseInt(a, 10));
 
             this.lineGroupToLineEmit(hash, lines, finalLine);
         }
@@ -167,7 +167,7 @@ export class GitBlameStream extends EventEmitter {
         }
     }
 
-    private commitInfoToCommitEmit(commitInfo: IGitCommitInfo): void {
+    private commitInfoToCommitEmit(commitInfo: GitCommitInfo): void {
         if (!this.emittedCommits[commitInfo.hash]) {
             this.emittedCommits[commitInfo.hash] = true;
             this.emit("commit", commitInfo.hash, commitInfo);

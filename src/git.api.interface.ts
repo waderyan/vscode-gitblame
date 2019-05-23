@@ -1,7 +1,7 @@
-export interface IVscodeGitExtension {
-    git: IGitPath;
+export interface VscodeGitExtension {
+    git: GitPath;
 }
 
-export interface IGitPath {
+export interface GitPath {
     path: string;
 }

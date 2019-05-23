@@ -1,7 +1,7 @@
 import { StatusBarAlignment, StatusBarItem, window } from "vscode";
 
 import { GitBlame } from "./git/blame";
-import { IGitCommitInfo } from "./interfaces";
+import { GitCommitInfo } from "./interfaces";
 import { Property } from "./util/property";
 import { Spinner } from "./util/spinner";
 import { TextDecorator } from "./util/textdecorator";
@@ -34,7 +34,7 @@ export class StatusBarView {
         this.setText("", false);
     }
 
-    public update(commitInfo: IGitCommitInfo): void {
+    public update(commitInfo: GitCommitInfo): void {
         this.stopProgress();
 
         if (commitInfo && !commitInfo.generated) {
@@ -61,7 +61,7 @@ export class StatusBarView {
         this.stopProgress();
 
         if (this.spinner.updatable()) {
-            this.progressInterval = setInterval(() => {
+            this.progressInterval = setInterval((): void => {
                 this.setSpinner();
             }, 100);
         } else {

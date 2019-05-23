@@ -2,27 +2,8 @@ import { execFile, ExecOptions } from "child_process";
 
 import { ErrorHandler } from "./errorhandler";
 
-export function execute(
-    command: string,
-    args: string[],
-    options: ExecOptions = {},
-): Promise<string> {
-    return new Promise((resolve, reject) => {
-        ErrorHandler.logCommand(`${command} ${args.join(" ")}`);
-        execFile(
-            command,
-            args,
-            options,
-            execFileCallback(command, resolve, reject),
-        );
-    });
-}
 
-function execFileCallback(
-    command: string,
-    resolve: (result: string) => void,
-    reject: (err: Error) => void,
-): (
+function execFileCallback(command: string, resolve: (result: string) => void): (
     error: NodeJS.ErrnoException | null,
     stdout: string,
     stderr: string,
@@ -48,4 +29,20 @@ function execFileCallback(
         resolve("");
         return;
     };
+}
+
+export function execute(
+    command: string,
+    args: string[],
+    options: ExecOptions = {},
+): Promise<string> {
+    return new Promise((resolve): void => {
+        ErrorHandler.logCommand(`${command} ${args.join(" ")}`);
+        execFile(
+            command,
+            args,
+            options,
+            execFileCallback(command, resolve),
+        );
+    });
 }

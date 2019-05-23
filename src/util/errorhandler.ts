@@ -11,7 +11,7 @@ export enum LogCategory {
 }
 
 export class ErrorHandler {
-    public static logInfo(message: string) {
+    public static logInfo(message: string): void {
         ErrorHandler.getInstance().writeToLog(LogCategory.Info, message);
     }
 
@@ -68,7 +68,7 @@ export class ErrorHandler {
         this.outputChannel = window.createOutputChannel("Extension: gitblame");
     }
 
-    public dispose() {
+    public dispose(): void {
         this.outputChannel.dispose();
     }
 

@@ -1,4 +1,3 @@
-import { workspace } from "vscode";
 import { Property } from "./property";
 
 export class Spinner {

@@ -12,7 +12,7 @@ import {
 } from "vscode";
 
 import { HASH_NO_COMMIT_GIT, TITLE_VIEW_ONLINE } from "../constants";
-import { IGitBlameInfo, IGitCommitAuthor, IGitCommitInfo } from "../interfaces";
+import { GitBlameInfo, GitCommitAuthor, GitCommitInfo } from "../interfaces";
 import { ActionableMessageItem } from "../util/actionablemessageitem";
 import { isActiveEditorValid } from "../util/editorvalidator";
 import { ErrorHandler } from "../util/errorhandler";
@@ -26,35 +26,35 @@ import { GitFile } from "./file";
 import { GitFileFactory } from "./filefactory";
 
 export class GitBlame {
-    public static blankBlameInfo(): IGitBlameInfo {
+    public static blankBlameInfo(): GitBlameInfo {
         return {
             commits: {},
             lines: {},
         };
     }
 
-    public static blankCommitInfo(real: boolean = false): IGitCommitInfo {
-        const emptyAuthor = {
+    public static blankCommitInfo(real: boolean = false): GitCommitInfo {
+        const emptyAuthor: GitCommitAuthor = {
             mail: "",
             name: "",
             timestamp: 0,
             tz: "",
-        } as IGitCommitAuthor;
-        const emptyCommitter = {
+        };
+        const emptyCommitter: GitCommitAuthor = {
             mail: "",
             name: "",
             timestamp: 0,
             tz: "",
-        } as IGitCommitAuthor;
+        };
 
-        const commitInfo = {
+        const commitInfo: GitCommitInfo = {
             author: emptyAuthor,
             committer: emptyCommitter,
             filename: "",
             generated: true,
             hash: HASH_NO_COMMIT_GIT,
             summary: "",
-        } as IGitCommitInfo;
+        };
 
         if (real) {
             delete commitInfo.generated;
@@ -63,7 +63,7 @@ export class GitBlame {
         return commitInfo;
     }
 
-    public static isBlankCommit(commit: IGitCommitInfo): boolean {
+    public static isBlankCommit(commit: GitCommitInfo): boolean {
         return commit.hash === HASH_NO_COMMIT_GIT;
     }
 
@@ -80,7 +80,7 @@ export class GitBlame {
     private readonly statusBarView: StatusBarView;
     private readonly files: Map<string, GitFile> = new Map();
 
-    constructor() {
+    public constructor() {
         this.statusBarView = StatusBarView.getInstance();
 
         this.disposable = this.setupDisposables();
@@ -244,7 +244,7 @@ export class GitBlame {
         this.onTextEditorMove();
     }
 
-    @throttleFunction(16)
+    @throttleFunction<GitBlame>(16)
     private async onTextEditorMove(): Promise<void> {
         const beforeBlameOpenFile = this.getCurrentActiveFileName();
         const beforeBlameLineNumber = this.getCurrentActiveLineNumber();
@@ -285,7 +285,7 @@ export class GitBlame {
     }
 
     private async generateMessageActions(
-        commitInfo: IGitCommitInfo,
+        commitInfo: GitCommitInfo,
     ): Promise<ActionableMessageItem[]> {
         const commitToolUrl = await this.getToolUrl(commitInfo);
         const extraActions: ActionableMessageItem[] = [];
@@ -295,7 +295,7 @@ export class GitBlame {
                 TITLE_VIEW_ONLINE,
             );
 
-            viewOnlineAction.setAction(() => {
+            viewOnlineAction.setAction((): void => {
                 commands.executeCommand("vscode.open", commitToolUrl);
             });
 
@@ -305,7 +305,7 @@ export class GitBlame {
         return extraActions;
     }
 
-    private async getCommitInfo(): Promise<IGitCommitInfo> {
+    private async getCommitInfo(): Promise<GitCommitInfo> {
         const commitInfo = await this.getCurrentLineInfo();
 
         if (commitInfo.generated) {
@@ -318,7 +318,7 @@ export class GitBlame {
     }
 
     private async getToolUrl(
-        commitInfo: IGitCommitInfo,
+        commitInfo: GitCommitInfo,
     ): Promise<Uri | undefined> {
         if (GitBlame.isBlankCommit(commitInfo)) {
             return;
@@ -357,7 +357,7 @@ export class GitBlame {
         }
     }
 
-    private updateView(commitInfo: IGitCommitInfo): void {
+    private updateView(commitInfo: GitCommitInfo): void {
         if (commitInfo.generated) {
             this.clearView();
         } else {
@@ -365,11 +365,11 @@ export class GitBlame {
         }
     }
 
-    private clearView() {
+    private clearView(): void {
         this.statusBarView.clear();
     }
 
-    private async getBlameInfo(fileName: string): Promise<IGitBlameInfo> {
+    private async getBlameInfo(fileName: string): Promise<GitBlameInfo> {
         if (!this.files.has(fileName)) {
             this.files.set(
                 fileName,
@@ -392,7 +392,7 @@ export class GitBlame {
         }
     }
 
-    private async getCurrentLineInfo(): Promise<IGitCommitInfo> {
+    private async getCurrentLineInfo(): Promise<GitCommitInfo> {
         if (
             isActiveEditorValid()
             && window
@@ -410,7 +410,7 @@ export class GitBlame {
     private async getLineInfo(
         fileName: string,
         lineNumber: number,
-    ): Promise<IGitCommitInfo> {
+    ): Promise<GitCommitInfo> {
         const commitLineNumber = lineNumber + 1;
         const blameInfo = await this.getBlameInfo(fileName);
 
@@ -488,7 +488,7 @@ export class GitBlame {
     }
 
     private generateDisposeFunction(fileName: string): () => void {
-        return () => {
+        return (): void => {
             this.files.delete(fileName);
         };
     }
@@ -506,6 +506,8 @@ export class GitBlame {
             return false;
         }
 
-        return urlParts.some((substring) => origin.includes(substring));
+        return urlParts.some(
+            (substring): boolean => origin.includes(substring),
+        );
     }
 }
