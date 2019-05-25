@@ -117,7 +117,7 @@ export class GitFilePhysical extends GitFile {
 
         if (workTree) {
             this.blameInfoPromise = new Promise<GitBlameInfo>(
-                (resolve, reject): void => {
+                (resolve): void => {
                     const blameInfo = GitBlame.blankBlameInfo();
                     this.blameProcess = new GitBlameStream(
                         this.fileName,
@@ -136,7 +136,6 @@ export class GitFilePhysical extends GitFile {
                         "end",
                         this.gitStreamOver(
                             this.blameProcess,
-                            reject,
                             resolve,
                             blameInfo,
                         ),
@@ -175,7 +174,6 @@ export class GitFilePhysical extends GitFile {
 
     private gitStreamOver(
         gitStream: GitBlameStream,
-        _reject: (err: Error) => void,
         resolve: (val: GitBlameInfo) => void,
         blameInfo: GitBlameInfo,
     ): (err: Error) => void {

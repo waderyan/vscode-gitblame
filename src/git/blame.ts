@@ -70,7 +70,7 @@ export class GitBlame {
     private static stripGitRemoteUrl(rawUrl: string): string {
         const httplessUrl = rawUrl.replace(/^[a-z-]+:\/\//i, "");
         const colonlessUrl = httplessUrl.replace(
-            /:([a-z_\.~+%-][a-z0-9_\.~+%-]+)\/?/i,
+            /:([a-z_.~+%-][a-z0-9_.~+%-]+)\/?/i,
             "/$1/",
         );
         return colonlessUrl.replace(/\.git$/i, "");
@@ -194,7 +194,7 @@ export class GitBlame {
     }
 
     public projectNameFromOrigin(origin: string): string {
-        const match = /([a-zA-Z0-9_~%+\.-]*?(\.git)?)$/.exec(origin);
+        const match = /([a-zA-Z0-9_~%+.-]*?(\.git)?)$/.exec(origin);
         if (!match) {
             return "";
         }

@@ -2,7 +2,6 @@ import { execFile, ExecOptions } from "child_process";
 
 import { ErrorHandler } from "./errorhandler";
 
-
 function execFileCallback(command: string, resolve: (result: string) => void): (
     error: NodeJS.ErrnoException | null,
     stdout: string,

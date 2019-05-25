@@ -4,10 +4,16 @@
         "@typescript-eslint"
     ],
     "extends": [
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "eslint:recommended"
     ],
     "parserOptions": {
         "project": "./tsconfig.json"
+    },
+    "env": {
+        "es6": true,
+        "node": true,
+        "mocha": true
     },
     "rules": {
         "complexity": ["error", 10],
@@ -25,6 +31,29 @@
                 "exports": "always-multiline",
                 "functions": "always-multiline"
             }
-        ]
+        ],
+        "no-multiple-empty-lines": [
+            "error",
+            {
+                "max": 1,
+                "maxEOF": 1,
+                "maxBOF": 0
+            }
+        ],
+        "max-depth": [
+            "error",
+            {
+                "max": 3
+            }
+        ],
+        "max-params": "error",
+        "no-eq-null": "error",
+        "no-multi-spaces": "error",
+        "space-infix-ops": "error",
+        "space-in-parens": ["error", "never"],
+        "keyword-spacing": "error",
+        "no-sync": "error",
+        "no-lonely-if": "error",
+        "arrow-spacing": "error"
     }
 }

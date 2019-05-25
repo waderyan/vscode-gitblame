@@ -59,7 +59,7 @@ export class TextDecorator {
         target: string,
         tokens: InfoTokenNormalizedCommitInfo,
     ): string {
-        const tokenRegex = /\$\{([a-z\.\-\_]{1,})[,]*(|.{1,}?)(?=\})}/gi;
+        const tokenRegex = /\$\{([a-z.\-_]{1,})[,]*(|.{1,}?)(?=\})}/gi;
 
         if (typeof target !== "string") {
             return "";
@@ -68,7 +68,7 @@ export class TextDecorator {
         return target.replace(
             tokenRegex,
             <K extends keyof InfoTokenNormalizedCommitInfo>(
-                path: string,
+                _path: string,
                 key: K,
                 inValue: string,
             ): string => {
