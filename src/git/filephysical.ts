@@ -108,10 +108,12 @@ export class GitFilePhysical extends GitFile {
 
     private async findBlameInfo(): Promise<GitBlameInfo> {
         let workTree: string;
+        StatusBarView.getInstance().startProgress();
 
         try {
             workTree = await this.getGitWorkTree();
         } catch (err) {
+            StatusBarView.getInstance().stopProgress();
             return GitBlame.blankBlameInfo();
         }
 

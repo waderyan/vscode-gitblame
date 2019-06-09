@@ -47,10 +47,10 @@ export class StatusBarView {
     }
 
     public stopProgress(): void {
-        if (typeof this.progressInterval !== "undefined") {
+        if (this.progressInterval !== undefined) {
             clearInterval(this.progressInterval);
-            this.spinnerActive = false;
         }
+        this.spinnerActive = false;
     }
 
     public startProgress(): void {

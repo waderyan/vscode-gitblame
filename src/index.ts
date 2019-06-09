@@ -2,7 +2,7 @@ import { commands, ExtensionContext, workspace } from "vscode";
 
 import { GitBlame } from "./git/blame";
 
-export async function activate(context: ExtensionContext): Promise<void> {
+export function activate(context: ExtensionContext): void {
     if (workspace.workspaceFolders) {
         const app = new GitBlame();
         const blameCommand = commands.registerCommand(
