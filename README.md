@@ -60,6 +60,20 @@ See Git Blame information in the status bar for the currently selected line.
       </ul>
     </tr>
     <tr>
+      <td><code>gitblame.pluralWebPathSubstrings</code></td>
+      <td><code>string[]</code></td>
+      <td><code>["bitbucket", "atlassian"]</code></td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        <ul>
+          <li>Will automaticly set <code>gitblame.isWebPathPlural</code> to true whenever it detects any of the strings in the array as part of the git origin URL.
+          <li>Ignored when <code>gitblame.isWebPathPlural</code> is set to true.
+          <li>Will only impact <code>gitblame.commitUrl</code> when it is set to <code>"guess"</code>.
+        </ul>
+      </td>
+    </tr>
+    <tr>
       <td><code>gitblame.isWebPathPlural</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -69,7 +83,7 @@ See Git Blame information in the status bar for the currently selected line.
         <ul>
           <li>Recommended for BitBucket users.
           <li>Will only impact <code>gitblame.commitUrl</code> when it is set to <code>"guess"</code>.
-          <li>When set to <code>true</code> it will set the url will point to <code>commits</code> instead of commit.
+          <li>When set to <code>true</code> it will set the url will point to <code>commits</code> instead of <code>commit</code>.
         </ul>
       </td>
     </tr>

@@ -1,5 +1,15 @@
 # Change Log
 
+## 2.8.0 (June 9, 2019)
+* Feature: Auto detect Atlassian's BitBucket [#52](https://github.com/Sertion/vscode-gitblame/pull/52)
+* Feature: Now display _X years ago_ instead of massive amounts of months [#53](https://github.com/Sertion/vscode-gitblame/pull/53) (Thanks to [radar](https://github.com/radar))
+* Fix: Updating dependencies
+* Fix: New linting rules
+
+### BitBucket Detection
+
+There is a new setting called `gitblame.pluralWebPathSubstrings`. It is an array of strings that, if present in the git origin url, will add an extra _S_ to the online tool url.
+
 ## 2.7.0 (March 27, 2019)
 
 * Feature: Copy tool URL or hash to your clipboard with `gitblame.addToolUrlToClipboard` and `gitblame.addCommitHashToClipboard`! (Thanks to [tombusby](https://github.com/tombusby) for the suggestion)
