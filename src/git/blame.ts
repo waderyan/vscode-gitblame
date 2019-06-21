@@ -78,7 +78,7 @@ export class GitBlame {
 
     private disposable: Disposable;
     private readonly statusBarView: StatusBarView;
-    private readonly files: Map<string, GitFile> = new Map();
+    private readonly files: Map<string, Promise<GitFile>> = new Map();
 
     public constructor() {
         this.statusBarView = StatusBarView.getInstance();
@@ -203,7 +203,20 @@ export class GitBlame {
     }
 
     public dispose(): void {
-        Disposable.from(...this.files.values()).dispose();
+        this.files.forEach(
+            async (
+                file: Promise<GitFile | undefined>,
+                key: string,
+            ): Promise<void> => {
+                const fileResult = await file;
+
+                if (fileResult) {
+                    fileResult.dispose();
+                } else {
+                    this.files.delete(key);
+                }
+            },
+        );
         this.disposable.dispose();
     }
 
@@ -380,7 +393,7 @@ export class GitBlame {
             );
         }
 
-        const blameFile = this.files.get(fileName);
+        const blameFile = await this.files.get(fileName);
 
         if (blameFile) {
             return blameFile.blame();

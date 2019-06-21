@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.8.1 (June 21, 2019)
+* Bug: Blaming a removed file crashes the extension [#54](https://github.com/Sertion/vscode-gitblame/pull/54) (Thanks to [dmitriismitnov](https://github.com/dmitriismitnov))
+* Fix: Updating dependencies
+
 ## 2.8.0 (June 9, 2019)
 * Feature: Auto detect Atlassian's BitBucket [#52](https://github.com/Sertion/vscode-gitblame/pull/52)
 * Feature: Now display _X years ago_ instead of massive amounts of months [#53](https://github.com/Sertion/vscode-gitblame/pull/53) (Thanks to [radar](https://github.com/radar))
