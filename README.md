@@ -137,20 +137,6 @@ See Git Blame information in the status bar for the currently selected line.
       </td>
     </tr>
     <tr>
-      <td><code>gitblame.progressSpinner</code></td>
-      <td><code>string[]</code></td>
-      <td><code>["$(sync~spin)"]</code></td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        <ul>
-          <li>An array of strings that will be displayed in sequence to denote progress while blaming files in larger repositories.</li>
-          <li>Supports <a href="https://octicons.github.com/">Octoicons</a> with the <code>~spin</code> suffix for spin action.</li>
-          <li>When the array only contains one item that item is rendered once instead of every 100ms.</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
       <td><code>gitblame.logLevel</code></td>
       <td><code>string[]</code></td>
       <td><code>["info", "error", "command", "critical"]</code></td>

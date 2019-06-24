@@ -7,7 +7,6 @@ interface PropertiesMap {
     "infoMessageFormat": string;
     "isWebPathPlural": boolean;
     "logLevel": LogCategory[];
-    "progressSpinner": string[];
     "statusBarMessageFormat": string;
     "statusBarMessageNoCommit": string;
     "statusBarPositionPriority": number;

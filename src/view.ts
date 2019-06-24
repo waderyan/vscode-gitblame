@@ -3,7 +3,6 @@ import { StatusBarAlignment, StatusBarItem, window } from "vscode";
 import { GitBlame } from "./git/blame";
 import { GitCommitInfo } from "./interfaces";
 import { Property } from "./util/property";
-import { Spinner } from "./util/spinner";
 import { TextDecorator } from "./util/textdecorator";
 
 export class StatusBarView {
@@ -17,8 +16,6 @@ export class StatusBarView {
 
     private static instance: StatusBarView;
     private readonly statusBarItem: StatusBarItem;
-    private progressInterval: NodeJS.Timer | undefined;
-    private readonly spinner: Spinner;
     private spinnerActive: boolean = false;
 
     private constructor() {
@@ -26,7 +23,6 @@ export class StatusBarView {
             StatusBarAlignment.Left,
             Property.get("statusBarPositionPriority"),
         );
-        this.spinner = new Spinner();
     }
 
     public clear(): void {
@@ -47,9 +43,6 @@ export class StatusBarView {
     }
 
     public stopProgress(): void {
-        if (this.progressInterval !== undefined) {
-            clearInterval(this.progressInterval);
-        }
         this.spinnerActive = false;
     }
 
@@ -58,16 +51,7 @@ export class StatusBarView {
             return;
         }
 
-        this.stopProgress();
-
-        if (this.spinner.updatable()) {
-            this.progressInterval = setInterval((): void => {
-                this.setSpinner();
-            }, 100);
-        } else {
-            this.setSpinner();
-        }
-
+        this.setText('$(sync~spin) Waiting for git blame response', false);
         this.spinnerActive = true;
     }
 
@@ -89,9 +73,5 @@ export class StatusBarView {
         }
 
         this.statusBarItem.show();
-    }
-
-    private setSpinner(): void {
-        this.setText(`${this.spinner} Waiting for git blame response`, false);
     }
 }

@@ -124,13 +124,6 @@
             ]
           }
         },
-        "gitblame.progressSpinner": {
-          "type": "array",
-          "default": [
-            "$(sync~spin)"
-          ],
-          "description": "A series of string that denotes progress"
-        },
         "gitblame.statusBarMessageFormat": {
           "type": "string",
           "default": "Blame ${author.name} ( ${time.ago} )",

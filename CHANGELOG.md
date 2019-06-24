@@ -3,6 +3,7 @@
 ## 3.0.0 (xxx xx, 2019)
 * Deprication: Removing the `.custom` tokens from status bar message.
 * Deprication: The `.from` token now is identical to `.ago`
+* Deprication: Removing custom spinner support (`gitblame.progressSpinner`)
 
 The removal of the custom-token allows us to remove our dependency on moment. This lowers the extension bundle size from 850 kb to about 110 kb.
 
