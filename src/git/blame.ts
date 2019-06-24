@@ -1,7 +1,6 @@
 import { parse } from "path";
 import { URL } from "url";
 
-import { isWebUri } from "valid-url";
 import {
     commands,
     Disposable,
@@ -18,10 +17,11 @@ import { isActiveEditorValid } from "../util/editorvalidator";
 import { ErrorHandler } from "../util/errorhandler";
 import { execute } from "../util/execcommand";
 import { getGitCommand } from "../util/gitcommand";
+import { isUrl } from "../util/is-url";
 import { Property } from "../util/property";
 import { TextDecorator } from "../util/textdecorator";
 import { throttleFunction } from "../util/throttle.function";
-import { StatusBarView } from "../view";
+import { StatusBarView } from "../view/view";
 import { GitFile } from "./file";
 import { GitFileFactory } from "./filefactory";
 
@@ -337,6 +337,8 @@ export class GitBlame {
             return;
         }
 
+        const inferCommitUrl = Property.get("inferCommitUrl");
+
         const remote = this.getRemoteUrl();
         const commitUrl = Property.get("commitUrl") || "";
         const origin = await this.getOriginOfActiveFile();
@@ -347,9 +349,9 @@ export class GitBlame {
             .replace(/\$\{project.remote\}/g, remoteUrl)
             .replace(/\$\{project.name\}/g, projectName);
 
-        if (isWebUri(parsedUrl)) {
+        if (isUrl(parsedUrl)) {
             return Uri.parse(parsedUrl);
-        } else if (parsedUrl === "guess") {
+        } else if (parsedUrl === '' && inferCommitUrl) {
             const isWebPathPlural = this.isToolUrlPlural(origin);
             if (origin) {
                 const uri = this.defaultWebPath(
@@ -361,10 +363,9 @@ export class GitBlame {
             } else {
                 return;
             }
-        } else if (parsedUrl !== "no") {
+        } else {
             window.showErrorMessage(
                 `Malformed URL in gitblame.commitUrl. ` +
-                    `Must be a valid web url, "guess", or "no". ` +
                     `Currently expands to: '${ parsedUrl }'`,
             );
         }

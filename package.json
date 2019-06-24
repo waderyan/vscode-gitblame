@@ -32,13 +32,10 @@
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "node ./node_modules/vscode/bin/test"
   },
-  "dependencies": {
-    "valid-url": "^1.0.9"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/mocha": "^5.2.7",
     "@types/node": "^10.14.9",
-    "@types/valid-url": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
     "eslint": "^5.16.0",
@@ -75,54 +72,12 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "Git blame configuration",
+      "title": "Git Blame",
       "properties": {
-        "gitblame.commitUrl": {
-          "type": "string",
-          "default": "guess",
-          "markdownDescription": "The link to an online tool to view a commit (use `${hash}` for the commit hash). `\"no\"` will disable this feature."
-        },
-        "gitblame.ignoreWhitespace": {
-          "type": "boolean",
-          "default": false,
-          "description": "Ignore whitespace changes when blaming (-w flag)"
-        },
         "gitblame.infoMessageFormat": {
           "type": "string",
           "default": "${time.custom,YYYY-MM-DD} ${commit.summary}",
           "description": "Customize the info message"
-        },
-        "gitblame.isWebPathPlural": {
-          "type": "boolean",
-          "default": false,
-          "description": "BitBucket uses commits instead of commit in their web interface. Turn this on if you want the View button to work for BitBucket."
-        },
-        "gitblame.pluralWebPathSubstrings": {
-          "type": "array",
-          "default": [
-            "bitbucket",
-            "atlassian"
-          ],
-          "markdownDescription": "An array of substrings that, when present in the git origin URL, activates `gitblame.isWebPathPlural`"
-        },
-        "gitblame.logLevel": {
-          "type": "array",
-          "default": [
-            "info",
-            "error",
-            "command",
-            "critical"
-          ],
-          "description": "Limit what levels of log message get sent to the log",
-          "items": {
-            "type": "string",
-            "enum": [
-              "info",
-              "error",
-              "command",
-              "critical"
-            ]
-          }
         },
         "gitblame.statusBarMessageFormat": {
           "type": "string",
@@ -137,6 +92,39 @@
         "gitblame.statusBarPositionPriority": {
           "type": "number",
           "description": "Priority where the status bar view should be placed"
+        },
+        "gitblame.inferCommitUrl": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "When enabled it inferes online commit tool URL based on origin URL. Disabled whenever `gitblame.commitUrl` isn't empty."
+        },
+        "gitblame.commitUrl": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "The link to an online tool to view a commit (use `${hash}` for the commit hash)."
+        },
+        "gitblame.ignoreWhitespace": {
+          "type": "boolean",
+          "default": false,
+          "description": "Ignore whitespace changes when blaming (-w flag)"
+        },
+        "gitblame.isWebPathPlural": {
+          "type": "boolean",
+          "default": false,
+          "description": "BitBucket uses commits instead of commit in their web interface. Turn this on if you want the View button to work for BitBucket."
+        },
+        "gitblame.pluralWebPathSubstrings": {
+          "type": "array",
+          "default": [
+            "bitbucket",
+            "atlassian"
+          ],
+          "markdownDescription": "An array of substrings that, when present in the git origin URL, activates `gitblame.isWebPathPlural`"
+        },
+        "gitblame.logNonCritical": {
+          "type": "boolean",
+          "default": true,
+          "description": "If enabled it logs all messages to the log. If disabled only critical messages gets logged."
         }
       }
     }
