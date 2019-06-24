@@ -1,5 +1,3 @@
-import * as moment from "moment";
-
 import { GitBlame } from "../git/blame";
 import {
     GitCommitInfo,
@@ -7,6 +5,13 @@ import {
 } from "../interfaces";
 import { pluralText } from "./plural-text";
 import { Property } from "./property";
+import {
+    daysBetween,
+    hoursBetween,
+    minutesBetween,
+    monthsBetween,
+    yearsBetween,
+} from "./ago";
 
 export class TextDecorator {
     public static toTextView(commit: GitCommitInfo): string {
@@ -31,14 +36,11 @@ export class TextDecorator {
     }
 
     public static toDateText(dateNow: Date, dateThen: Date): string {
-        const momentNow = moment(dateNow);
-        const momentThen = moment(dateThen);
-
-        const years = momentNow.diff(momentThen, "years");
-        const months = momentNow.diff(momentThen, "months");
-        const days = momentNow.diff(momentThen, "days");
-        const hours = momentNow.diff(momentThen, "hours");
-        const minutes = momentNow.diff(momentThen, "minutes");
+        const years = yearsBetween(dateNow, dateThen);
+        const months = monthsBetween(dateNow, dateThen);
+        const days = daysBetween(dateNow, dateThen);
+        const hours = hoursBetween(dateNow, dateThen);
+        const minutes = minutesBetween(dateNow, dateThen);
 
         if (years >= 1) {
             return pluralText(years, "year", "years") + " ago";
@@ -92,14 +94,6 @@ export class TextDecorator {
             return tokens["commit.hash_short"](value);
         }
 
-        if (key === "time.c_custom") {
-            return tokens["time.c_custom"](value);
-        }
-
-        if (key === "time.custom") {
-            return tokens["time.custom"](value);
-        }
-
         if (currentToken) {
             return currentToken();
         }
@@ -111,46 +105,51 @@ export class TextDecorator {
         commit: GitCommitInfo,
     ): InfoTokenNormalizedCommitInfo {
         const now = new Date();
-        const authorTime = moment.unix(commit.author.timestamp);
-        const committerTime = moment.unix(commit.committer.timestamp);
+        const authorTime = new Date(commit.author.timestamp * 1000);
+        const committerTime = new Date(commit.committer.timestamp * 1000);
+
+        const valueFrom = (value: string): () => string => {
+            return (): string => value;
+        }
+        const ago = valueFrom(TextDecorator.toDateText(now, authorTime));
+        const cAgo = valueFrom(TextDecorator.toDateText(now, committerTime));
+        const hashShort = (length = "7"): string => {
+            const cutoffPoint = length.toString();
+            return commit.hash.substr(
+                0,
+                parseInt(cutoffPoint, 10),
+            );
+        };
 
         return {
-            "author.mail": (): string => commit.author.mail,
-            "author.name": (): string => commit.author.name,
-            "author.timestamp": (): string => (
-                commit.author.timestamp.toString()
+            "author.mail": valueFrom(commit.author.mail),
+            "author.name": valueFrom(commit.author.name),
+            "author.timestamp": valueFrom(
+                commit.author.timestamp.toString(),
             ),
-            "author.tz": (): string => commit.author.tz,
-            "commit.filename": (): string => commit.filename,
-            "commit.hash": (): string => commit.hash,
-            "commit.hash_short": (length = "7"): string => {
-                const cutoffPoint = length.toString();
-                return commit.hash.substr(
-                    0,
-                    parseInt(cutoffPoint, 10),
-                );
-            },
-            "commit.summary": (): string => commit.summary,
-            "committer.mail": (): string => commit.committer.mail,
-            "committer.name": (): string => commit.committer.name,
-            "committer.timestamp": (): string => (
-                commit.committer.timestamp.toString()
+            "author.tz": valueFrom(commit.author.tz),
+            "commit.filename": valueFrom(commit.filename),
+            "commit.hash": valueFrom(commit.hash),
+            "commit.hash_short": hashShort,
+            "commit.summary": valueFrom(commit.summary),
+            "committer.mail": valueFrom(commit.committer.mail),
+            "committer.name": valueFrom(commit.committer.name),
+            "committer.timestamp": valueFrom(
+                commit.committer.timestamp.toString(),
             ),
-            "committer.tz": (): string => commit.committer.tz,
-            "time.ago": (): string => TextDecorator.toDateText(
-                now,
-                authorTime.toDate(),
+            "committer.tz": valueFrom(commit.committer.tz),
+            "time.ago": ago,
+            "time.c_ago": cAgo,
+            "time.from": ago,
+            "time.c_from": cAgo,
+
+            // Deprecated
+            "time.custom": valueFrom(
+                `${authorTime.toUTCString()} (time.custom is deprecated)`,
             ),
-            "time.c_ago": (): string => TextDecorator.toDateText(
-                now,
-                committerTime.toDate(),
+            "time.c_custom": valueFrom(
+                `${committerTime.toUTCString()} (time.c_custom is deprecated)`,
             ),
-            "time.c_custom": (format = ""): string => (
-                committerTime.format(format)
-            ),
-            "time.c_from": (): string => committerTime.fromNow(),
-            "time.custom": (format = ""): string => authorTime.format(format),
-            "time.from": (): string => authorTime.fromNow(),
         };
     }
 }

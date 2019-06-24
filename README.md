@@ -191,11 +191,7 @@ See Git Blame information in the status bar for the currently selected line.
 | `${committer.timestamp}` | No | - | - | timestamp for the committer's commit |
 | `${committer.tz}` | No | - | - | the committer's time zone |
 | `${time.ago}` | No | - | - | displays an estimation of how long ago the author committed (e.g. `10 hours ago`, `20 days ago`, `4 months ago`) |
-| `${time.custom,format}` | Yes | `format` | `undefined` | custom time format based on [momentjs.format(format)](https://momentjs.com/docs/#/displaying/format/) (uses author timestamp) |
-| `${time.from}` | No | - | - | format based on [momentjs.fromNow()](https://momentjs.com/docs/#/displaying/fromnow/) (uses author timestamp) |
 | `${time.c_ago}` | No | - | - | displays an estimation of how long ago the committer committed (e.g. `10 hours ago`, `20 days ago`, `4 months ago`) |
-| `${time.c_custom,format}` | No | `format` | `undefined` | custom time format based on [momentjs.format(format)](https://momentjs.com/docs/#/displaying/format/) (uses committer timestamp) |
-| `${time.c_from}` | No | - | - | format based on [momentjs.fromNow()](https://momentjs.com/docs/#/displaying/fromnow/) (uses committer timestamp) |
 
 # [Planned Features](https://github.com/Sertion/vscode-gitblame/labels/Planned)
 

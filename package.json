@@ -2,7 +2,7 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "2.8.1",
+  "version": "3.0.0",
   "publisher": "waderyan",
   "engines": {
     "vscode": "^1.32.0"
@@ -28,13 +28,11 @@
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
     "lint": "eslint --no-inline-config --ext .js,.ts ./src ./test",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "node ./node_modules/vscode/bin/test"
   },
   "dependencies": {
-    "moment": "^2.24.0",
     "valid-url": "^1.0.9"
   },
   "devDependencies": {

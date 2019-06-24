@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.0.0 (xxx xx, 2019)
+* Deprication: Removing the `.custom` tokens from status bar message.
+* Deprication: The `.from` token now is identical to `.ago`
+
+The removal of the custom-token allows us to remove our dependency on moment. This lowers the extension bundle size from 850 kb to about 110 kb.
+
 ## 2.8.1 (June 21, 2019)
 * Bug: Blaming a removed file crashes the extension [#54](https://github.com/Sertion/vscode-gitblame/pull/54) (Thanks to [dmitriismitnov](https://github.com/dmitriismitnov))
 * Fix: Updating dependencies

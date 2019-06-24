@@ -18,7 +18,7 @@ suite("Date Calculations", (): void => {
         );
 
         assert.equal(
-            TextDecorator.toDateText(new Date(2015, 2, 20), new Date(2015, 1)),
+            TextDecorator.toDateText(new Date(2015, 2, 10), new Date(2015, 1)),
             "1 month ago",
         );
     });
@@ -46,10 +46,10 @@ suite("Date Calculations", (): void => {
     test("Time ago in minutes", (): void => {
         assert.equal(
             TextDecorator.toDateText(
-                new Date(2015, 1, 1, 1, 30, 0),
+                new Date(2015, 1, 1, 1, 29, 0),
                 new Date(2015, 1, 1, 1, 0, 0),
             ),
-            "30 minutes ago",
+            "29 minutes ago",
         );
     });
 

@@ -43,8 +43,9 @@ export interface InfoTokenNormalizedCommitInfo {
     "committer.tz": () => string;
     "time.ago": () => string;
     "time.c_ago": () => string;
-    "time.c_custom": (format?: string) => string;
     "time.c_from": () => string;
-    "time.custom": (format?: string) => string;
     "time.from": () => string;
+    // Deprecated
+    "time.custom": () => string;
+    "time.c_custom": () => string;
 }
