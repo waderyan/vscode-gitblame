@@ -3,7 +3,7 @@ import { OutputChannel, window } from "vscode";
 import { TITLE_SHOW_LOG } from "../constants";
 import { Property } from "./property";
 
-export enum LogCategory {
+enum Level {
     Info = "info",
     Error = "error",
     Command = "command",
@@ -12,23 +12,23 @@ export enum LogCategory {
 
 export class ErrorHandler {
     public static logInfo(message: string): void {
-        ErrorHandler.getInstance().writeToLog(LogCategory.Info, message);
+        ErrorHandler.getInstance().writeToLog(Level.Info, message);
     }
 
     public static logCommand(message: string): void {
-        ErrorHandler.getInstance().writeToLog(LogCategory.Command, message);
+        ErrorHandler.getInstance().writeToLog(Level.Command, message);
     }
 
     public static logError(error: Error): void {
         ErrorHandler.getInstance().writeToLog(
-            LogCategory.Error,
+            Level.Error,
             error.toString(),
         );
     }
 
     public static logCritical(error: Error, message: string): void {
         ErrorHandler.getInstance().writeToLog(
-            LogCategory.Critical,
+            Level.Critical,
             error.toString(),
         );
         ErrorHandler.getInstance().showErrorMessage(message);
@@ -83,27 +83,15 @@ export class ErrorHandler {
         }
     }
 
-    private writeToLog(category: LogCategory, message: string): boolean {
-        const allowCategory = this.logCategoryAllowed(category);
+    private writeToLog(level: Level, message: string): void {
+        const logNonCritical = Property.get("logNonCritical");
 
-        if (allowCategory) {
+        if (logNonCritical || level === Level.Critical) {
             const trimmedMessage = message.trim();
             const timestamp = ErrorHandler.timestamp();
             this.outputChannel.appendLine(
-                `[ ${timestamp} | ${category} ] ${trimmedMessage}`,
+                `[ ${timestamp} | ${level} ] ${trimmedMessage}`,
             );
-        }
-
-        return allowCategory;
-    }
-
-    private logCategoryAllowed(level: LogCategory): boolean {
-        const enabledLevels = Property.get("logLevel");
-
-        if (enabledLevels) {
-            return enabledLevels.includes(level);
-        } else {
-            return false;
         }
     }
 }

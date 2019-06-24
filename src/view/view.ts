@@ -1,9 +1,9 @@
 import { StatusBarAlignment, StatusBarItem, window } from "vscode";
 
-import { GitBlame } from "./git/blame";
-import { GitCommitInfo } from "./interfaces";
-import { Property } from "./util/property";
-import { TextDecorator } from "./util/textdecorator";
+import { GitBlame } from "../git/blame";
+import { GitCommitInfo } from "../interfaces";
+import { Property } from "../util/property";
+import { TextDecorator } from "../util/textdecorator";
 
 export class StatusBarView {
     public static getInstance(): StatusBarView {

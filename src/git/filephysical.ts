@@ -5,7 +5,7 @@ import { GitBlameInfo, GitCommitInfo } from "../interfaces";
 import { ErrorHandler } from "../util/errorhandler";
 import { execute } from "../util/execcommand";
 import { getGitCommand } from "../util/gitcommand";
-import { StatusBarView } from "../view";
+import { StatusBarView } from "../view/view";
 import { GitBlame } from "./blame";
 import { GitFile } from "./file";
 import { GitBlameStream } from "./stream";

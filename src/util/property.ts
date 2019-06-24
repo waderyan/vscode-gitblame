@@ -1,12 +1,12 @@
 import { workspace } from "vscode";
-import { LogCategory } from "./errorhandler";
 
 interface PropertiesMap {
+    "inferCommitUrl": boolean;
     "commitUrl": string;
     "ignoreWhitespace": boolean;
     "infoMessageFormat": string;
     "isWebPathPlural": boolean;
-    "logLevel": LogCategory[];
+    "logNonCritical": boolean;
     "statusBarMessageFormat": string;
     "statusBarMessageNoCommit": string;
     "statusBarPositionPriority": number;
