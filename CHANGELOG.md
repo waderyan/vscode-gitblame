@@ -3,6 +3,7 @@
 ## 3.0.0 (xxx xx, 2019)
 * Deprication: Removing the `.custom` tokens from status bar message.
 * Deprication: The `.from` token now is identical to `.ago`
+* Deprication: Removing the `commit.filename` tokens from status bar message.
 * Deprication: Removing custom spinner support (`gitblame.progressSpinner`)
 * Deprication: Removing log levels (`gitblame.logLevel`). It is replaced by `gitblame.logNonCritical` (defaults to `true`)
 * Fix: Remove all non-dev dependencies

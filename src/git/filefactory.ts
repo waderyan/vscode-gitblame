@@ -4,6 +4,7 @@ import { Uri, workspace } from "vscode";
 import { GitFile } from "./file";
 import { GitFileDummy } from "./filedummy";
 import { GitFilePhysical } from "./filephysical";
+import { getWorkTree } from "./util/gitcommand";
 
 export class GitFileFactory {
     public static async create(
@@ -13,6 +14,7 @@ export class GitFileFactory {
         if (
             GitFileFactory.inWorkspace(fileName)
             && await this.exists(fileName)
+            && await this.inGitWorktree(fileName)
         ) {
             return new GitFilePhysical(fileName, disposeCallback);
         } else {
@@ -36,5 +38,11 @@ export class GitFileFactory {
                 }
             });
         });
+    }
+
+    private static async inGitWorktree(fileName: string): Promise<boolean> {
+        const workTree = await getWorkTree(fileName);
+
+        return workTree !== "";
     }
 }

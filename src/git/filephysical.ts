@@ -1,20 +1,14 @@
 import { FSWatcher, watch } from "fs";
-import { dirname, normalize } from "path";
 
-import { GitBlameInfo, GitCommitInfo } from "../interfaces";
 import { ErrorHandler } from "../util/errorhandler";
-import { execute } from "../util/execcommand";
-import { getGitCommand } from "../util/gitcommand";
 import { StatusBarView } from "../view/view";
-import { GitBlame } from "./blame";
 import { GitFile } from "./file";
 import { GitBlameStream } from "./stream";
+import { blankBlameInfo, GitBlameInfo, GitCommitInfo } from "./util/blanks";
 
 export class GitFilePhysical extends GitFile {
     private readonly fileSystemWatcher: FSWatcher;
     private blameInfoPromise: Promise<GitBlameInfo> | undefined;
-    private workTree: string | undefined;
-    private workTreePromise: Promise<string> | undefined;
     private blameProcess: GitBlameStream | undefined;
 
     public constructor(fileName: string, disposeCallback: () => void) {
@@ -43,7 +37,7 @@ export class GitFilePhysical extends GitFile {
     }
 
     private setupWatcher(): FSWatcher {
-        const fsWatcher = watch(this.fileName.fsPath, (event: string): void => {
+        const fsWatcher = watch(this.fileName, (event: string): void => {
             if (event === "rename") {
                 this.dispose();
             } else if (event === "change") {
@@ -55,105 +49,35 @@ export class GitFilePhysical extends GitFile {
     }
 
     private changed(): void {
-        delete this.workTree;
         delete this.blameInfoPromise;
     }
 
-    private async getGitWorkTree(): Promise<string> {
-        if (this.workTree) {
-            return this.workTree;
-        }
-
-        if (!this.workTreePromise) {
-            this.workTreePromise = this.findWorkTree();
-        }
-
-        try {
-            this.workTree = await this.workTreePromise;
-        } catch (err) {
-            delete this.workTreePromise;
-            throw new Error("Unable to get git work tree");
-        }
-
-        return this.workTree;
-    }
-
-    private async findWorkTree(): Promise<string> {
-        const workTree = await this.executeGitRevParseCommand(
-            "--show-toplevel",
-        );
-
-        if (workTree === "") {
-            return "";
-        } else {
-            return normalize(workTree);
-        }
-    }
-
-    private async executeGitRevParseCommand(command: string): Promise<string> {
-        const currentDirectory = dirname(this.fileName.fsPath);
-        const gitCommand = getGitCommand();
-        const gitExecArguments = ["rev-parse", command];
-        const gitExecOptions = {
-            cwd: currentDirectory,
-        };
-        const gitRev = await execute(
-            gitCommand,
-            gitExecArguments,
-            gitExecOptions,
-        );
-
-        return gitRev.trim();
-    }
-
     private async findBlameInfo(): Promise<GitBlameInfo> {
-        let workTree: string;
         StatusBarView.getInstance().startProgress();
 
-        try {
-            workTree = await this.getGitWorkTree();
-        } catch (err) {
-            StatusBarView.getInstance().stopProgress();
-            return GitBlame.blankBlameInfo();
-        }
+        this.blameInfoPromise = new Promise<GitBlameInfo>(
+            (resolve): void => {
+                const blameInfo = blankBlameInfo();
+                this.blameProcess = new GitBlameStream(this.fileName);
 
-        if (workTree) {
-            this.blameInfoPromise = new Promise<GitBlameInfo>(
-                (resolve): void => {
-                    const blameInfo = GitBlame.blankBlameInfo();
-                    this.blameProcess = new GitBlameStream(
-                        this.fileName,
-                        workTree,
-                    );
-
-                    this.blameProcess.on(
-                        "commit",
-                        this.gitAddCommit(blameInfo),
-                    );
-                    this.blameProcess.on(
-                        "line",
-                        this.gitAddLine(blameInfo),
-                    );
-                    this.blameProcess.on(
-                        "end",
-                        this.gitStreamOver(
-                            this.blameProcess,
-                            resolve,
-                            blameInfo,
-                        ),
-                    );
-                },
-            );
-        } else {
-            StatusBarView.getInstance().stopProgress();
-            this.startCacheInterval();
-            ErrorHandler.logInfo(
-                `File "${
-                    this.fileName.fsPath
-                }" is not a decendant of a git repository`,
-            );
-            this.blameInfoPromise = Promise.resolve(GitBlame.blankBlameInfo());
-        }
+                this.blameProcess.on(
+                    "commit",
+                    this.gitAddCommit(blameInfo),
+                );
+                this.blameProcess.on(
+                    "line",
+                    this.gitAddLine(blameInfo),
+                );
+                this.blameProcess.on(
+                    "end",
+                    this.gitStreamOver(
+                        this.blameProcess,
+                        resolve,
+                        blameInfo,
+                    ),
+                );
+            },
+        );
 
         return this.blameInfoPromise;
     }
@@ -186,11 +110,11 @@ export class GitFilePhysical extends GitFile {
 
             if (err) {
                 ErrorHandler.logError(err);
-                resolve(GitBlame.blankBlameInfo());
+                resolve(blankBlameInfo());
             } else {
                 ErrorHandler.logInfo(
                     `Blamed file "${
-                        this.fileName.fsPath
+                        this.fileName
                     }" and found ${
                         Object.keys(blameInfo.commits).length
                     } commits`,

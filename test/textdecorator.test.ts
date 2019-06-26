@@ -1,7 +1,9 @@
 import * as assert from "assert";
 
-import { InfoTokenNormalizedCommitInfo } from "interfaces";
-import { TextDecorator } from "../src/util/textdecorator";
+import {
+    InfoTokenNormalizedCommitInfo,
+    TextDecorator,
+} from "../src/util/textdecorator";
 
 suite("Date Calculations", (): void => {
     test("Time ago in years", (): void => {

@@ -51,6 +51,9 @@
     "type": "git",
     "url": "https://github.com/Sertion/vscode-gitblame"
   },
+  "extensionDependencies": [
+    "vscode.git"
+  ],
   "contributes": {
     "commands": [
       {

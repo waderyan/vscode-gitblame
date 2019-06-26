@@ -1,15 +1,9 @@
-import { TextEditor, window } from "vscode";
+import { TextEditor } from "vscode";
 
-export function validEditor(editor: TextEditor): boolean {
+export function validEditor(
+    editor: TextEditor | undefined,
+): editor is TextEditor {
     const doc = editor && editor.document;
 
-    return doc && !doc.isUntitled;
-}
-
-export function isActiveEditorValid(): boolean {
-    if (window && window.activeTextEditor) {
-        return validEditor(window.activeTextEditor);
-    } else {
-        return false;
-    }
+    return !!doc && !doc.isUntitled;
 }

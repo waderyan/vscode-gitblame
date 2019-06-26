@@ -1,8 +1,3 @@
-import { GitBlame } from "../git/blame";
-import {
-    GitCommitInfo,
-    InfoTokenNormalizedCommitInfo,
-} from "../interfaces";
 import { pluralText } from "./plural-text";
 import { Property } from "./property";
 import {
@@ -12,10 +7,37 @@ import {
     monthsBetween,
     yearsBetween,
 } from "./ago";
+import {
+    GitCommitInfo,
+    isBlankCommit,
+} from "../git/util/blanks";
+
+export interface InfoTokenNormalizedCommitInfo {
+    "author.mail": () => string;
+    "author.name": () => string;
+    "author.timestamp": () => string;
+    "author.tz": () => string;
+    "commit.hash": () => string;
+    "commit.hash_short": (length?: string) => string;
+    "commit.summary": () => string;
+    "committer.mail": () => string;
+    "committer.name": () => string;
+    "committer.timestamp": () => string;
+    "committer.tz": () => string;
+    "time.ago": () => string;
+    "time.c_ago": () => string;
+    "time.c_from": () => string;
+    "time.from": () => string;
+
+    // Deprecated
+    "commit.filename": () => string;
+    "time.custom": () => string;
+    "time.c_custom": () => string;
+}
 
 export class TextDecorator {
     public static toTextView(commit: GitCommitInfo): string {
-        if (GitBlame.isBlankCommit(commit)) {
+        if (isBlankCommit(commit)) {
             return Property.get("statusBarMessageNoCommit")
                 || "Not Committed Yet";
         }
@@ -108,8 +130,8 @@ export class TextDecorator {
         const authorTime = new Date(commit.author.timestamp * 1000);
         const committerTime = new Date(commit.committer.timestamp * 1000);
 
-        const valueFrom = (value: string): () => string => {
-            return (): string => value;
+        const valueFrom = (value: string | number): () => string => {
+            return (): string => value.toString();
         }
         const ago = valueFrom(TextDecorator.toDateText(now, authorTime));
         const cAgo = valueFrom(TextDecorator.toDateText(now, committerTime));
@@ -124,19 +146,14 @@ export class TextDecorator {
         return {
             "author.mail": valueFrom(commit.author.mail),
             "author.name": valueFrom(commit.author.name),
-            "author.timestamp": valueFrom(
-                commit.author.timestamp.toString(),
-            ),
+            "author.timestamp": valueFrom(commit.author.timestamp),
             "author.tz": valueFrom(commit.author.tz),
-            "commit.filename": valueFrom(commit.filename),
             "commit.hash": valueFrom(commit.hash),
             "commit.hash_short": hashShort,
             "commit.summary": valueFrom(commit.summary),
             "committer.mail": valueFrom(commit.committer.mail),
             "committer.name": valueFrom(commit.committer.name),
-            "committer.timestamp": valueFrom(
-                commit.committer.timestamp.toString(),
-            ),
+            "committer.timestamp": valueFrom(commit.committer.timestamp),
             "committer.tz": valueFrom(commit.committer.tz),
             "time.ago": ago,
             "time.c_ago": cAgo,
@@ -144,6 +161,7 @@ export class TextDecorator {
             "time.c_from": cAgo,
 
             // Deprecated
+            "commit.filename": valueFrom("(commit.filename is deprecated)"),
             "time.custom": valueFrom(
                 `${authorTime.toUTCString()} (time.custom is deprecated)`,
             ),

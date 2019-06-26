@@ -1,18 +1,17 @@
-import { Uri, window } from "vscode";
+import { window } from "vscode";
 
 import { TIME_CACHE_LIFETIME } from "../constants";
-import { GitBlameInfo } from "../interfaces";
 import { ErrorHandler } from "../util/errorhandler";
-import { GitBlame } from "./blame";
+import { blankBlameInfo, GitBlameInfo } from "./util/blanks";
 
 export class GitFile {
-    public readonly fileName: Uri;
+    public readonly fileName: string;
     public disposeCallback: () => void;
 
     private cacheClearInterval: NodeJS.Timer | undefined;
 
     public constructor(fileName: string, disposeCallback: () => void) {
-        this.fileName = Uri.file(fileName);
+        this.fileName = fileName;
         this.disposeCallback = disposeCallback;
     }
 
@@ -22,14 +21,14 @@ export class GitFile {
         this.cacheClearInterval = setInterval((): void => {
             const isOpen = window.visibleTextEditors.some(
                 (editor): boolean => (
-                    editor.document.uri.fsPath === this.fileName.fsPath
+                    editor.document.uri.fsPath === this.fileName
                 ),
             );
 
             if (!isOpen) {
                 ErrorHandler.logInfo(
                     `Clearing the file "${
-                        this.fileName.fsPath
+                        this.fileName
                     }" from the internal cache`,
                 );
                 this.dispose();
@@ -38,7 +37,7 @@ export class GitFile {
     }
 
     public async blame(): Promise<GitBlameInfo> {
-        return GitBlame.blankBlameInfo();
+        return blankBlameInfo();
     }
 
     public dispose(): void {
@@ -49,7 +48,7 @@ export class GitFile {
     }
 
     private clearCacheInterval(): void {
-        if (typeof this.cacheClearInterval !== "undefined") {
+        if (this.cacheClearInterval !== undefined) {
             clearInterval(this.cacheClearInterval);
         }
     }

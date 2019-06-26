@@ -167,7 +167,6 @@ See Git Blame information in the status bar for the currently selected line.
 | `${commit.hash}` | No | - | - | 40-bit hash unique to the commit |
 | `${commit.hash_short,length}` | Yes | `length` | 7 | the first `length` characters of the 40-bit hash unique to the commit |
 | `${commit.summary}` | No | - | - | the first line of the commit message |
-| `${commit.filename}` | No | - | - | the file name where the line was committed |
 | `${author.name}` | No | - | - | the commit author's name |
 | `${author.email}` | No | - | - | the commit author's e-mail |
 | `${author.timestamp}` | No | - | - | timestamp for the commit author's commit |

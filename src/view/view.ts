@@ -1,9 +1,15 @@
-import { StatusBarAlignment, StatusBarItem, window } from "vscode";
+import {
+    StatusBarAlignment,
+    StatusBarItem,
+    window,
+} from "vscode";
 
-import { GitBlame } from "../git/blame";
-import { GitCommitInfo } from "../interfaces";
 import { Property } from "../util/property";
 import { TextDecorator } from "../util/textdecorator";
+import {
+    GitCommitInfo,
+    isBlankCommit,
+} from "../git/util/blanks";
 
 export class StatusBarView {
     public static getInstance(): StatusBarView {
@@ -34,7 +40,7 @@ export class StatusBarView {
         this.stopProgress();
 
         if (commitInfo && !commitInfo.generated) {
-            const clickable = !GitBlame.isBlankCommit(commitInfo);
+            const clickable = !isBlankCommit(commitInfo);
 
             this.setText(TextDecorator.toTextView(commitInfo), clickable);
         } else {

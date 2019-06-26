@@ -1,4 +1,3 @@
-import { parse } from "path";
 import { URL } from "url";
 
 import {
@@ -10,13 +9,17 @@ import {
     workspace,
 } from "vscode";
 
-import { HASH_NO_COMMIT_GIT, TITLE_VIEW_ONLINE } from "../constants";
-import { GitBlameInfo, GitCommitAuthor, GitCommitInfo } from "../interfaces";
+import {
+    HASH_NO_COMMIT_GIT,
+    TITLE_VIEW_ONLINE,
+} from "../constants";
 import { ActionableMessageItem } from "../util/actionablemessageitem";
-import { isActiveEditorValid } from "../util/editorvalidator";
+import { validEditor } from "../util/editorvalidator";
 import { ErrorHandler } from "../util/errorhandler";
-import { execute } from "../util/execcommand";
-import { getGitCommand } from "../util/gitcommand";
+import {
+    getOriginOfActiveFile,
+    getRemoteUrl,
+} from "./util/gitcommand";
 import { isUrl } from "../util/is-url";
 import { Property } from "../util/property";
 import { TextDecorator } from "../util/textdecorator";
@@ -24,58 +27,23 @@ import { throttleFunction } from "../util/throttle.function";
 import { StatusBarView } from "../view/view";
 import { GitFile } from "./file";
 import { GitFileFactory } from "./filefactory";
+import {
+    blankCommitInfo,
+    GitBlameInfo,
+    GitCommitInfo,
+    isBlankCommit,
+} from "./util/blanks";
+
+function stripGitRemoteUrl(rawUrl: string): string {
+    const httplessUrl = rawUrl.replace(/^[a-z-]+:\/\//i, "");
+    const colonlessUrl = httplessUrl.replace(
+        /:([a-z_.~+%-][a-z0-9_.~+%-]+)\/?/i,
+        "/$1/",
+    );
+    return colonlessUrl.replace(/\.git$/i, "");
+}
 
 export class GitBlame {
-    public static blankBlameInfo(): GitBlameInfo {
-        return {
-            commits: {},
-            lines: {},
-        };
-    }
-
-    public static blankCommitInfo(real: boolean = false): GitCommitInfo {
-        const emptyAuthor: GitCommitAuthor = {
-            mail: "",
-            name: "",
-            timestamp: 0,
-            tz: "",
-        };
-        const emptyCommitter: GitCommitAuthor = {
-            mail: "",
-            name: "",
-            timestamp: 0,
-            tz: "",
-        };
-
-        const commitInfo: GitCommitInfo = {
-            author: emptyAuthor,
-            committer: emptyCommitter,
-            filename: "",
-            generated: true,
-            hash: HASH_NO_COMMIT_GIT,
-            summary: "",
-        };
-
-        if (real) {
-            delete commitInfo.generated;
-        }
-
-        return commitInfo;
-    }
-
-    public static isBlankCommit(commit: GitCommitInfo): boolean {
-        return commit.hash === HASH_NO_COMMIT_GIT;
-    }
-
-    private static stripGitRemoteUrl(rawUrl: string): string {
-        const httplessUrl = rawUrl.replace(/^[a-z-]+:\/\//i, "");
-        const colonlessUrl = httplessUrl.replace(
-            /:([a-z_.~+%-][a-z0-9_.~+%-]+)\/?/i,
-            "/$1/",
-        );
-        return colonlessUrl.replace(/\.git$/i, "");
-    }
-
     private disposable: Disposable;
     private readonly statusBarView: StatusBarView;
     private readonly files: Map<string, Promise<GitFile>> = new Map();
@@ -176,7 +144,7 @@ export class GitBlame {
         hash: string,
         isPlural: boolean,
     ): string {
-        const gitlessUrl = GitBlame.stripGitRemoteUrl(url);
+        const gitlessUrl = stripGitRemoteUrl(url);
 
         let uri: URL;
 
@@ -273,11 +241,7 @@ export class GitBlame {
     }
 
     private getCurrentActiveFileName(): string {
-        if (
-            window
-            && window.activeTextEditor
-            && window.activeTextEditor.document
-        ) {
+        if (validEditor(window.activeTextEditor)) {
             return window.activeTextEditor.document.fileName;
         } else {
             return "no-file";
@@ -285,12 +249,7 @@ export class GitBlame {
     }
 
     private getCurrentActiveLineNumber(): number {
-        if (
-            window
-            && window.activeTextEditor
-            && window.activeTextEditor.selection
-            && window.activeTextEditor.selection.active
-        ) {
+        if (validEditor(window.activeTextEditor)) {
             return window.activeTextEditor.selection.active.line;
         } else {
             return -1;
@@ -333,17 +292,17 @@ export class GitBlame {
     private async getToolUrl(
         commitInfo: GitCommitInfo,
     ): Promise<Uri | undefined> {
-        if (GitBlame.isBlankCommit(commitInfo)) {
+        if (isBlankCommit(commitInfo)) {
             return;
         }
 
         const inferCommitUrl = Property.get("inferCommitUrl");
 
-        const remote = this.getRemoteUrl();
+        const remote = getRemoteUrl();
         const commitUrl = Property.get("commitUrl") || "";
-        const origin = await this.getOriginOfActiveFile();
+        const origin = await getOriginOfActiveFile();
         const projectName = this.projectNameFromOrigin(origin);
-        const remoteUrl = GitBlame.stripGitRemoteUrl(await remote);
+        const remoteUrl = stripGitRemoteUrl(await remote);
         const parsedUrl = commitUrl
             .replace(/\$\{hash\}/g, commitInfo.hash)
             .replace(/\$\{project.remote\}/g, remoteUrl)
@@ -407,17 +366,13 @@ export class GitBlame {
     }
 
     private async getCurrentLineInfo(): Promise<GitCommitInfo> {
-        if (
-            isActiveEditorValid()
-            && window
-            && window.activeTextEditor
-        ) {
+        if (validEditor(window.activeTextEditor)) {
             return this.getLineInfo(
                 window.activeTextEditor.document.fileName,
                 window.activeTextEditor.selection.active.line,
             );
         } else {
-            return GitBlame.blankCommitInfo();
+            return blankCommitInfo();
         }
     }
 
@@ -432,73 +387,8 @@ export class GitBlame {
             const hash = blameInfo.lines[commitLineNumber];
             return blameInfo.commits[hash];
         } else {
-            return GitBlame.blankCommitInfo();
+            return blankCommitInfo();
         }
-    }
-
-    private async getRemoteUrl(): Promise<string> {
-        if (
-            !isActiveEditorValid()
-            || !(
-                window
-                && window.activeTextEditor
-            )
-        ) {
-            return "";
-        }
-        const gitCommand = getGitCommand();
-        const activeFile = window.activeTextEditor.document.fileName;
-        const activeFileFolder = parse(activeFile).dir;
-        const currentBranch = await execute(gitCommand, [
-            "symbolic-ref",
-            "-q",
-            "--short",
-            "HEAD",
-        ], {
-            cwd: activeFileFolder,
-        });
-        const curRemote = await execute(gitCommand, [
-            "config",
-            "--local",
-            "--get",
-            `branch.${ currentBranch.trim() }.remote`,
-        ], {
-            cwd: activeFileFolder,
-        });
-        const remoteUrl = await execute(gitCommand, [
-            "config",
-            "--local",
-            "--get",
-            `remote.${ curRemote.trim() }.url`,
-        ], {
-            cwd: activeFileFolder,
-        });
-        return remoteUrl.trim();
-    }
-
-    private async getOriginOfActiveFile(): Promise<string> {
-        if (
-            !isActiveEditorValid()
-            || !(
-                window
-                && window.activeTextEditor
-            )
-        ) {
-            return "";
-        }
-
-        const gitCommand = getGitCommand();
-        const activeFile = window.activeTextEditor.document.fileName;
-        const activeFileFolder = parse(activeFile).dir;
-        const originUrl = await execute(gitCommand, [
-            "ls-remote",
-            "--get-url",
-            "origin",
-        ], {
-            cwd: activeFileFolder,
-        });
-
-        return originUrl.trim();
     }
 
     private generateDisposeFunction(fileName: string): () => void {
