@@ -2,18 +2,22 @@ import { FSWatcher, watch } from "fs";
 
 import { ErrorHandler } from "../util/errorhandler";
 import { StatusBarView } from "../view/view";
-import { GitFile } from "./file";
+import { GitFile } from "./filefactory";
 import { GitBlameStream } from "./stream";
-import { blankBlameInfo, GitBlameInfo, GitCommitInfo } from "./util/blanks";
+import {
+    blankBlameInfo,
+    GitBlameInfo,
+    GitCommitInfo,
+} from "./util/blanks";
 
-export class GitFilePhysical extends GitFile {
+export class GitFilePhysical implements GitFile {
+    private readonly fileName: string;
     private readonly fileSystemWatcher: FSWatcher;
     private blameInfoPromise: Promise<GitBlameInfo> | undefined;
     private blameProcess: GitBlameStream | undefined;
 
-    public constructor(fileName: string, disposeCallback: () => void) {
-        super(fileName, disposeCallback);
-
+    public constructor(fileName: string) {
+        this.fileName = fileName;
         this.fileSystemWatcher = this.setupWatcher();
     }
 
@@ -28,7 +32,6 @@ export class GitFilePhysical extends GitFile {
     }
 
     public dispose(): void {
-        super.dispose();
         if (this.blameProcess) {
             this.blameProcess.terminate();
             delete this.blameProcess;
@@ -105,8 +108,6 @@ export class GitFilePhysical extends GitFile {
     ): (err: Error) => void {
         return (err: Error): void => {
             gitStream.removeAllListeners();
-            StatusBarView.getInstance().stopProgress();
-            this.startCacheInterval();
 
             if (err) {
                 ErrorHandler.logError(err);

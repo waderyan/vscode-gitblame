@@ -1,14 +1,22 @@
 import { ErrorHandler } from "../util/errorhandler";
-import { GitFile } from "./file";
+import { GitFile } from "./filefactory";
+import {
+    blankBlameInfo,
+    GitBlameInfo,
+} from "./util/blanks";
 
-export class GitFileDummy extends GitFile {
-    public constructor(fileName: string, disposeCallback: () => void) {
-        super(fileName, disposeCallback);
-        this.startCacheInterval();
+export class GitFileDummy implements GitFile {
+    public constructor(fileName: string) {
         ErrorHandler.logInfo(
             `Will not try to blame file "${
-                this.fileName
+                fileName
             }" as it is outside of the current workspace`,
         );
     }
+
+    public async blame(): Promise<GitBlameInfo> {
+        return blankBlameInfo();
+    }
+
+    public dispose(): void {}
 }

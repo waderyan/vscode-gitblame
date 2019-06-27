@@ -22,7 +22,6 @@ export class StatusBarView {
 
     private static instance: StatusBarView;
     private readonly statusBarItem: StatusBarItem;
-    private spinnerActive: boolean = false;
 
     private constructor() {
         this.statusBarItem = window.createStatusBarItem(
@@ -32,13 +31,10 @@ export class StatusBarView {
     }
 
     public clear(): void {
-        this.stopProgress();
-        this.setText("", false);
+        this.setText("");
     }
 
     public update(commitInfo: GitCommitInfo): void {
-        this.stopProgress();
-
         if (commitInfo && !commitInfo.generated) {
             const clickable = !isBlankCommit(commitInfo);
 
@@ -48,25 +44,15 @@ export class StatusBarView {
         }
     }
 
-    public stopProgress(): void {
-        this.spinnerActive = false;
-    }
-
     public startProgress(): void {
-        if (this.spinnerActive) {
-            return;
-        }
-
-        this.setText('$(sync~spin) Waiting for git blame response', false);
-        this.spinnerActive = true;
+        this.setText('$(sync~spin) Waiting for git blame response');
     }
 
     public dispose(): void {
-        this.stopProgress();
         this.statusBarItem.dispose();
     }
 
-    private setText(text: string, hasCommand: boolean = true): void {
+    private setText(text: string, hasCommand: boolean = false): void {
         this.statusBarItem.text = `$(git-commit) ${text}`.trim();
 
         if (hasCommand) {

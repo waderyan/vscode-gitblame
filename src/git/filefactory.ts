@@ -1,24 +1,31 @@
 import { access } from "fs";
-import { Uri, workspace } from "vscode";
+import { TextDocument,
+    Uri,
+    workspace,
+} from "vscode";
 
-import { GitFile } from "./file";
 import { GitFileDummy } from "./filedummy";
 import { GitFilePhysical } from "./filephysical";
+import { GitBlameInfo } from "./util/blanks";
 import { getWorkTree } from "./util/gitcommand";
+
+export interface GitFile {
+    blame(): Promise<GitBlameInfo>;
+    dispose(): void;
+}
 
 export class GitFileFactory {
     public static async create(
-        fileName: string,
-        disposeCallback: () => void,
+        document: TextDocument,
     ): Promise<GitFile> {
         if (
-            GitFileFactory.inWorkspace(fileName)
-            && await this.exists(fileName)
-            && await this.inGitWorktree(fileName)
+            GitFileFactory.inWorkspace(document.fileName)
+            && await this.exists(document.fileName)
+            && await this.inGitWorktree(document.fileName)
         ) {
-            return new GitFilePhysical(fileName, disposeCallback);
+            return new GitFilePhysical(document.fileName);
         } else {
-            return new GitFileDummy(fileName, disposeCallback);
+            return new GitFileDummy(document.fileName);
         }
     }
 

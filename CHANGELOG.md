@@ -6,6 +6,7 @@
 * Deprication: Removing the `commit.filename` tokens from status bar message.
 * Deprication: Removing custom spinner support (`gitblame.progressSpinner`)
 * Deprication: Removing log levels (`gitblame.logLevel`). It is replaced by `gitblame.logNonCritical` (defaults to `true`)
+* Feature: Blame cache is now tied to the open document. Closing the document will clear if from the cache.
 * Fix: Remove all non-dev dependencies
 
 The removal of the custom-token allows us to remove our dependency on moment. This lowers the extension bundle size from 850 kb to about 110 kb.

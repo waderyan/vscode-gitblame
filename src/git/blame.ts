@@ -4,49 +4,43 @@ import {
     commands,
     Disposable,
     env,
+    TextDocument,
     Uri,
     window,
     workspace,
 } from "vscode";
 
 import {
-    HASH_NO_COMMIT_GIT,
     TITLE_VIEW_ONLINE,
 } from "../constants";
 import { ActionableMessageItem } from "../util/actionablemessageitem";
 import { validEditor } from "../util/editorvalidator";
 import { ErrorHandler } from "../util/errorhandler";
-import {
-    getOriginOfActiveFile,
-    getRemoteUrl,
-} from "./util/gitcommand";
 import { isUrl } from "../util/is-url";
 import { Property } from "../util/property";
 import { TextDecorator } from "../util/textdecorator";
 import { throttleFunction } from "../util/throttle.function";
 import { StatusBarView } from "../view/view";
-import { GitFile } from "./file";
-import { GitFileFactory } from "./filefactory";
+import {
+    GitFile,
+    GitFileFactory,
+} from "./filefactory";
 import {
     blankCommitInfo,
     GitBlameInfo,
     GitCommitInfo,
     isBlankCommit,
 } from "./util/blanks";
-
-function stripGitRemoteUrl(rawUrl: string): string {
-    const httplessUrl = rawUrl.replace(/^[a-z-]+:\/\//i, "");
-    const colonlessUrl = httplessUrl.replace(
-        /:([a-z_.~+%-][a-z0-9_.~+%-]+)\/?/i,
-        "/$1/",
-    );
-    return colonlessUrl.replace(/\.git$/i, "");
-}
+import {
+    getOriginOfActiveFile,
+    getRemoteUrl,
+} from "./util/gitcommand";
+import { stripGitRemoteUrl } from "./util/strip-git-remote-url";
 
 export class GitBlame {
     private disposable: Disposable;
     private readonly statusBarView: StatusBarView;
-    private readonly files: Map<string, Promise<GitFile>> = new Map();
+    private readonly files: Map<TextDocument, Promise<GitFile>> = new Map();
 
     public constructor() {
         this.statusBarView = StatusBarView.getInstance();
@@ -73,7 +67,7 @@ export class GitBlame {
     public async showMessage(): Promise<void> {
         const commitInfo = await this.getCommitInfo();
 
-        if (commitInfo.hash === HASH_NO_COMMIT_GIT) {
+        if (isBlankCommit(commitInfo)) {
             this.clearView();
             return;
         }
@@ -171,20 +165,6 @@ export class GitBlame {
     }
 
     public dispose(): void {
-        this.files.forEach(
-            async (
-                file: Promise<GitFile | undefined>,
-                key: string,
-            ): Promise<void> => {
-                const fileResult = await file;
-
-                if (fileResult) {
-                    fileResult.dispose();
-                } else {
-                    this.files.delete(key);
-                }
-            },
-        );
         this.disposable.dispose();
     }
 
@@ -214,6 +194,11 @@ export class GitBlame {
         );
         workspace.onDidSaveTextDocument(
             this.onTextEditorMove,
+            this,
+            disposables,
+        );
+        workspace.onDidCloseTextDocument(
+            this.onCloseTextDocument,
             this,
             disposables,
         );
@@ -254,6 +239,21 @@ export class GitBlame {
         } else {
             return -1;
         }
+    }
+
+    private async onCloseTextDocument(document: TextDocument): Promise<void> {
+        if (!document.isClosed) {
+            return;
+        }
+
+        const blameFile = await this.files.get(document);
+
+        if (!blameFile) {
+            return;
+        }
+
+        this.files.delete(document);
+        blameFile.dispose();
     }
 
     private async generateMessageActions(
@@ -342,18 +342,15 @@ export class GitBlame {
         this.statusBarView.clear();
     }
 
-    private async getBlameInfo(fileName: string): Promise<GitBlameInfo> {
-        if (!this.files.has(fileName)) {
+    private async getBlameInfo(document: TextDocument): Promise<GitBlameInfo> {
+        if (!this.files.has(document)) {
             this.files.set(
-                fileName,
-                GitFileFactory.create(
-                    fileName,
-                    this.generateDisposeFunction(fileName),
-                ),
+                document,
+                GitFileFactory.create(document),
             );
         }
 
-        const blameFile = await this.files.get(fileName);
+        const blameFile = await this.files.get(document);
 
         if (blameFile) {
             return blameFile.blame();
@@ -368,7 +365,7 @@ export class GitBlame {
     private async getCurrentLineInfo(): Promise<GitCommitInfo> {
         if (validEditor(window.activeTextEditor)) {
             return this.getLineInfo(
-                window.activeTextEditor.document.fileName,
+                window.activeTextEditor.document,
                 window.activeTextEditor.selection.active.line,
             );
         } else {
@@ -377,11 +374,11 @@ export class GitBlame {
     }
 
     private async getLineInfo(
-        fileName: string,
+        document: TextDocument,
         lineNumber: number,
     ): Promise<GitCommitInfo> {
         const commitLineNumber = lineNumber + 1;
-        const blameInfo = await this.getBlameInfo(fileName);
+        const blameInfo = await this.getBlameInfo(document);
 
         if (blameInfo.lines[commitLineNumber]) {
             const hash = blameInfo.lines[commitLineNumber];
@@ -389,12 +386,6 @@ export class GitBlame {
         } else {
             return blankCommitInfo();
         }
-    }
-
-    private generateDisposeFunction(fileName: string): () => void {
-        return (): void => {
-            this.files.delete(fileName);
-        };
     }
 
     private isToolUrlPlural(origin: string): boolean {
