@@ -28,7 +28,7 @@ export class GitBlameStream extends EventEmitter {
     }
 
     public dispose(): void {
-        this.process.kill("SIGKILL");
+        this.process.kill("SIGTERM");
         this.process.removeAllListeners();
     }
 

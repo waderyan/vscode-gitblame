@@ -32,7 +32,7 @@ export class GitFileFactory {
     private static inWorkspace(fileName: string): boolean {
         const uriFileName = Uri.file(fileName);
 
-        return typeof workspace.getWorkspaceFolder(uriFileName) !== "undefined";
+        return workspace.getWorkspaceFolder(uriFileName) !== undefined;
     }
 
     private static exists(fileName: string): Promise<boolean> {

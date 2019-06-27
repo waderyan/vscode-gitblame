@@ -1,10 +1,16 @@
-import { commands, ExtensionContext, workspace } from "vscode";
+import {
+    commands,
+    ExtensionContext,
+    workspace,
+} from "vscode";
 
+import { GitExtension } from "./git/extension";
 import { GitBlame } from "./git/blame";
 
 export function activate(context: ExtensionContext): void {
     if (workspace.workspaceFolders) {
-        const app = new GitBlame();
+        const blame = new GitBlame();
+        const app = new GitExtension(blame);
         const blameCommand = commands.registerCommand(
             "gitblame.quickInfo",
             app.showMessage,
@@ -28,6 +34,7 @@ export function activate(context: ExtensionContext): void {
 
         context.subscriptions.push(
             app,
+            blame,
             blameCommand,
             linkCommand,
             copyHashCommand,
