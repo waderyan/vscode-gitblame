@@ -3,6 +3,10 @@ import {
     StatusBarItem,
     window,
 } from "vscode";
+import {
+    container,
+    singleton,
+} from "tsyringe";
 
 import { Property } from "../util/property";
 import { TextDecorator } from "../util/textdecorator";
@@ -11,22 +15,14 @@ import {
     isBlankCommit,
 } from "../git/util/blanks";
 
+@singleton()
 export class StatusBarView {
-    public static getInstance(): StatusBarView {
-        if (!this.instance) {
-            this.instance = new StatusBarView();
-        }
-
-        return this.instance;
-    }
-
-    private static instance: StatusBarView;
     private readonly statusBarItem: StatusBarItem;
 
-    private constructor() {
+    public constructor() {
         this.statusBarItem = window.createStatusBarItem(
             StatusBarAlignment.Left,
-            Property.get("statusBarPositionPriority"),
+            container.resolve(Property).get("statusBarPositionPriority"),
         );
     }
 

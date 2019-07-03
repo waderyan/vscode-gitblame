@@ -1,14 +1,15 @@
 import { MessageItem } from "vscode";
+import { injectable } from "tsyringe";
 
+@injectable()
 export class ActionableMessageItem implements MessageItem {
-    public title: string;
-    private action: () => void;
+    public title: string = "NO_TITLE";
+    private action: () => void = (): void => {
+        return;
+    };
 
-    public constructor(title: string) {
+    public setTitle(title: string): void {
         this.title = title;
-        this.action = (): void => {
-            return;
-        };
     }
 
     public setAction(action: () => void): void {

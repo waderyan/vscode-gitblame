@@ -1,5 +1,6 @@
 import { ChildProcess } from "child_process";
 import { EventEmitter } from "events";
+import { injectable } from "tsyringe";
 
 import { spawnGitBlameStreamProcess } from "./util/gitcommand";
 import {
@@ -8,16 +9,19 @@ import {
     GitCommitInfo,
 } from "./util/blanks";
 
+@injectable()
 export class GitBlameStream extends EventEmitter {
     private static readonly HASH_PATTERN: RegExp = /[a-z0-9]{40}/;
 
-    private readonly process: ChildProcess;
+    private process: ChildProcess | undefined;
     private readonly emittedCommits: Set<string>;
 
-    public constructor(fileName: string) {
+    public constructor() {
         super();
-
         this.emittedCommits = new Set();
+    }
+
+    public blame(fileName: string): void {
         this.process = spawnGitBlameStreamProcess(fileName);
 
         this.setupListeners();
@@ -28,11 +32,19 @@ export class GitBlameStream extends EventEmitter {
     }
 
     public dispose(): void {
+        if (this.process === undefined) {
+            return;
+        }
+
         this.process.kill("SIGTERM");
         this.process.removeAllListeners();
     }
 
     private setupListeners(): void {
+        if (this.process === undefined) {
+            return;
+        }
+
         this.process.addListener("close", (): void => this.close());
         this.process.stdout.addListener("data", (chunk): void => {
             this.data(chunk.toString());

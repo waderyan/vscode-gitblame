@@ -1,16 +1,20 @@
+import "@abraham/reflection";
+
 import {
     commands,
     ExtensionContext,
     workspace,
 } from "vscode";
+import { container } from "tsyringe";
 
 import { GitExtension } from "./git/extension";
-import { GitBlame } from "./git/blame";
+import { ErrorHandler } from "./util/errorhandler";
 
 export function activate(context: ExtensionContext): void {
     if (workspace.workspaceFolders) {
-        const blame = new GitBlame();
-        const app = new GitExtension(blame);
+        const errorHandler = container.resolve(ErrorHandler);
+        const app = container.resolve(GitExtension);
+
         const blameCommand = commands.registerCommand(
             "gitblame.quickInfo",
             app.showMessage,
@@ -33,8 +37,8 @@ export function activate(context: ExtensionContext): void {
         );
 
         context.subscriptions.push(
+            errorHandler,
             app,
-            blame,
             blameCommand,
             linkCommand,
             copyHashCommand,

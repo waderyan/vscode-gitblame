@@ -1,4 +1,5 @@
 import { workspace } from "vscode";
+import { injectable } from "tsyringe";
 
 interface PropertiesMap {
     "inferCommitUrl": boolean;
@@ -13,8 +14,9 @@ interface PropertiesMap {
     "pluralWebPathSubstrings": string[];
 }
 
+@injectable()
 export class Property {
-    public static get<K extends keyof PropertiesMap>(
+    public get<K extends keyof PropertiesMap>(
         name: K,
     ): PropertiesMap[K] | undefined {
         const properties = workspace.getConfiguration("gitblame");

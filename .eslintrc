@@ -52,6 +52,7 @@
                 "max": 3
             }
         ],
+        "no-trailing-spaces": "error",
         "max-params": "error",
         "no-eq-null": "error",
         "no-multi-spaces": "error",

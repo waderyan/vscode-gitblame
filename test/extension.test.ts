@@ -1,11 +1,10 @@
 import * as assert from "assert";
+import { container } from "tsyringe";
 
 import { GitExtension } from "../src/git/extension";
-import { GitBlame } from "../src/git/blame";
 
 suite("Web URL formatting", (): void => {
-    const blame = new GitBlame();
-    const extension = new GitExtension(blame);
+    const extension = container.resolve(GitExtension);
 
     test("https://", (): void => {
         assert.equal(
@@ -178,8 +177,7 @@ suite("Web URL formatting", (): void => {
 });
 
 suite("Origin to project name", (): void => {
-    const blame = new GitBlame();
-    const extension = new GitExtension(blame);
+    const extension = container.resolve(GitExtension);
 
     test("https://", (): void => {
         assert.equal(

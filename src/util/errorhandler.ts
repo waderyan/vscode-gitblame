@@ -1,4 +1,11 @@
-import { OutputChannel, window } from "vscode";
+import {
+    OutputChannel,
+    window,
+} from "vscode";
+import {
+    container,
+    singleton,
+} from "tsyringe";
 
 import { TITLE_SHOW_LOG } from "../constants";
 import { Property } from "./property";
@@ -10,41 +17,37 @@ enum Level {
     Critical = "critical",
 }
 
+@singleton()
 export class ErrorHandler {
-    public static logInfo(message: string): void {
-        ErrorHandler.getInstance().writeToLog(Level.Info, message);
+    private readonly outputChannel: OutputChannel;
+
+    public constructor() {
+        this.outputChannel = window.createOutputChannel("Extension: gitblame");
+    }
+    public logInfo(message: string): void {
+        this.writeToLog(Level.Info, message);
     }
 
-    public static logCommand(message: string): void {
-        ErrorHandler.getInstance().writeToLog(Level.Command, message);
+    public logCommand(message: string): void {
+        this.writeToLog(Level.Command, message);
     }
 
-    public static logError(error: Error): void {
-        ErrorHandler.getInstance().writeToLog(
+    public logError(error: Error): void {
+        this.writeToLog(
             Level.Error,
             error.toString(),
         );
     }
 
-    public static logCritical(error: Error, message: string): void {
-        ErrorHandler.getInstance().writeToLog(
+    public logCritical(error: Error, message: string): void {
+        this.writeToLog(
             Level.Critical,
             error.toString(),
         );
-        ErrorHandler.getInstance().showErrorMessage(message);
+        this.showErrorMessage(message);
     }
 
-    public static getInstance(): ErrorHandler {
-        if (!ErrorHandler.instance) {
-            ErrorHandler.instance = new ErrorHandler();
-        }
-
-        return ErrorHandler.instance;
-    }
-
-    private static instance: ErrorHandler;
-
-    private static timestamp(): string {
+    private timestamp(): string {
         const now = new Date();
         const hour = now
             .getHours()
@@ -60,12 +63,6 @@ export class ErrorHandler {
             .padStart(2, "0");
 
         return `${hour}:${minute}:${second}`;
-    }
-
-    private readonly outputChannel: OutputChannel;
-
-    private constructor() {
-        this.outputChannel = window.createOutputChannel("Extension: gitblame");
     }
 
     public dispose(): void {
@@ -84,11 +81,12 @@ export class ErrorHandler {
     }
 
     private writeToLog(level: Level, message: string): void {
-        const logNonCritical = Property.get("logNonCritical");
+        const logNonCritical = container.resolve(Property)
+            .get("logNonCritical");
 
         if (logNonCritical || level === Level.Critical) {
             const trimmedMessage = message.trim();
-            const timestamp = ErrorHandler.timestamp();
+            const timestamp = this.timestamp();
             this.outputChannel.appendLine(
                 `[ ${timestamp} | ${level} ] ${trimmedMessage}`,
             );

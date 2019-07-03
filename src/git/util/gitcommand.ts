@@ -11,6 +11,7 @@ import {
     extensions,
     window,
 } from "vscode";
+import { container } from "tsyringe";
 
 import { GIT_COMMAND_IN_PATH } from "../../constants";
 import { validEditor } from "../../util/editorvalidator";
@@ -119,7 +120,7 @@ export function spawnGitBlameStreamProcess(fileName: string): ChildProcess {
 
     args.push("blame");
 
-    if (Property.get("ignoreWhitespace")) {
+    if (container.resolve(Property).get("ignoreWhitespace")) {
         args.push("-w");
     }
 
@@ -132,7 +133,7 @@ export function spawnGitBlameStreamProcess(fileName: string): ChildProcess {
         cwd: dirname(fileName),
     };
 
-    ErrorHandler.logCommand(
+    container.resolve(ErrorHandler).logCommand(
         `${gitCommand} ${args.join(" ")}`,
     );
 

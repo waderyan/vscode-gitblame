@@ -3,6 +3,7 @@ import { TextDocument,
     Uri,
     workspace,
 } from "vscode";
+import { injectable } from "tsyringe";
 
 import { GitFileDummy } from "./filedummy";
 import { GitFilePhysical } from "./filephysical";
@@ -14,12 +15,13 @@ export interface GitFile {
     dispose(): void;
 }
 
+@injectable()
 export class GitFileFactory {
-    public static async create(
+    public async create(
         document: TextDocument,
     ): Promise<GitFile> {
         if (
-            GitFileFactory.inWorkspace(document.fileName)
+            this.inWorkspace(document.fileName)
             && await this.exists(document.fileName)
             && await this.inGitWorktree(document.fileName)
         ) {
@@ -29,13 +31,13 @@ export class GitFileFactory {
         }
     }
 
-    private static inWorkspace(fileName: string): boolean {
+    private inWorkspace(fileName: string): boolean {
         const uriFileName = Uri.file(fileName);
 
         return workspace.getWorkspaceFolder(uriFileName) !== undefined;
     }
 
-    private static exists(fileName: string): Promise<boolean> {
+    private exists(fileName: string): Promise<boolean> {
         return new Promise((resolve): void => {
             access(fileName, (err): void => {
                 if (err) {
@@ -47,7 +49,7 @@ export class GitFileFactory {
         });
     }
 
-    private static async inGitWorktree(fileName: string): Promise<boolean> {
+    private async inGitWorktree(fileName: string): Promise<boolean> {
         const workTree = await getWorkTree(fileName);
 
         return workTree !== "";

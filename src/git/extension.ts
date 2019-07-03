@@ -9,6 +9,10 @@ import {
     window,
     workspace,
 } from "vscode";
+import {
+    container,
+    injectable,
+} from "tsyringe";
 
 import {
     TITLE_VIEW_ONLINE,
@@ -32,18 +36,17 @@ import {
 import { stripGitRemoteUrl } from "./util/strip-git-remote-url";
 import { GitBlame } from "./blame";
 
+@injectable()
 export class GitExtension {
-    private disposable: Disposable;
+    private readonly disposable: Disposable;
     private readonly blame: GitBlame;
     private readonly statusBarView: StatusBarView;
 
-    public constructor(blame: GitBlame) {
+    public constructor(blame: GitBlame, statusBarView: StatusBarView) {
         this.blame = blame;
+        this.statusBarView = statusBarView;
 
-        this.statusBarView = StatusBarView.getInstance();
-
-        this.disposable = this.setupDisposables();
-        this.setupListeners();
+        this.disposable = this.setupListeners();
 
         this.init();
     }
@@ -69,7 +72,9 @@ export class GitExtension {
             return;
         }
 
-        const messageFormat = Property.get("infoMessageFormat") || "";
+        const messageFormat = container.resolve(Property).get(
+            "infoMessageFormat",
+        ) || "";
         const normalizedTokens = TextDecorator.normalizeCommitInfoTokens(
             commitInfo,
         );
@@ -98,7 +103,7 @@ export class GitExtension {
             await env.clipboard.writeText(commitInfo.hash);
             window.showInformationMessage("Copied hash to clipboard");
         } catch (err) {
-            ErrorHandler.logCritical(
+            container.resolve(ErrorHandler).logCritical(
                 err,
                 `Unable to copy hash to clipboard. hash: ${
                     commitInfo.hash
@@ -116,7 +121,7 @@ export class GitExtension {
                 await env.clipboard.writeText(commitToolUrl.toString());
                 window.showInformationMessage("Copied tool URL to clipboard");
             } catch (err) {
-                ErrorHandler.logCritical(
+                container.resolve(ErrorHandler).logCritical(
                     err,
                     `Unable to copy tool URL to clipboard. URL: ${
                         commitToolUrl
@@ -165,18 +170,7 @@ export class GitExtension {
         this.disposable.dispose();
     }
 
-    private setupDisposables(): Disposable {
-        // The blamer does not use the ErrorHandler but
-        // is responsible for keeping it disposable
-        const errorHandler = ErrorHandler.getInstance();
-
-        return Disposable.from(
-            this.statusBarView,
-            errorHandler,
-        );
-    }
-
-    private setupListeners(): void {
+    private setupListeners(): Disposable {
         const disposables: Disposable[] = [];
 
         window.onDidChangeActiveTextEditor(
@@ -200,7 +194,7 @@ export class GitExtension {
             disposables,
         );
 
-        this.disposable = Disposable.from(this.disposable, ...disposables);
+        return Disposable.from(...disposables);
     }
 
     private init(): void {
@@ -240,9 +234,9 @@ export class GitExtension {
         const extraActions: ActionableMessageItem[] = [];
 
         if (commitToolUrl) {
-            const viewOnlineAction = new ActionableMessageItem(
-                TITLE_VIEW_ONLINE,
-            );
+            const viewOnlineAction = container.resolve(ActionableMessageItem);
+
+            viewOnlineAction.setTitle(TITLE_VIEW_ONLINE);
 
             viewOnlineAction.setAction((): void => {
                 commands.executeCommand("vscode.open", commitToolUrl);
@@ -273,10 +267,12 @@ export class GitExtension {
             return;
         }
 
-        const inferCommitUrl = Property.get("inferCommitUrl");
+        const inferCommitUrl = container.resolve(Property).get(
+            "inferCommitUrl",
+        );
 
         const remote = getRemoteUrl();
-        const commitUrl = Property.get("commitUrl") || "";
+        const commitUrl = container.resolve(Property).get("commitUrl") || "";
         const origin = await getOriginOfActiveFile();
         const projectName = this.projectNameFromOrigin(origin);
         const remoteUrl = stripGitRemoteUrl(await remote);
@@ -331,13 +327,17 @@ export class GitExtension {
     }
 
     private isToolUrlPlural(origin: string): boolean {
-        const isWebPathPlural = Property.get("isWebPathPlural");
+        const isWebPathPlural = container.resolve(Property).get(
+            "isWebPathPlural",
+        );
 
         if (isWebPathPlural === true) {
             return true;
         }
 
-        const urlParts = Property.get("pluralWebPathSubstrings");
+        const urlParts = container.resolve(Property).get(
+            "pluralWebPathSubstrings",
+        );
 
         if (urlParts === undefined) {
             return false;

@@ -1,3 +1,5 @@
+import { container } from "tsyringe";
+
 import { pluralText } from "./plural-text";
 import { Property } from "./property";
 import {
@@ -38,14 +40,17 @@ export interface InfoTokenNormalizedCommitInfo {
 export class TextDecorator {
     public static toTextView(commit: GitCommitInfo): string {
         if (isBlankCommit(commit)) {
-            return Property.get("statusBarMessageNoCommit")
-                || "Not Committed Yet";
+            return container.resolve(Property).get(
+                "statusBarMessageNoCommit",
+            ) || "Not Committed Yet";
         }
 
         const normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(
             commit,
         );
-        const messageFormat = Property.get("statusBarMessageFormat");
+        const messageFormat = container.resolve(Property).get(
+            "statusBarMessageFormat",
+        );
 
         if (messageFormat) {
             return TextDecorator.parseTokens(
