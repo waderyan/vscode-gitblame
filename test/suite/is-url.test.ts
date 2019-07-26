@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { isUrl } from '../src/util/is-url';
+import { isUrl } from '../../src/util/is-url';
 
 suite('Is URL', (): void => {
     test('Valid', (): void => {

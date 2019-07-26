@@ -29,21 +29,24 @@
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -p ./",
     "lint": "eslint --no-inline-config --ext .js,.ts ./src ./test",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test"
+    "test": "node ./out/test/run-test.js"
   },
   "dependencies": {
-    "@abraham/reflection": "^0.5.1",
-    "tsyringe": "^3.2.0"
+    "@types/vscode": "^1.32.0",
+    "reflect-metadata": "^0.1.13",
+    "tsyringe": "^3.2.0",
+    "vscode-test": "^1.0.0"
   },
   "devDependencies": {
+    "@types/glob": "^7.1.1",
     "@types/mocha": "^5.2.7",
     "@types/node": "^10.14.9",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
     "eslint": "^5.16.0",
-    "typescript": "^3.5.2",
-    "vscode": "^1.1.34"
+    "glob": "^7.1.4",
+    "mocha": "^6.1.4",
+    "typescript": "^3.5.2"
   },
   "homepage": "https://github.com/Sertion/vscode-gitblame/blob/master/README.md",
   "bugs": {

@@ -7,7 +7,7 @@ import {
     monthsBetween,
     secondsBetween,
     yearsBetween,
-} from "../src/util/ago";
+} from "../../src/util/ago";
 
 suite("Ago", (): void => {
     test("Seconds", (): void => {

@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { container } from "tsyringe";
 
-import { GitExtension } from "../src/git/extension";
+import { GitExtension } from "../../src/git/extension";
 
 suite("Web URL formatting", (): void => {
     const extension = container.resolve(GitExtension);

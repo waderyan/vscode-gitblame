@@ -14,7 +14,11 @@ import {
     isBlankCommit,
 } from "../git/util/blanks";
 
-export interface InfoTokenNormalizedCommitInfo {
+export interface InfoTokens {
+    [key: string]: (value?: string) => string;
+}
+
+export interface InfoTokenNormalizedCommitInfo extends InfoTokens {
     "author.mail": () => string;
     "author.name": () => string;
     "author.timestamp": () => string;
@@ -35,6 +39,12 @@ export interface InfoTokenNormalizedCommitInfo {
     "commit.filename": () => string;
     "time.custom": () => string;
     "time.c_custom": () => string;
+}
+
+interface TokenReplaceGroup {
+    token: string;
+    value: string;
+    modifier: string;
 }
 
 export class TextDecorator {
@@ -86,9 +96,17 @@ export class TextDecorator {
 
     public static parseTokens(
         target: string,
-        tokens: InfoTokenNormalizedCommitInfo,
+        tokens: InfoTokens,
     ): string {
-        const tokenRegex = /\$\{([a-z.\-_]{1,})[,]*(|.{1,}?)(?=\})}/gi;
+        const tokenRegex = new RegExp(
+            "\\$\\{" +
+            "(?<token>[a-z._-]{1,})" +
+            ",*" +
+            "(?<value>.*?)" +
+            "(?<modifier>(|\\|[a-z]+))" +
+            "\\}",
+            "gi",
+        );
 
         if (typeof target !== "string") {
             return "";
@@ -96,36 +114,38 @@ export class TextDecorator {
 
         return target.replace(
             tokenRegex,
-            <K extends keyof InfoTokenNormalizedCommitInfo>(
-                _path: string,
-                key: K,
-                inValue: string,
-            ): string => {
-                return TextDecorator.runKey(
-                    tokens,
-                    key,
-                    inValue,
-                );
+            (...args: unknown[]): string => {
+                const groups: TokenReplaceGroup
+                    = args[args.length - 1] as unknown as TokenReplaceGroup;
+
+                const value = TextDecorator.runKey(tokens, groups);
+
+                return TextDecorator.modify(value, groups.modifier);
             },
         );
     }
 
-    public static runKey<K extends keyof InfoTokenNormalizedCommitInfo>(
-        tokens: InfoTokenNormalizedCommitInfo,
-        key: K,
-        value: string,
+    public static runKey(
+        tokens: InfoTokens,
+        group: TokenReplaceGroup,
     ): string {
-        const currentToken = tokens[key];
-
-        if (key === "commit.hash_short") {
-            return tokens["commit.hash_short"](value);
-        }
+        const currentToken = tokens[group.token];
 
         if (currentToken) {
-            return currentToken();
+            return currentToken(group.value);
         }
 
-        return key;
+        return group.token;
+    }
+
+    public static modify(value: string, modifier: string): string {
+        if (modifier === "|u") {
+            return value.toUpperCase();
+        } else if (modifier === "|l") {
+            return value.toLowerCase();
+        }
+
+        return `${value}${modifier}`;
     }
 
     public static normalizeCommitInfoTokens(
@@ -135,7 +155,7 @@ export class TextDecorator {
         const authorTime = new Date(commit.author.timestamp * 1000);
         const committerTime = new Date(commit.committer.timestamp * 1000);
 
-        const valueFrom = (value: string | number): () => string => {
+        const valueFrom = (value: { toString: () => string }): () => string => {
             return (): string => value.toString();
         }
         const ago = valueFrom(TextDecorator.toDateText(now, authorTime));

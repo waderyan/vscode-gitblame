@@ -7,9 +7,10 @@
 * Deprication: Removing custom spinner support (`gitblame.progressSpinner`)
 * Deprication: Removing log levels (`gitblame.logLevel`). It is replaced by `gitblame.logNonCritical` (defaults to `true`)
 * Feature: Blame cache is now tied to the open document. Closing the document will clear if from the cache.
-* Fix: Remove all non-dev dependencies
+* Feature: Move to the new `@types/vscode` and `vscode-test` packages
+* Fix: Removeing or updating dependencies
 
-The removal of the custom-token allows us to remove our dependency on moment. This lowers the extension bundle size from 850 kb to about 110 kb.
+The removal of the custom-token allows us to remove our dependency on moment. This lowers the extension bundle size from 850 kb to about 150 kb.
 
 ## 2.8.1 (June 21, 2019)
 * Bug: Blaming a removed file crashes the extension [#54](https://github.com/Sertion/vscode-gitblame/pull/54) (Thanks to [dmitriismitnov](https://github.com/dmitriismitnov))
