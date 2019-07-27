@@ -21,6 +21,7 @@ import { ActionableMessageItem } from "../util/actionablemessageitem";
 import { ErrorHandler } from "../util/errorhandler";
 import { isUrl } from "../util/is-url";
 import { Property } from "../util/property";
+import { runNextTick } from "../util/run-next-tick";
 import { TextDecorator } from "../util/textdecorator";
 import { throttleFunction } from "../util/throttle.function";
 import { StatusBarView } from "../view/view";
@@ -35,6 +36,8 @@ import {
 } from "./util/gitcommand";
 import { stripGitRemoteUrl } from "./util/strip-git-remote-url";
 import { GitBlame } from "./blame";
+
+const NO_FILE_OR_PLACE = "no-file:-1";
 
 @injectable()
 export class GitExtension {
@@ -202,20 +205,22 @@ export class GitExtension {
     }
 
     @throttleFunction<GitExtension>(16)
+    @runNextTick<GitExtension, void>()
     private async onTextEditorMove(): Promise<void> {
-        const beforePosition = this.getCurrentActiveFilePosition();
+        const before = this.getCurrentActiveFilePosition();
         const commitInfo = await this.getCurrentLineInfo();
-        const afterPosition = this.getCurrentActiveFilePosition();
+        const after = this.getCurrentActiveFilePosition();
 
         // Only update if we haven't moved since we started blaming
-        if (beforePosition === afterPosition) {
+        // or if we no longer have focus on any file
+        if (before === after || after === NO_FILE_OR_PLACE) {
             this.updateView(commitInfo);
         }
     }
 
     private getCurrentActiveFilePosition(): string {
         if (window.activeTextEditor === undefined) {
-            return "no-file:-1";
+            return NO_FILE_OR_PLACE;
         }
 
         const {document, selection} = window.activeTextEditor;

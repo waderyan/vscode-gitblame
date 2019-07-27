@@ -1,6 +1,7 @@
 # Change Log
 
-## 3.0.0 (xxx xx, 2019)
+## 3.0.0 (July 27, 2019)
+* Bug: Fixing rare bug where swapping between different file views didn't update the view
 * Deprication: Removing the `.custom` tokens from status bar message
 * Deprication: The `.from` token now is identical to `.ago`
 * Deprication: Removing the `commit.filename` tokens from status bar message

@@ -16,7 +16,7 @@
 			"outFiles": [
 				"${workspaceRoot}/out/src/**/*.js"
 			],
-			"preLaunchTask": "npm: test-build"
+			"preLaunchTask": "npm: build"
 		},
 		{
 			"name": "Test Extension",
