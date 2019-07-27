@@ -9,6 +9,9 @@ os:
   - osx
   - linux
 
+services:
+  - xvfb
+
 cache:
   directories:
     - "node_modules"
