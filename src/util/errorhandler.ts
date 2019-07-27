@@ -24,6 +24,7 @@ export class ErrorHandler {
     public constructor() {
         this.outputChannel = window.createOutputChannel("Extension: gitblame");
     }
+
     public logInfo(message: string): void {
         this.writeToLog(Level.Info, message);
     }

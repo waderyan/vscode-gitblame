@@ -1,8 +1,10 @@
 .vscode/**
-out/test/**
+out/**
 test/**
 src/**
 **/*.map
 .gitignore
+.eslintignore
 tsconfig.json
-vsc-extension-quickstart.md
+node_modules
+webpack.config.js

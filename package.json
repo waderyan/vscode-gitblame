@@ -24,12 +24,13 @@
     "blame"
   ],
   "qna": false,
-  "main": "./out/src/index",
+  "main": "./dist/bundle",
   "scripts": {
-    "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -p ./",
+    "vscode:prepublish": "npm run build",
+    "build": "webpack --config webpack.config.js",
+    "test-build": "tsc -p ./",
     "lint": "eslint --no-inline-config --ext .js,.ts ./src ./test",
-    "test": "node ./out/test/run-test.js"
+    "test": "npm run test-build && node ./out/test/run-test.js"
   },
   "dependencies": {
     "@types/vscode": "^1.32.0",
@@ -46,7 +47,10 @@
     "eslint": "^5.16.0",
     "glob": "^7.1.4",
     "mocha": "^6.1.4",
-    "typescript": "^3.5.2"
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.2",
+    "webpack": "^4.38.0",
+    "webpack-cli": "^3.3.6"
   },
   "homepage": "https://github.com/Sertion/vscode-gitblame/blob/master/README.md",
   "bugs": {
