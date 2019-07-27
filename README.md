@@ -137,20 +137,6 @@ See Git Blame information in the status bar for the currently selected line.
       </td>
     </tr>
     <tr>
-      <td><code>gitblame.progressSpinner</code></td>
-      <td><code>string[]</code></td>
-      <td><code>["$(sync~spin)"]</code></td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        <ul>
-          <li>An array of strings that will be displayed in sequence to denote progress while blaming files in larger repositories.</li>
-          <li>Supports <a href="https://octicons.github.com/">Octoicons</a> with the <code>~spin</code> suffix for spin action.</li>
-          <li>When the array only contains one item that item is rendered once instead of every 100ms.</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
       <td><code>gitblame.logLevel</code></td>
       <td><code>string[]</code></td>
       <td><code>["info", "error", "command", "critical"]</code></td>
@@ -181,7 +167,6 @@ See Git Blame information in the status bar for the currently selected line.
 | `${commit.hash}` | No | - | - | 40-bit hash unique to the commit |
 | `${commit.hash_short,length}` | Yes | `length` | 7 | the first `length` characters of the 40-bit hash unique to the commit |
 | `${commit.summary}` | No | - | - | the first line of the commit message |
-| `${commit.filename}` | No | - | - | the file name where the line was committed |
 | `${author.name}` | No | - | - | the commit author's name |
 | `${author.email}` | No | - | - | the commit author's e-mail |
 | `${author.timestamp}` | No | - | - | timestamp for the commit author's commit |
@@ -191,11 +176,7 @@ See Git Blame information in the status bar for the currently selected line.
 | `${committer.timestamp}` | No | - | - | timestamp for the committer's commit |
 | `${committer.tz}` | No | - | - | the committer's time zone |
 | `${time.ago}` | No | - | - | displays an estimation of how long ago the author committed (e.g. `10 hours ago`, `20 days ago`, `4 months ago`) |
-| `${time.custom,format}` | Yes | `format` | `undefined` | custom time format based on [momentjs.format(format)](https://momentjs.com/docs/#/displaying/format/) (uses author timestamp) |
-| `${time.from}` | No | - | - | format based on [momentjs.fromNow()](https://momentjs.com/docs/#/displaying/fromnow/) (uses author timestamp) |
 | `${time.c_ago}` | No | - | - | displays an estimation of how long ago the committer committed (e.g. `10 hours ago`, `20 days ago`, `4 months ago`) |
-| `${time.c_custom,format}` | No | `format` | `undefined` | custom time format based on [momentjs.format(format)](https://momentjs.com/docs/#/displaying/format/) (uses committer timestamp) |
-| `${time.c_from}` | No | - | - | format based on [momentjs.fromNow()](https://momentjs.com/docs/#/displaying/fromnow/) (uses committer timestamp) |
 
 # [Planned Features](https://github.com/Sertion/vscode-gitblame/labels/Planned)
 

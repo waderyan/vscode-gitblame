@@ -1,6 +1,7 @@
 import { execFile, ExecOptions } from "child_process";
 
 import { ErrorHandler } from "./errorhandler";
+import { container } from "tsyringe";
 
 function execFileCallback(command: string, resolve: (result: string) => void): (
     error: NodeJS.ErrnoException | null,
@@ -19,12 +20,12 @@ function execFileCallback(command: string, resolve: (result: string) => void): (
 
         if (error.code === "ENOENT") {
             const message = `${command}: No such file or directory. (ENOENT)`;
-            ErrorHandler.logCritical(error, message);
+            container.resolve(ErrorHandler).logCritical(error, message);
             resolve("");
             return;
         }
 
-        ErrorHandler.logError(new Error(stderr));
+        container.resolve(ErrorHandler).logError(new Error(stderr));
         resolve("");
         return;
     };
@@ -36,7 +37,9 @@ export function execute(
     options: ExecOptions = {},
 ): Promise<string> {
     return new Promise((resolve): void => {
-        ErrorHandler.logCommand(`${command} ${args.join(" ")}`);
+        container.resolve(ErrorHandler)
+            .logCommand(`${command} ${args.join(" ")}`);
+
         execFile(
             command,
             args,

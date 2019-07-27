@@ -1,21 +1,22 @@
 import { workspace } from "vscode";
-import { LogCategory } from "./errorhandler";
+import { injectable } from "tsyringe";
 
 interface PropertiesMap {
+    "inferCommitUrl": boolean;
     "commitUrl": string;
     "ignoreWhitespace": boolean;
     "infoMessageFormat": string;
     "isWebPathPlural": boolean;
-    "logLevel": LogCategory[];
-    "progressSpinner": string[];
+    "logNonCritical": boolean;
     "statusBarMessageFormat": string;
     "statusBarMessageNoCommit": string;
     "statusBarPositionPriority": number;
     "pluralWebPathSubstrings": string[];
 }
 
+@injectable()
 export class Property {
-    public static get<K extends keyof PropertiesMap>(
+    public get<K extends keyof PropertiesMap>(
         name: K,
     ): PropertiesMap[K] | undefined {
         const properties = workspace.getConfiguration("gitblame");

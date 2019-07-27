@@ -2,7 +2,7 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "2.8.1",
+  "version": "3.0.0",
   "publisher": "waderyan",
   "engines": {
     "vscode": "^1.32.0"
@@ -24,28 +24,33 @@
     "blame"
   ],
   "qna": false,
-  "main": "./out/src/index",
+  "main": "./dist/bundle",
   "scripts": {
-    "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run build",
+    "build": "webpack --config webpack.config.js",
+    "test-build": "tsc -p ./",
     "lint": "eslint --no-inline-config --ext .js,.ts ./src ./test",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test"
+    "test": "npm run test-build && node ./out/test/run-test.js"
   },
   "dependencies": {
-    "moment": "^2.24.0",
-    "valid-url": "^1.0.9"
+    "@types/vscode": "^1.32.0",
+    "reflect-metadata": "^0.1.13",
+    "tsyringe": "^3.2.0",
+    "vscode-test": "^1.0.0"
   },
   "devDependencies": {
+    "@types/glob": "^7.1.1",
     "@types/mocha": "^5.2.7",
     "@types/node": "^10.14.9",
-    "@types/valid-url": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
     "eslint": "^5.16.0",
+    "glob": "^7.1.4",
+    "mocha": "^6.1.4",
+    "ts-loader": "^6.0.4",
     "typescript": "^3.5.2",
-    "vscode": "^1.1.34"
+    "webpack": "^4.38.0",
+    "webpack-cli": "^3.3.6"
   },
   "homepage": "https://github.com/Sertion/vscode-gitblame/blob/master/README.md",
   "bugs": {
@@ -56,6 +61,9 @@
     "type": "git",
     "url": "https://github.com/Sertion/vscode-gitblame"
   },
+  "extensionDependencies": [
+    "vscode.git"
+  ],
   "contributes": {
     "commands": [
       {
@@ -77,61 +85,12 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "Git blame configuration",
+      "title": "Git Blame",
       "properties": {
-        "gitblame.commitUrl": {
-          "type": "string",
-          "default": "guess",
-          "markdownDescription": "The link to an online tool to view a commit (use `${hash}` for the commit hash). `\"no\"` will disable this feature."
-        },
-        "gitblame.ignoreWhitespace": {
-          "type": "boolean",
-          "default": false,
-          "description": "Ignore whitespace changes when blaming (-w flag)"
-        },
         "gitblame.infoMessageFormat": {
           "type": "string",
           "default": "${time.custom,YYYY-MM-DD} ${commit.summary}",
           "description": "Customize the info message"
-        },
-        "gitblame.isWebPathPlural": {
-          "type": "boolean",
-          "default": false,
-          "description": "BitBucket uses commits instead of commit in their web interface. Turn this on if you want the View button to work for BitBucket."
-        },
-        "gitblame.pluralWebPathSubstrings": {
-          "type": "array",
-          "default": [
-            "bitbucket",
-            "atlassian"
-          ],
-          "markdownDescription": "An array of substrings that, when present in the git origin URL, activates `gitblame.isWebPathPlural`"
-        },
-        "gitblame.logLevel": {
-          "type": "array",
-          "default": [
-            "info",
-            "error",
-            "command",
-            "critical"
-          ],
-          "description": "Limit what levels of log message get sent to the log",
-          "items": {
-            "type": "string",
-            "enum": [
-              "info",
-              "error",
-              "command",
-              "critical"
-            ]
-          }
-        },
-        "gitblame.progressSpinner": {
-          "type": "array",
-          "default": [
-            "$(sync~spin)"
-          ],
-          "description": "A series of string that denotes progress"
         },
         "gitblame.statusBarMessageFormat": {
           "type": "string",
@@ -146,6 +105,39 @@
         "gitblame.statusBarPositionPriority": {
           "type": "number",
           "description": "Priority where the status bar view should be placed"
+        },
+        "gitblame.inferCommitUrl": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "When enabled it inferes online commit tool URL based on origin URL. Disabled whenever `gitblame.commitUrl` isn't empty."
+        },
+        "gitblame.commitUrl": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "The link to an online tool to view a commit (use `${hash}` for the commit hash)."
+        },
+        "gitblame.ignoreWhitespace": {
+          "type": "boolean",
+          "default": false,
+          "description": "Ignore whitespace changes when blaming (-w flag)"
+        },
+        "gitblame.isWebPathPlural": {
+          "type": "boolean",
+          "default": false,
+          "description": "BitBucket uses commits instead of commit in their web interface. Turn this on if you want the View button to work for BitBucket."
+        },
+        "gitblame.pluralWebPathSubstrings": {
+          "type": "array",
+          "default": [
+            "bitbucket",
+            "atlassian"
+          ],
+          "markdownDescription": "An array of substrings that, when present in the git origin URL, activates `gitblame.isWebPathPlural`"
+        },
+        "gitblame.logNonCritical": {
+          "type": "boolean",
+          "default": true,
+          "description": "If enabled it logs all messages to the log. If disabled only critical messages gets logged."
         }
       }
     }

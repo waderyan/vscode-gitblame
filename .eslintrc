@@ -22,6 +22,12 @@
         }],
         "@typescript-eslint/no-require-imports": 2,
         "no-duplicate-imports": ["error"],
+        "sort-imports": ["error", {
+            "ignoreCase": true,
+            "ignoreDeclarationSort": true,
+            "ignoreMemberSort": false,
+            "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+        }],
         "comma-dangle": [
             "error",
             {
@@ -46,6 +52,7 @@
                 "max": 3
             }
         ],
+        "no-trailing-spaces": "error",
         "max-params": "error",
         "no-eq-null": "error",
         "no-multi-spaces": "error",
@@ -54,6 +61,7 @@
         "keyword-spacing": "error",
         "no-sync": "error",
         "no-lonely-if": "error",
-        "arrow-spacing": "error"
+        "arrow-spacing": "error",
+        "eol-last": ["error", "always"]
     }
 }

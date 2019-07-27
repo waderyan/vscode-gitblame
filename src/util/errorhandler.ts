@@ -1,50 +1,54 @@
-import { OutputChannel, window } from "vscode";
+import {
+    OutputChannel,
+    window,
+} from "vscode";
+import {
+    container,
+    singleton,
+} from "tsyringe";
 
 import { TITLE_SHOW_LOG } from "../constants";
 import { Property } from "./property";
 
-export enum LogCategory {
+enum Level {
     Info = "info",
     Error = "error",
     Command = "command",
     Critical = "critical",
 }
 
+@singleton()
 export class ErrorHandler {
-    public static logInfo(message: string): void {
-        ErrorHandler.getInstance().writeToLog(LogCategory.Info, message);
+    private readonly outputChannel: OutputChannel;
+
+    public constructor() {
+        this.outputChannel = window.createOutputChannel("Extension: gitblame");
     }
 
-    public static logCommand(message: string): void {
-        ErrorHandler.getInstance().writeToLog(LogCategory.Command, message);
+    public logInfo(message: string): void {
+        this.writeToLog(Level.Info, message);
     }
 
-    public static logError(error: Error): void {
-        ErrorHandler.getInstance().writeToLog(
-            LogCategory.Error,
+    public logCommand(message: string): void {
+        this.writeToLog(Level.Command, message);
+    }
+
+    public logError(error: Error): void {
+        this.writeToLog(
+            Level.Error,
             error.toString(),
         );
     }
 
-    public static logCritical(error: Error, message: string): void {
-        ErrorHandler.getInstance().writeToLog(
-            LogCategory.Critical,
+    public logCritical(error: Error, message: string): void {
+        this.writeToLog(
+            Level.Critical,
             error.toString(),
         );
-        ErrorHandler.getInstance().showErrorMessage(message);
+        this.showErrorMessage(message);
     }
 
-    public static getInstance(): ErrorHandler {
-        if (!ErrorHandler.instance) {
-            ErrorHandler.instance = new ErrorHandler();
-        }
-
-        return ErrorHandler.instance;
-    }
-
-    private static instance: ErrorHandler;
-
-    private static timestamp(): string {
+    private timestamp(): string {
         const now = new Date();
         const hour = now
             .getHours()
@@ -62,12 +66,6 @@ export class ErrorHandler {
         return `${hour}:${minute}:${second}`;
     }
 
-    private readonly outputChannel: OutputChannel;
-
-    private constructor() {
-        this.outputChannel = window.createOutputChannel("Extension: gitblame");
-    }
-
     public dispose(): void {
         this.outputChannel.dispose();
     }
@@ -83,27 +81,16 @@ export class ErrorHandler {
         }
     }
 
-    private writeToLog(category: LogCategory, message: string): boolean {
-        const allowCategory = this.logCategoryAllowed(category);
+    private writeToLog(level: Level, message: string): void {
+        const logNonCritical = container.resolve(Property)
+            .get("logNonCritical");
 
-        if (allowCategory) {
+        if (logNonCritical || level === Level.Critical) {
             const trimmedMessage = message.trim();
-            const timestamp = ErrorHandler.timestamp();
+            const timestamp = this.timestamp();
             this.outputChannel.appendLine(
-                `[ ${timestamp} | ${category} ] ${trimmedMessage}`,
+                `[ ${timestamp} | ${level} ] ${trimmedMessage}`,
             );
-        }
-
-        return allowCategory;
-    }
-
-    private logCategoryAllowed(level: LogCategory): boolean {
-        const enabledLevels = Property.get("logLevel");
-
-        if (enabledLevels) {
-            return enabledLevels.includes(level);
-        } else {
-            return false;
         }
     }
 }

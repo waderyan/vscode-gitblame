@@ -16,7 +16,7 @@
 			"outFiles": [
 				"${workspaceRoot}/out/src/**/*.js"
 			],
-			"preLaunchTask": "npm: watch"
+			"preLaunchTask": "npm: build"
 		},
 		{
 			"name": "Test Extension",
@@ -26,14 +26,14 @@
 			"args": [
 				"--disable-extensions",
 				"--extensionDevelopmentPath=${workspaceRoot}",
-				"--extensionTestsPath=${workspaceRoot}/out/test"
+				"--extensionTestsPath=${workspaceRoot}/out/test/suite"
 			],
 			"stopOnEntry": false,
 			"sourceMaps": true,
 			"outFiles": [
 				"${workspaceRoot}/out/src/**/*.js"
 			],
-			"preLaunchTask": "npm: watch"
+			"preLaunchTask": "npm: test-build"
 		}
 	]
 }

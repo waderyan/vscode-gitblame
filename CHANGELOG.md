@@ -1,5 +1,19 @@
 # Change Log
 
+## 3.0.0 (July 27, 2019)
+* Bug: Fixing rare bug where swapping between different file views didn't update the view
+* Deprication: Removing the `.custom` tokens from status bar message
+* Deprication: The `.from` token now is identical to `.ago`
+* Deprication: Removing the `commit.filename` tokens from status bar message
+* Deprication: Removing custom spinner support (`gitblame.progressSpinner`)
+* Deprication: Removing log levels (`gitblame.logLevel`). It is replaced by `gitblame.logNonCritical` (defaults to `true`)
+* Feature: Blame cache is now tied to the open document. Closing the document will clear if from the cache
+* Feature: Move to the new `@types/vscode` and `vscode-test` packages
+* Feature: Move to new build system
+* Fix: Removeing or updating dependencies
+
+The removal of the custom-token allows us to remove our dependency on moment. This lowers the extension bundle size from 850 kb to about 100 kb.
+
 ## 2.8.1 (June 21, 2019)
 * Bug: Blaming a removed file crashes the extension [#54](https://github.com/Sertion/vscode-gitblame/pull/54) (Thanks to [dmitriismitnov](https://github.com/dmitriismitnov))
 * Fix: Updating dependencies

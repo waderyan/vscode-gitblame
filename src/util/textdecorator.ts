@@ -1,24 +1,66 @@
-import * as moment from "moment";
+import { container } from "tsyringe";
 
-import { GitBlame } from "../git/blame";
-import {
-    GitCommitInfo,
-    InfoTokenNormalizedCommitInfo,
-} from "../interfaces";
 import { pluralText } from "./plural-text";
 import { Property } from "./property";
+import {
+    daysBetween,
+    hoursBetween,
+    minutesBetween,
+    monthsBetween,
+    yearsBetween,
+} from "./ago";
+import {
+    GitCommitInfo,
+    isBlankCommit,
+} from "../git/util/blanks";
+
+export interface InfoTokens {
+    [key: string]: (value?: string) => string;
+}
+
+export interface InfoTokenNormalizedCommitInfo extends InfoTokens {
+    "author.mail": () => string;
+    "author.name": () => string;
+    "author.timestamp": () => string;
+    "author.tz": () => string;
+    "commit.hash": () => string;
+    "commit.hash_short": (length?: string) => string;
+    "commit.summary": () => string;
+    "committer.mail": () => string;
+    "committer.name": () => string;
+    "committer.timestamp": () => string;
+    "committer.tz": () => string;
+    "time.ago": () => string;
+    "time.c_ago": () => string;
+    "time.c_from": () => string;
+    "time.from": () => string;
+
+    // Deprecated
+    "commit.filename": () => string;
+    "time.custom": () => string;
+    "time.c_custom": () => string;
+}
+
+interface TokenReplaceGroup {
+    token: string;
+    value: string;
+    modifier: string;
+}
 
 export class TextDecorator {
     public static toTextView(commit: GitCommitInfo): string {
-        if (GitBlame.isBlankCommit(commit)) {
-            return Property.get("statusBarMessageNoCommit")
-                || "Not Committed Yet";
+        if (isBlankCommit(commit)) {
+            return container.resolve(Property).get(
+                "statusBarMessageNoCommit",
+            ) || "Not Committed Yet";
         }
 
         const normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(
             commit,
         );
-        const messageFormat = Property.get("statusBarMessageFormat");
+        const messageFormat = container.resolve(Property).get(
+            "statusBarMessageFormat",
+        );
 
         if (messageFormat) {
             return TextDecorator.parseTokens(
@@ -31,14 +73,11 @@ export class TextDecorator {
     }
 
     public static toDateText(dateNow: Date, dateThen: Date): string {
-        const momentNow = moment(dateNow);
-        const momentThen = moment(dateThen);
-
-        const years = momentNow.diff(momentThen, "years");
-        const months = momentNow.diff(momentThen, "months");
-        const days = momentNow.diff(momentThen, "days");
-        const hours = momentNow.diff(momentThen, "hours");
-        const minutes = momentNow.diff(momentThen, "minutes");
+        const years = yearsBetween(dateNow, dateThen);
+        const months = monthsBetween(dateNow, dateThen);
+        const days = daysBetween(dateNow, dateThen);
+        const hours = hoursBetween(dateNow, dateThen);
+        const minutes = minutesBetween(dateNow, dateThen);
 
         if (years >= 1) {
             return pluralText(years, "year", "years") + " ago";
@@ -57,9 +96,17 @@ export class TextDecorator {
 
     public static parseTokens(
         target: string,
-        tokens: InfoTokenNormalizedCommitInfo,
+        tokens: InfoTokens,
     ): string {
-        const tokenRegex = /\$\{([a-z.\-_]{1,})[,]*(|.{1,}?)(?=\})}/gi;
+        const tokenRegex = new RegExp(
+            "\\$\\{" +
+            "(?<token>[a-z._-]{1,})" +
+            ",*" +
+            "(?<value>.*?)" +
+            "(?<modifier>(|\\|[a-z]+))" +
+            "\\}",
+            "gi",
+        );
 
         if (typeof target !== "string") {
             return "";
@@ -67,90 +114,85 @@ export class TextDecorator {
 
         return target.replace(
             tokenRegex,
-            <K extends keyof InfoTokenNormalizedCommitInfo>(
-                _path: string,
-                key: K,
-                inValue: string,
-            ): string => {
-                return TextDecorator.runKey(
-                    tokens,
-                    key,
-                    inValue,
-                );
+            (...args: unknown[]): string => {
+                const groups: TokenReplaceGroup
+                    = args[args.length - 1] as unknown as TokenReplaceGroup;
+
+                const value = TextDecorator.runKey(tokens, groups);
+
+                return TextDecorator.modify(value, groups.modifier);
             },
         );
     }
 
-    public static runKey<K extends keyof InfoTokenNormalizedCommitInfo>(
-        tokens: InfoTokenNormalizedCommitInfo,
-        key: K,
-        value: string,
+    public static runKey(
+        tokens: InfoTokens,
+        group: TokenReplaceGroup,
     ): string {
-        const currentToken = tokens[key];
-
-        if (key === "commit.hash_short") {
-            return tokens["commit.hash_short"](value);
-        }
-
-        if (key === "time.c_custom") {
-            return tokens["time.c_custom"](value);
-        }
-
-        if (key === "time.custom") {
-            return tokens["time.custom"](value);
-        }
+        const currentToken = tokens[group.token];
 
         if (currentToken) {
-            return currentToken();
+            return currentToken(group.value);
         }
 
-        return key;
+        return group.token;
+    }
+
+    public static modify(value: string, modifier: string): string {
+        if (modifier === "|u") {
+            return value.toUpperCase();
+        } else if (modifier === "|l") {
+            return value.toLowerCase();
+        }
+
+        return `${value}${modifier}`;
     }
 
     public static normalizeCommitInfoTokens(
         commit: GitCommitInfo,
     ): InfoTokenNormalizedCommitInfo {
         const now = new Date();
-        const authorTime = moment.unix(commit.author.timestamp);
-        const committerTime = moment.unix(commit.committer.timestamp);
+        const authorTime = new Date(commit.author.timestamp * 1000);
+        const committerTime = new Date(commit.committer.timestamp * 1000);
+
+        const valueFrom = (value: { toString: () => string }): () => string => {
+            return (): string => value.toString();
+        }
+        const ago = valueFrom(TextDecorator.toDateText(now, authorTime));
+        const cAgo = valueFrom(TextDecorator.toDateText(now, committerTime));
+        const hashShort = (length = "7"): string => {
+            const cutoffPoint = length.toString();
+            return commit.hash.substr(
+                0,
+                parseInt(cutoffPoint, 10),
+            );
+        };
 
         return {
-            "author.mail": (): string => commit.author.mail,
-            "author.name": (): string => commit.author.name,
-            "author.timestamp": (): string => (
-                commit.author.timestamp.toString()
+            "author.mail": valueFrom(commit.author.mail),
+            "author.name": valueFrom(commit.author.name),
+            "author.timestamp": valueFrom(commit.author.timestamp),
+            "author.tz": valueFrom(commit.author.tz),
+            "commit.hash": valueFrom(commit.hash),
+            "commit.hash_short": hashShort,
+            "commit.summary": valueFrom(commit.summary),
+            "committer.mail": valueFrom(commit.committer.mail),
+            "committer.name": valueFrom(commit.committer.name),
+            "committer.timestamp": valueFrom(commit.committer.timestamp),
+            "committer.tz": valueFrom(commit.committer.tz),
+            "time.ago": ago,
+            "time.c_ago": cAgo,
+            "time.from": ago,
+            "time.c_from": cAgo,
+
+            // Deprecated
+            "commit.filename": valueFrom("(commit.filename is deprecated)"),
+            "time.custom": valueFrom(
+                `${authorTime.toUTCString()} (time.custom is deprecated)`,
             ),
-            "author.tz": (): string => commit.author.tz,
-            "commit.filename": (): string => commit.filename,
-            "commit.hash": (): string => commit.hash,
-            "commit.hash_short": (length = "7"): string => {
-                const cutoffPoint = length.toString();
-                return commit.hash.substr(
-                    0,
-                    parseInt(cutoffPoint, 10),
-                );
-            },
-            "commit.summary": (): string => commit.summary,
-            "committer.mail": (): string => commit.committer.mail,
-            "committer.name": (): string => commit.committer.name,
-            "committer.timestamp": (): string => (
-                commit.committer.timestamp.toString()
+            "time.c_custom": valueFrom(
+                `${committerTime.toUTCString()} (time.c_custom is deprecated)`,
             ),
-            "committer.tz": (): string => commit.committer.tz,
-            "time.ago": (): string => TextDecorator.toDateText(
-                now,
-                authorTime.toDate(),
-            ),
-            "time.c_ago": (): string => TextDecorator.toDateText(
-                now,
-                committerTime.toDate(),
-            ),
-            "time.c_custom": (format = ""): string => (
-                committerTime.format(format)
-            ),
-            "time.c_from": (): string => committerTime.fromNow(),
-            "time.custom": (format = ""): string => authorTime.format(format),
-            "time.from": (): string => authorTime.fromNow(),
         };
     }
 }
