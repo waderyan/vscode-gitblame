@@ -37,7 +37,9 @@ export function execute(
     options: ExecOptions = {},
 ): Promise<string> {
     return new Promise((resolve): void => {
-        container.resolve(ErrorHandler).logCommand(`${command} ${args.join(" ")}`);
+        container.resolve(ErrorHandler)
+            .logCommand(`${command} ${args.join(" ")}`);
+
         execFile(
             command,
             args,
