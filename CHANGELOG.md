@@ -1,5 +1,8 @@
 # Change Log
 
+## 3.0.1 (August 2, 2019)
+* Bug: Removing depricated token from default value for `gitblame.infoMessageFormat` [#57](https://github.com/Sertion/vscode-gitblame/issues/57) (Thanks to [Kyngo](https://github.com/Kyngo))
+
 ## 3.0.0 (July 27, 2019)
 * Bug: Fixing rare bug where swapping between different file views didn't update the view
 * Deprication: Removing the `.custom` tokens from status bar message

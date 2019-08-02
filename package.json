@@ -2,7 +2,7 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "publisher": "waderyan",
   "engines": {
     "vscode": "^1.32.0"
@@ -89,7 +89,7 @@
       "properties": {
         "gitblame.infoMessageFormat": {
           "type": "string",
-          "default": "${time.custom,YYYY-MM-DD} ${commit.summary}",
+          "default": "${commit.summary}",
           "description": "Customize the info message"
         },
         "gitblame.statusBarMessageFormat": {
