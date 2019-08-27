@@ -14,8 +14,13 @@ import {
     isBlankCommit,
 } from "../git/util/blanks";
 
+type InfoTokenFunctionWithParameter = (value: string) => string;
+type InfoTokenFunctionWithoutParameter = () => string;
+type InfoTokenFunction =
+    InfoTokenFunctionWithParameter | InfoTokenFunctionWithoutParameter;
+
 export interface InfoTokens {
-    [key: string]: (value?: string) => string;
+    [key: string]: InfoTokenFunction;
 }
 
 export interface InfoTokenNormalizedCommitInfo extends InfoTokens {
@@ -24,7 +29,7 @@ export interface InfoTokenNormalizedCommitInfo extends InfoTokens {
     "author.timestamp": () => string;
     "author.tz": () => string;
     "commit.hash": () => string;
-    "commit.hash_short": (length?: string) => string;
+    "commit.hash_short": (length: string) => string;
     "commit.summary": () => string;
     "committer.mail": () => string;
     "committer.name": () => string;

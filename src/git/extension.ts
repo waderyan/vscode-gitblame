@@ -310,11 +310,11 @@ export class GitExtension {
         }
     }
 
-    private gitOriginHostname(origin: string): (index?: string) => string {
-        return (index?: string): string => {
+    private gitOriginHostname(origin: string): (index: string) => string {
+        return (index: string): string => {
             const originUrl = new URL(origin);
 
-            if (index === undefined) {
+            if (index === '') {
                 return originUrl.hostname;
             }
 
