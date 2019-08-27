@@ -1,5 +1,12 @@
 # Change Log
 
+## 3.1.0 (August 27, 2019)
+* Bug: Extension host crashing when renaming file [#59](https://github.com/Sertion/vscode-gitblame/issues/59) (Thanks to [pierznj](https://github.com/pierznj))
+* Feature: Two new tokens for `gitblame.commitUrl` [#61](https://github.com/Sertion/vscode-gitblame/issues/61) (Thanks to [ajoga](https://github.com/ajoga) and [nitzel](https://github.com/nitzel))
+* Fix: Adding [acknowledgements for the logo](https://twitter.com/jasonlong) [#63](https://github.com/Sertion/vscode-gitblame/issues/63) (Thanks to [Eonfge](https://github.com/Eonfge))
+* Fix: Updating readme
+* Fix: Updating dependencies
+
 ## 3.0.1 (August 2, 2019)
 * Bug: Removing depricated token from default value for `gitblame.infoMessageFormat` [#57](https://github.com/Sertion/vscode-gitblame/issues/57) (Thanks to [Kyngo](https://github.com/Kyngo))
 

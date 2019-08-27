@@ -283,8 +283,9 @@ export class GitExtension {
         const remoteUrl = stripGitRemoteUrl(await remote);
         const parsedUrl = TextDecorator.parseTokens(commitUrl, {
             "hash": (): string => commitInfo.hash,
-            "project.remote": (): string => remoteUrl,
             "project.name": (): string => projectName,
+            "project.remote": (): string => remoteUrl,
+            "gitorigin.hostname": this.gitOriginHostname(origin),
         });
 
         if (isUrl(parsedUrl)) {
@@ -307,6 +308,24 @@ export class GitExtension {
                     `Currently expands to: '${ parsedUrl }'`,
             );
         }
+    }
+
+    private gitOriginHostname(origin: string): (index?: string) => string {
+        return (index?: string): string => {
+            const originUrl = new URL(origin);
+
+            if (index === undefined) {
+                return originUrl.hostname;
+            }
+
+            const parts = originUrl.hostname.split('.');
+
+            if (index !== undefined && index in parts) {
+                return parts[Number(index)];
+            }
+
+            return 'invalid-index';
+        };
     }
 
     private updateView(commitInfo: GitCommitInfo): void {

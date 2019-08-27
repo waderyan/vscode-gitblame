@@ -25,7 +25,7 @@ interface VscodeGitExtension {
     };
 }
 
-export function getGitCommand(): string {
+function getGitCommand(): string {
     const vscodeGit = extensions.getExtension<VscodeGitExtension>(
         "vscode.git",
     );

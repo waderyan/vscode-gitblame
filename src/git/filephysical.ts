@@ -18,12 +18,17 @@ import {
 export class GitFilePhysical implements GitFile {
     private readonly fileName: string;
     private readonly fileSystemWatcher: FSWatcher;
-    private blameInfoPromise: Promise<GitBlameInfo> | undefined;
-    private blameProcess: GitBlameStream | undefined;
+    private blameInfoPromise?: Promise<GitBlameInfo>;
+    private blameProcess?: GitBlameStream;
+    private clearFromCache?: () => void;
 
     public constructor(fileName: string) {
         this.fileName = fileName;
         this.fileSystemWatcher = this.setupWatcher();
+    }
+
+    public registerDisposeFunction(dispose: () => void): void {
+        this.clearFromCache = dispose;
     }
 
     public async blame(): Promise<GitBlameInfo> {
@@ -41,6 +46,12 @@ export class GitFilePhysical implements GitFile {
             this.blameProcess.terminate();
             delete this.blameProcess;
         }
+
+        if (this.clearFromCache) {
+            this.clearFromCache();
+            this.clearFromCache = undefined;
+        }
+
         this.fileSystemWatcher.close();
     }
 

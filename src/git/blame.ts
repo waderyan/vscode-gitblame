@@ -73,6 +73,10 @@ export class GitBlame {
             return;
         }
 
+        blameFile.registerDisposeFunction((): void => {
+            this.removeDocument(document);
+        });
+
         return blameFile.blame();
     }
 }

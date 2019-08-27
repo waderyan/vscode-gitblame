@@ -17,6 +17,10 @@ export class GitFileDummy implements GitFile {
         );
     }
 
+    public registerDisposeFunction(): void {
+        // noop
+    }
+
     public async blame(): Promise<GitBlameInfo> {
         return blankBlameInfo();
     }

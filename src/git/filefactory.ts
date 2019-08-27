@@ -11,6 +11,7 @@ import { GitBlameInfo } from "./util/blanks";
 import { getWorkTree } from "./util/gitcommand";
 
 export interface GitFile {
+    registerDisposeFunction(dispose: () => void): void;
     blame(): Promise<GitBlameInfo>;
     dispose(): void;
 }
@@ -20,11 +21,15 @@ export class GitFileFactory {
     public async create(
         document: TextDocument,
     ): Promise<GitFile> {
-        if (
-            this.inWorkspace(document.fileName)
-            && await this.exists(document.fileName)
-            && await this.inGitWorktree(document.fileName)
-        ) {
+        const inWorkspace = this.inWorkspace(document.fileName);
+        const exists = inWorkspace ?
+            this.exists(document.fileName) : false;
+        const inGitWorktree = inWorkspace ?
+            this.inGitWorktree(document.fileName) : false;
+        const realFile = (await Promise.all([exists, inGitWorktree]))
+            .every((fileStatus): boolean => fileStatus === true);
+
+        if (realFile) {
             return new GitFilePhysical(document.fileName);
         } else {
             return new GitFileDummy(document.fileName);
