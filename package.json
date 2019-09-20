@@ -109,7 +109,12 @@
         "gitblame.inferCommitUrl": {
           "type": "boolean",
           "default": true,
-          "markdownDescription": "When enabled it inferes online commit tool URL based on origin URL. Disabled whenever `gitblame.commitUrl` isn't empty."
+          "markdownDescription": "When enabled it inferes online commit tool URL based on a remote's URL. Disabled whenever `gitblame.commitUrl` isn't empty."
+        },
+        "gitblame.remoteName": {
+          "type": "string",
+          "default": "origin",
+          "markdownDescription": "The name of the git remote used by inferCommitUrl to build the URL."
         },
         "gitblame.commitUrl": {
           "type": "string",
