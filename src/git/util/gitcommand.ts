@@ -42,7 +42,9 @@ function getGitCommand(): string {
     }
 }
 
-export async function getOriginOfActiveFile(): Promise<string> {
+export async function getOriginOfActiveFile(
+    remoteName: string,
+): Promise<string> {
     if (!validEditor(window.activeTextEditor)) {
         return "";
     }
@@ -53,7 +55,7 @@ export async function getOriginOfActiveFile(): Promise<string> {
     const originUrl = await execute(gitCommand, [
         "ls-remote",
         "--get-url",
-        "origin",
+        remoteName,
     ], {
         cwd: activeFileFolder,
     });

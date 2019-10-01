@@ -277,8 +277,10 @@ export class GitExtension {
         );
 
         const remote = getRemoteUrl();
-        const commitUrl = container.resolve(Property).get("commitUrl") || "";
-        const origin = await getOriginOfActiveFile();
+        const properties = container.resolve(Property);
+        const commitUrl = properties.get("commitUrl") || "";
+        const remoteName = properties.get("remoteName") || "origin";
+        const origin = await getOriginOfActiveFile(remoteName);
         const projectName = this.projectNameFromOrigin(origin);
         const remoteUrl = stripGitRemoteUrl(await remote);
         const parsedUrl = TextDecorator.parseTokens(commitUrl, {

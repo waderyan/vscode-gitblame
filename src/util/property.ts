@@ -4,6 +4,7 @@ import { injectable } from "tsyringe";
 interface PropertiesMap {
     "inferCommitUrl": boolean;
     "commitUrl": string;
+    "remoteName": string;
     "ignoreWhitespace": boolean;
     "infoMessageFormat": string;
     "isWebPathPlural": boolean;
