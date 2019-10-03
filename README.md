@@ -171,10 +171,12 @@ See Git Blame information in the status bar for the currently selected line.
 | `${author.email}` | No | - | - | the commit author's e-mail |
 | `${author.timestamp}` | No | - | - | timestamp for the commit author's commit |
 | `${author.tz}` | No | - | - | the commit author's time zone |
+| `${author.date}` | No | - | - | the commit author's date (ex: 1990-09-16) |
 | `${committer.name}` | No | - | - | the committer's name |
 | `${committer.email}` | No | - | - | the committer's e-mail |
 | `${committer.timestamp}` | No | - | - | timestamp for the committer's commit |
 | `${committer.tz}` | No | - | - | the committer's time zone |
+| `${committer.date}` | No | - | - | the committer's date (ex: Sep 16 1990) |
 | `${time.ago}` | No | - | - | displays an estimation of how long ago the author committed (e.g. `10 hours ago`, `20 days ago`, `4 months ago`) |
 | `${time.c_ago}` | No | - | - | displays an estimation of how long ago the committer committed (e.g. `10 hours ago`, `20 days ago`, `4 months ago`) |
 
