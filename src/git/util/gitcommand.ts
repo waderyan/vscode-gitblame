@@ -7,10 +7,6 @@ import {
     normalize,
 } from "path";
 
-import {
-    extensions,
-    window,
-} from "vscode";
 import { container } from "tsyringe";
 
 import { GIT_COMMAND_IN_PATH } from "../../constants";
@@ -18,6 +14,8 @@ import { validEditor } from "../../util/editorvalidator";
 import { execute } from "../../util/execcommand";
 import { Property } from "../../util/property";
 import { ErrorHandler } from "../../util/errorhandler";
+import { ActiveTextEditor } from "../../vscode-api/active-text-editor";
+import { ExtensionGetter } from "../../vscode-api/get-extension";
 
 interface VscodeGitExtension {
     git: {
@@ -26,9 +24,8 @@ interface VscodeGitExtension {
 }
 
 function getGitCommand(): string {
-    const vscodeGit = extensions.getExtension<VscodeGitExtension>(
-        "vscode.git",
-    );
+    const vscodeGit = container.resolve<ExtensionGetter>("ExtensionGetter")
+        .get<VscodeGitExtension>("vscode.git");
 
     if (
         vscodeGit
@@ -45,12 +42,14 @@ function getGitCommand(): string {
 export async function getOriginOfActiveFile(
     remoteName: string,
 ): Promise<string> {
-    if (!validEditor(window.activeTextEditor)) {
+    const activeEditor = container
+        .resolve<ActiveTextEditor>("ActiveTextEditor").get();
+    if (!validEditor(activeEditor)) {
         return "";
     }
 
     const gitCommand = getGitCommand();
-    const activeFile = window.activeTextEditor.document.fileName;
+    const activeFile = activeEditor.document.fileName;
     const activeFileFolder = dirname(activeFile);
     const originUrl = await execute(gitCommand, [
         "ls-remote",
@@ -64,11 +63,13 @@ export async function getOriginOfActiveFile(
 }
 
 export async function getRemoteUrl(): Promise<string> {
-    if (!validEditor(window.activeTextEditor)) {
+    const activeEditor = container
+        .resolve<ActiveTextEditor>("ActiveTextEditor").get();
+    if (!validEditor(activeEditor)) {
         return "";
     }
     const gitCommand = getGitCommand();
-    const activeFile = window.activeTextEditor.document.fileName;
+    const activeFile = activeEditor.document.fileName;
     const activeFileFolder = dirname(activeFile);
     const currentBranch = await execute(gitCommand, [
         "symbolic-ref",
@@ -122,7 +123,7 @@ export function spawnGitBlameStreamProcess(fileName: string): ChildProcess {
 
     args.push("blame");
 
-    if (container.resolve(Property).get("ignoreWhitespace")) {
+    if (container.resolve<Property>("Property").get("ignoreWhitespace")) {
         args.push("-w");
     }
 
@@ -135,7 +136,7 @@ export function spawnGitBlameStreamProcess(fileName: string): ChildProcess {
         cwd: dirname(fileName),
     };
 
-    container.resolve(ErrorHandler).logCommand(
+    container.resolve<ErrorHandler>("ErrorHandler").logCommand(
         `${gitCommand} ${args.join(" ")}`,
     );
 

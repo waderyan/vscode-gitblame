@@ -1,14 +1,16 @@
 import {
-    OutputChannel,
-    window,
-} from "vscode";
-import {
     container,
     singleton,
+    inject,
 } from "tsyringe";
 
 import { TITLE_SHOW_LOG } from "../constants";
 import { Property } from "./property";
+import { MessageService } from "../view/messages";
+import {
+    OutputChannel,
+    OutputChannelFactory,
+} from "../view/output-channel-factory";
 
 enum Level {
     Info = "info",
@@ -17,12 +19,22 @@ enum Level {
     Critical = "critical",
 }
 
+export interface ErrorHandler {
+    logInfo(message: string): void;
+    logCommand(message: string): void;
+    logError(error: Error): void;
+    logCritical(error: Error, message: string): void;
+    dispose(): void;
+}
+
 @singleton()
-export class ErrorHandler {
+export class ErrorHandlerImpl implements ErrorHandler {
     private readonly outputChannel: OutputChannel;
 
-    public constructor() {
-        this.outputChannel = window.createOutputChannel("Extension: gitblame");
+    public constructor(
+        @inject("OutputChannelFactory") channelFactory: OutputChannelFactory,
+    ) {
+        this.outputChannel = channelFactory.create("Extension: gitblame");
     }
 
     public logInfo(message: string): void {
@@ -48,6 +60,10 @@ export class ErrorHandler {
         this.showErrorMessage(message);
     }
 
+    public dispose(): void {
+        this.outputChannel.dispose();
+    }
+
     private timestamp(): string {
         const now = new Date();
         const hour = now
@@ -66,15 +82,13 @@ export class ErrorHandler {
         return `${hour}:${minute}:${second}`;
     }
 
-    public dispose(): void {
-        this.outputChannel.dispose();
-    }
-
     private async showErrorMessage(message: string): Promise<void> {
-        const selectedItem = await window.showErrorMessage(
-            message,
-            TITLE_SHOW_LOG,
-        );
+        const selectedItem = await container
+            .resolve<MessageService>("MessageService")
+            .showError(
+                message,
+                TITLE_SHOW_LOG,
+            );
 
         if (selectedItem === TITLE_SHOW_LOG) {
             this.outputChannel.show();
@@ -82,7 +96,7 @@ export class ErrorHandler {
     }
 
     private writeToLog(level: Level, message: string): void {
-        const logNonCritical = container.resolve(Property)
+        const logNonCritical = container.resolve<Property>("Property")
             .get("logNonCritical");
 
         if (logNonCritical || level === Level.Critical) {

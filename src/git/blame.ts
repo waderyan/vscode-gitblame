@@ -1,5 +1,5 @@
 import { TextDocument } from "vscode";
-import { injectable } from "tsyringe";
+import { container } from "tsyringe";
 
 import {
     blankCommitInfo,
@@ -11,14 +11,17 @@ import {
     GitFileFactory,
 } from "./filefactory";
 
-@injectable()
-export class GitBlame {
-    private readonly factory: GitFileFactory;
-    private readonly files: Map<TextDocument, Promise<GitFile>> = new Map();
+export interface GitBlame {
+    blameLine(
+        document: TextDocument,
+        lineNumber: number,
+    ): Promise<GitCommitInfo>;
+    removeDocument(document: TextDocument): Promise<void>;
+    dispose(): void;
+}
 
-    public constructor(factory: GitFileFactory) {
-        this.factory = factory;
-    }
+export class GitBlameImpl implements GitBlame {
+    private readonly files: Map<TextDocument, Promise<GitFile>> = new Map();
 
     public async blameLine(
         document: TextDocument,
@@ -61,10 +64,9 @@ export class GitBlame {
         document: TextDocument,
     ): Promise<GitBlameInfo | undefined> {
         if (!this.files.has(document)) {
-            this.files.set(
-                document,
-                this.factory.create(document),
-            );
+            const factory = container
+                .resolve<GitFileFactory>("GitFileFactory");
+            this.files.set(document, factory.create(document));
         }
 
         const blameFile = await this.files.get(document);

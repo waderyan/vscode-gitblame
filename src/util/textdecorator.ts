@@ -55,7 +55,7 @@ interface TokenReplaceGroup {
 export class TextDecorator {
     public static toTextView(commit: GitCommitInfo): string {
         if (isBlankCommit(commit)) {
-            return container.resolve(Property).get(
+            return container.resolve<Property>("Property").get(
                 "statusBarMessageNoCommit",
             ) || "Not Committed Yet";
         }
@@ -63,7 +63,7 @@ export class TextDecorator {
         const normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(
             commit,
         );
-        const messageFormat = container.resolve(Property).get(
+        const messageFormat = container.resolve<Property>("Property").get(
             "statusBarMessageFormat",
         );
 

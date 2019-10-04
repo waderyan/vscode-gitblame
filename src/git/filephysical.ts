@@ -1,4 +1,5 @@
 import { FSWatcher, watch } from "fs";
+import { container } from "tsyringe";
 
 import { ErrorHandler } from "../util/errorhandler";
 import { StatusBarView } from "../view/view";
@@ -9,12 +10,7 @@ import {
     GitBlameInfo,
     GitCommitInfo,
 } from "./util/blanks";
-import {
-    container,
-    injectable,
-} from "tsyringe";
 
-@injectable()
 export class GitFilePhysical implements GitFile {
     private readonly fileName: string;
     private readonly fileSystemWatcher: FSWatcher;
@@ -32,7 +28,7 @@ export class GitFilePhysical implements GitFile {
     }
 
     public async blame(): Promise<GitBlameInfo> {
-        container.resolve(StatusBarView).startProgress();
+        container.resolve<StatusBarView>("StatusBarView").startProgress();
 
         if (this.blameInfoPromise) {
             return this.blameInfoPromise;
@@ -72,12 +68,13 @@ export class GitFilePhysical implements GitFile {
     }
 
     private async findBlameInfo(): Promise<GitBlameInfo> {
-        container.resolve(StatusBarView).startProgress();
+        container.resolve<StatusBarView>("StatusBarView").startProgress();
 
         this.blameInfoPromise = new Promise<GitBlameInfo>(
             (resolve): void => {
                 const blameInfo = blankBlameInfo();
-                this.blameProcess = container.resolve(GitBlameStream);
+                this.blameProcess = container
+                    .resolve<GitBlameStream>("GitBlameStream");
                 this.blameProcess.blame(this.fileName);
 
                 this.blameProcess.on(
@@ -127,10 +124,10 @@ export class GitFilePhysical implements GitFile {
             gitStream.removeAllListeners();
 
             if (err) {
-                container.resolve(ErrorHandler).logError(err);
+                container.resolve<ErrorHandler>("ErrorHandler").logError(err);
                 resolve(blankBlameInfo());
             } else {
-                container.resolve(ErrorHandler).logInfo(
+                container.resolve<ErrorHandler>("ErrorHandler").logInfo(
                     `Blamed file "${
                         this.fileName
                     }" and found ${
