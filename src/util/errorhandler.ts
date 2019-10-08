@@ -1,7 +1,7 @@
 import {
     container,
-    singleton,
     inject,
+    singleton,
 } from "tsyringe";
 
 import { TITLE_SHOW_LOG } from "../constants";
