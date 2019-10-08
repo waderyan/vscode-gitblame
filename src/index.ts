@@ -20,32 +20,36 @@ import { GitExtensionImpl } from "./git/extension";
 import { GitFileFactoryImpl } from "./git/filefactory";
 import { GitBlameStreamImpl } from "./git/stream";
 
-const uc = <T>(useClass: T): {useClass: T} => ({useClass});
-const singleton = {singleton: true};
+export function registerContainer(): void {
+    const uc = <T>(useClass: T): {useClass: T} => ({useClass});
+    const singleton = {singleton: true};
 
-// vscode-api
-container.register("ActiveTextEditor", uc(ActiveTextEditorImpl));
-container.register("Clipboard", uc(ClipboardImpl));
-container.register("Command", uc(CommandImpl));
-container.register("EditorEvents", uc(EditorEventsImpl));
-container.register("ExtensionGetter", uc(ExtensionGetterImpl));
-container.register("Workspace", uc(WorkspaceImpl));
+    // vscode-api
+    container.register("ActiveTextEditor", uc(ActiveTextEditorImpl));
+    container.register("Clipboard", uc(ClipboardImpl));
+    container.register("Command", uc(CommandImpl));
+    container.register("EditorEvents", uc(EditorEventsImpl));
+    container.register("ExtensionGetter", uc(ExtensionGetterImpl));
+    container.register("Workspace", uc(WorkspaceImpl));
 
-// util
-container.register("ActionableMessageItem", uc(ActionableMessageItemImpl));
-container.register("ErrorHandler", uc(ErrorHandlerImpl), singleton);
-container.register("Property", uc(PropertyImpl));
+    // util
+    container.register("ActionableMessageItem", uc(ActionableMessageItemImpl));
+    container.register("ErrorHandler", uc(ErrorHandlerImpl), singleton);
+    container.register("Property", uc(PropertyImpl));
 
-// view
-container.register("MessageService", uc(MessageServiceImpl));
-container.register("OutputChannelFactory", uc(OutputChannelFactoryImpl));
-container.register("StatusBarItemFactory", uc(StatusBarItemFactoryImpl));
-container.register("StatusBarView", uc(StatusBarViewImpl), singleton);
+    // view
+    container.register("MessageService", uc(MessageServiceImpl));
+    container.register("OutputChannelFactory", uc(OutputChannelFactoryImpl));
+    container.register("StatusBarItemFactory", uc(StatusBarItemFactoryImpl));
+    container.register("StatusBarView", uc(StatusBarViewImpl), singleton);
 
-// git
-container.register("GitBlame", uc(GitBlameImpl));
-container.register("GitExtension", uc(GitExtensionImpl), singleton);
-container.register("GitFileFactory", uc(GitFileFactoryImpl));
-container.register("GitBlameStream", uc(GitBlameStreamImpl));
+    // git
+    container.register("GitBlame", uc(GitBlameImpl));
+    container.register("GitExtension", uc(GitExtensionImpl), singleton);
+    container.register("GitFileFactory", uc(GitFileFactoryImpl));
+    container.register("GitBlameStream", uc(GitBlameStreamImpl));
+}
+
+registerContainer();
 
 export { activate } from "./main";

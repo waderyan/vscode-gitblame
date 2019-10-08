@@ -4,6 +4,10 @@ import * as glob from 'glob';
 
 import "reflect-metadata";
 
+import { registerContainer } from "../../src/index";
+
+registerContainer();
+
 export function run(): Promise<void> {
     // Create the mocha test
     const mocha = new Mocha({
