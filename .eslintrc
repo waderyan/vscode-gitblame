@@ -5,6 +5,7 @@
     ],
     "extends": [
         "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
         "eslint:recommended"
     ],
     "parserOptions": {
@@ -50,6 +51,20 @@
             "error",
             {
                 "max": 3
+            }
+        ],
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            {
+                "varsIgnorePattern": "^_",
+                "argsIgnorePattern": "^_"
+            }
+        ],
+        "@typescript-eslint/no-unnecessary-condition": [
+            "error",
+            {
+                "ignoreRhs": true
             }
         ],
         "no-trailing-spaces": "error",

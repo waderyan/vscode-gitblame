@@ -120,6 +120,10 @@ export class GitExtensionImpl implements GitExtension {
     public async copyHash(): Promise<void> {
         const commitInfo = await this.getCommitInfo();
 
+        if (commitInfo.generated) {
+            return;
+        }
+
         try {
             await container.resolve<Clipboard>("Clipboard")
                 .write(commitInfo.hash);
@@ -199,25 +203,27 @@ export class GitExtensionImpl implements GitExtension {
         const editorEvents = container.resolve<EditorEvents>("EditorEvents");
         const disposables: Disposable[] = [];
 
-        editorEvents.changeActiveEditor(
-            this.onTextEditorMove,
-            this,
-            disposables,
-        );
-        editorEvents.changeSelection(
-            this.onTextEditorMove,
-            this,
-            disposables,
-        );
-        editorEvents.saveDocument(
-            this.onTextEditorMove,
-            this,
-            disposables,
-        );
-        editorEvents.closeDocument(
-            this.onCloseTextDocument,
-            this,
-            disposables,
+        disposables.push(
+            editorEvents.changeActiveEditor(
+                (): void => {
+                    this.onTextEditorMove();
+                },
+            ),
+            editorEvents.changeSelection(
+                (): void => {
+                    this.onTextEditorMove()
+                },
+            ),
+            editorEvents.saveDocument(
+                (): void => {
+                    this.onTextEditorMove();
+                },
+            ),
+            editorEvents.closeDocument(
+                (document: TextDocument): void => {
+                    this.onCloseTextDocument(document);
+                },
+            ),
         );
 
         return Disposable.from(...disposables);
@@ -253,7 +259,7 @@ export class GitExtensionImpl implements GitExtension {
         return `${document.fileName}:${selection.active.line}`;
     }
 
-    private async onCloseTextDocument(document: TextDocument): Promise<void> {
+    private onCloseTextDocument(document: TextDocument): void {
         this.blame.removeDocument(document);
     }
 
@@ -372,14 +378,19 @@ export class GitExtensionImpl implements GitExtension {
     private async getCurrentLineInfo(): Promise<GitCommitInfo> {
         const activeEditor = container
             .resolve<ActiveTextEditor>("ActiveTextEditor").get();
+
         if (activeEditor === undefined) {
             return blankCommitInfo();
         }
 
-        return this.blame.blameLine(
-            activeEditor.document,
-            activeEditor.selection.active.line,
-        );
+        try {
+            return await this.blame.blameLine(
+                activeEditor.document,
+                activeEditor.selection.active.line,
+                );
+        } catch (err) {
+            return blankCommitInfo();
+        }
     }
 
     private isToolUrlPlural(origin: string): boolean {

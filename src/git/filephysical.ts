@@ -119,8 +119,8 @@ export class GitFilePhysical implements GitFile {
         gitStream: GitBlameStream,
         resolve: (val: GitBlameInfo) => void,
         blameInfo: GitBlameInfo,
-    ): (err: Error) => void {
-        return (err: Error): void => {
+    ): (err: Error | null) => void {
+        return (err: Error | null): void => {
             gitStream.removeAllListeners();
 
             if (err) {

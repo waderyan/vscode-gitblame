@@ -20,9 +20,11 @@ export class GitFileDummy implements GitFile {
         // noop
     }
 
-    public async blame(): Promise<GitBlameInfo> {
-        return blankBlameInfo();
+    public blame(): Promise<GitBlameInfo> {
+        return Promise.resolve(blankBlameInfo());
     }
 
-    public dispose(): void {}
+    public dispose(): void {
+        // noop
+    }
 }

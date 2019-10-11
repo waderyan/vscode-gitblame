@@ -8,7 +8,7 @@ export interface ActionableMessageItem extends MessageItem {
 }
 
 export class ActionableMessageItemImpl implements ActionableMessageItem {
-    public title: string = "NO_TITLE";
+    public title = "NO_TITLE";
     private action: () => void = (): void => {
         return;
     };
@@ -22,8 +22,6 @@ export class ActionableMessageItemImpl implements ActionableMessageItem {
     }
 
     public takeAction(): void {
-        if (this.action) {
-            this.action();
-        }
+        this.action();
     }
 }

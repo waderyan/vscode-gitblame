@@ -11,7 +11,7 @@ import { container } from "tsyringe";
 
 import { GIT_COMMAND_IN_PATH } from "../../constants";
 import { validEditor } from "../../util/editorvalidator";
-import { execute } from "../../util/execcommand";
+import { Executor } from "../../util/execcommand";
 import { Property } from "../../util/property";
 import { ErrorHandler } from "../../util/errorhandler";
 import { ActiveTextEditor } from "../../vscode-api/active-text-editor";
@@ -51,13 +51,14 @@ export async function getOriginOfActiveFile(
     const gitCommand = getGitCommand();
     const activeFile = activeEditor.document.fileName;
     const activeFileFolder = dirname(activeFile);
-    const originUrl = await execute(gitCommand, [
-        "ls-remote",
-        "--get-url",
-        remoteName,
-    ], {
-        cwd: activeFileFolder,
-    });
+    const originUrl = await container.resolve<Executor>("Executor")
+        .execute(gitCommand, [
+            "ls-remote",
+            "--get-url",
+            remoteName,
+        ], {
+            cwd: activeFileFolder,
+        });
 
     return originUrl.trim();
 }
@@ -71,30 +72,33 @@ export async function getRemoteUrl(): Promise<string> {
     const gitCommand = getGitCommand();
     const activeFile = activeEditor.document.fileName;
     const activeFileFolder = dirname(activeFile);
-    const currentBranch = await execute(gitCommand, [
-        "symbolic-ref",
-        "-q",
-        "--short",
-        "HEAD",
-    ], {
-        cwd: activeFileFolder,
-    });
-    const curRemote = await execute(gitCommand, [
-        "config",
-        "--local",
-        "--get",
-        `branch.${ currentBranch.trim() }.remote`,
-    ], {
-        cwd: activeFileFolder,
-    });
-    const remoteUrl = await execute(gitCommand, [
-        "config",
-        "--local",
-        "--get",
-        `remote.${ curRemote.trim() }.url`,
-    ], {
-        cwd: activeFileFolder,
-    });
+    const currentBranch = await container.resolve<Executor>("Executor")
+        .execute(gitCommand, [
+            "symbolic-ref",
+            "-q",
+            "--short",
+            "HEAD",
+        ], {
+            cwd: activeFileFolder,
+        });
+    const curRemote = await container.resolve<Executor>("Executor")
+        .execute(gitCommand, [
+            "config",
+            "--local",
+            "--get",
+            `branch.${ currentBranch.trim() }.remote`,
+        ], {
+            cwd: activeFileFolder,
+        });
+    const remoteUrl = await container.resolve<Executor>("Executor")
+        .execute(gitCommand, [
+            "config",
+            "--local",
+            "--get",
+            `remote.${ curRemote.trim() }.url`,
+        ], {
+            cwd: activeFileFolder,
+        });
     return remoteUrl.trim();
 }
 
@@ -105,11 +109,12 @@ export async function getWorkTree(fileName: string): Promise<string> {
     const gitExecOptions = {
         cwd: currentDirectory,
     };
-    const workTree = await execute(
-        gitCommand,
-        gitExecArguments,
-        gitExecOptions,
-    );
+    const workTree = await container.resolve<Executor>("Executor")
+        .execute(
+            gitCommand,
+            gitExecArguments,
+            gitExecOptions,
+        );
 
     if (workTree.trim() === "") {
         return "";

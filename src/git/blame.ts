@@ -55,7 +55,7 @@ export class GitBlameImpl implements GitBlame {
     }
 
     public dispose(): void {
-        this.files.forEach(async (_gitFile, document): Promise<void> => {
+        this.files.forEach((_gitFile, document): void => {
             this.removeDocument(document);
         });
     }

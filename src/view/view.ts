@@ -40,7 +40,7 @@ export class StatusBarViewImpl implements StatusBarView {
     }
 
     public update(commitInfo: GitCommitInfo): void {
-        if (commitInfo && !commitInfo.generated) {
+        if (!commitInfo.generated) {
             const clickable = !isBlankCommit(commitInfo);
 
             this.setText(TextDecorator.toTextView(commitInfo), clickable);
@@ -57,7 +57,7 @@ export class StatusBarViewImpl implements StatusBarView {
         this.statusBarItem.dispose();
     }
 
-    private setText(text: string, hasCommand: boolean = false): void {
+    private setText(text: string, hasCommand = false): void {
         this.statusBarItem.text = `$(git-commit) ${text}`.trim();
 
         if (hasCommand) {

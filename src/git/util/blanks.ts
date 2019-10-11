@@ -37,7 +37,7 @@ export function blankBlameInfo(): GitBlameInfo {
     };
 }
 
-export function blankCommitInfo(real: boolean = false): GitCommitInfo {
+export function blankCommitInfo(real = false): GitCommitInfo {
     const emptyAuthor: GitCommitAuthor = {
         mail: "",
         name: "",

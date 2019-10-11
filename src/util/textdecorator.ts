@@ -121,7 +121,7 @@ export class TextDecorator {
             tokenRegex,
             (...args: unknown[]): string => {
                 const groups: TokenReplaceGroup
-                    = args[args.length - 1] as unknown as TokenReplaceGroup;
+                    = args[args.length - 1] as TokenReplaceGroup;
 
                 const value = TextDecorator.runKey(tokens, groups);
 
@@ -136,7 +136,7 @@ export class TextDecorator {
     ): string {
         const currentToken = tokens[group.token];
 
-        if (currentToken) {
+        if (group.token in tokens) {
             return currentToken(group.value);
         }
 

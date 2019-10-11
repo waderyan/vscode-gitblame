@@ -83,7 +83,7 @@ export class GitBlameStreamImpl
 
         lines.forEach((line, index): void => {
             if (line && line !== "boundary") {
-                const match = line.match(/(.*?) (.*)/);
+                const match = (/(.*?) (.*)/).exec(line);
                 if (match === null) {
                     return;
                 }

@@ -10,6 +10,7 @@ import { ExtensionGetterImpl } from "./vscode-api/get-extension";
 import { WorkspaceImpl } from "./vscode-api/workspace";
 import { ActionableMessageItemImpl } from "./util/actionablemessageitem";
 import { ErrorHandlerImpl } from "./util/errorhandler";
+import { ExecutorImpl } from "./util/execcommand";
 import { PropertyImpl } from "./util/property";
 import { MessageServiceImpl } from "./view/messages";
 import { OutputChannelFactoryImpl } from "./view/output-channel-factory";
@@ -35,6 +36,7 @@ export function registerContainer(): void {
     // util
     container.register("ActionableMessageItem", uc(ActionableMessageItemImpl));
     container.register("ErrorHandler", uc(ErrorHandlerImpl), singleton);
+    container.register("Executor", uc(ExecutorImpl));
     container.register("Property", uc(PropertyImpl));
 
     // view
