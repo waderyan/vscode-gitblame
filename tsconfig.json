@@ -12,11 +12,10 @@
         ],
         "sourceMap": true,
         "rootDir": ".",
-        "baseUrl": "src",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
     },
     "exclude": [
-        "node_modules",
-    ],
+        "node_modules"
+    ]
 }
