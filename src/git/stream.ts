@@ -11,7 +11,7 @@ import {
 const HASH_PATTERN = /[a-z0-9]{40}/;
 
 export interface GitBlameStream extends EventEmitter {
-    blame(fileName: string): void;
+    blame(fileName: string): Promise<void>;
     on(
         event: "commit",
         callback: (hash: string, info: GitCommitInfo) => void,
@@ -40,8 +40,8 @@ export class GitBlameStreamImpl
         this.emittedCommits = new Set();
     }
 
-    public blame(fileName: string): void {
-        this.process = spawnGitBlameStreamProcess(fileName);
+    public async blame(fileName: string): Promise<void> {
+        this.process = await spawnGitBlameStreamProcess(fileName);
 
         this.setupListeners();
     }

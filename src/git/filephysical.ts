@@ -71,11 +71,11 @@ export class GitFilePhysical implements GitFile {
         container.resolve<StatusBarView>("StatusBarView").startProgress();
 
         this.blameInfoPromise = new Promise<GitBlameInfo>(
-            (resolve): void => {
+            async (resolve): Promise<void> => {
                 const blameInfo = blankBlameInfo();
                 this.blameProcess = container
                     .resolve<GitBlameStream>("GitBlameStream");
-                this.blameProcess.blame(this.fileName);
+                await this.blameProcess.blame(this.fileName);
 
                 this.blameProcess.on(
                     "commit",

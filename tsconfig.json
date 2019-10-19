@@ -13,7 +13,6 @@
         ],
         "sourceMap": true,
         "rootDir": ".",
-        "baseUrl": "src",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
     },
