@@ -8,19 +8,28 @@ import {
 suite("Date Calculations", (): void => {
     test("Time ago in years", (): void => {
         assert.equal(
-            TextDecorator.toDateText(new Date(2015, 1), new Date(2014, 1)),
+            TextDecorator.toDateText(
+                new Date(2015, 1),
+                new Date(2014, 1),
+            ),
             "1 year ago",
         );
     });
 
     test("Time ago in months", (): void => {
         assert.equal(
-            TextDecorator.toDateText(new Date(2015, 4), new Date(2015, 1)),
+            TextDecorator.toDateText(
+                new Date(2015, 4),
+                new Date(2015, 1),
+            ),
             "3 months ago",
         );
 
         assert.equal(
-            TextDecorator.toDateText(new Date(2015, 2, 10), new Date(2015, 1)),
+            TextDecorator.toDateText(
+                new Date(2015, 2, 10),
+                new Date(2015, 1),
+            ),
             "1 month ago",
         );
     });

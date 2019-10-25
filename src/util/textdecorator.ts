@@ -23,6 +23,7 @@ export interface InfoTokenNormalizedCommitInfo extends InfoTokens {
     "author.name": () => string;
     "author.timestamp": () => string;
     "author.tz": () => string;
+    "author.date": () => string;
     "commit.hash": () => string;
     "commit.hash_short": (length?: string) => string;
     "commit.summary": () => string;
@@ -30,6 +31,7 @@ export interface InfoTokenNormalizedCommitInfo extends InfoTokens {
     "committer.name": () => string;
     "committer.timestamp": () => string;
     "committer.tz": () => string;
+    "committer.date": () => string;
     "time.ago": () => string;
     "time.c_ago": () => string;
     "time.c_from": () => string;
@@ -160,7 +162,9 @@ export class TextDecorator {
         }
         const ago = valueFrom(TextDecorator.toDateText(now, authorTime));
         const cAgo = valueFrom(TextDecorator.toDateText(now, committerTime));
-        const hashShort = (length = "7"): string => {
+        const authorDate = valueFrom(authorTime.toISOString().slice(0, 10));
+        const cDate = valueFrom(committerTime.toISOString().slice(0, 10));
+        const hashShort = (length = '7'): string => {
             const cutoffPoint = length.toString();
             return commit.hash.substr(
                 0,
@@ -173,6 +177,7 @@ export class TextDecorator {
             "author.name": valueFrom(commit.author.name),
             "author.timestamp": valueFrom(commit.author.timestamp),
             "author.tz": valueFrom(commit.author.tz),
+            "author.date": authorDate,
             "commit.hash": valueFrom(commit.hash),
             "commit.hash_short": hashShort,
             "commit.summary": valueFrom(commit.summary),
@@ -180,6 +185,7 @@ export class TextDecorator {
             "committer.name": valueFrom(commit.committer.name),
             "committer.timestamp": valueFrom(commit.committer.timestamp),
             "committer.tz": valueFrom(commit.committer.tz),
+            "committer.date": cDate,
             "time.ago": ago,
             "time.c_ago": cAgo,
             "time.from": ago,
