@@ -21,8 +21,8 @@ export class GitBlameStream extends EventEmitter {
         this.emittedCommits = new Set();
     }
 
-    public blame(fileName: string): void {
-        this.process = spawnGitBlameStreamProcess(fileName);
+    public async blame(fileName: string): Promise<void> {
+        this.process = await spawnGitBlameStreamProcess(fileName);
 
         this.setupListeners();
     }
