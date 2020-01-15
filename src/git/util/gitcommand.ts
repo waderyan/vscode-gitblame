@@ -18,28 +18,29 @@ import { validEditor } from "../../util/editorvalidator";
 import { execute } from "../../util/execcommand";
 import { Property } from "../../util/property";
 import { ErrorHandler } from "../../util/errorhandler";
+import { GitExtension } from "../../../types/git";
 
-interface VscodeGitExtension {
-    git: {
-        path: string;
-    };
-}
-
-function getGitCommand(): string {
-    const vscodeGit = extensions.getExtension<VscodeGitExtension>(
+export async function getGitCommand(): Promise<string> {
+    const vscodeGit = extensions.getExtension<GitExtension>(
         "vscode.git",
     );
 
-    if (
-        vscodeGit
-        && vscodeGit.exports
-        && vscodeGit.exports.git
-        && vscodeGit.exports.git.path
-    ) {
-        return vscodeGit.exports.git.path;
-    } else {
-        return GIT_COMMAND_IN_PATH;
+    if (vscodeGit && vscodeGit.exports.enabled) {
+        const api = vscodeGit.exports.getAPI(1);
+        if (api.state === "initialized") {
+            return api.git.path;
+        } else {
+            return new Promise((resolve): void => {
+                api.onDidChangeState((newState): void => {
+                    if (newState === "initialized") {
+                        resolve(api.git.path);
+                    }
+                });
+            });
+        }
     }
+
+    return GIT_COMMAND_IN_PATH;
 }
 
 export async function getOriginOfActiveFile(
@@ -49,7 +50,7 @@ export async function getOriginOfActiveFile(
         return "";
     }
 
-    const gitCommand = getGitCommand();
+    const gitCommand = await getGitCommand();
     const activeFile = window.activeTextEditor.document.fileName;
     const activeFileFolder = dirname(activeFile);
     const originUrl = await execute(gitCommand, [
@@ -67,7 +68,7 @@ export async function getRemoteUrl(): Promise<string> {
     if (!validEditor(window.activeTextEditor)) {
         return "";
     }
-    const gitCommand = getGitCommand();
+    const gitCommand = await getGitCommand();
     const activeFile = window.activeTextEditor.document.fileName;
     const activeFileFolder = dirname(activeFile);
     const currentBranch = await execute(gitCommand, [
@@ -99,7 +100,7 @@ export async function getRemoteUrl(): Promise<string> {
 
 export async function getWorkTree(fileName: string): Promise<string> {
     const currentDirectory = dirname(fileName);
-    const gitCommand = getGitCommand();
+    const gitCommand = await getGitCommand();
     const gitExecArguments = ["rev-parse", "--show-toplevel"];
     const gitExecOptions = {
         cwd: currentDirectory,
@@ -117,7 +118,9 @@ export async function getWorkTree(fileName: string): Promise<string> {
     }
 }
 
-export function spawnGitBlameStreamProcess(fileName: string): ChildProcess {
+export async function spawnGitBlameStreamProcess(
+    fileName: string,
+): Promise<ChildProcess> {
     const args = [];
 
     args.push("blame");
@@ -130,7 +133,7 @@ export function spawnGitBlameStreamProcess(fileName: string): ChildProcess {
     args.push("--");
     args.push(fileName);
 
-    const gitCommand = getGitCommand();
+    const gitCommand = await getGitCommand();
     const spawnOptions = {
         cwd: dirname(fileName),
     };
