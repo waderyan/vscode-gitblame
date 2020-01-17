@@ -2,13 +2,14 @@ import {
     Extension,
     extensions,
 } from "vscode";
+import { GitExtension } from "../../types/git";
 
 export interface ExtensionGetter {
-    get<T>(extensionId: string): undefined | Extension<T>;
+    get(): undefined | Extension<GitExtension>;
 }
 
 export class ExtensionGetterImpl implements ExtensionGetter {
-    public get<T>(extensionId: string): undefined | Extension<T> {
-        return extensions.getExtension<T>(extensionId);
+    public get(): undefined | Extension<GitExtension> {
+        return extensions.getExtension("vscode.git");
     }
 }

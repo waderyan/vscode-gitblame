@@ -2,7 +2,6 @@ import { URL } from "url";
 
 import {
     Disposable,
-    TextDocument,
     Uri,
 } from "vscode";
 import {
@@ -14,7 +13,7 @@ import {
 import {
     TITLE_VIEW_ONLINE,
 } from "../constants";
-import { ActionableMessageItem } from "../util/actionablemessageitem";
+import { ActionableMessageItem } from "../util/actionable-message-item";
 import { ErrorHandler } from "../util/errorhandler";
 import { isUrl } from "../util/is-url";
 import { runNextTick } from "../util/run-next-tick";
@@ -23,7 +22,10 @@ import { Property } from "../util/property";
 import { throttleFunction } from "../util/throttle.function";
 import { MessageService } from "../view/messages";
 import { StatusBarView } from "../view/view";
-import { ActiveTextEditor } from "../vscode-api/active-text-editor";
+import {
+    ActiveTextEditor,
+    PartialDocument,
+} from "../vscode-api/active-text-editor";
 import { Clipboard } from "../vscode-api/clipboard";
 import { Command } from "../vscode-api/command";
 import { EditorEvents } from "../vscode-api/editor-events";
@@ -220,7 +222,7 @@ export class GitExtensionImpl implements GitExtension {
                 },
             ),
             editorEvents.closeDocument(
-                (document: TextDocument): void => {
+                (document: PartialDocument): void => {
                     this.onCloseTextDocument(document);
                 },
             ),
@@ -259,7 +261,7 @@ export class GitExtensionImpl implements GitExtension {
         return `${document.fileName}:${selection.active.line}`;
     }
 
-    private onCloseTextDocument(document: TextDocument): void {
+    private onCloseTextDocument(document: PartialDocument): void {
         this.blame.removeDocument(document);
     }
 

@@ -1,8 +1,8 @@
-import { TextEditor } from "vscode";
+import { PartialTextEditor } from "../vscode-api/active-text-editor";
 
 export function validEditor(
-    editor: TextEditor | undefined,
-): editor is TextEditor {
+    editor: PartialTextEditor | undefined,
+): editor is PartialTextEditor {
     const doc = editor && editor.document;
 
     return !!doc && !doc.isUntitled;

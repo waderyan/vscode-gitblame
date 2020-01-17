@@ -60,7 +60,11 @@ export class GitBlameStreamImpl
     }
 
     private setupListeners(): void {
-        if (this.process === undefined) {
+        if (
+            this.process === undefined
+            || this.process.stdout === null
+            || this.process.stderr === null
+        ) {
             return;
         }
 

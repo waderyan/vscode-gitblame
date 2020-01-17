@@ -11,27 +11,20 @@ import { container } from "tsyringe";
 
 import { GIT_COMMAND_IN_PATH } from "../../constants";
 import { validEditor } from "../../util/editorvalidator";
-import { Executor } from "../../util/execcommand";
 import { Property } from "../../util/property";
 import { ErrorHandler } from "../../util/errorhandler";
 import { ActiveTextEditor } from "../../vscode-api/active-text-editor";
 import { ExtensionGetter } from "../../vscode-api/get-extension";
-import { GitExtension } from "../../../types/git";
+import { Executor } from "../../util/execcommand";
 
-interface VscodeGitExtension {
-    git: {
-        path: string;
-    };
-}
-
-async function getGitCommand(): Promise<string> {
-    const vscodeGit = container.resolve<ExtensionGetter>("ExtensionGetter")
-        .get<GitExtension>("vscode.git");
+function getGitCommand(): Promise<string> {
+    const vscodeGit = container
+        .resolve<ExtensionGetter>("ExtensionGetter").get();
 
     if (vscodeGit && vscodeGit.exports.enabled) {
         const api = vscodeGit.exports.getAPI(1);
         if (api.state === "initialized") {
-            return api.git.path;
+            return Promise.resolve(api.git.path);
         } else {
             return new Promise((resolve): void => {
                 api.onDidChangeState((newState): void => {
@@ -43,7 +36,7 @@ async function getGitCommand(): Promise<string> {
         }
     }
 
-    return GIT_COMMAND_IN_PATH;
+    return Promise.resolve(GIT_COMMAND_IN_PATH);
 }
 
 export async function getOriginOfActiveFile(
@@ -51,6 +44,7 @@ export async function getOriginOfActiveFile(
 ): Promise<string> {
     const activeEditor = container
         .resolve<ActiveTextEditor>("ActiveTextEditor").get();
+
     if (!validEditor(activeEditor)) {
         return "";
     }
@@ -73,9 +67,11 @@ export async function getOriginOfActiveFile(
 export async function getRemoteUrl(): Promise<string> {
     const activeEditor = container
         .resolve<ActiveTextEditor>("ActiveTextEditor").get();
+
     if (!validEditor(activeEditor)) {
         return "";
     }
+
     const gitCommand = await getGitCommand();
     const activeFile = activeEditor.document.fileName;
     const activeFileFolder = dirname(activeFile);

@@ -1,9 +1,9 @@
 import { container } from "tsyringe";
-import { TextDocument } from "vscode";
 import { SinonSpy, spy } from "sinon";
 
 import { blankCommitInfo, GitCommitInfo } from "../../src/git/util/blanks";
 import { GitBlame, GitBlameImpl } from "../../src/git/blame";
+import { PartialDocument } from "../../src/vscode-api/active-text-editor";
 
 export function initGitBlameSpy(): {
     blameLineSpy: SinonSpy;
@@ -27,7 +27,7 @@ export function initGitBlameSpy(): {
     container.register<GitBlame>("GitBlame", {
         useClass: class implements GitBlame {
             public blameLine(
-                document: TextDocument,
+                document: PartialDocument,
                 lineNumber: number,
             ): Promise<GitCommitInfo> {
                 blameLineSpy(document, lineNumber);
@@ -60,7 +60,7 @@ export function initGitBlameSpy(): {
                     filename: "fake/file.name",
                 });
             }
-            public removeDocument(document: TextDocument): Promise<void> {
+            public removeDocument(document: PartialDocument): Promise<void> {
                 removeDocumentSpy(document);
                 return Promise.resolve();
             }

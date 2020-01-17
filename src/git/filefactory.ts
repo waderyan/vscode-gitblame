@@ -1,14 +1,12 @@
 import { access } from "fs";
-import {
-    TextDocument,
-    Uri,
-} from "vscode";
+import { Uri } from "vscode";
 import { container } from "tsyringe";
 
 import { GitFileDummy } from "./filedummy";
 import { GitFilePhysical } from "./filephysical";
 import { GitBlameInfo } from "./util/blanks";
 import { getWorkTree } from "./util/gitcommand";
+import { PartialDocument } from "../vscode-api/active-text-editor";
 import { Workspace } from "../vscode-api/workspace";
 
 export interface GitFile {
@@ -18,12 +16,12 @@ export interface GitFile {
 }
 
 export interface GitFileFactory {
-    create(document: TextDocument): Promise<GitFile>;
+    create(document: PartialDocument): Promise<GitFile>;
 }
 
 export class GitFileFactoryImpl implements GitFileFactory {
     public async create(
-        document: TextDocument,
+        document: PartialDocument,
     ): Promise<GitFile> {
         const inWorkspace = this.inWorkspace(document.fileName);
         const exists = inWorkspace ?

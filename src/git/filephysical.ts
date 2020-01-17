@@ -71,28 +71,32 @@ export class GitFilePhysical implements GitFile {
         container.resolve<StatusBarView>("StatusBarView").startProgress();
 
         this.blameInfoPromise = new Promise<GitBlameInfo>(
-            async (resolve): Promise<void> => {
+            (resolve): void => {
                 const blameInfo = blankBlameInfo();
                 this.blameProcess = container
                     .resolve<GitBlameStream>("GitBlameStream");
-                await this.blameProcess.blame(this.fileName);
+                this.blameProcess.blame(this.fileName).then(() => {
+                    if (this.blameProcess === undefined) {
+                        throw new Error("Where did my blame process go?!");
+                    }
 
-                this.blameProcess.on(
-                    "commit",
-                    this.gitAddCommit(blameInfo),
-                );
-                this.blameProcess.on(
-                    "line",
-                    this.gitAddLine(blameInfo),
-                );
-                this.blameProcess.on(
-                    "end",
-                    this.gitStreamOver(
-                        this.blameProcess,
-                        resolve,
-                        blameInfo,
-                    ),
-                );
+                    this.blameProcess.on(
+                        "commit",
+                        this.gitAddCommit(blameInfo),
+                    );
+                    this.blameProcess.on(
+                        "line",
+                        this.gitAddLine(blameInfo),
+                    );
+                    this.blameProcess.on(
+                        "end",
+                        this.gitStreamOver(
+                            this.blameProcess,
+                            resolve,
+                            blameInfo,
+                        ),
+                    );
+                });
             },
         );
 

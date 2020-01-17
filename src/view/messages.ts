@@ -1,4 +1,4 @@
-import { ActionableMessageItem } from "../util/actionablemessageitem";
+import { ActionableMessageItem } from "../util/actionable-message-item";
 import { window } from "vscode";
 
 export interface MessageService {

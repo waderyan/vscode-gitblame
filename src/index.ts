@@ -1,6 +1,6 @@
 import "reflect-metadata";
 
-import { container } from "tsyringe";
+import { container, Lifecycle } from "tsyringe";
 
 import { ActiveTextEditorImpl } from "./vscode-api/active-text-editor";
 import { ClipboardImpl } from "./vscode-api/clipboard";
@@ -8,7 +8,7 @@ import { CommandImpl } from "./vscode-api/command";
 import { EditorEventsImpl } from "./vscode-api/editor-events";
 import { ExtensionGetterImpl } from "./vscode-api/get-extension";
 import { WorkspaceImpl } from "./vscode-api/workspace";
-import { ActionableMessageItemImpl } from "./util/actionablemessageitem";
+import { ActionableMessageItemImpl } from "./util/actionable-message-item";
 import { ErrorHandlerImpl } from "./util/errorhandler";
 import { ExecutorImpl } from "./util/execcommand";
 import { PropertyImpl } from "./util/property";
@@ -23,7 +23,7 @@ import { GitBlameStreamImpl } from "./git/stream";
 
 export function registerContainer(): void {
     const uc = <T>(useClass: T): {useClass: T} => ({useClass});
-    const singleton = {singleton: true};
+    const singleton = {lifecycle: Lifecycle.Singleton};
 
     // vscode-api
     container.register("ActiveTextEditor", uc(ActiveTextEditorImpl));

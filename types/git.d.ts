@@ -14,6 +14,5 @@ export interface API {
 
 export interface GitExtension {
     readonly enabled: boolean;
-    readonly onDidChangeEnablement: Event<boolean>;
     getAPI(version: 1): API;
 }

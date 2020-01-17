@@ -1,4 +1,4 @@
-import { execFile, ExecOptions } from "child_process";
+import { execFile, ExecOptions, ExecException } from "child_process";
 
 import { ErrorHandler } from "./errorhandler";
 import { container } from "tsyringe";
@@ -34,12 +34,12 @@ export class ExecutorImpl implements Executor {
         command: string,
         resolve: (result: string) => void,
     ): (
-            error: NodeJS.ErrnoException | null,
+            error: ExecException | null,
             stdout: string,
             stderr: string,
         ) => void {
         return (
-            error: NodeJS.ErrnoException | null,
+            error: ExecException | null,
             stdout: string,
             stderr: string,
         ): void => {
@@ -48,7 +48,7 @@ export class ExecutorImpl implements Executor {
                 return;
             }
 
-            if (error.code === "ENOENT") {
+            if (error.code?.toString() === "ENOENT") {
                 const message = `${
                     command
                 }: No such file or directory. (ENOENT)`;

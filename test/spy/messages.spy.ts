@@ -2,7 +2,7 @@ import { SinonSpy, spy } from "sinon";
 import { container } from "tsyringe";
 
 import { MessageService, MessageServiceImpl } from "../../src/view/messages";
-import { ActionableMessageItem } from "../../src/util/actionablemessageitem";
+import { ActionableMessageItem } from "../../src/util/actionable-message-item";
 
 export function initMessageServiceSpy(): {
     showInfoSpy: SinonSpy;

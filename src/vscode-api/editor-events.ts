@@ -1,15 +1,17 @@
 import {
     Disposable,
-    TextDocument,
-    TextEditor,
     TextEditorSelectionChangeEvent,
     window,
     workspace,
 } from "vscode";
+import {
+    PartialDocument,
+    PartialTextEditor,
+} from "./active-text-editor";
 
 export interface EditorEvents {
     changeActiveEditor<T>(
-        callback: (e: TextEditor | undefined) => void,
+        callback: (e: PartialTextEditor | undefined) => void,
         thisArg?: T,
         disposable?: Disposable[],
     ): Disposable;
@@ -19,12 +21,12 @@ export interface EditorEvents {
         disposable?: Disposable[],
     ): Disposable;
     saveDocument<T>(
-        callback: (e: TextDocument) => void,
+        callback: (e: PartialDocument) => void,
         thisArg?: T,
         disposable?: Disposable[],
     ): Disposable;
     closeDocument<T>(
-        callback: (e: TextDocument) => void,
+        callback: (e: PartialDocument) => void,
         thisArg?: T,
         disposable?: Disposable[],
     ): Disposable;
@@ -32,7 +34,7 @@ export interface EditorEvents {
 
 export class EditorEventsImpl implements EditorEvents {
     public changeActiveEditor<T>(
-        callback: (e: TextEditor | undefined) => void,
+        callback: (e: PartialTextEditor | undefined) => void,
         thisArg?: T,
         disposable?: Disposable[],
     ): Disposable {
@@ -56,7 +58,7 @@ export class EditorEventsImpl implements EditorEvents {
     }
 
     public saveDocument<T>(
-        callback: (e: TextDocument) => void,
+        callback: (e: PartialDocument) => void,
         thisArg?: T,
         disposable?: Disposable[],
     ): Disposable {
@@ -68,7 +70,7 @@ export class EditorEventsImpl implements EditorEvents {
     }
 
     public closeDocument<T>(
-        callback: (e: TextDocument) => void,
+        callback: (e: PartialDocument) => void,
         thisArg?: T,
         disposable?: Disposable[],
     ): Disposable {

@@ -3,6 +3,7 @@
 ## 3.1.0 (October 20, 2019)
 * Bug: Extension host crashing when renaming file [#59](https://github.com/Sertion/vscode-gitblame/issues/59) (Thanks to [pierznj](https://github.com/pierznj))
 * Bug: Git command not found [#67](https://github.com/Sertion/vscode-gitblame/issues/67) (Thanks to [MarcMenghin](https://github.com/MarcMenghin))
+* Bug: Documentation or text token is wrong [#70](https://github.com/Sertion/vscode-gitblame/issues/70) (Thanks to [MisLink](https://github.com/MisLink))
 * Feature: Two new tokens for `gitblame.commitUrl` [#61](https://github.com/Sertion/vscode-gitblame/issues/61) (Thanks to [ajoga](https://github.com/ajoga) and [nitzel](https://github.com/nitzel))
 * Fix: Adding [acknowledgements for the logo](https://twitter.com/jasonlong) [#63](https://github.com/Sertion/vscode-gitblame/issues/63) (Thanks to [Eonfge](https://github.com/Eonfge))
 * Fix: Updating readme
