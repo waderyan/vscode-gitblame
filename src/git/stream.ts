@@ -95,7 +95,7 @@ export class GitBlameStreamImpl
                 const [, key, value] = Array.from(match);
                 if (
                     HASH_PATTERN.test(key) &&
-                    lines.hasOwnProperty(index + 1) &&
+                    (index + 1) in lines &&
                     /^(author|committer)/.test(lines[index + 1]) &&
                     commitInfo.hash !== ""
                 ) {

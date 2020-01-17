@@ -1,4 +1,4 @@
-import { execFile, ExecOptions, ExecException } from "child_process";
+import { ExecException, execFile, ExecOptions } from "child_process";
 
 import { ErrorHandler } from "./errorhandler";
 import { container } from "tsyringe";
