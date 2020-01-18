@@ -1,12 +1,16 @@
+import { container } from "tsyringe";
+
 import * as assert from "assert";
 
 import { Executor } from "../../src/util/execcommand";
-import { container } from "tsyringe";
+import { getGitCommand } from "../../src/git/util/gitcommand";
 
 suite("Execute Command", (): void => {
     test("Simple command", async (): Promise<void> => {
+        const gitCommand = await getGitCommand();
+
         const commandResult = await container.resolve<Executor>("Executor")
-            .execute("git", ["--version"]);
+            .execute(gitCommand, ["--version"]);
 
         assert.ok(commandResult);
     });

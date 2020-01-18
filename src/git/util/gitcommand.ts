@@ -17,7 +17,7 @@ import { ActiveTextEditor } from "../../vscode-api/active-text-editor";
 import { ExtensionGetter } from "../../vscode-api/get-extension";
 import { Executor } from "../../util/execcommand";
 
-function getGitCommand(): Promise<string> {
+export async function getGitCommand(): Promise<string> {
     const vscodeGit = container
         .resolve<ExtensionGetter>("ExtensionGetter").get();
 
