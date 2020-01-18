@@ -1,4 +1,4 @@
-import { container, injectable } from "tsyringe";
+import { container } from "tsyringe";
 
 import { ErrorHandler } from "../util/errorhandler";
 import { GitFile } from "./filefactory";
@@ -7,10 +7,9 @@ import {
     GitBlameInfo,
 } from "./util/blanks";
 
-@injectable()
 export class GitFileDummy implements GitFile {
     public constructor(fileName: string) {
-        container.resolve(ErrorHandler).logInfo(
+        container.resolve<ErrorHandler>("ErrorHandler").logInfo(
             `Will not try to blame file "${
                 fileName
             }" as it is outside of the current workspace`,
@@ -21,9 +20,11 @@ export class GitFileDummy implements GitFile {
         // noop
     }
 
-    public async blame(): Promise<GitBlameInfo> {
-        return blankBlameInfo();
+    public blame(): Promise<GitBlameInfo> {
+        return Promise.resolve(blankBlameInfo());
     }
 
-    public dispose(): void {}
+    public dispose(): void {
+        // noop
+    }
 }

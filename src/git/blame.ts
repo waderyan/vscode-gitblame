@@ -1,5 +1,4 @@
-import { TextDocument } from "vscode";
-import { injectable } from "tsyringe";
+import { container } from "tsyringe";
 
 import {
     blankCommitInfo,
@@ -10,18 +9,22 @@ import {
     GitFile,
     GitFileFactory,
 } from "./filefactory";
+import { PartialDocument } from "../vscode-api/active-text-editor";
 
-@injectable()
-export class GitBlame {
-    private readonly factory: GitFileFactory;
-    private readonly files: Map<TextDocument, Promise<GitFile>> = new Map();
+export interface GitBlame {
+    blameLine(
+        document: PartialDocument,
+        lineNumber: number,
+    ): Promise<GitCommitInfo>;
+    removeDocument(document: PartialDocument): Promise<void>;
+    dispose(): void;
+}
 
-    public constructor(factory: GitFileFactory) {
-        this.factory = factory;
-    }
+export class GitBlameImpl implements GitBlame {
+    private readonly files: Map<PartialDocument, Promise<GitFile>> = new Map();
 
     public async blameLine(
-        document: TextDocument,
+        document: PartialDocument,
         lineNumber: number,
     ): Promise<GitCommitInfo> {
         const commitLineNumber = lineNumber + 1;
@@ -40,7 +43,7 @@ export class GitBlame {
         return blameInfo.commits[hash];
     }
 
-    public async removeDocument(document: TextDocument): Promise<void> {
+    public async removeDocument(document: PartialDocument): Promise<void> {
         const blamefile = await this.files.get(document);
 
         if (blamefile === undefined) {
@@ -52,19 +55,18 @@ export class GitBlame {
     }
 
     public dispose(): void {
-        this.files.forEach(async (_gitFile, document): Promise<void> => {
+        this.files.forEach((_gitFile, document): void => {
             this.removeDocument(document);
         });
     }
 
     private async getBlameInfo(
-        document: TextDocument,
+        document: PartialDocument,
     ): Promise<GitBlameInfo | undefined> {
         if (!this.files.has(document)) {
-            this.files.set(
-                document,
-                this.factory.create(document),
-            );
+            const factory = container
+                .resolve<GitFileFactory>("GitFileFactory");
+            this.files.set(document, factory.create(document));
         }
 
         const blameFile = await this.files.get(document);

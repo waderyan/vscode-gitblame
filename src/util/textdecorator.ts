@@ -55,7 +55,7 @@ interface TokenReplaceGroup {
 export class TextDecorator {
     public static toTextView(commit: GitCommitInfo): string {
         if (isBlankCommit(commit)) {
-            return container.resolve(Property).get(
+            return container.resolve<Property>("Property").get(
                 "statusBarMessageNoCommit",
             ) || "Not Committed Yet";
         }
@@ -63,7 +63,7 @@ export class TextDecorator {
         const normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(
             commit,
         );
-        const messageFormat = container.resolve(Property).get(
+        const messageFormat = container.resolve<Property>("Property").get(
             "statusBarMessageFormat",
         );
 
@@ -121,7 +121,7 @@ export class TextDecorator {
             tokenRegex,
             (...args: unknown[]): string => {
                 const groups: TokenReplaceGroup
-                    = args[args.length - 1] as unknown as TokenReplaceGroup;
+                    = args[args.length - 1] as TokenReplaceGroup;
 
                 const value = TextDecorator.runKey(tokens, groups);
 
@@ -136,7 +136,7 @@ export class TextDecorator {
     ): string {
         const currentToken = tokens[group.token];
 
-        if (currentToken) {
+        if (group.token in tokens) {
             return currentToken(group.value);
         }
 

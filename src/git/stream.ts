@@ -1,6 +1,5 @@
 import { ChildProcess } from "child_process";
 import { EventEmitter } from "events";
-import { injectable } from "tsyringe";
 
 import { spawnGitBlameStreamProcess } from "./util/gitcommand";
 import {
@@ -9,10 +8,30 @@ import {
     GitCommitInfo,
 } from "./util/blanks";
 
-@injectable()
-export class GitBlameStream extends EventEmitter {
-    private static readonly HASH_PATTERN: RegExp = /[a-z0-9]{40}/;
+const HASH_PATTERN = /[a-z0-9]{40}/;
 
+export interface GitBlameStream extends EventEmitter {
+    blame(fileName: string): Promise<void>;
+    on(
+        event: "commit",
+        callback: (hash: string, info: GitCommitInfo) => void,
+    ): this;
+    on(
+        event: "line",
+        callback: (finalLine: number, hash: string) => void,
+    ): this;
+    on(
+        event: "end",
+        callback: (err: Error) => void,
+    ): this;
+    terminate(): void;
+    dispose(): void;
+}
+
+export class GitBlameStreamImpl
+    extends EventEmitter
+    implements GitBlameStream
+{
     private process: ChildProcess | undefined;
     private readonly emittedCommits: Set<string>;
 
@@ -41,7 +60,11 @@ export class GitBlameStream extends EventEmitter {
     }
 
     private setupListeners(): void {
-        if (this.process === undefined) {
+        if (
+            this.process === undefined
+            || this.process.stdout === null
+            || this.process.stderr === null
+        ) {
             return;
         }
 
@@ -64,15 +87,15 @@ export class GitBlameStream extends EventEmitter {
 
         lines.forEach((line, index): void => {
             if (line && line !== "boundary") {
-                const match = line.match(/(.*?) (.*)/);
+                const match = (/(.*?) (.*)/).exec(line);
                 if (match === null) {
                     return;
                 }
 
                 const [, key, value] = Array.from(match);
                 if (
-                    GitBlameStream.HASH_PATTERN.test(key) &&
-                    lines.hasOwnProperty(index + 1) &&
+                    HASH_PATTERN.test(key) &&
+                    (index + 1) in lines &&
                     /^(author|committer)/.test(lines[index + 1]) &&
                     commitInfo.hash !== ""
                 ) {
@@ -116,7 +139,7 @@ export class GitBlameStream extends EventEmitter {
             owner.tz = value;
         } else if (key === "summary") {
             commitInfo.summary = value;
-        } else if (GitBlameStream.HASH_PATTERN.test(key)) {
+        } else if (HASH_PATTERN.test(key)) {
             commitInfo.hash = key;
 
             const hash = key;

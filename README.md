@@ -159,11 +159,11 @@ See Git Blame information in the status bar for the currently selected line.
 | `${commit.hash_short,length}` | Yes | `length` | 7 | the first `length` characters of the 40-bit hash unique to the commit |
 | `${commit.summary}` | No | - | - | the first line of the commit message |
 | `${author.name}` | No | - | - | the commit author's name |
-| `${author.email}` | No | - | - | the commit author's e-mail |
+| `${author.mail}` | No | - | - | the commit author's e-mail |
 | `${author.timestamp}` | No | - | - | timestamp for the commit author's commit |
 | `${author.tz}` | No | - | - | the commit author's time zone |
 | `${committer.name}` | No | - | - | the committer's name |
-| `${committer.email}` | No | - | - | the committer's e-mail |
+| `${committer.mail}` | No | - | - | the committer's e-mail |
 | `${committer.timestamp}` | No | - | - | timestamp for the committer's commit |
 | `${committer.tz}` | No | - | - | the committer's time zone |
 | `${time.ago}` | No | - | - | displays an estimation of how long ago the author committed (e.g. `10 hours ago`, `20 days ago`, `4 months ago`) |
