@@ -4,7 +4,7 @@ import {
 } from "tsyringe";
 import { Workspace } from "../vscode-api/workspace";
 
-interface PropertiesMap {
+export interface PropertiesMap {
     "inferCommitUrl": boolean;
     "commitUrl": string;
     "remoteName": string;
@@ -14,7 +14,7 @@ interface PropertiesMap {
     "logNonCritical": boolean;
     "statusBarMessageFormat": string;
     "statusBarMessageNoCommit": string;
-    "statusBarPositionPriority": number;
+    "statusBarPositionPriority": number | undefined;
     "pluralWebPathSubstrings": string[];
 }
 

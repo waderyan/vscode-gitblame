@@ -23,7 +23,6 @@ async function main(): Promise<void> {
             extensionTestsPath,
             launchArgs: [
                 "--disable-extensions",
-                "--disable-namespace-sandbox",
             ],
         });
     } catch (err) {

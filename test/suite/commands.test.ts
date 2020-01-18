@@ -32,6 +32,10 @@ import {
     initCommandSpy,
     restoreCommand,
 } from "../spy/command.spy";
+import {
+    initPropertySpy,
+    restoreProperty,
+} from "../spy/property.spy";
 
 suite("Commands", (): void => {
     const gitBlame = initGitBlameSpy();
@@ -41,6 +45,7 @@ suite("Commands", (): void => {
     const activeTextEditor = initActiveTextEditorSpy();
     const extension = initExtensionGetterSpy();
     const command = initCommandSpy();
+    const property = initPropertySpy();
 
     suiteTeardown((): void => {
         restoreGitBlame();
@@ -50,6 +55,7 @@ suite("Commands", (): void => {
         restoreActiveTextEditor();
         restoreExtensionGetter();
         restoreCommand();
+        restoreProperty();
     });
 
     teardown((): void => {
@@ -62,6 +68,7 @@ suite("Commands", (): void => {
             activeTextEditor,
             extension,
             command,
+            property,
         ]
             .flatMap((e) => Object.values(e))
             .filter((w): w is SinonSpy => "resetHistory" in w)
