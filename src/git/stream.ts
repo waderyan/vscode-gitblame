@@ -96,7 +96,9 @@ export class GitBlameStreamImpl implements GitBlameStream
         value: string,
         commitInfo: GitCommitInfo,
     ): Generator<BlamedLine> {
-        if (this.isHash(hashOrKey)) {
+        if (hashOrKey === "summary") {
+            commitInfo.summary = value;
+        } else if (this.isHash(hashOrKey)) {
             commitInfo.hash = hashOrKey;
 
             const [, finalLine, lines] = value.split(" ").map(Number);
@@ -113,26 +115,11 @@ export class GitBlameStreamImpl implements GitBlameStream
         commitInfo: GitCommitInfo,
     ): void {
         const [author, dataPoint] = split(key, "-");
-        let owner: GitCommitAuthor;
 
         if (author === "author") {
-            owner = commitInfo.author;
+            this.fillOwner(commitInfo.author, dataPoint, value);
         } else if (author === "committer") {
-            owner = commitInfo.committer;
-        } else {
-            return;
-        }
-
-        if (key === "author" || key === "committer") {
-            owner.name = value;
-        } else if (dataPoint === "mail") {
-            owner.mail = value;
-        } else if (dataPoint === "time") {
-            owner.timestamp = parseInt(value, 10);
-        } else if (dataPoint === "tz") {
-            owner.tz = value;
-        } else if (key === "summary") {
-            commitInfo.summary = value;
+            this.fillOwner(commitInfo.committer, dataPoint, value);
         }
     }
 
@@ -171,11 +158,28 @@ export class GitBlameStreamImpl implements GitBlameStream
     ): boolean {
         return this.isHash(potentialHash)
             && nextLine !== undefined
-            && /^(author|committer)/.test(nextLine)
+            && (
+                nextLine.startsWith("author")
+                || nextLine.startsWith("committer")
+            )
             && commitInfo.hash !== "";
     }
 
     private isHash(potentialHash: string): boolean {
-        return /[a-z0-9]{40}/.test(potentialHash);
+        return /^[a-z0-9]{40}$/.test(potentialHash);
+    }
+
+    private fillOwner(
+        owner: GitCommitAuthor,
+        dataPoint: string,
+        value: string,
+    ): void {
+        if (dataPoint === "time") {
+            owner.timestamp = parseInt(value, 10);
+        } else if (dataPoint === "tz" || dataPoint === "mail") {
+            owner[dataPoint] = value;
+        } else if (dataPoint === "") {
+            owner.name = value;
+        }
     }
 }
