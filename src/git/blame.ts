@@ -30,10 +30,6 @@ export class GitBlameImpl implements GitBlame {
         const commitLineNumber = lineNumber + 1;
         const blameInfo = await this.getBlameInfo(document);
 
-        if (blameInfo === undefined) {
-            return blankCommitInfo();
-        }
-
         const hash = blameInfo.lines[commitLineNumber];
 
         if (hash === undefined) {
@@ -60,25 +56,34 @@ export class GitBlameImpl implements GitBlame {
         });
     }
 
+    public createRemovalFunction(document: PartialDocument): () => void {
+        return (): void => {
+            this.removeDocument(document);
+        }
+    }
+
     private async getBlameInfo(
         document: PartialDocument,
-    ): Promise<GitBlameInfo | undefined> {
-        if (!this.files.has(document)) {
-            const factory = container
-                .resolve<GitFileFactory>("GitFileFactory");
-            this.files.set(document, factory.create(document));
-        }
+    ): Promise<GitBlameInfo> {
+        const blameFile = await this.ensureGitFile(document);
 
-        const blameFile = await this.files.get(document);
-
-        if (blameFile === undefined) {
-            return;
-        }
-
-        blameFile.registerDisposeFunction((): void => {
-            this.removeDocument(document);
-        });
+        blameFile.registerDisposeFunction(this.createRemovalFunction(document));
 
         return blameFile.blame();
+    }
+
+    private ensureGitFile(document: PartialDocument): Promise<GitFile> {
+        const potentialGitFile = this.files.get(document);
+
+        if (potentialGitFile) {
+            return potentialGitFile;
+        }
+
+        const gitFile = container.resolve<GitFileFactory>("GitFileFactory")
+            .create(document);
+
+        this.files.set(document, gitFile);
+
+        return gitFile;
     }
 }
