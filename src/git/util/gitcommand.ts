@@ -64,7 +64,7 @@ export async function getOriginOfActiveFile(
     return originUrl.trim();
 }
 
-export async function getRemoteUrl(): Promise<string> {
+export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
     const activeEditor = container
         .resolve<ActiveTextEditor>("ActiveTextEditor").get();
 
@@ -98,10 +98,11 @@ export async function getRemoteUrl(): Promise<string> {
             "config",
             "--local",
             "--get",
-            `remote.${ curRemote.trim() }.url`,
+            `remote.${ curRemote.trim() || fallbackRemote }.url`,
         ], {
             cwd: activeFileFolder,
         });
+
     return remoteUrl.trim();
 }
 

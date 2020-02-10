@@ -308,13 +308,11 @@ export class GitExtensionImpl implements GitExtension {
         }
         const properties = container.resolve<Property>("Property");
 
-        const inferCommitUrl = properties.get(
-            "inferCommitUrl",
-        );
-
-        const remote = getRemoteUrl();
+        const inferCommitUrl = properties.get("inferCommitUrl");
         const commitUrl = properties.get("commitUrl") || "";
         const remoteName = properties.get("remoteName") || "origin";
+
+        const remote = getRemoteUrl(remoteName);
         const origin = await getOriginOfActiveFile(remoteName);
         const projectName = this.projectNameFromOrigin(origin);
         const remoteUrl = stripGitRemoteUrl(await remote);
@@ -328,21 +326,26 @@ export class GitExtensionImpl implements GitExtension {
         if (isUrl(parsedUrl)) {
             return Uri.parse(parsedUrl);
         } else if (parsedUrl === '' && inferCommitUrl) {
-            const isWebPathPlural = this.isToolUrlPlural(origin);
-            if (origin) {
-                const uri = this.defaultWebPath(
-                    origin,
-                    commitInfo.hash,
-                    isWebPathPlural,
-                );
-                return Uri.parse(uri);
-            } else {
-                return;
-            }
+            return this.getDefaultToolUrl(origin, commitInfo);
         } else {
             container.resolve<MessageService>("MessageService").showError(
                 `Malformed URL in gitblame.commitUrl. ` +
                     `Currently expands to: '${ parsedUrl }'`,
+            );
+        }
+    }
+
+    private getDefaultToolUrl(
+        origin: string,
+        commitInfo: GitCommitInfo,
+    ): Uri | undefined {
+        if (origin) {
+            return Uri.parse(
+                this.defaultWebPath(
+                    origin,
+                    commitInfo.hash,
+                    this.isToolUrlPlural(origin),
+                ),
             );
         }
     }
