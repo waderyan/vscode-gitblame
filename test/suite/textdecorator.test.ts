@@ -66,28 +66,43 @@ suite("Date Calculations", (): void => {
     });
 
     test("Correct pluralisation", (): void => {
-        assert.notEqual(
+        assert.equal(
             TextDecorator.toDateText(
                 new Date(2015, 1, 2),
                 new Date(2015, 1, 1),
             ),
-            "1 days ago",
+            "1 day ago",
         );
 
-        assert.notEqual(
+        assert.equal(
+            TextDecorator.toDateText(
+                new Date(2015, 1, 3),
+                new Date(2015, 1, 1),
+            ),
+            "2 days ago",
+        );
+
+        assert.equal(
             TextDecorator.toDateText(
                 new Date(2015, 1, 1, 1, 0, 0),
                 new Date(2015, 1, 1, 0, 0, 0),
             ),
-            "1 hours ago",
+            "1 hour ago",
+        );
+        assert.equal(
+            TextDecorator.toDateText(
+                new Date(2015, 1, 1, 2, 0, 0),
+                new Date(2015, 1, 1, 0, 0, 0),
+            ),
+            "2 hours ago",
         );
 
-        assert.notEqual(
+        assert.equal(
             TextDecorator.toDateText(
-                new Date(2015, 1, 1, 1, 1, 0),
+                new Date(2015, 1, 1, 1, 6, 0),
                 new Date(2015, 1, 1, 1, 0, 0),
             ),
-            "1 minutes ago",
+            "6 minutes ago",
         );
     });
 });

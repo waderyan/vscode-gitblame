@@ -5,17 +5,13 @@ import { ErrorHandler } from "../util/errorhandler";
 import { StatusBarView } from "../view/view";
 import { GitFile } from "./filefactory";
 import { GitBlameStream } from "./stream";
-import {
-    blankBlameInfo,
-    GitBlameInfo,
-    GitCommitInfo,
-} from "./util/blanks";
+import { blankBlameInfo, GitBlameInfo } from "./util/blanks";
 
 export class GitFilePhysical implements GitFile {
     private readonly fileName: string;
     private readonly fileSystemWatcher: FSWatcher;
     private blameInfoPromise?: Promise<GitBlameInfo>;
-    private blameProcess?: GitBlameStream;
+    private terminate = false;
     private clearFromCache?: () => void;
 
     public constructor(fileName: string) {
@@ -38,14 +34,11 @@ export class GitFilePhysical implements GitFile {
     }
 
     public dispose(): void {
-        if (this.blameProcess) {
-            this.blameProcess.terminate();
-            delete this.blameProcess;
-        }
+        this.terminate = true;
 
         if (this.clearFromCache) {
             this.clearFromCache();
-            this.clearFromCache = undefined;
+            delete this.clearFromCache;
         }
 
         this.fileSystemWatcher.close();
@@ -72,74 +65,58 @@ export class GitFilePhysical implements GitFile {
 
         this.blameInfoPromise = new Promise<GitBlameInfo>(
             (resolve): void => {
-                const blameInfo = blankBlameInfo();
-                this.blameProcess = container
-                    .resolve<GitBlameStream>("GitBlameStream");
-                this.blameProcess.blame(this.fileName).then(() => {
-                    if (this.blameProcess === undefined) {
-                        throw new Error("Where did my blame process go?!");
-                    }
-
-                    this.blameProcess.on(
-                        "commit",
-                        this.gitAddCommit(blameInfo),
-                    );
-                    this.blameProcess.on(
-                        "line",
-                        this.gitAddLine(blameInfo),
-                    );
-                    this.blameProcess.on(
-                        "end",
-                        this.gitStreamOver(
-                            this.blameProcess,
-                            resolve,
-                            blameInfo,
-                        ),
-                    );
-                });
+                this.blameProcess(resolve)
+                    .catch((err): void => {
+                        this.gitStreamError(err, resolve);
+                    });
             },
         );
 
         return this.blameInfoPromise;
     }
 
-    private gitAddCommit(
-        blameInfo: GitBlameInfo,
-    ): (hash: string, data: GitCommitInfo) => void {
-        return (hash, data): void => {
-            blameInfo.commits[hash] = data;
-        };
+    private async blameProcess(
+        resolve: (info: GitBlameInfo) => void,
+    ): Promise<void> {
+        const blameInfo = blankBlameInfo();
+        const blamer = container.resolve<GitBlameStream>("GitBlameStream");
+        const blameStream = blamer.blame(this.fileName);
+        let reachedDone = false;
+
+        while (!reachedDone) {
+            const {done, value} = await blameStream.next(this.terminate);
+
+            if (done || value === undefined) {
+                reachedDone = true;
+                this.gitStreamOver(resolve, blameInfo);
+            } else if (value.type === "commit") {
+                blameInfo.commits[value.hash] = value.info;
+            } else {
+                blameInfo.lines[value.line] = value.hash;
+            }
+        }
     }
 
-    private gitAddLine(
-        blameInfo: GitBlameInfo,
-    ): (line: number, gitCommitHash: string) => void {
-        return (line: number, gitCommitHash: string): void => {
-            blameInfo.lines[line] = gitCommitHash;
-        };
+    private gitStreamError(
+        err: Error,
+        resolve: (info: GitBlameInfo) => void,
+    ): void {
+        container.resolve<ErrorHandler>("ErrorHandler").logError(err);
+        resolve(blankBlameInfo());
     }
 
     private gitStreamOver(
-        gitStream: GitBlameStream,
-        resolve: (val: GitBlameInfo) => void,
+        resolve: (info: GitBlameInfo) => void,
         blameInfo: GitBlameInfo,
-    ): (err: Error | null) => void {
-        return (err: Error | null): void => {
-            gitStream.removeAllListeners();
-
-            if (err) {
-                container.resolve<ErrorHandler>("ErrorHandler").logError(err);
-                resolve(blankBlameInfo());
-            } else {
-                container.resolve<ErrorHandler>("ErrorHandler").logInfo(
-                    `Blamed file "${
-                        this.fileName
-                    }" and found ${
-                        Object.keys(blameInfo.commits).length
-                    } commits`,
-                );
-                resolve(blameInfo);
-            }
-        };
+    ): void {
+        const numberOfCommits = Object.keys(blameInfo.commits).length;
+        container.resolve<ErrorHandler>("ErrorHandler").logInfo(
+            `Blamed file "${
+                this.fileName
+            }" and found ${
+                numberOfCommits
+            } commits`,
+        );
+        resolve(blameInfo);
     }
 }

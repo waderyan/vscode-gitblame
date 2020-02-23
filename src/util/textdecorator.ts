@@ -20,7 +20,7 @@ type InfoTokenFunction =
     InfoTokenFunctionWithParameter | InfoTokenFunctionWithoutParameter;
 
 export interface InfoTokens {
-    [key: string]: InfoTokenFunction;
+    [key: string]: InfoTokenFunction | undefined;
 }
 
 export interface InfoTokenNormalizedCommitInfo extends InfoTokens {
@@ -93,7 +93,7 @@ export class TextDecorator {
         } else if (hours >= 1) {
             return pluralText(hours, "hour", "hours") + " ago";
         } else if (minutes >= 5) {
-            return pluralText(minutes, "minute", "minutes") + " ago";
+            return `${minutes} minutes ago`;
         } else {
             return "right now";
         }
@@ -136,7 +136,7 @@ export class TextDecorator {
     ): string {
         const currentToken = tokens[group.token];
 
-        if (group.token in tokens) {
+        if (currentToken) {
             return currentToken(group.value);
         }
 
