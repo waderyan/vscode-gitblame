@@ -14,8 +14,13 @@ import {
     isBlankCommit,
 } from "../git/util/blanks";
 
+type InfoTokenFunctionWithParameter = (value: string) => string;
+type InfoTokenFunctionWithoutParameter = () => string;
+type InfoTokenFunction =
+    InfoTokenFunctionWithParameter | InfoTokenFunctionWithoutParameter;
+
 export interface InfoTokens {
-    [key: string]: (value?: string) => string;
+    [key: string]: InfoTokenFunction | undefined;
 }
 
 export interface InfoTokenNormalizedCommitInfo extends InfoTokens {
@@ -25,7 +30,7 @@ export interface InfoTokenNormalizedCommitInfo extends InfoTokens {
     "author.tz": () => string;
     "author.date": () => string;
     "commit.hash": () => string;
-    "commit.hash_short": (length?: string) => string;
+    "commit.hash_short": (length: string) => string;
     "commit.summary": () => string;
     "committer.mail": () => string;
     "committer.name": () => string;
@@ -52,7 +57,7 @@ interface TokenReplaceGroup {
 export class TextDecorator {
     public static toTextView(commit: GitCommitInfo): string {
         if (isBlankCommit(commit)) {
-            return container.resolve(Property).get(
+            return container.resolve<Property>("Property").get(
                 "statusBarMessageNoCommit",
             ) || "Not Committed Yet";
         }
@@ -60,7 +65,7 @@ export class TextDecorator {
         const normalizedCommitInfo = TextDecorator.normalizeCommitInfoTokens(
             commit,
         );
-        const messageFormat = container.resolve(Property).get(
+        const messageFormat = container.resolve<Property>("Property").get(
             "statusBarMessageFormat",
         );
 
@@ -90,7 +95,7 @@ export class TextDecorator {
         } else if (hours >= 1) {
             return pluralText(hours, "hour", "hours") + " ago";
         } else if (minutes >= 5) {
-            return pluralText(minutes, "minute", "minutes") + " ago";
+            return `${minutes} minutes ago`;
         } else {
             return "right now";
         }
@@ -118,7 +123,7 @@ export class TextDecorator {
             tokenRegex,
             (...args: unknown[]): string => {
                 const groups: TokenReplaceGroup
-                    = args[args.length - 1] as unknown as TokenReplaceGroup;
+                    = args[args.length - 1] as TokenReplaceGroup;
 
                 const value = TextDecorator.runKey(tokens, groups);
 

@@ -7,108 +7,108 @@ import {
     normalize,
 } from "path";
 
-import {
-    extensions,
-    window,
-} from "vscode";
 import { container } from "tsyringe";
 
 import { GIT_COMMAND_IN_PATH } from "../../constants";
 import { validEditor } from "../../util/editorvalidator";
-import { execute } from "../../util/execcommand";
 import { Property } from "../../util/property";
 import { ErrorHandler } from "../../util/errorhandler";
+import { ActiveTextEditor } from "../../vscode-api/active-text-editor";
+import { ExtensionGetter } from "../../vscode-api/get-extension";
+import { Executor } from "../../util/execcommand";
 
-interface VscodeGitExtension {
-    git: {
-        path: string;
-    };
+export async function getGitCommand(): Promise<string> {
+    const vscodeGit = container
+        .resolve<ExtensionGetter>("ExtensionGetter").get();
+
+    if (vscodeGit && vscodeGit.exports.enabled) {
+        const api = vscodeGit.exports.getAPI(1);
+        if (api.state === "initialized") {
+            return Promise.resolve(api.git.path);
+        } else {
+            return new Promise((resolve): void => {
+                api.onDidChangeState((newState): void => {
+                    if (newState === "initialized") {
+                        resolve(api.git.path);
+                    }
+                });
+            });
+        }
+    }
+
+    return Promise.resolve(GIT_COMMAND_IN_PATH);
 }
 
-export function getGitCommand(): string {
-    const vscodeGit = extensions.getExtension<VscodeGitExtension>(
-        "vscode.git",
-    );
-
-    if (
-        vscodeGit
-        && vscodeGit.exports
-        && vscodeGit.exports.git
-        && vscodeGit.exports.git.path
-    ) {
-        return vscodeGit.exports.git.path;
-    } else {
-        return GIT_COMMAND_IN_PATH;
-    }
+function execute(
+    command: string,
+    args: string[],
+    cwd: string,
+): Promise<string> {
+    return container.resolve<Executor>("Executor")
+        .execute(command, args, { cwd });
 }
 
 export async function getOriginOfActiveFile(
     remoteName: string,
 ): Promise<string> {
-    if (!validEditor(window.activeTextEditor)) {
+    const activeEditor = container
+        .resolve<ActiveTextEditor>("ActiveTextEditor").get();
+
+    if (!validEditor(activeEditor)) {
         return "";
     }
 
-    const gitCommand = getGitCommand();
-    const activeFile = window.activeTextEditor.document.fileName;
+    const gitCommand = await getGitCommand();
+    const activeFile = activeEditor.document.fileName;
     const activeFileFolder = dirname(activeFile);
-    const originUrl = await execute(gitCommand, [
-        "ls-remote",
-        "--get-url",
-        remoteName,
-    ], {
-        cwd: activeFileFolder,
-    });
+    const originUrl = await execute(
+        gitCommand,
+        ["ls-remote", "--get-url", remoteName],
+        activeFileFolder,
+    );
 
     return originUrl.trim();
 }
 
-export async function getRemoteUrl(): Promise<string> {
-    if (!validEditor(window.activeTextEditor)) {
+export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
+    const activeEditor = container
+        .resolve<ActiveTextEditor>("ActiveTextEditor").get();
+
+    if (!validEditor(activeEditor)) {
         return "";
     }
-    const gitCommand = getGitCommand();
-    const activeFile = window.activeTextEditor.document.fileName;
-    const activeFileFolder = dirname(activeFile);
+
+    const gitCommand = await getGitCommand();
+    const activeFileFolder = dirname(activeEditor.document.fileName);
     const currentBranch = await execute(gitCommand, [
-        "symbolic-ref",
-        "-q",
-        "--short",
-        "HEAD",
-    ], {
-        cwd: activeFileFolder,
-    });
+            "symbolic-ref",
+            "-q",
+            "--short",
+            "HEAD",
+        ], activeFileFolder);
     const curRemote = await execute(gitCommand, [
-        "config",
-        "--local",
-        "--get",
-        `branch.${ currentBranch.trim() }.remote`,
-    ], {
-        cwd: activeFileFolder,
-    });
+            "config",
+            "--local",
+            "--get",
+            `branch.${ currentBranch.trim() }.remote`,
+        ], activeFileFolder);
     const remoteUrl = await execute(gitCommand, [
-        "config",
-        "--local",
-        "--get",
-        `remote.${ curRemote.trim() }.url`,
-    ], {
-        cwd: activeFileFolder,
-    });
+            "config",
+            "--local",
+            "--get",
+            `remote.${ curRemote.trim() || fallbackRemote }.url`,
+        ], activeFileFolder);
+
     return remoteUrl.trim();
 }
 
 export async function getWorkTree(fileName: string): Promise<string> {
-    const currentDirectory = dirname(fileName);
-    const gitCommand = getGitCommand();
-    const gitExecArguments = ["rev-parse", "--show-toplevel"];
-    const gitExecOptions = {
-        cwd: currentDirectory,
-    };
+    const gitCommand = await getGitCommand();
     const workTree = await execute(
-        gitCommand,
-        gitExecArguments,
-        gitExecOptions,
-    );
+            gitCommand,
+            ["rev-parse", "--show-toplevel"],
+            dirname(fileName),
+        );
 
     if (workTree.trim() === "") {
         return "";
@@ -117,12 +117,14 @@ export async function getWorkTree(fileName: string): Promise<string> {
     }
 }
 
-export function spawnGitBlameStreamProcess(fileName: string): ChildProcess {
+export async function spawnGitBlameStreamProcess(
+    fileName: string,
+): Promise<ChildProcess> {
     const args = [];
 
     args.push("blame");
 
-    if (container.resolve(Property).get("ignoreWhitespace")) {
+    if (container.resolve<Property>("Property").get("ignoreWhitespace")) {
         args.push("-w");
     }
 
@@ -130,12 +132,12 @@ export function spawnGitBlameStreamProcess(fileName: string): ChildProcess {
     args.push("--");
     args.push(fileName);
 
-    const gitCommand = getGitCommand();
+    const gitCommand = await getGitCommand();
     const spawnOptions = {
         cwd: dirname(fileName),
     };
 
-    container.resolve(ErrorHandler).logCommand(
+    container.resolve<ErrorHandler>("ErrorHandler").logCommand(
         `${gitCommand} ${args.join(" ")}`,
     );
 

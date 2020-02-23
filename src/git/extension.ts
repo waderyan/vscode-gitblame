@@ -1,30 +1,34 @@
 import { URL } from "url";
 
 import {
-    commands,
     Disposable,
-    env,
-    TextDocument,
     Uri,
-    window,
-    workspace,
 } from "vscode";
 import {
     container,
+    inject,
     injectable,
 } from "tsyringe";
 
 import {
     TITLE_VIEW_ONLINE,
 } from "../constants";
-import { ActionableMessageItem } from "../util/actionablemessageitem";
+import { ActionableMessageItem } from "../util/actionable-message-item";
 import { ErrorHandler } from "../util/errorhandler";
 import { isUrl } from "../util/is-url";
-import { Property } from "../util/property";
 import { runNextTick } from "../util/run-next-tick";
 import { TextDecorator } from "../util/textdecorator";
+import { Property } from "../util/property";
 import { throttleFunction } from "../util/throttle.function";
+import { MessageService } from "../view/messages";
 import { StatusBarView } from "../view/view";
+import {
+    ActiveTextEditor,
+    PartialDocument,
+} from "../vscode-api/active-text-editor";
+import { Clipboard } from "../vscode-api/clipboard";
+import { Command } from "../vscode-api/command";
+import { EditorEvents } from "../vscode-api/editor-events";
 import {
     blankCommitInfo,
     GitCommitInfo,
@@ -39,13 +43,26 @@ import { GitBlame } from "./blame";
 
 const NO_FILE_OR_PLACE = "no-file:-1";
 
+export interface GitExtension {
+    blameLink(): Promise<void>;
+    showMessage(): Promise<void>;
+    copyHash(): Promise<void>;
+    copyToolUrl(): Promise<void>;
+    defaultWebPath(url: string, hash: string, isPlural: boolean): string;
+    projectNameFromOrigin(origin: string): string;
+    dispose(): void;
+}
+
 @injectable()
-export class GitExtension {
+export class GitExtensionImpl implements GitExtension {
     private readonly disposable: Disposable;
     private readonly blame: GitBlame;
     private readonly statusBarView: StatusBarView;
 
-    public constructor(blame: GitBlame, statusBarView: StatusBarView) {
+    public constructor(
+        @inject("GitBlame") blame: GitBlame,
+        @inject("StatusBarView") statusBarView: StatusBarView,
+    ) {
         this.blame = blame;
         this.statusBarView = statusBarView;
 
@@ -59,9 +76,10 @@ export class GitExtension {
         const commitToolUrl = await this.getToolUrl(commitInfo);
 
         if (commitToolUrl) {
-            commands.executeCommand("vscode.open", commitToolUrl);
+            container.resolve<Command>("Command")
+                .execute("vscode.open", commitToolUrl);
         } else {
-            window.showErrorMessage(
+            container.resolve<MessageService>("MessageService").showError(
                 "Missing gitblame.commitUrl configuration value.",
             );
         }
@@ -75,7 +93,7 @@ export class GitExtension {
             return;
         }
 
-        const messageFormat = container.resolve(Property).get(
+        const messageFormat = container.resolve<Property>("Property").get(
             "infoMessageFormat",
         ) || "";
         const normalizedTokens = TextDecorator.normalizeCommitInfoTokens(
@@ -89,10 +107,12 @@ export class GitExtension {
 
         this.updateView(commitInfo);
 
-        const actionedItem = await window.showInformationMessage(
-            message,
-            ...(await extraActions),
-        );
+        const actionedItem = await container
+            .resolve<MessageService>("MessageService")
+            .showInfo(
+                message,
+                ...(await extraActions),
+            );
 
         if (actionedItem) {
             actionedItem.takeAction();
@@ -102,11 +122,17 @@ export class GitExtension {
     public async copyHash(): Promise<void> {
         const commitInfo = await this.getCommitInfo();
 
+        if (commitInfo.generated) {
+            return;
+        }
+
         try {
-            await env.clipboard.writeText(commitInfo.hash);
-            window.showInformationMessage("Copied hash to clipboard");
+            await container.resolve<Clipboard>("Clipboard")
+                .write(commitInfo.hash);
+            container.resolve<MessageService>("MessageService")
+                .showInfo("Copied hash to clipboard");
         } catch (err) {
-            container.resolve(ErrorHandler).logCritical(
+            container.resolve<ErrorHandler>("ErrorHandler").logCritical(
                 err,
                 `Unable to copy hash to clipboard. hash: ${
                     commitInfo.hash
@@ -121,10 +147,12 @@ export class GitExtension {
 
         if (commitToolUrl) {
             try {
-                await env.clipboard.writeText(commitToolUrl.toString());
-                window.showInformationMessage("Copied tool URL to clipboard");
+                await container.resolve<Clipboard>("Clipboard")
+                    .write(commitToolUrl.toString());
+                container.resolve<MessageService>("MessageService")
+                    .showInfo("Copied tool URL to clipboard");
             } catch (err) {
-                container.resolve(ErrorHandler).logCritical(
+                container.resolve<ErrorHandler>("ErrorHandler").logCritical(
                     err,
                     `Unable to copy tool URL to clipboard. URL: ${
                         commitToolUrl
@@ -132,7 +160,7 @@ export class GitExtension {
                 );
             }
         } else {
-            window.showErrorMessage(
+            container.resolve<MessageService>("MessageService").showError(
                 "Missing gitblame.commitUrl configuration value.",
             );
         }
@@ -174,27 +202,30 @@ export class GitExtension {
     }
 
     private setupListeners(): Disposable {
+        const editorEvents = container.resolve<EditorEvents>("EditorEvents");
         const disposables: Disposable[] = [];
 
-        window.onDidChangeActiveTextEditor(
-            this.onTextEditorMove,
-            this,
-            disposables,
-        );
-        window.onDidChangeTextEditorSelection(
-            this.onTextEditorMove,
-            this,
-            disposables,
-        );
-        workspace.onDidSaveTextDocument(
-            this.onTextEditorMove,
-            this,
-            disposables,
-        );
-        workspace.onDidCloseTextDocument(
-            this.onCloseTextDocument,
-            this,
-            disposables,
+        disposables.push(
+            editorEvents.changeActiveEditor(
+                (): void => {
+                    this.onTextEditorMove();
+                },
+            ),
+            editorEvents.changeSelection(
+                (): void => {
+                    this.onTextEditorMove()
+                },
+            ),
+            editorEvents.saveDocument(
+                (): void => {
+                    this.onTextEditorMove();
+                },
+            ),
+            editorEvents.closeDocument(
+                (document: PartialDocument): void => {
+                    this.onCloseTextDocument(document);
+                },
+            ),
         );
 
         return Disposable.from(...disposables);
@@ -219,16 +250,18 @@ export class GitExtension {
     }
 
     private getCurrentActiveFilePosition(): string {
-        if (window.activeTextEditor === undefined) {
+        const activeEditor = container
+            .resolve<ActiveTextEditor>("ActiveTextEditor").get();
+        if (activeEditor === undefined) {
             return NO_FILE_OR_PLACE;
         }
 
-        const {document, selection} = window.activeTextEditor;
+        const {document, selection} = activeEditor;
 
         return `${document.fileName}:${selection.active.line}`;
     }
 
-    private async onCloseTextDocument(document: TextDocument): Promise<void> {
+    private onCloseTextDocument(document: PartialDocument): void {
         this.blame.removeDocument(document);
     }
 
@@ -239,12 +272,14 @@ export class GitExtension {
         const extraActions: ActionableMessageItem[] = [];
 
         if (commitToolUrl) {
-            const viewOnlineAction = container.resolve(ActionableMessageItem);
+            const viewOnlineAction = container
+                .resolve<ActionableMessageItem>("ActionableMessageItem");
 
             viewOnlineAction.setTitle(TITLE_VIEW_ONLINE);
 
             viewOnlineAction.setAction((): void => {
-                commands.executeCommand("vscode.open", commitToolUrl);
+                container.resolve<Command>("Command")
+                    .execute("vscode.open", commitToolUrl);
             });
 
             extraActions.push(viewOnlineAction);
@@ -257,7 +292,7 @@ export class GitExtension {
         const commitInfo = await this.getCurrentLineInfo();
 
         if (commitInfo.generated) {
-            window.showErrorMessage(
+            container.resolve<MessageService>("MessageService").showError(
                 "The current file and line can not be blamed.",
             );
         }
@@ -271,44 +306,66 @@ export class GitExtension {
         if (isBlankCommit(commitInfo)) {
             return;
         }
+        const properties = container.resolve<Property>("Property");
 
-        const inferCommitUrl = container.resolve(Property).get(
-            "inferCommitUrl",
-        );
-
-        const remote = getRemoteUrl();
-        const properties = container.resolve(Property);
+        const inferCommitUrl = properties.get("inferCommitUrl");
         const commitUrl = properties.get("commitUrl") || "";
         const remoteName = properties.get("remoteName") || "origin";
+
+        const remote = await getRemoteUrl(remoteName);
         const origin = await getOriginOfActiveFile(remoteName);
         const projectName = this.projectNameFromOrigin(origin);
-        const remoteUrl = stripGitRemoteUrl(await remote);
+        const remoteUrl = stripGitRemoteUrl(remote);
         const parsedUrl = TextDecorator.parseTokens(commitUrl, {
             "hash": (): string => commitInfo.hash,
-            "project.remote": (): string => remoteUrl,
             "project.name": (): string => projectName,
+            "project.remote": (): string => remoteUrl,
+            "gitorigin.hostname": this.gitOriginHostname(origin),
         });
 
         if (isUrl(parsedUrl)) {
             return Uri.parse(parsedUrl);
         } else if (parsedUrl === '' && inferCommitUrl) {
-            const isWebPathPlural = this.isToolUrlPlural(origin);
-            if (origin) {
-                const uri = this.defaultWebPath(
-                    origin,
-                    commitInfo.hash,
-                    isWebPathPlural,
-                );
-                return Uri.parse(uri);
-            } else {
-                return;
-            }
+            return this.getDefaultToolUrl(origin, commitInfo);
         } else {
-            window.showErrorMessage(
+            container.resolve<MessageService>("MessageService").showError(
                 `Malformed URL in gitblame.commitUrl. ` +
                     `Currently expands to: '${ parsedUrl }'`,
             );
         }
+    }
+
+    private getDefaultToolUrl(
+        origin: string,
+        commitInfo: GitCommitInfo,
+    ): Uri | undefined {
+        if (origin) {
+            return Uri.parse(
+                this.defaultWebPath(
+                    origin,
+                    commitInfo.hash,
+                    this.isToolUrlPlural(origin),
+                ),
+            );
+        }
+    }
+
+    private gitOriginHostname(origin: string): (index: string) => string {
+        return (index: string): string => {
+            const originUrl = new URL(origin);
+
+            if (index === '') {
+                return originUrl.hostname;
+            }
+
+            const parts = originUrl.hostname.split('.');
+
+            if (index !== undefined && index in parts) {
+                return parts[Number(index)];
+            }
+
+            return 'invalid-index';
+        };
     }
 
     private updateView(commitInfo: GitCommitInfo): void {
@@ -324,18 +381,26 @@ export class GitExtension {
     }
 
     private async getCurrentLineInfo(): Promise<GitCommitInfo> {
-        if (window.activeTextEditor === undefined) {
+        const activeEditor = container
+            .resolve<ActiveTextEditor>("ActiveTextEditor").get();
+
+        if (activeEditor === undefined) {
             return blankCommitInfo();
         }
 
-        return this.blame.blameLine(
-            window.activeTextEditor.document,
-            window.activeTextEditor.selection.active.line,
-        );
+        try {
+            return await this.blame.blameLine(
+                activeEditor.document,
+                activeEditor.selection.active.line,
+                );
+        } catch (err) {
+            return blankCommitInfo();
+        }
     }
 
     private isToolUrlPlural(origin: string): boolean {
-        const isWebPathPlural = container.resolve(Property).get(
+        const property = container.resolve<Property>("Property");
+        const isWebPathPlural = property.get(
             "isWebPathPlural",
         );
 
@@ -343,7 +408,7 @@ export class GitExtension {
             return true;
         }
 
-        const urlParts = container.resolve(Property).get(
+        const urlParts = property.get(
             "pluralWebPathSubstrings",
         );
 

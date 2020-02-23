@@ -2,8 +2,8 @@ const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
-const MONTH = (365.25 / 12) * DAY;
 const YEAR = 365.25 * DAY;
+const MONTH = YEAR / 12;
 
 function unitsBetween(unit: number, compareTo: Date, now: Date): number {
     const diffMilliseconds = compareTo.valueOf() - now.valueOf();

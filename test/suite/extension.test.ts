@@ -4,7 +4,7 @@ import { container } from "tsyringe";
 import { GitExtension } from "../../src/git/extension";
 
 suite("Web URL formatting", (): void => {
-    const extension = container.resolve(GitExtension);
+    const extension = container.resolve<GitExtension>("GitExtension");
 
     test("https://", (): void => {
         assert.equal(
@@ -177,7 +177,7 @@ suite("Web URL formatting", (): void => {
 });
 
 suite("Origin to project name", (): void => {
-    const extension = container.resolve(GitExtension);
+    const extension = container.resolve<GitExtension>("GitExtension");
 
     test("https://", (): void => {
         assert.equal(

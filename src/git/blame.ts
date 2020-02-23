@@ -1,5 +1,4 @@
-import { TextDocument } from "vscode";
-import { injectable } from "tsyringe";
+import { container } from "tsyringe";
 
 import {
     blankCommitInfo,
@@ -10,26 +9,26 @@ import {
     GitFile,
     GitFileFactory,
 } from "./filefactory";
+import { PartialDocument } from "../vscode-api/active-text-editor";
 
-@injectable()
-export class GitBlame {
-    private readonly factory: GitFileFactory;
-    private readonly files: Map<TextDocument, Promise<GitFile>> = new Map();
+export interface GitBlame {
+    blameLine(
+        document: PartialDocument,
+        lineNumber: number,
+    ): Promise<GitCommitInfo>;
+    removeDocument(document: PartialDocument): Promise<void>;
+    dispose(): void;
+}
 
-    public constructor(factory: GitFileFactory) {
-        this.factory = factory;
-    }
+export class GitBlameImpl implements GitBlame {
+    private readonly files: Map<PartialDocument, Promise<GitFile>> = new Map();
 
     public async blameLine(
-        document: TextDocument,
+        document: PartialDocument,
         lineNumber: number,
     ): Promise<GitCommitInfo> {
         const commitLineNumber = lineNumber + 1;
         const blameInfo = await this.getBlameInfo(document);
-
-        if (blameInfo === undefined) {
-            return blankCommitInfo();
-        }
 
         const hash = blameInfo.lines[commitLineNumber];
 
@@ -40,7 +39,7 @@ export class GitBlame {
         return blameInfo.commits[hash];
     }
 
-    public async removeDocument(document: TextDocument): Promise<void> {
+    public async removeDocument(document: PartialDocument): Promise<void> {
         const blamefile = await this.files.get(document);
 
         if (blamefile === undefined) {
@@ -52,27 +51,39 @@ export class GitBlame {
     }
 
     public dispose(): void {
-        this.files.forEach(async (_gitFile, document): Promise<void> => {
+        this.files.forEach((_gitFile, document): void => {
             this.removeDocument(document);
         });
     }
 
+    public createRemovalFunction(document: PartialDocument): () => void {
+        return (): void => {
+            this.removeDocument(document);
+        }
+    }
+
     private async getBlameInfo(
-        document: TextDocument,
-    ): Promise<GitBlameInfo | undefined> {
-        if (!this.files.has(document)) {
-            this.files.set(
-                document,
-                this.factory.create(document),
-            );
-        }
+        document: PartialDocument,
+    ): Promise<GitBlameInfo> {
+        const blameFile = await this.ensureGitFile(document);
 
-        const blameFile = await this.files.get(document);
-
-        if (blameFile === undefined) {
-            return;
-        }
+        blameFile.registerDisposeFunction(this.createRemovalFunction(document));
 
         return blameFile.blame();
+    }
+
+    private ensureGitFile(document: PartialDocument): Promise<GitFile> {
+        const potentialGitFile = this.files.get(document);
+
+        if (potentialGitFile) {
+            return potentialGitFile;
+        }
+
+        const gitFile = container.resolve<GitFileFactory>("GitFileFactory")
+            .create(document);
+
+        this.files.set(document, gitFile);
+
+        return gitFile;
     }
 }

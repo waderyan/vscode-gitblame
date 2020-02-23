@@ -53,6 +53,7 @@ See Git Blame information in the status bar for the currently selected line.
               <li><code>${project.remote}</code> - the current default remote's URL with the
               protocol, port-specifiers, and trailing <code>.git</code> stripped. (e.g.
               <code>https://<strong>github.com/user/project_name</strong>.git</code>)</li>
+              <li><code>${gitorigin.hostname,n}</code> - the nth part of the git origin domain (e.g. if the git origin is <code>https://github.com/ckb-next/ckb-next.git</code> <code>${gitorigin.path,1}</code> will return <code>com</code>)</li>
             </ul>
           </li>
           <li><em>Example:</em> <code>https://github.com/Sertion/vscode-gitblame/commit/${hash}</code></li>
@@ -137,23 +138,13 @@ See Git Blame information in the status bar for the currently selected line.
       </td>
     </tr>
     <tr>
-      <td><code>gitblame.logLevel</code></td>
-      <td><code>string[]</code></td>
-      <td><code>["info", "error", "command", "critical"]</code></td>
+      <td><code>gitblame.logNonCritical</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
     </tr>
     <tr>
       <td colspan="3">
-        <ul>
-          <li>An array of levels to log to the extension log.</li>
-          <li>Available levels:
-            <ul>
-              <li><code>"info"</code></li>
-              <li><code>"error"</code></li>
-              <li><code>"command"</code></li>
-              <li><code>"critical"</code></li>
-            </ul>
-          </li>
-        </ul>
+        Log non-critical messages to the <em>Extension: gitblame</em> output
       </td>
     </tr>
     <tr>
@@ -168,12 +159,12 @@ See Git Blame information in the status bar for the currently selected line.
 | `${commit.hash_short,length}` | Yes | `length` | 7 | the first `length` characters of the 40-bit hash unique to the commit |
 | `${commit.summary}` | No | - | - | the first line of the commit message |
 | `${author.name}` | No | - | - | the commit author's name |
-| `${author.email}` | No | - | - | the commit author's e-mail |
+| `${author.mail}` | No | - | - | the commit author's e-mail |
 | `${author.timestamp}` | No | - | - | timestamp for the commit author's commit |
 | `${author.tz}` | No | - | - | the commit author's time zone |
 | `${author.date}` | No | - | - | the commit author's date (ex: 1990-09-16) |
 | `${committer.name}` | No | - | - | the committer's name |
-| `${committer.email}` | No | - | - | the committer's e-mail |
+| `${committer.mail}` | No | - | - | the committer's e-mail |
 | `${committer.timestamp}` | No | - | - | timestamp for the committer's commit |
 | `${committer.tz}` | No | - | - | the committer's time zone |
 | `${committer.date}` | No | - | - | the committer's date (ex: Sep 16 1990) |
@@ -183,3 +174,7 @@ See Git Blame information in the status bar for the currently selected line.
 # [Planned Features](https://github.com/Sertion/vscode-gitblame/labels/Planned)
 
 # [Known Issues](https://github.com/Sertion/vscode-gitblame/issues)
+
+# Acknowledgements
+
+* Logo by [Jason Long](https://twitter.com/jasonlong).

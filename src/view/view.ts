@@ -1,11 +1,9 @@
 import {
     StatusBarAlignment,
     StatusBarItem,
-    window,
 } from "vscode";
 import {
-    container,
-    singleton,
+    container, inject, injectable,
 } from "tsyringe";
 
 import { Property } from "../util/property";
@@ -14,15 +12,26 @@ import {
     GitCommitInfo,
     isBlankCommit,
 } from "../git/util/blanks";
+import { StatusBarItemFactory } from "./statusbar-item-factory";
 
-@singleton()
-export class StatusBarView {
+export interface StatusBarView {
+    clear(): void;
+    update(commitInfo: GitCommitInfo): void;
+    startProgress(): void;
+    dispose(): void;
+}
+
+@injectable()
+export class StatusBarViewImpl implements StatusBarView {
     private readonly statusBarItem: StatusBarItem;
 
-    public constructor() {
-        this.statusBarItem = window.createStatusBarItem(
+    public constructor(
+        @inject("StatusBarItemFactory") itemFactory: StatusBarItemFactory,
+    ) {
+        this.statusBarItem = itemFactory.createStatusBarItem(
             StatusBarAlignment.Left,
-            container.resolve(Property).get("statusBarPositionPriority"),
+            container.resolve<Property>("Property")
+                .get("statusBarPositionPriority"),
         );
     }
 
@@ -31,7 +40,7 @@ export class StatusBarView {
     }
 
     public update(commitInfo: GitCommitInfo): void {
-        if (commitInfo && !commitInfo.generated) {
+        if (!commitInfo.generated) {
             const clickable = !isBlankCommit(commitInfo);
 
             this.setText(TextDecorator.toTextView(commitInfo), clickable);
@@ -48,7 +57,7 @@ export class StatusBarView {
         this.statusBarItem.dispose();
     }
 
-    private setText(text: string, hasCommand: boolean = false): void {
+    private setText(text: string, hasCommand = false): void {
         this.statusBarItem.text = `$(git-commit) ${text}`.trim();
 
         if (hasCommand) {
