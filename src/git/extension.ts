@@ -312,10 +312,10 @@ export class GitExtensionImpl implements GitExtension {
         const commitUrl = properties.get("commitUrl") || "";
         const remoteName = properties.get("remoteName") || "origin";
 
-        const remote = getRemoteUrl(remoteName);
+        const remote = await getRemoteUrl(remoteName);
         const origin = await getOriginOfActiveFile(remoteName);
         const projectName = this.projectNameFromOrigin(origin);
-        const remoteUrl = stripGitRemoteUrl(await remote);
+        const remoteUrl = stripGitRemoteUrl(remote);
         const parsedUrl = TextDecorator.parseTokens(commitUrl, {
             "hash": (): string => commitInfo.hash,
             "project.name": (): string => projectName,
