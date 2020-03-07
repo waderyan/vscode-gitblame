@@ -1,5 +1,9 @@
 # Change Log
 
+## 3.2.0 (March 07, 2020)
+* Feature: Move to new build system with fewer dependencies
+* Feature: No longer bundle the feature gif into the install package
+
 ## 3.1.0 (February 23, 2020)
 * Bug: Extension host crashing when renaming file [#59](https://github.com/Sertion/vscode-gitblame/issues/59) (Thanks to [pierznj](https://github.com/pierznj))
 * Bug: Git command not found [#67](https://github.com/Sertion/vscode-gitblame/issues/67) (Thanks to [MarcMenghin](https://github.com/MarcMenghin))

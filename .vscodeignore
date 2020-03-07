@@ -2,9 +2,14 @@
 out/**
 test/**
 src/**
+types/**
 **/*.map
 .gitignore
+.eslintrc
 .eslintignore
+.travis.yml
 tsconfig.json
+package-lock.json
 node_modules
-webpack.config.js
+rollup.config.js
+**/GitBlamePreview.gif
