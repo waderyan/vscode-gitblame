@@ -28,7 +28,7 @@
   "scripts": {
     "vscode:prepublish": "npm run build",
     "build": "rollup -c",
-    "test-build": "tsc -p ./",
+    "test-build": "tsc -p tsconfig.test.json",
     "package": "vsce package",
     "lint": "eslint --no-inline-config --ext .js,.ts ./src ./test",
     "test": "npm run test-build && node ./out/test/run-test.js"
