@@ -1,4 +1,4 @@
-import { ExecException, execFile, ExecOptions } from "child_process";
+import { ChildProcess, execFile, ExecOptions } from "child_process";
 
 import { ErrorHandler } from "./errorhandler";
 import { container } from "tsyringe";
@@ -12,56 +12,36 @@ export interface Executor {
 }
 
 export class ExecutorImpl implements Executor {
-    public execute(
+    public async execute(
         command: string,
         args: string[],
         options: ExecOptions = {},
     ): Promise<string> {
-        return new Promise((resolve): void => {
-            container.resolve<ErrorHandler>("ErrorHandler")
-                .logCommand(`${command} ${args.join(" ")}`);
+        container.resolve<ErrorHandler>("ErrorHandler")
+            .logCommand(`${command} ${args.join(" ")}`);
 
-            execFile(
+        let execution: ChildProcess;
+
+        try {
+            execution = execFile(
                 command,
                 args,
-                options,
-                this.execFileCallback(command, resolve),
+                { ...options, encoding: "utf8" },
             );
-        });
-    }
-
-    private execFileCallback(
-        command: string,
-        resolve: (result: string) => void,
-    ): (
-            error: ExecException | null,
-            stdout: string,
-            stderr: string,
-        ) => void {
-        return (
-            error: ExecException | null,
-            stdout: string,
-            stderr: string,
-        ): void => {
-            if (!error) {
-                resolve(stdout);
-                return;
+            if (execution.stdout === null) {
+                return "";
             }
+        } catch (err) {
+            container.resolve<ErrorHandler>("ErrorHandler").logError(err);
+            return "";
+        }
 
-            if (error.code?.toString() === "ENOENT") {
-                const message = `${
-                    command
-                }: No such file or directory. (ENOENT)`;
-                container.resolve<ErrorHandler>("ErrorHandler")
-                    .logCritical(error, message);
-                resolve("");
-                return;
-            }
+        let data = "";
 
-            container.resolve<ErrorHandler>("ErrorHandler")
-                .logError(new Error(stderr));
-            resolve("");
-            return;
-        };
+        for await (const chunk of execution.stdout) {
+            data += chunk;
+        }
+
+        return data.trim();
     }
 }
