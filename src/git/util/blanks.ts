@@ -5,7 +5,6 @@ export interface GitCommitAuthor {
     mail: string;
     timestamp: number;
     tz: string;
-    temporary?: true;
 }
 
 export interface GitCommitInfo {

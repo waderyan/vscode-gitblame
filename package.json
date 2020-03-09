@@ -24,7 +24,7 @@
     "blame"
   ],
   "qna": false,
-  "main": "./dist/bundle",
+  "main": "./dist/index",
   "scripts": {
     "vscode:prepublish": "npm run build",
     "build": "rollup -c",

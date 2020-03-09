@@ -1,6 +1,7 @@
 # Change Log
 
-## 3.2.0 (March 07, 2020)
+## 3.2.0 (March 09, 2020)
+* Bug: No longer show a critical error when trying to blame a removed file [#78](https://github.com/Sertion/vscode-gitblame/issues/78) (Thanks to [Marius van Witzenburg](https://github.com/mariusvw))
 * Feature: Move to new build system with fewer dependencies
 * Feature: No longer bundle the feature gif into the install package
 

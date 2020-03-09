@@ -58,16 +58,21 @@ export async function getOriginOfActiveFile(
         return "";
     }
 
-    const gitCommand = await getGitCommand();
-    const activeFile = activeEditor.document.fileName;
-    const activeFileFolder = dirname(activeFile);
-    const originUrl = await execute(
-        gitCommand,
-        ["ls-remote", "--get-url", remoteName],
-        activeFileFolder,
-    );
+    try {
+        const gitCommand = await getGitCommand();
+        const activeFile = activeEditor.document.fileName;
+        const activeFileFolder = dirname(activeFile);
+        const originUrl = await execute(
+            gitCommand,
+            ["ls-remote", "--get-url", remoteName],
+            activeFileFolder,
+        );
 
-    return originUrl.trim();
+        return originUrl.trim();
+    } catch (e) {
+        container.resolve<ErrorHandler>("ErrorHandler").logError(e);
+        return "";
+    }
 }
 
 export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
@@ -78,42 +83,52 @@ export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
         return "";
     }
 
-    const gitCommand = await getGitCommand();
-    const activeFileFolder = dirname(activeEditor.document.fileName);
-    const currentBranch = await execute(gitCommand, [
-            "symbolic-ref",
-            "-q",
-            "--short",
-            "HEAD",
-        ], activeFileFolder);
-    const curRemote = await execute(gitCommand, [
-            "config",
-            "--local",
-            "--get",
-            `branch.${ currentBranch.trim() }.remote`,
-        ], activeFileFolder);
-    const remoteUrl = await execute(gitCommand, [
-            "config",
-            "--local",
-            "--get",
-            `remote.${ curRemote.trim() || fallbackRemote }.url`,
-        ], activeFileFolder);
+    try {
+        const gitCommand = await getGitCommand();
+        const activeFileFolder = dirname(activeEditor.document.fileName);
+        const currentBranch = await execute(gitCommand, [
+                "symbolic-ref",
+                "-q",
+                "--short",
+                "HEAD",
+            ], activeFileFolder);
+        const curRemote = await execute(gitCommand, [
+                "config",
+                "--local",
+                "--get",
+                `branch.${ currentBranch.trim() }.remote`,
+            ], activeFileFolder);
+        const remoteUrl = await execute(gitCommand, [
+                "config",
+                "--local",
+                "--get",
+                `remote.${ curRemote.trim() || fallbackRemote }.url`,
+            ], activeFileFolder);
 
-    return remoteUrl.trim();
+        return remoteUrl.trim();
+    } catch (e) {
+        container.resolve<ErrorHandler>("ErrorHandler").logError(e);
+        return "";
+    }
 }
 
 export async function getWorkTree(fileName: string): Promise<string> {
     const gitCommand = await getGitCommand();
-    const workTree = await execute(
-            gitCommand,
-            ["rev-parse", "--show-toplevel"],
-            dirname(fileName),
-        );
+    try {
+        const workTree = await execute(
+                gitCommand,
+                ["rev-parse", "--show-toplevel"],
+                dirname(fileName),
+            );
 
-    if (workTree.trim() === "") {
+        if (workTree.trim() === "") {
+            return "";
+        } else {
+            return normalize(workTree.trim());
+        }
+    } catch (e) {
+        container.resolve<ErrorHandler>("ErrorHandler").logError(e);
         return "";
-    } else {
-        return normalize(workTree.trim());
     }
 }
 

@@ -26,11 +26,11 @@ export class GitFilePhysical implements GitFile {
     public async blame(): Promise<GitBlameInfo> {
         container.resolve<StatusBarView>("StatusBarView").startProgress();
 
-        if (this.blameInfoPromise) {
-            return this.blameInfoPromise;
-        } else {
-            return this.findBlameInfo();
+        if (this.blameInfoPromise === undefined) {
+            this.blameInfoPromise = this.findBlameInfo();
         }
+
+        return this.blameInfoPromise;
     }
 
     public dispose(): void {
@@ -63,53 +63,30 @@ export class GitFilePhysical implements GitFile {
     private async findBlameInfo(): Promise<GitBlameInfo> {
         container.resolve<StatusBarView>("StatusBarView").startProgress();
 
-        this.blameInfoPromise = new Promise<GitBlameInfo>(
-            (resolve): void => {
-                this.blameProcess(resolve)
-                    .catch((err): void => {
-                        this.gitStreamError(err, resolve);
-                    });
-            },
-        );
-
-        return this.blameInfoPromise;
-    }
-
-    private async blameProcess(
-        resolve: (info: GitBlameInfo) => void,
-    ): Promise<void> {
-        const blameInfo = blankBlameInfo();
+        const { commits, lines } = blankBlameInfo();
         const blamer = container.resolve<GitBlameStream>("GitBlameStream");
-        const blameStream = blamer.blame(this.fileName);
-        let reachedDone = false;
 
-        while (!reachedDone) {
-            const {done, value} = await blameStream.next(this.terminate);
+        try {
+            const blameStream = blamer.blame(this.fileName);
+            let reachedDone = false;
 
-            if (done || value === undefined) {
-                reachedDone = true;
-                this.gitStreamOver(resolve, blameInfo);
-            } else if (value.type === "commit") {
-                blameInfo.commits[value.hash] = value.info;
-            } else {
-                blameInfo.lines[value.line] = value.hash;
+            while (!reachedDone) {
+                const {done, value} = await blameStream.next(this.terminate);
+
+                if (done || value === undefined) {
+                    reachedDone = true;
+                } else if (value.type === "commit") {
+                    commits[value.hash] = value.info;
+                } else {
+                    lines[value.line] = value.hash;
+                }
             }
+        } catch (err) {
+            container.resolve<ErrorHandler>("ErrorHandler").logError(err);
+            return blankBlameInfo();
         }
-    }
 
-    private gitStreamError(
-        err: Error,
-        resolve: (info: GitBlameInfo) => void,
-    ): void {
-        container.resolve<ErrorHandler>("ErrorHandler").logError(err);
-        resolve(blankBlameInfo());
-    }
-
-    private gitStreamOver(
-        resolve: (info: GitBlameInfo) => void,
-        blameInfo: GitBlameInfo,
-    ): void {
-        const numberOfCommits = Object.keys(blameInfo.commits).length;
+        const numberOfCommits = Object.keys(commits).length;
         container.resolve<ErrorHandler>("ErrorHandler").logInfo(
             `Blamed file "${
                 this.fileName
@@ -117,6 +94,7 @@ export class GitFilePhysical implements GitFile {
                 numberOfCommits
             } commits`,
         );
-        resolve(blameInfo);
+
+        return { commits, lines };
     }
 }
