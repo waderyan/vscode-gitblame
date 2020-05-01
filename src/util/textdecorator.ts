@@ -31,7 +31,7 @@ export interface InfoTokenNormalizedCommitInfo extends InfoTokens {
     "author.date": () => string;
     "commit.hash": () => string;
     "commit.hash_short": (length: string) => string;
-    "commit.summary": () => string;
+    "commit.summary": (length: string) => string;
     "committer.mail": () => string;
     "committer.name": () => string;
     "committer.timestamp": () => string;
@@ -41,11 +41,6 @@ export interface InfoTokenNormalizedCommitInfo extends InfoTokens {
     "time.c_ago": () => string;
     "time.c_from": () => string;
     "time.from": () => string;
-
-    // Deprecated
-    "commit.filename": () => string;
-    "time.custom": () => string;
-    "time.c_custom": () => string;
 }
 
 interface TokenReplaceGroup {
@@ -169,9 +164,12 @@ export class TextDecorator {
         const cAgo = valueFrom(TextDecorator.toDateText(now, committerTime));
         const authorDate = valueFrom(authorTime.toISOString().slice(0, 10));
         const cDate = valueFrom(committerTime.toISOString().slice(0, 10));
-        const hashShort = (length = '7'): string => {
-            const cutoffPoint = length.toString();
-            return commit.hash.substr(
+        const shortness = (
+            target: string,
+            fallbackLength: string,
+        ) => (length: string): string => {
+            const cutoffPoint = (length || fallbackLength).toString();
+            return target.substr(
                 0,
                 parseInt(cutoffPoint, 10),
             );
@@ -184,8 +182,8 @@ export class TextDecorator {
             "author.tz": valueFrom(commit.author.tz),
             "author.date": authorDate,
             "commit.hash": valueFrom(commit.hash),
-            "commit.hash_short": hashShort,
-            "commit.summary": valueFrom(commit.summary),
+            "commit.hash_short": shortness(commit.hash, '7'),
+            "commit.summary": shortness(commit.summary, '65536'),
             "committer.mail": valueFrom(commit.committer.mail),
             "committer.name": valueFrom(commit.committer.name),
             "committer.timestamp": valueFrom(commit.committer.timestamp),
@@ -195,15 +193,6 @@ export class TextDecorator {
             "time.c_ago": cAgo,
             "time.from": ago,
             "time.c_from": cAgo,
-
-            // Deprecated
-            "commit.filename": valueFrom("(commit.filename is deprecated)"),
-            "time.custom": valueFrom(
-                `${authorTime.toUTCString()} (time.custom is deprecated)`,
-            ),
-            "time.c_custom": valueFrom(
-                `${committerTime.toUTCString()} (time.c_custom is deprecated)`,
-            ),
         };
     }
 }

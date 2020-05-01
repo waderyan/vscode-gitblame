@@ -1,5 +1,9 @@
 # Change Log
 
+## 4.0.0 (May 01, 2020)
+* Deprication: Removing all depricated message token
+* Feature: It is now able to limit the length of the summary [#81](https://github.com/Sertion/vscode-gitblame/issues/81) (Thanks to [Diab Neiroukh](https://github.com/lazerl0rd))
+
 ## 3.2.0 (March 09, 2020)
 * Bug: No longer show a critical error when trying to blame a removed file [#78](https://github.com/Sertion/vscode-gitblame/issues/78) (Thanks to [Marius van Witzenburg](https://github.com/mariusvw))
 * Feature: Move to new build system with fewer dependencies
