@@ -47,7 +47,7 @@ export class GitBlameStreamImpl implements GitBlameStream
         }
 
         for await (const chunk of this.process.stdout) {
-            const terminate = yield* this.processChunk(chunk.toString());
+            const terminate = yield* this.processChunk(String(chunk));
 
             if (terminate) {
                 return this.terminate();
@@ -71,7 +71,8 @@ export class GitBlameStreamImpl implements GitBlameStream
 
     private * processChunk(
         dataChunk: string,
-    ): Generator<BlamedCommit | BlamedLine> {
+    ): Generator<BlamedCommit | BlamedLine, boolean, boolean> {
+        let terminate = false;
         const lines = dataChunk.split("\n");
         let commitInfo = blankCommitInfo();
 
@@ -80,22 +81,34 @@ export class GitBlameStreamImpl implements GitBlameStream
                 const [key, value] = split(line);
 
                 if (this.newCommit(key, lines[index + 1], commitInfo)) {
-                    yield* this.commitDeduplicator(commitInfo);
+                    const nextParam = yield* this.commitDeduplicator(
+                        commitInfo,
+                    );
                     commitInfo = blankCommitInfo(true);
+
+                    terminate = terminate || nextParam;
                 }
 
-                yield* this.processLine(key, value, commitInfo);
+                const nextParam = yield* this.processLine(
+                    key,
+                    value,
+                    commitInfo,
+                );
+
+                terminate = terminate || nextParam;
             }
         }
 
-        yield* this.commitDeduplicator(commitInfo);
+        const nextParam = yield* this.commitDeduplicator(commitInfo);
+
+        return terminate || nextParam;
     }
 
     private * processLine(
         hashOrKey: string,
         value: string,
         commitInfo: GitCommitInfo,
-    ): Generator<BlamedLine> {
+    ): Generator<BlamedLine, boolean, boolean> {
         if (hashOrKey === "summary") {
             commitInfo.summary = value;
         } else if (this.isHash(hashOrKey)) {
@@ -103,10 +116,16 @@ export class GitBlameStreamImpl implements GitBlameStream
 
             const [, finalLine, lines] = value.split(" ").map(Number);
 
-            yield* this.lineGroupToIndividualLines(hashOrKey, lines, finalLine);
+            return yield* this.lineGroupToIndividualLines(
+                hashOrKey,
+                lines,
+                finalLine,
+            );
         } else {
             this.processAuthorLine(hashOrKey, value, commitInfo);
         }
+
+        return false;
     }
 
     private processAuthorLine(
@@ -127,28 +146,35 @@ export class GitBlameStreamImpl implements GitBlameStream
         hash: string,
         lines: number,
         finalLine: number,
-    ): Generator<BlamedLine> {
+    ): Generator<BlamedLine, boolean, boolean> {
+        let terminate = false;
         for (let i = 0; i < lines; i++) {
-            yield {
+            const nextParam = yield {
                 type: "line",
                 line: finalLine + i,
                 hash,
             };
+
+            terminate = terminate || nextParam;
         }
+
+        return terminate;
     }
 
     private * commitDeduplicator(
         commitInfo: GitCommitInfo,
-    ): Generator<BlamedCommit> {
+    ): Generator<BlamedCommit, boolean, boolean> {
         if (this.emittedCommits.has(commitInfo.hash) === false) {
             this.emittedCommits.add(commitInfo.hash);
 
-            yield {
+            return yield {
                 type: "commit",
                 info: commitInfo,
                 hash: commitInfo.hash,
             };
         }
+
+        return false;
     }
 
     private newCommit(
