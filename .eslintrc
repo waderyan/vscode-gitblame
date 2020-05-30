@@ -61,12 +61,6 @@
                 "argsIgnorePattern": "^_"
             }
         ],
-        "@typescript-eslint/no-unnecessary-condition": [
-            "error",
-            {
-                "ignoreRhs": true
-            }
-        ],
         "no-trailing-spaces": "error",
         "max-params": "error",
         "no-eq-null": "error",

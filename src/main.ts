@@ -17,25 +17,25 @@ export function activate(context: ExtensionContext): void {
         const blameCommand = commands.registerCommand(
             "gitblame.quickInfo",
             (): void => {
-                app.showMessage();
+                void app.showMessage();
             },
         );
         const linkCommand = commands.registerCommand(
             "gitblame.online",
             (): void => {
-                app.blameLink();
+                void app.blameLink();
             },
         );
         const copyHashCommand = commands.registerCommand(
             "gitblame.addCommitHashToClipboard",
             (): void => {
-                app.copyHash();
+                void app.copyHash();
             },
         );
         const copyToolUrl = commands.registerCommand(
             "gitblame.addToolUrlToClipboard",
             (): void => {
-                app.copyToolUrl();
+                void app.copyToolUrl();
             },
         );
 

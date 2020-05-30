@@ -6,17 +6,17 @@ const cache: Set<symbol> = new Set();
  *
  * @param timeout in milliseconds
  */
-export function throttleFunction<T>(timeout: number): (
+export function throttleFunction<T, R = void>(timeout: number): (
     target: T ,
     propertyKey: string,
-    descriptor: TypedPropertyDescriptor<() => Promise<void>>,
+    descriptor: TypedPropertyDescriptor<() => Promise<R | undefined>>,
 ) => void {
     return (
         _target: T,
         _propertyKey: string,
         descriptor: TypedPropertyDescriptor<(
             ...args: unknown[]
-        ) => Promise<void>>,
+        ) => Promise<R | undefined>>,
     ): void => {
 
         if (descriptor.value === undefined) {
@@ -26,16 +26,16 @@ export function throttleFunction<T>(timeout: number): (
         const oldMethod = descriptor.value;
         const identifier = Symbol();
 
-        descriptor.value = function(...args: unknown[]): Promise<void> {
+        descriptor.value = async function(
+            ...args: unknown[]
+        ): Promise<R | undefined> {
             if (!cache.has(identifier)) {
-                oldMethod.call(this, args);
                 cache.add(identifier);
                 setTimeout((): void => {
                     cache.delete(identifier);
                 }, timeout);
+                return oldMethod.call(this, args);
             }
-
-            return Promise.resolve();
         };
     };
 }

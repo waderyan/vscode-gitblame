@@ -57,7 +57,7 @@ export class ErrorHandlerImpl implements ErrorHandler {
             Level.Critical,
             error.toString(),
         );
-        this.showErrorMessage(message);
+        void this.showErrorMessage(message);
     }
 
     public dispose(): void {

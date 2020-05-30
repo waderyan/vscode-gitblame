@@ -86,6 +86,11 @@ export class GitFilePhysical implements GitFile {
             return blankBlameInfo();
         }
 
+        if (this.terminate) {
+            // Don't return partial git blame info when terminating a blame
+            return blankBlameInfo();
+        }
+
         const numberOfCommits = Object.keys(commits).length;
         container.resolve<ErrorHandler>("ErrorHandler").logInfo(
             `Blamed file "${

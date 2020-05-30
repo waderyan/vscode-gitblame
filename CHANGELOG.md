@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.1.0 (May 30, 2020)
+* Feature: Improve time ago estimate [#83](https://github.com/Sertion/vscode-gitblame/pull/83) (Thanks to [Ben Langlois](https://github.com/BenLanglois))
+* Bug: Refixing [#3](https://github.com/Sertion/vscode-gitblame/issues/3)
+* Fix: Updating dependencies
+* Fix: Updated linters means pushing around code
+
 ## 4.0.1 (May 13, 2020)
 * Bug: Undocumented change to [StatusBarItem api](https://code.visualstudio.com/api/references/vscode-api#StatusBarItem) [#82](https://github.com/Sertion/vscode-gitblame/issues/82) (Thanks to [Mike MacCana](https://github.com/mikemaccana))
 

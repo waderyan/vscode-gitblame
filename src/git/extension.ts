@@ -76,10 +76,10 @@ export class GitExtensionImpl implements GitExtension {
         const commitToolUrl = await this.getToolUrl(commitInfo);
 
         if (commitToolUrl) {
-            container.resolve<Command>("Command")
+            await container.resolve<Command>("Command")
                 .execute("vscode.open", commitToolUrl);
         } else {
-            container.resolve<MessageService>("MessageService").showError(
+            void container.resolve<MessageService>("MessageService").showError(
                 "Missing gitblame.commitUrl configuration value.",
             );
         }
@@ -129,7 +129,7 @@ export class GitExtensionImpl implements GitExtension {
         try {
             await container.resolve<Clipboard>("Clipboard")
                 .write(commitInfo.hash);
-            container.resolve<MessageService>("MessageService")
+            void container.resolve<MessageService>("MessageService")
                 .showInfo("Copied hash to clipboard");
         } catch (err) {
             container.resolve<ErrorHandler>("ErrorHandler").logCritical(
@@ -149,18 +149,18 @@ export class GitExtensionImpl implements GitExtension {
             try {
                 await container.resolve<Clipboard>("Clipboard")
                     .write(commitToolUrl.toString());
-                container.resolve<MessageService>("MessageService")
+                void container.resolve<MessageService>("MessageService")
                     .showInfo("Copied tool URL to clipboard");
             } catch (err) {
                 container.resolve<ErrorHandler>("ErrorHandler").logCritical(
                     err,
                     `Unable to copy tool URL to clipboard. URL: ${
-                        commitToolUrl
+                        commitToolUrl.toString()
                     }`,
                 );
             }
         } else {
-            container.resolve<MessageService>("MessageService").showError(
+            void container.resolve<MessageService>("MessageService").showError(
                 "Missing gitblame.commitUrl configuration value.",
             );
         }
@@ -208,17 +208,17 @@ export class GitExtensionImpl implements GitExtension {
         disposables.push(
             editorEvents.changeActiveEditor(
                 (): void => {
-                    this.onTextEditorMove();
+                    void this.onTextEditorMove();
                 },
             ),
             editorEvents.changeSelection(
                 (): void => {
-                    this.onTextEditorMove()
+                    void this.onTextEditorMove()
                 },
             ),
             editorEvents.saveDocument(
                 (): void => {
-                    this.onTextEditorMove();
+                    void this.onTextEditorMove();
                 },
             ),
             editorEvents.closeDocument(
@@ -232,7 +232,7 @@ export class GitExtensionImpl implements GitExtension {
     }
 
     private init(): void {
-        this.onTextEditorMove();
+        void this.onTextEditorMove();
     }
 
     @throttleFunction<GitExtension>(16)
@@ -262,7 +262,7 @@ export class GitExtensionImpl implements GitExtension {
     }
 
     private onCloseTextDocument(document: PartialDocument): void {
-        this.blame.removeDocument(document);
+        void this.blame.removeDocument(document);
     }
 
     private async generateMessageActions(
@@ -278,7 +278,7 @@ export class GitExtensionImpl implements GitExtension {
             viewOnlineAction.setTitle(TITLE_VIEW_ONLINE);
 
             viewOnlineAction.setAction((): void => {
-                container.resolve<Command>("Command")
+                void container.resolve<Command>("Command")
                     .execute("vscode.open", commitToolUrl);
             });
 
@@ -292,7 +292,7 @@ export class GitExtensionImpl implements GitExtension {
         const commitInfo = await this.getCurrentLineInfo();
 
         if (commitInfo.generated) {
-            container.resolve<MessageService>("MessageService").showError(
+            void container.resolve<MessageService>("MessageService").showError(
                 "The current file and line can not be blamed.",
             );
         }
@@ -328,7 +328,7 @@ export class GitExtensionImpl implements GitExtension {
         } else if (parsedUrl === '' && inferCommitUrl) {
             return this.getDefaultToolUrl(origin, commitInfo);
         } else {
-            container.resolve<MessageService>("MessageService").showError(
+            void container.resolve<MessageService>("MessageService").showError(
                 `Malformed URL in gitblame.commitUrl. ` +
                     `Currently expands to: '${ parsedUrl }'`,
             );

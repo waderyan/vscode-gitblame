@@ -21,7 +21,7 @@ export interface GitBlame {
 }
 
 export class GitBlameImpl implements GitBlame {
-    private readonly files: Map<PartialDocument, Promise<GitFile>> = new Map();
+    private readonly files = new Map<PartialDocument, Promise<GitFile>>();
 
     public async blameLine(
         document: PartialDocument,
@@ -52,13 +52,13 @@ export class GitBlameImpl implements GitBlame {
 
     public dispose(): void {
         this.files.forEach((_gitFile, document): void => {
-            this.removeDocument(document);
+            void this.removeDocument(document);
         });
     }
 
     public createRemovalFunction(document: PartialDocument): () => void {
         return (): void => {
-            this.removeDocument(document);
+            void this.removeDocument(document);
         }
     }
 

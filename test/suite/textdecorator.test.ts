@@ -113,7 +113,11 @@ suite("Token Parser", (): void => {
     const normalizedInfo: InfoTokens = {
         "example.token": (): string => "example-token",
         "value": (value?: string): string => {
-            return `${ value }-example`;
+            if (value) {
+                return `${ value }-example`;
+            } else {
+                return `-example`;
+            }
         },
         "mixed.token": (): string => "mIxeD-ToKeN",
     };

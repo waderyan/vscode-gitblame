@@ -61,18 +61,19 @@ suite("Commands", (): void => {
     teardown((): void => {
         // Reset all spies
         [
-            gitBlame,
-            clipboard,
-            execcommand,
-            messages,
-            activeTextEditor,
-            extension,
-            command,
-            property,
+            gitBlame.blameLineSpy,
+            gitBlame.disposeSpy,
+            gitBlame.removeDocumentSpy,
+            clipboard.writeSpy,
+            execcommand.executeSpy,
+            messages.showErrorSpy,
+            messages.showInfoSpy,
+            activeTextEditor.getSpy,
+            extension.apiSpy,
+            command.executeSpy,
+            property.propertySpy,
         ]
-            .flatMap((e) => Object.values(e))
-            .filter((w): w is SinonSpy => "resetHistory" in w)
-            .forEach((aSpy): void => aSpy.resetHistory());
+            .forEach((aSpy: SinonSpy): void => aSpy.resetHistory());
     });
 
     suite("gitblame.addCommitHashToClipboard", (): void => {
