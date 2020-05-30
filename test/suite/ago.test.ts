@@ -5,21 +5,10 @@ import {
     hoursBetween,
     minutesBetween,
     monthsBetween,
-    secondsBetween,
     yearsBetween,
 } from "../../src/util/ago";
 
 suite("Ago", (): void => {
-    test("Seconds", (): void => {
-        assert.equal(
-            secondsBetween(
-                new Date("1970-06-06 10:00:00"),
-                new Date("1970-06-06 10:00:20"),
-            ),
-            -20,
-        );
-    });
-
     test("Minutes", (): void => {
         assert.equal(
             minutesBetween(

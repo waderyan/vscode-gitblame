@@ -81,18 +81,18 @@ export class TextDecorator {
         const hours = hoursBetween(dateNow, dateThen);
         const minutes = minutesBetween(dateNow, dateThen);
 
-        if (years >= 1) {
-            return pluralText(years, "year", "years") + " ago";
-        } else if (months >= 1) {
-            return pluralText(months, "month", "months") + " ago";
-        } else if (days >= 1) {
-            return pluralText(days, "day", "days") + " ago";
-        } else if (hours >= 1) {
-            return pluralText(hours, "hour", "hours") + " ago";
-        } else if (minutes >= 5) {
-            return `${minutes} minutes ago`;
-        } else {
+        if (minutes < 5) {
             return "right now";
+        } else if (minutes < 60) {
+            return `${minutes} minutes ago`;
+        } else if (hours < 24) {
+            return pluralText(hours, "hour", "hours") + " ago";
+        } else if (days < 31) {
+            return pluralText(days, "day", "days") + " ago";
+        } else if (months < 12) {
+            return pluralText(months, "month", "months") + " ago";
+        } else {
+            return pluralText(years, "year", "years") + " ago";
         }
     }
 

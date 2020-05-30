@@ -14,67 +14,33 @@ suite("Date Calculations", (): void => {
             ),
             "1 year ago",
         );
+        assert.equal(
+            TextDecorator.toDateText(
+                new Date(2015, 1),
+                new Date(2005, 1),
+            ),
+            "10 years ago",
+        );
     });
 
     test("Time ago in months", (): void => {
         assert.equal(
             TextDecorator.toDateText(
-                new Date(2015, 4),
                 new Date(2015, 1),
-            ),
-            "3 months ago",
-        );
-
-        assert.equal(
-            TextDecorator.toDateText(
-                new Date(2015, 2, 10),
-                new Date(2015, 1),
+                new Date(2015, 0),
             ),
             "1 month ago",
+        );
+        assert.equal(
+            TextDecorator.toDateText(
+                new Date(2015, 11, 10),
+                new Date(2015, 0),
+            ),
+            "11 months ago",
         );
     });
 
     test("Time ago in days", (): void => {
-        assert.equal(
-            TextDecorator.toDateText(
-                new Date(2015, 1, 5),
-                new Date(2015, 1, 1),
-            ),
-            "4 days ago",
-        );
-    });
-
-    test("Time ago in hours", (): void => {
-        assert.equal(
-            TextDecorator.toDateText(
-                new Date(2015, 1, 1, 3, 0, 0),
-                new Date(2015, 1, 1, 1, 0, 0),
-            ),
-            "2 hours ago",
-        );
-    });
-
-    test("Time ago in minutes", (): void => {
-        assert.equal(
-            TextDecorator.toDateText(
-                new Date(2015, 1, 1, 1, 29, 0),
-                new Date(2015, 1, 1, 1, 0, 0),
-            ),
-            "29 minutes ago",
-        );
-    });
-
-    test("Right now", (): void => {
-        assert.equal(
-            TextDecorator.toDateText(
-                new Date(2015, 1, 1, 1, 1, 0),
-                new Date(2015, 1, 1, 1, 0, 0),
-            ),
-            "right now",
-        );
-    });
-
-    test("Correct pluralisation", (): void => {
         assert.equal(
             TextDecorator.toDateText(
                 new Date(2015, 1, 2),
@@ -82,15 +48,16 @@ suite("Date Calculations", (): void => {
             ),
             "1 day ago",
         );
-
         assert.equal(
             TextDecorator.toDateText(
-                new Date(2015, 1, 3),
+                new Date(2015, 1, 31),
                 new Date(2015, 1, 1),
             ),
-            "2 days ago",
+            "30 days ago",
         );
+    });
 
+    test("Time ago in hours", (): void => {
         assert.equal(
             TextDecorator.toDateText(
                 new Date(2015, 1, 1, 1, 0, 0),
@@ -100,18 +67,44 @@ suite("Date Calculations", (): void => {
         );
         assert.equal(
             TextDecorator.toDateText(
-                new Date(2015, 1, 1, 2, 0, 0),
+                new Date(2015, 1, 1, 23, 29, 0),
                 new Date(2015, 1, 1, 0, 0, 0),
             ),
-            "2 hours ago",
+            "23 hours ago",
         );
+    });
 
+    test("Time ago in minutes", (): void => {
         assert.equal(
             TextDecorator.toDateText(
-                new Date(2015, 1, 1, 1, 6, 0),
+                new Date(2015, 1, 1, 1, 5, 0),
                 new Date(2015, 1, 1, 1, 0, 0),
             ),
-            "6 minutes ago",
+            "5 minutes ago",
+        );
+        assert.equal(
+            TextDecorator.toDateText(
+                new Date(2015, 1, 1, 1, 59, 29),
+                new Date(2015, 1, 1, 1, 0, 0),
+            ),
+            "59 minutes ago",
+        );
+    });
+
+    test("Right now", (): void => {
+        assert.equal(
+            TextDecorator.toDateText(
+                new Date(2015, 1, 1, 1, 0, 1),
+                new Date(2015, 1, 1, 1, 0, 0),
+            ),
+            "right now",
+        );
+        assert.equal(
+            TextDecorator.toDateText(
+                new Date(2015, 1, 1, 1, 4, 29),
+                new Date(2015, 1, 1, 1, 0, 0),
+            ),
+            "right now",
         );
     });
 });
