@@ -3,6 +3,7 @@ import { container } from "tsyringe";
 import {
     Disposable,
     Extension,
+    Uri,
 } from "vscode";
 
 import {
@@ -22,6 +23,7 @@ export function initExtensionGetterSpy(): {
                 const api = {
                     id: 'id',
                     extensionPath: '/extension/path',
+                    extensionUri: Uri.parse('/extension/path'),
                     isActive: true,
                     packageJSON: {},
                     extensionKind: 1,

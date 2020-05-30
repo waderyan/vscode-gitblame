@@ -1,5 +1,8 @@
 # Change Log
 
+## 4.0.1 (May 13, 2020)
+* Bug: Undocumented change to [StatusBarItem api](https://code.visualstudio.com/api/references/vscode-api#StatusBarItem) [#82](https://github.com/Sertion/vscode-gitblame/issues/82) (Thanks to [Mike MacCana](https://github.com/mikemaccana))
+
 ## 4.0.0 (May 01, 2020)
 * Deprication: Removing all depricated message token
 * Feature: It is now able to limit the length of the summary [#81](https://github.com/Sertion/vscode-gitblame/issues/81) (Thanks to [Diab Neiroukh](https://github.com/lazerl0rd))

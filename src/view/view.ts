@@ -66,7 +66,7 @@ export class StatusBarViewImpl implements StatusBarView {
         } else {
             this.statusBarItem.tooltip =
                 "git blame - No info about the current line";
-            this.statusBarItem.command = "";
+            this.statusBarItem.command = undefined;
         }
 
         this.statusBarItem.show();
