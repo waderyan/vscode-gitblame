@@ -5,32 +5,32 @@ const DAY = 24 * HOUR;
 const YEAR = 365.25 * DAY;
 const MONTH = YEAR / 12;
 
-function unitsBetween(unit: number, compareTo: Date, now: Date): number {
-    const diffMilliseconds = compareTo.valueOf() - now.valueOf();
+function unitsBetween(unit: number, now: Date, compareTo: Date): number {
+    const diffMilliseconds = now.valueOf() - compareTo.valueOf();
 
     return Math.round(diffMilliseconds / unit);
 }
 
-export function secondsBetween(compareTo: Date, now: Date): number {
-    return unitsBetween(SECOND, compareTo, now);
+export function secondsBetween(now: Date, compareTo: Date): number {
+    return unitsBetween(SECOND, now, compareTo);
 }
 
-export function minutesBetween(compareTo: Date, now: Date): number {
-    return unitsBetween(MINUTE, compareTo, now);
+export function minutesBetween(now: Date, compareTo: Date): number {
+    return unitsBetween(MINUTE, now, compareTo);
 }
 
-export function hoursBetween(compareTo: Date, now: Date): number {
-    return unitsBetween(HOUR, compareTo, now);
+export function hoursBetween(now: Date, compareTo: Date): number {
+    return unitsBetween(HOUR, now, compareTo);
 }
 
-export function daysBetween(compareTo: Date, now: Date): number {
-    return unitsBetween(DAY, compareTo, now);
+export function daysBetween(now: Date, compareTo: Date): number {
+    return unitsBetween(DAY, now, compareTo);
 }
 
-export function monthsBetween(compareTo: Date, now: Date): number {
-    return unitsBetween(MONTH, compareTo, now);
+export function monthsBetween(now: Date, compareTo: Date): number {
+    return unitsBetween(MONTH, now, compareTo);
 }
 
-export function yearsBetween(compareTo: Date, now: Date): number {
-    return unitsBetween(YEAR, compareTo, now);
+export function yearsBetween(now: Date, compareTo: Date): number {
+    return unitsBetween(YEAR, now, compareTo);
 }
