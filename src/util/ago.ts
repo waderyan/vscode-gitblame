@@ -11,10 +11,6 @@ function unitsBetween(unit: number, now: Date, compareTo: Date): number {
     return Math.round(diffMilliseconds / unit);
 }
 
-export function secondsBetween(now: Date, compareTo: Date): number {
-    return unitsBetween(SECOND, now, compareTo);
-}
-
 export function minutesBetween(now: Date, compareTo: Date): number {
     return unitsBetween(MINUTE, now, compareTo);
 }
