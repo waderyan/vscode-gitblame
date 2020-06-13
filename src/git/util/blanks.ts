@@ -13,7 +13,7 @@ export interface GitCommitInfo {
     committer: GitCommitAuthor;
     summary: string;
     filename: string;
-    generated?: true;
+    generated: boolean;
 }
 
 export interface GitCommitInfoArray {
@@ -54,14 +54,10 @@ export function blankCommitInfo(real = false): GitCommitInfo {
         author: emptyAuthor,
         committer: emptyCommitter,
         filename: "",
-        generated: true,
+        generated: !real,
         hash: HASH_NO_COMMIT_GIT,
         summary: "",
     };
-
-    if (real) {
-        delete commitInfo.generated;
-    }
 
     return commitInfo;
 }

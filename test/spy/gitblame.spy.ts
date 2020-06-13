@@ -56,6 +56,7 @@ export function initGitBlameSpy(): {
                         timestamp: 1338,
                         tz: "+0300",
                     },
+                    generated: false,
                     summary: "Fake commit",
                     filename: "fake/file.name",
                 });

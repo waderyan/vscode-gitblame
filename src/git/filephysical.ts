@@ -38,7 +38,7 @@ export class GitFilePhysical implements GitFile {
 
         if (this.clearFromCache) {
             this.clearFromCache();
-            delete this.clearFromCache;
+            this.clearFromCache = undefined;
         }
 
         this.fileSystemWatcher.close();
@@ -57,7 +57,7 @@ export class GitFilePhysical implements GitFile {
     }
 
     private changed(): void {
-        delete this.blameInfoPromise;
+        this.blameInfoPromise = undefined;
     }
 
     private async findBlameInfo(): Promise<GitBlameInfo> {

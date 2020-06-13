@@ -35,7 +35,7 @@ suite("Split", (): void => {
     test("Short second parameter", (): void => {
         assert.throws(
             (): void => {
-                split("bad second argument", "")
+                split("bad second argument", "");
             },
             new Error(`Invalid split character argument ""`),
         );
@@ -43,7 +43,7 @@ suite("Split", (): void => {
     test("Long second parameter", (): void => {
         assert.throws(
             (): void => {
-                split("bad second argument", "long")
+                split("bad second argument", "long");
             },
             new Error(`Invalid split character argument "long"`),
         );
