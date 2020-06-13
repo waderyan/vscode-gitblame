@@ -21,7 +21,7 @@ export interface GitBlame {
 }
 
 export class GitBlameImpl implements GitBlame {
-    private readonly files = new Map<PartialDocument, Promise<GitFile>>();
+    readonly #files = new Map<PartialDocument, Promise<GitFile>>();
 
     public async blameLine(
         document: PartialDocument,
@@ -40,18 +40,18 @@ export class GitBlameImpl implements GitBlame {
     }
 
     public async removeDocument(document: PartialDocument): Promise<void> {
-        const blamefile = await this.files.get(document);
+        const blamefile = await this.#files.get(document);
 
         if (blamefile === undefined) {
             return;
         }
 
-        this.files.delete(document);
+        this.#files.delete(document);
         blamefile.dispose();
     }
 
     public dispose(): void {
-        this.files.forEach((_gitFile, document): void => {
+        this.#files.forEach((_gitFile, document): void => {
             void this.removeDocument(document);
         });
     }
@@ -73,7 +73,7 @@ export class GitBlameImpl implements GitBlame {
     }
 
     private ensureGitFile(document: PartialDocument): Promise<GitFile> {
-        const potentialGitFile = this.files.get(document);
+        const potentialGitFile = this.#files.get(document);
 
         if (potentialGitFile) {
             return potentialGitFile;
@@ -82,7 +82,7 @@ export class GitBlameImpl implements GitBlame {
         const gitFile = container.resolve<GitFileFactory>("GitFileFactory")
             .create(document);
 
-        this.files.set(document, gitFile);
+        this.#files.set(document, gitFile);
 
         return gitFile;
     }

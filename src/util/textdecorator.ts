@@ -97,12 +97,16 @@ export class TextDecorator {
     }
 
     public static parseTokens(
-        target: string,
-        tokens: InfoTokens,
+        target: unknown,
+        infoTokens: InfoTokens,
     ): string {
+        if (typeof target !== "string") {
+            return "";
+        }
+
         const tokenRegex = new RegExp(
             "\\$\\{" +
-            "(?<token>[a-z._-]{1,})" +
+            "(?<token>[a-z][a-z._-]*)" +
             ",*" +
             "(?<value>.*?)" +
             "(?<modifier>(|\\|[a-z]+))" +
@@ -110,34 +114,31 @@ export class TextDecorator {
             "gi",
         );
 
-        if (typeof target !== "string") {
-            return "";
-        }
-
         return target.replace(
             tokenRegex,
             (...args: unknown[]): string => {
-                const groups: TokenReplaceGroup
+                const {modifier, token, value}: TokenReplaceGroup
                     = args[args.length - 1] as TokenReplaceGroup;
 
-                const value = TextDecorator.runKey(tokens, groups);
+                const newValue = TextDecorator.runKey(infoTokens, token, value);
 
-                return TextDecorator.modify(value, groups.modifier);
+                return TextDecorator.modify(newValue, modifier);
             },
         );
     }
 
     public static runKey(
         tokens: InfoTokens,
-        group: TokenReplaceGroup,
+        token: string,
+        value: string,
     ): string {
-        const currentToken = tokens[group.token];
+        const currentToken = tokens[token];
 
         if (currentToken) {
-            return currentToken(group.value);
+            return currentToken(value);
         }
 
-        return group.token;
+        return token;
     }
 
     public static modify(value: string, modifier: string): string {

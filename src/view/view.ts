@@ -23,12 +23,12 @@ export interface StatusBarView {
 
 @injectable()
 export class StatusBarViewImpl implements StatusBarView {
-    private readonly statusBarItem: StatusBarItem;
+    readonly #statusBarItem: StatusBarItem;
 
     public constructor(
         @inject("StatusBarItemFactory") itemFactory: StatusBarItemFactory,
     ) {
-        this.statusBarItem = itemFactory.createStatusBarItem(
+        this.#statusBarItem = itemFactory.createStatusBarItem(
             StatusBarAlignment.Left,
             container.resolve<Property>("Property")
                 .get("statusBarPositionPriority"),
@@ -54,21 +54,21 @@ export class StatusBarViewImpl implements StatusBarView {
     }
 
     public dispose(): void {
-        this.statusBarItem.dispose();
+        this.#statusBarItem.dispose();
     }
 
     private setText(text: string, hasCommand = false): void {
-        this.statusBarItem.text = `$(git-commit) ${text}`.trimEnd();
+        this.#statusBarItem.text = `$(git-commit) ${text}`.trimEnd();
 
         if (hasCommand) {
-            this.statusBarItem.tooltip = "git blame";
-            this.statusBarItem.command = "gitblame.quickInfo";
+            this.#statusBarItem.tooltip = "git blame";
+            this.#statusBarItem.command = "gitblame.quickInfo";
         } else {
-            this.statusBarItem.tooltip =
+            this.#statusBarItem.tooltip =
                 "git blame - No info about the current line";
-            this.statusBarItem.command = undefined;
+            this.#statusBarItem.command = undefined;
         }
 
-        this.statusBarItem.show();
+        this.#statusBarItem.show();
     }
 }
