@@ -29,12 +29,12 @@ export interface ErrorHandler {
 
 @singleton()
 export class ErrorHandlerImpl implements ErrorHandler {
-    readonly #outputChannel: OutputChannel;
+    private readonly outputChannel: OutputChannel;
 
     public constructor(
         @inject("OutputChannelFactory") channelFactory: OutputChannelFactory,
     ) {
-        this.#outputChannel = channelFactory.create("Extension: gitblame");
+        this.outputChannel = channelFactory.create("Extension: gitblame");
     }
 
     public logInfo(message: string): void {
@@ -61,7 +61,7 @@ export class ErrorHandlerImpl implements ErrorHandler {
     }
 
     public dispose(): void {
-        this.#outputChannel.dispose();
+        this.outputChannel.dispose();
     }
 
     private timestamp(): string {
@@ -91,7 +91,7 @@ export class ErrorHandlerImpl implements ErrorHandler {
             );
 
         if (selectedItem === TITLE_SHOW_LOG) {
-            this.#outputChannel.show();
+            this.outputChannel.show();
         }
     }
 
@@ -102,7 +102,7 @@ export class ErrorHandlerImpl implements ErrorHandler {
         if (logNonCritical || level === Level.Critical) {
             const trimmedMessage = message.trim();
             const timestamp = this.timestamp();
-            this.#outputChannel.appendLine(
+            this.outputChannel.appendLine(
                 `[ ${timestamp} | ${level} ] ${trimmedMessage}`,
             );
         }

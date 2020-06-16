@@ -55,18 +55,18 @@ export interface GitExtension {
 
 @injectable()
 export class GitExtensionImpl implements GitExtension {
-    readonly #disposable: Disposable;
-    readonly #blame: GitBlame;
-    readonly #statusBarView: StatusBarView;
+    private readonly disposable: Disposable;
+    private readonly blame: GitBlame;
+    private readonly statusBarView: StatusBarView;
 
     public constructor(
         @inject("GitBlame") blame: GitBlame,
         @inject("StatusBarView") statusBarView: StatusBarView,
     ) {
-        this.#blame = blame;
-        this.#statusBarView = statusBarView;
+        this.blame = blame;
+        this.statusBarView = statusBarView;
 
-        this.#disposable = this.setupListeners();
+        this.disposable = this.setupListeners();
 
         this.init();
     }
@@ -198,7 +198,7 @@ export class GitExtensionImpl implements GitExtension {
     }
 
     public dispose(): void {
-        this.#disposable.dispose();
+        this.disposable.dispose();
     }
 
     private setupListeners(): Disposable {
@@ -262,7 +262,7 @@ export class GitExtensionImpl implements GitExtension {
     }
 
     private onCloseTextDocument(document: PartialDocument): void {
-        void this.#blame.removeDocument(document);
+        void this.blame.removeDocument(document);
     }
 
     private async generateMessageActions(
@@ -372,12 +372,12 @@ export class GitExtensionImpl implements GitExtension {
         if (commitInfo.generated) {
             this.clearView();
         } else {
-            this.#statusBarView.update(commitInfo);
+            this.statusBarView.update(commitInfo);
         }
     }
 
     private clearView(): void {
-        this.#statusBarView.clear();
+        this.statusBarView.clear();
     }
 
     private async getCurrentLineInfo(): Promise<GitCommitInfo> {
@@ -389,7 +389,7 @@ export class GitExtensionImpl implements GitExtension {
         }
 
         try {
-            return await this.#blame.blameLine(
+            return await this.blame.blameLine(
                 activeEditor.document,
                 activeEditor.selection.active.line,
                 );

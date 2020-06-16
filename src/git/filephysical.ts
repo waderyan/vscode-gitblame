@@ -8,44 +8,44 @@ import { GitBlameStream } from "./stream";
 import { blankBlameInfo, GitBlameInfo } from "./util/blanks";
 
 export class GitFilePhysical implements GitFile {
-    readonly #fileName: string;
-    readonly #fileSystemWatcher: FSWatcher;
-    #blameInfoPromise?: Promise<GitBlameInfo>;
-    #terminate = false;
-    #clearFromCache?: () => void;
+    private readonly fileName: string;
+    private readonly fileSystemWatcher: FSWatcher;
+    private blameInfoPromise?: Promise<GitBlameInfo>;
+    private terminate = false;
+    private clearFromCache?: () => void;
 
     public constructor(fileName: string) {
-        this.#fileName = fileName;
-        this.#fileSystemWatcher = this.setupWatcher();
+        this.fileName = fileName;
+        this.fileSystemWatcher = this.setupWatcher();
     }
 
     public registerDisposeFunction(dispose: () => void): void {
-        this.#clearFromCache = dispose;
+        this.clearFromCache = dispose;
     }
 
     public async blame(): Promise<GitBlameInfo> {
         container.resolve<StatusBarView>("StatusBarView").startProgress();
 
-        if (this.#blameInfoPromise === undefined) {
-            this.#blameInfoPromise = this.findBlameInfo();
+        if (this.blameInfoPromise === undefined) {
+            this.blameInfoPromise = this.findBlameInfo();
         }
 
-        return this.#blameInfoPromise;
+        return this.blameInfoPromise;
     }
 
     public dispose(): void {
-        this.#terminate = true;
+        this.terminate = true;
 
-        if (this.#clearFromCache) {
-            this.#clearFromCache();
-            this.#clearFromCache = undefined;
+        if (this.clearFromCache) {
+            this.clearFromCache();
+            this.clearFromCache = undefined;
         }
 
-        this.#fileSystemWatcher.close();
+        this.fileSystemWatcher.close();
     }
 
     private setupWatcher(): FSWatcher {
-        const fsWatcher = watch(this.#fileName, (event: string): void => {
+        const fsWatcher = watch(this.fileName, (event: string): void => {
             if (event === "rename") {
                 this.dispose();
             } else if (event === "change") {
@@ -57,7 +57,7 @@ export class GitFilePhysical implements GitFile {
     }
 
     private changed(): void {
-        this.#blameInfoPromise = undefined;
+        this.blameInfoPromise = undefined;
     }
 
     private async findBlameInfo(): Promise<GitBlameInfo> {
@@ -67,11 +67,11 @@ export class GitFilePhysical implements GitFile {
         const blamer = container.resolve<GitBlameStream>("GitBlameStream");
 
         try {
-            const blameStream = blamer.blame(this.#fileName);
+            const blameStream = blamer.blame(this.fileName);
             let reachedDone = false;
 
             while (!reachedDone) {
-                const {done, value} = await blameStream.next(this.#terminate);
+                const {done, value} = await blameStream.next(this.terminate);
 
                 if (done || value === undefined) {
                     reachedDone = true;
@@ -86,7 +86,7 @@ export class GitFilePhysical implements GitFile {
             return blankBlameInfo();
         }
 
-        if (this.#terminate) {
+        if (this.terminate) {
             // Don't return partial git blame info when terminating a blame
             return blankBlameInfo();
         }
@@ -94,7 +94,7 @@ export class GitFilePhysical implements GitFile {
         const numberOfCommits = Object.keys(commits).length;
         container.resolve<ErrorHandler>("ErrorHandler").logInfo(
             `Blamed file "${
-                this.#fileName
+                this.fileName
             }" and found ${
                 numberOfCommits
             } commits`,
