@@ -44,9 +44,14 @@ export interface InfoTokenNormalizedCommitInfo extends InfoTokens {
 }
 
 interface TokenReplaceGroup {
-    token: string;
-    value: string;
+    function: string;
+    parameter: string;
     modifier: string;
+}
+
+enum MODE {
+    OUT,
+    IN,
 }
 
 export class TextDecorator {
@@ -96,6 +101,81 @@ export class TextDecorator {
         }
     }
 
+    private static tokenParser(token: string): TokenReplaceGroup {
+        const parameterIndex = token.indexOf(',');
+        const modifierIndex = token.indexOf('|');
+
+        if (
+            parameterIndex !== -1 &&
+            modifierIndex !== -1
+        ) {
+            return {
+                function: token.substring(0, parameterIndex),
+                parameter: token.substring(parameterIndex + 1, modifierIndex),
+                modifier: token.substring(modifierIndex + 1),
+            };
+        } else if (parameterIndex !== -1) {
+            return {
+                function: token.substring(0, parameterIndex),
+                parameter: token.substring(parameterIndex + 1),
+                modifier: "",
+            };
+        } else if (modifierIndex !== -1) {
+            return {
+                function: token.substring(0, modifierIndex),
+                parameter: "",
+                modifier: token.substring(modifierIndex + 1),
+            };
+        }
+
+        return {
+            function: token,
+            parameter: "",
+            modifier: "",
+        };
+    }
+
+    private static parse(
+        inString: string,
+    ): (string | TokenReplaceGroup)[] {
+        const tokenized = [];
+        let lastSplit = 0;
+        let mode = MODE.OUT;
+
+        for (let index = 0; index < inString.length; index++) {
+            const currentCharacter = inString[index];
+            const potentialLetter = inString[index + 2];
+
+            if (
+                mode === MODE.OUT &&
+                currentCharacter === '$' &&
+                inString[index + 1] === '{' &&
+                /^[a-zA-Z]$/.test(potentialLetter)
+            ) {
+                mode = MODE.IN;
+                tokenized.push(inString.substring(lastSplit, index));
+                lastSplit = index;
+                index = index + 1;
+            } else if (
+                mode === MODE.IN &&
+                currentCharacter === '}'
+            ) {
+                mode = MODE.OUT;
+                const newSplitIndex = index + 1;
+                tokenized.push(
+                    TextDecorator.tokenParser(
+                        inString.substring(lastSplit + 2, newSplitIndex - 1),
+                    ),
+                );
+                lastSplit = newSplitIndex;
+            }
+        }
+
+        tokenized.push(inString.substring(lastSplit));
+
+        return tokenized;
+    }
+
     public static parseTokens(
         target: unknown,
         infoTokens: InfoTokens,
@@ -104,30 +184,24 @@ export class TextDecorator {
             return "";
         }
 
-        const tokenRegex = new RegExp(
-            "\\$\\{" +
-            "(?<token>[a-z][a-z._-]*)" +
-            ",*" +
-            "(?<value>.*?)" +
-            "(?<modifier>(|\\|[a-z]+))" +
-            "\\}",
-            "gi",
-        );
+        const parsed = TextDecorator.parse(target);
 
-        return target.replace(
-            tokenRegex,
-            (...args: unknown[]): string => {
-                const {modifier, token, value}: TokenReplaceGroup
-                    = args[args.length - 1] as TokenReplaceGroup;
+        return parsed.map((piece: string | TokenReplaceGroup) => {
+            if (typeof piece === "string") {
+                return piece;
+            }
 
-                const newValue = TextDecorator.runKey(infoTokens, token, value);
+            const newValue = TextDecorator.runKey(
+                infoTokens,
+                piece.function,
+                piece.parameter,
+            );
 
-                return TextDecorator.modify(newValue, modifier);
-            },
-        );
+            return TextDecorator.modify(newValue, piece.modifier);
+        }).join('')
     }
 
-    public static runKey(
+    private static runKey(
         tokens: InfoTokens,
         token: string,
         value: string,
@@ -141,14 +215,16 @@ export class TextDecorator {
         return token;
     }
 
-    public static modify(value: string, modifier: string): string {
-        if (modifier === "|u") {
+    private static modify(value: string, modifier: string): string {
+        if (modifier === "u") {
             return value.toUpperCase();
-        } else if (modifier === "|l") {
+        } else if (modifier === "l") {
             return value.toLowerCase();
+        } else if (modifier.length) {
+            return `${value}|${modifier}`;
         }
 
-        return `${value}${modifier}`;
+        return `${value}`;
     }
 
     public static normalizeCommitInfoTokens(

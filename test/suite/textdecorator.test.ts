@@ -122,6 +122,13 @@ suite("Token Parser", (): void => {
         "mixed.token": (): string => "mIxeD-ToKeN",
     };
 
+    test("No token", (): void => {
+        assert.equal(
+            TextDecorator.parseTokens("No token", normalizedInfo),
+            "No token",
+        );
+    });
+
     test("Invalid token", (): void => {
         assert.equal(
             TextDecorator.parseTokens("Invalid ${token}", normalizedInfo),
@@ -216,6 +223,26 @@ suite("Token Parser", (): void => {
                 normalizedInfo,
             ),
             "Value ${|mod}",
+        );
+    });
+
+    test("Token in the middle of string", (): void => {
+        assert.equal(
+            TextDecorator.parseTokens(
+                "Simple ${example.token} in a longer text",
+                normalizedInfo,
+            ),
+            "Simple example-token in a longer text",
+        );
+    });
+
+    test("Multiple tokens", (): void => {
+        assert.equal(
+            TextDecorator.parseTokens(
+                "Multiple ${example.token} in a ${length,longer} text",
+                normalizedInfo,
+            ),
+            "Multiple example-token in a length text",
         );
     });
 });
