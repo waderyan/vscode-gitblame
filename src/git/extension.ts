@@ -271,6 +271,12 @@ export class GitExtensionImpl implements GitExtension {
         const commitToolUrl = await this.getToolUrl(commitInfo);
         const extraActions: ActionableMessageItem[] = [];
 
+        container.resolve<ErrorHandler>("ErrorHandler")
+            .logInfo(JSON.stringify({
+                from: "generateMessageActions",
+                commitToolUrl,
+            }));
+
         if (commitToolUrl) {
             const viewOnlineAction = container
                 .resolve<ActionableMessageItem>("ActionableMessageItem");
@@ -278,6 +284,11 @@ export class GitExtensionImpl implements GitExtension {
             viewOnlineAction.setTitle(TITLE_VIEW_ONLINE);
 
             viewOnlineAction.setAction((): void => {
+                container.resolve<ErrorHandler>("ErrorHandler")
+                    .logInfo(JSON.stringify({
+                        from: "generateMessageActions-action",
+                        commitToolUrl,
+                    }));
                 void container.resolve<Command>("Command")
                     .execute("vscode.open", commitToolUrl);
             });
@@ -322,6 +333,18 @@ export class GitExtensionImpl implements GitExtension {
             "project.remote": (): string => remoteUrl,
             "gitorigin.hostname": this.gitOriginHostname(origin),
         });
+
+        container.resolve<ErrorHandler>("ErrorHandler")
+            .logInfo(JSON.stringify({
+                from: "getToolUrl",
+                inferCommitUrl,
+                commitUrl,
+                remote,
+                origin,
+                remoteUrl,
+                parsedUrl,
+                isUrl: isUrl(parsedUrl),
+            }));
 
         if (isUrl(parsedUrl)) {
             return Uri.parse(parsedUrl, true);
