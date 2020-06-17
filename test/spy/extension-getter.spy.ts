@@ -23,7 +23,7 @@ export function initExtensionGetterSpy(): {
                 const api = {
                     id: 'id',
                     extensionPath: '/extension/path',
-                    extensionUri: Uri.parse('/extension/path'),
+                    extensionUri: Uri.parse('file:///extension/path', true),
                     isActive: true,
                     packageJSON: {},
                     extensionKind: 1,

@@ -324,7 +324,7 @@ export class GitExtensionImpl implements GitExtension {
         });
 
         if (isUrl(parsedUrl)) {
-            return Uri.parse(parsedUrl);
+            return Uri.parse(parsedUrl, true);
         } else if (parsedUrl === '' && inferCommitUrl) {
             return this.getDefaultToolUrl(origin, commitInfo);
         } else {
@@ -346,6 +346,7 @@ export class GitExtensionImpl implements GitExtension {
                     commitInfo.hash,
                     this.isToolUrlPlural(origin),
                 ),
+                true,
             );
         }
     }
