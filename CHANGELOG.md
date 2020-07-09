@@ -1,7 +1,8 @@
 # Change Log
 
-## 4.1.0 (May 30, 2020)
+## 4.1.0 (July 09, 2020)
 * Feature: Improve time ago estimate [#83](https://github.com/Sertion/vscode-gitblame/pull/83) (Thanks to [Ben Langlois](https://github.com/BenLanglois))
+* Feature: Unable to open '': File is a directory.[#84](https://github.com/Sertion/vscode-gitblame/issues/84) (Thanks to [Matt Fletcher](https://github.com/MaffooBristol))
 * Bug: Refixing [#3](https://github.com/Sertion/vscode-gitblame/issues/3)
 * Fix: Updating dependencies
 * Fix: Updated linters means pushing around code
