@@ -22,8 +22,13 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    # Runs a single command using the runners shell
-    - name: Run Tests
+    - name: Install xvfb
       run: |
-        npm install
-        npm run test
+        sudo apt-get update -q
+        sudo apt-get install --no-install-recommends -y xvfb
+
+    - name: Install Node Dependencies
+      run: npm install
+
+    - name: Run Tests
+      run: npm run test
