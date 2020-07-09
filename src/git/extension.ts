@@ -48,7 +48,11 @@ export interface GitExtension {
     showMessage(): Promise<void>;
     copyHash(): Promise<void>;
     copyToolUrl(): Promise<void>;
-    defaultWebPath(url: string, hash: string, isPlural: boolean): string;
+    defaultWebPath(
+        url: string,
+        hash: string,
+        isPlural: boolean,
+    ): string | false;
     projectNameFromOrigin(origin: string): string;
     dispose(): void;
 }
@@ -170,7 +174,7 @@ export class GitExtensionImpl implements GitExtension {
         url: string,
         hash: string,
         isPlural: boolean,
-    ): string {
+    ): string | false {
         const gitlessUrl = stripGitRemoteUrl(url);
 
         let uri: URL;
@@ -178,7 +182,7 @@ export class GitExtensionImpl implements GitExtension {
         try {
             uri = new URL(`https://${ gitlessUrl }`);
         } catch (err) {
-            return "";
+            return false;
         }
 
         const host = uri.hostname;
@@ -271,7 +275,7 @@ export class GitExtensionImpl implements GitExtension {
         const commitToolUrl = await this.getToolUrl(commitInfo);
         const extraActions: ActionableMessageItem[] = [];
 
-        if (commitToolUrl) {
+        if (commitToolUrl && commitToolUrl.toString()) {
             const viewOnlineAction = container
                 .resolve<ActionableMessageItem>("ActionableMessageItem");
 
@@ -324,7 +328,7 @@ export class GitExtensionImpl implements GitExtension {
         });
 
         if (isUrl(parsedUrl)) {
-            return Uri.parse(parsedUrl);
+            return Uri.parse(parsedUrl, true);
         } else if (parsedUrl === '' && inferCommitUrl) {
             return this.getDefaultToolUrl(origin, commitInfo);
         } else {
@@ -340,13 +344,15 @@ export class GitExtensionImpl implements GitExtension {
         commitInfo: GitCommitInfo,
     ): Uri | undefined {
         if (origin) {
-            return Uri.parse(
-                this.defaultWebPath(
-                    origin,
-                    commitInfo.hash,
-                    this.isToolUrlPlural(origin),
-                ),
+            const attemptedURL = this.defaultWebPath(
+                origin,
+                commitInfo.hash,
+                this.isToolUrlPlural(origin),
             );
+
+            if (attemptedURL) {
+                return Uri.parse(attemptedURL, true);
+            }
         }
     }
 
