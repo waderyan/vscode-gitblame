@@ -1,6 +1,6 @@
 # Git Blame
 
-[![Build Status](https://github.com/sertion/vscode-gitblame/workflows/CI/badge.svg)](https://github.com/Sertion/vscode-gitblame/actions?query=workflow%3ACI)
+[Build Status](https://github.com/Sertion/vscode-gitblame/actions?query=workflow%3ACI)
 
 See Git Blame information in the status bar for the currently selected line.
 
