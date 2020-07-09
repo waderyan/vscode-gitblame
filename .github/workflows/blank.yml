@@ -20,12 +20,12 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses:
-        actions/checkout@v2
-        GabrielBB/xvfb-action@v1.2
+    - uses: actions/checkout@v2
 
     - name: Install Node Dependencies
       run: npm install
 
-    - name: Run Tests
-      run: npm run test
+    - name: Run tests
+      uses: GabrielBB/xvfb-action@v1.2
+      with:
+        run: npm test
