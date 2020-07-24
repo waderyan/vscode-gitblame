@@ -36,6 +36,7 @@ import {
 } from "./util/blanks";
 import {
     getOriginOfActiveFile,
+    getRelativePathOfActiveFile,
     getRemoteUrl,
 } from "./util/gitcommand";
 import { stripGitRemoteUrl } from "./util/strip-git-remote-url";
@@ -318,6 +319,7 @@ export class GitExtensionImpl implements GitExtension {
 
         const remote = await getRemoteUrl(remoteName);
         const origin = await getOriginOfActiveFile(remoteName);
+        const relativePath = await getRelativePathOfActiveFile();
         const projectName = this.projectNameFromOrigin(origin);
         const remoteUrl = stripGitRemoteUrl(remote);
         const parsedUrl = TextDecorator.parseTokens(commitUrl, {
@@ -325,6 +327,7 @@ export class GitExtensionImpl implements GitExtension {
             "project.name": (): string => projectName,
             "project.remote": (): string => remoteUrl,
             "gitorigin.hostname": this.gitOriginHostname(origin),
+            "file.path": (): string => relativePath,
         });
 
         if (isUrl(parsedUrl)) {

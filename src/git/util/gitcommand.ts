@@ -3,6 +3,7 @@ import {
     spawn,
 } from "child_process";
 import {
+    basename,
     dirname,
     normalize,
 } from "path";
@@ -157,4 +158,30 @@ export async function spawnGitBlameStreamProcess(
     );
 
     return spawn(gitCommand, args, spawnOptions);
+}
+
+export async function getRelativePathOfActiveFile(): Promise<string> {
+    const activeEditor = container
+        .resolve<ActiveTextEditor>("ActiveTextEditor").get();
+
+    if (!validEditor(activeEditor)) {
+        return "";
+    }
+
+    try {
+        const gitCommand = await getGitCommand();
+        const activeFile = activeEditor.document.fileName;
+        const activeFileFolder = dirname(activeFile);
+        const activeFileName = basename(activeFile);
+        const relativePath = await execute(
+            gitCommand,
+            ["ls-files", "--full-name", activeFileName],
+            activeFileFolder,
+        );
+
+        return relativePath.trim();
+    } catch (e) {
+        container.resolve<ErrorHandler>("ErrorHandler").logError(e);
+        return "";
+    }
 }

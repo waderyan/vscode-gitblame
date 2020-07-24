@@ -1,5 +1,8 @@
 # Change Log
 
+## 4.2.0 (July 24, 2020)
+* Feature: Relative Path Token [#87](https://github.com/Sertion/vscode-gitblame/pull/87) (Thanks to [Ben](https://github.com/bwathen))
+
 ## 4.1.0 (July 09, 2020)
 * Feature: Improve time ago estimate [#83](https://github.com/Sertion/vscode-gitblame/pull/83) (Thanks to [Ben Langlois](https://github.com/BenLanglois))
 * Feature: Unable to open '': File is a directory.[#84](https://github.com/Sertion/vscode-gitblame/issues/84) (Thanks to [Matt Fletcher](https://github.com/MaffooBristol))

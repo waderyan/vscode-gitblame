@@ -49,6 +49,7 @@ See Git Blame information in the status bar for the currently selected line.
           <li>Available tokens:
             <ul>
               <li><code>${hash}</code> - the commit hash</li>
+              <li><code>${file.path}</code> - the relative file path</li>
               <li><code>${project.name}</code> - your project name (e.g. <code>https://github.com/user/<strong>project_name</strong>.git</code>)</li>
               <li><code>${project.remote}</code> - the current default remote's URL with the
               protocol, port-specifiers, and trailing <code>.git</code> stripped. (e.g.
