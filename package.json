@@ -5,7 +5,7 @@
   "version": "5.0.0",
   "publisher": "waderyan",
   "engines": {
-    "vscode": "^1.45.1"
+    "vscode": "^1.48.1"
   },
   "categories": [
     "Other"
