@@ -1,3 +1,5 @@
+import type { Thenable } from "../../types/thenable";
+
 import { ActionableMessageItem } from "../util/actionable-message-item";
 import { window } from "vscode";
 

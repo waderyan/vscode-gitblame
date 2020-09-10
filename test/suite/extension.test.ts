@@ -70,7 +70,7 @@ suite("Web URL formatting", (): void => {
                 "hash",
                 false,
             ),
-            "https://example.com/user/repo/commit/hash",
+            "https://example.com:8080/user/repo/commit/hash",
         );
         assert.equal(
             extension.defaultWebPath(
@@ -78,7 +78,26 @@ suite("Web URL formatting", (): void => {
                 "hash",
                 false,
             ),
-            "https://example.com/user/repo/commit/hash",
+            "https://example.com:8080/user/repo/commit/hash",
+        );
+    });
+
+    test("http:// with port", (): void => {
+        assert.equal(
+            extension.defaultWebPath(
+                "http://example.com:8080/user/repo.git",
+                "hash",
+                false,
+            ),
+            "http://example.com:8080/user/repo/commit/hash",
+        );
+        assert.equal(
+            extension.defaultWebPath(
+                "http://example.com:8080/user/repo",
+                "hash",
+                false,
+            ),
+            "http://example.com:8080/user/repo/commit/hash",
         );
     });
 

@@ -39,6 +39,7 @@ import {
     getRelativePathOfActiveFile,
     getRemoteUrl,
 } from "./util/gitcommand";
+import { httpOrHttps } from "./util/http-or-https";
 import { stripGitRemoteUrl } from "./util/strip-git-remote-url";
 import { GitBlame } from "./blame";
 
@@ -176,21 +177,24 @@ export class GitExtensionImpl implements GitExtension {
         hash: string,
         isPlural: boolean,
     ): string | false {
+        const httpProtocol = httpOrHttps(url);
         const gitlessUrl = stripGitRemoteUrl(url);
 
         let uri: URL;
 
         try {
-            uri = new URL(`https://${ gitlessUrl }`);
+            uri = new URL(`${ httpProtocol ?? "https" }://${ gitlessUrl }`);
         } catch (err) {
             return false;
         }
 
-        const host = uri.hostname;
-        const path = uri.pathname;
         const commit = isPlural ? "commits" : "commit";
+        const port = httpProtocol && uri.port ? `:${ uri.port }` : "";
+        const protocol = uri.protocol;
 
-        return `https://${ host }${ path }/${ commit }/${ hash }`;
+        return `${ protocol }//` +
+            `${ uri.hostname }${ port }` +
+            `${ uri.pathname }/${ commit }/${ hash }`;
     }
 
     public projectNameFromOrigin(origin: string): string {

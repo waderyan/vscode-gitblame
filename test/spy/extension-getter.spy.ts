@@ -1,3 +1,5 @@
+import type { Thenable } from "../../types/thenable";
+
 import { SinonSpy, spy } from "sinon";
 import { container } from "tsyringe";
 import {

@@ -1,3 +1,5 @@
+import type { Thenable } from "../../types/thenable";
+
 import { env } from "vscode";
 
 export interface Clipboard {

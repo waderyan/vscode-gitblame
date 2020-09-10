@@ -1,11 +1,16 @@
 # Change Log
 
+## 5.0.0 (September 10, 2020)
+* Breaking change: Previously we stripped the port from git origin. We now keep the port if the protocol is http or https.
+* Feature Support HTTP git origins with port [#89](https://github.com/Sertion/vscode-gitblame/issues/89) (Thanks to [xgdgsc](https://github.com/xgdgsc))
+* Fix: Updating dependencies
+
 ## 4.2.0 (July 24, 2020)
 * Feature: Relative Path Token [#87](https://github.com/Sertion/vscode-gitblame/pull/87) (Thanks to [Ben](https://github.com/bwathen))
 
 ## 4.1.0 (July 09, 2020)
 * Feature: Improve time ago estimate [#83](https://github.com/Sertion/vscode-gitblame/pull/83) (Thanks to [Ben Langlois](https://github.com/BenLanglois))
-* Feature: Unable to open '': File is a directory.[#84](https://github.com/Sertion/vscode-gitblame/issues/84) (Thanks to [Matt Fletcher](https://github.com/MaffooBristol))
+* Feature: Unable to open '': File is a directory. [#84](https://github.com/Sertion/vscode-gitblame/issues/84) (Thanks to [Matt Fletcher](https://github.com/MaffooBristol))
 * Bug: Refixing [#3](https://github.com/Sertion/vscode-gitblame/issues/3)
 * Fix: Updating dependencies
 * Fix: Updated linters means pushing around code
