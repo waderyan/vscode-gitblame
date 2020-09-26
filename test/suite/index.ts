@@ -1,43 +1,34 @@
-import * as path from 'path';
+import { resolve } from 'path';
+import { promises } from 'fs';
+
 import * as Mocha from 'mocha';
-import * as glob from 'glob';
 
-import "reflect-metadata";
+import '@abraham/reflection';
 
-import { registerContainer } from "../../src/index";
+import { registerContainer } from '../../src/container-registry';
 
 registerContainer();
 
-export function run(): Promise<void> {
-    // Create the mocha test
+export async function run(): Promise<void> {
     const mocha = new Mocha({
         ui: 'tdd',
+        color: true,
     });
 
-    const testsRoot = path.resolve(__dirname, '..');
+    const files = await promises.opendir(__dirname);
 
-    return new Promise((c, e): void => {
-        glob('**/**.test.js', { cwd: testsRoot }, (err, files): void => {
-            if (err) {
-                return e(err);
-            }
+    for await (const dirent of files) {
+        if (dirent.isFile() && dirent.name.endsWith('.test.js')) {
+            mocha.addFile(resolve(__dirname, dirent.name));
+        }
+    }
 
-            // Add files to the test suite
-            files.forEach(
-                (f): Mocha => mocha.addFile(path.resolve(testsRoot, f)),
-            );
-
-            try {
-                // Run the mocha test
-                mocha.run((failures): void => {
-                    if (failures > 0) {
-                        e(new Error(`${failures} tests failed.`));
-                    } else {
-                        c();
-                    }
-                });
-            } catch (err) {
-                e(err);
+    return new Promise((resolve, reject): void => {
+        mocha.run((failures): void => {
+            if (failures > 0) {
+                reject(new Error(`${failures} tests failed.`));
+            } else {
+                resolve();
             }
         });
     });

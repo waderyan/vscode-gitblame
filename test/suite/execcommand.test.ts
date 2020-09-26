@@ -19,6 +19,6 @@ suite("Execute Command", (): void => {
         const commandResult = await container.resolve<Executor>("Executor")
             .execute("not-a-real-command", []);
 
-        assert.equal(commandResult, "");
+        assert.strictEqual(commandResult, "");
     });
 });

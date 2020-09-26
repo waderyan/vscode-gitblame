@@ -13,6 +13,10 @@ export default {
     },
     external: [
         "vscode",
+        "child_process",
+        "fs",
+        "url",
+        "path",
     ],
     plugins: [
         resolve({
@@ -20,6 +24,18 @@ export default {
         }),
         commonjs(),
         typescript(),
-        terser(),
+        terser({
+            ecma: 2019,
+            compress: {
+                unsafe_arrows: true,
+                keep_classnames: false,
+                passes: 4,
+                toplevel: true,
+                unsafe_methods: true,
+            },
+            format: {
+                max_line_len: 2500,
+            },
+        }),
     ],
 };
