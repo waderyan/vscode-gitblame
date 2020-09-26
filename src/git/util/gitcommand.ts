@@ -116,16 +116,17 @@ export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
 export async function getWorkTree(fileName: string): Promise<string> {
     const gitCommand = await getGitCommand();
     try {
-        const workTree = await execute(
+        const unTrimmedWorkTree = await execute(
                 gitCommand,
                 ["rev-parse", "--show-toplevel"],
                 dirname(fileName),
             );
+        const workTree = unTrimmedWorkTree.trim();
 
-        if (workTree.trim() === "") {
+        if (workTree === "") {
             return "";
         } else {
-            return normalize(workTree.trim());
+            return normalize(workTree);
         }
     } catch (e) {
         container.resolve<ErrorHandler>("ErrorHandler").logError(e);
@@ -135,10 +136,9 @@ export async function getWorkTree(fileName: string): Promise<string> {
 
 export async function spawnGitBlameStreamProcess(
     fileName: string,
-): Promise<ChildProcess> {
-    const args = [];
-
-    args.push("blame");
+    lastSecondAbort = (): boolean => false,
+): Promise<ChildProcess | undefined> {
+    const args = ["blame"];
 
     if (container.resolve<Property>("Property").get("ignoreWhitespace")) {
         args.push("-w");
@@ -157,7 +157,9 @@ export async function spawnGitBlameStreamProcess(
         `${gitCommand} ${args.join(" ")}`,
     );
 
-    return spawn(gitCommand, args, spawnOptions);
+    if (lastSecondAbort() === false) {
+        return spawn(gitCommand, args, spawnOptions);
+    }
 }
 
 export async function getRelativePathOfActiveFile(): Promise<string> {

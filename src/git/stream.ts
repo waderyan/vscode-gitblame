@@ -8,25 +8,22 @@ import {
 } from "./util/blanks";
 import { split } from "../util/split";
 
-interface BlamedCommit {
+type BlamedCommit = {
     readonly type: "commit";
     readonly hash: string;
     readonly info: GitCommitInfo;
 }
 
-interface BlamedLine {
+type BlamedLine = {
     readonly type: "line";
     readonly line: number;
     readonly hash: string;
 }
 
+export type ChunkyGenerator = Generator<BlamedCommit> | Generator<BlamedLine>;
+
 export interface GitBlameStream {
-    blame(fileName: string): AsyncGenerator<
-        BlamedCommit | BlamedLine,
-        void,
-        boolean
-    >;
-    terminate(): void;
+    blame(fileName: string): AsyncGenerator<ChunkyGenerator>;
     dispose(): void;
 }
 
@@ -34,23 +31,28 @@ export class GitBlameStreamImpl implements GitBlameStream
 {
     private process: ChildProcess | undefined;
     private readonly emittedCommits: Set<string> = new Set();
+    private killBeforeSpawn = false;
 
     public async * blame(
         fileName: string,
-    ): AsyncGenerator<BlamedCommit | BlamedLine, void, boolean> {
-        this.process = await spawnGitBlameStreamProcess(fileName);
+    ): AsyncGenerator<ChunkyGenerator> {
+        this.process = await spawnGitBlameStreamProcess(
+            fileName,
+            () => this.killBeforeSpawn,
+        );
 
-        if (this.process.stdout === null || this.process.stderr === null) {
+        if (
+            this.process?.stdout == undefined ||
+            this.process?.stderr == undefined
+        ) {
             throw new Error(
                 'Unable to setup stdout and/or stderr for git blame process',
             );
         }
 
         for await (const chunk of this.process.stdout) {
-            const terminate = yield* this.processChunk(String(chunk));
-
-            if (terminate) {
-                return this.terminate();
+            for (const processedChunk of this.processChunk(String(chunk))) {
+                yield processedChunk;
             }
         }
 
@@ -59,56 +61,46 @@ export class GitBlameStreamImpl implements GitBlameStream
         }
     }
 
-    public terminate(): void {
-        this.dispose();
-    }
-
     public dispose(): void {
-        if (this.process) {
-            this.process.kill("SIGTERM");
-        }
+        this.killBeforeSpawn = true;
+        this.process?.kill();
     }
 
     private * processChunk(
         dataChunk: string,
-    ): Generator<BlamedCommit | BlamedLine, boolean, boolean> {
-        let terminate = false;
-        const lines = dataChunk.split("\n");
+    ): Generator<ChunkyGenerator> {
         let commitInfo = blankCommitInfo();
 
-        for (const [index, line] of lines.entries()) {
-            if (line !== "boundary") {
-                const [key, value] = split(line);
-
-                if (this.newCommit(key, lines[index + 1], commitInfo)) {
-                    const nextParam = yield* this.commitDeduplicator(
-                        commitInfo,
-                    );
-                    commitInfo = blankCommitInfo(true);
-
-                    terminate = terminate || nextParam;
-                }
-
-                const nextParam = yield* this.processLine(
-                    key,
-                    value,
-                    commitInfo,
-                );
-
-                terminate = terminate || nextParam;
+        for (const [key, value, nextLine] of this.splitChunk(dataChunk)) {
+            if (this.newCommit(key, nextLine, commitInfo)) {
+                yield this.commitDeduplicator(commitInfo);
+                commitInfo = blankCommitInfo(true);
             }
+
+            yield this.processLine(key, value, commitInfo);
         }
 
-        const nextParam = yield* this.commitDeduplicator(commitInfo);
+        yield this.commitDeduplicator(commitInfo);
+    }
 
-        return terminate || nextParam;
+    private * splitChunk(
+        chunk: string,
+    ): Generator<[string, string, string | undefined]> {
+        const lines = chunk.split("\n");
+
+        for (let index = 0; index < chunk.length; index++) {
+            if (lines[index]) {
+                const [key, value] = split(lines[index]);
+                yield [key, value, lines[index + 1]];
+            }
+        }
     }
 
     private * processLine(
         hashOrKey: string,
         value: string,
         commitInfo: GitCommitInfo,
-    ): Generator<BlamedLine, boolean, boolean> {
+    ): Generator<BlamedLine> {
         if (hashOrKey === "summary") {
             commitInfo.summary = value;
         } else if (this.isHash(hashOrKey)) {
@@ -116,7 +108,7 @@ export class GitBlameStreamImpl implements GitBlameStream
 
             const [, finalLine, lines] = value.split(" ").map(Number);
 
-            return yield* this.lineGroupToIndividualLines(
+            yield* this.lineGroupToIndividualLines(
                 hashOrKey,
                 lines,
                 finalLine,
@@ -124,8 +116,6 @@ export class GitBlameStreamImpl implements GitBlameStream
         } else {
             this.processAuthorLine(hashOrKey, value, commitInfo);
         }
-
-        return false;
     }
 
     private processAuthorLine(
@@ -146,53 +136,44 @@ export class GitBlameStreamImpl implements GitBlameStream
         hash: string,
         lines: number,
         finalLine: number,
-    ): Generator<BlamedLine, boolean, boolean> {
-        let terminate = false;
+    ): Generator<BlamedLine> {
         for (let i = 0; i < lines; i++) {
-            const nextParam = yield {
+            yield {
                 type: "line",
                 line: finalLine + i,
                 hash,
             };
-
-            terminate = terminate || nextParam;
         }
-
-        return terminate;
     }
 
     private * commitDeduplicator(
         commitInfo: GitCommitInfo,
-    ): Generator<BlamedCommit, boolean, boolean> {
+    ): Generator<BlamedCommit> {
         if (this.emittedCommits.has(commitInfo.hash) === false) {
             this.emittedCommits.add(commitInfo.hash);
 
-            return yield {
+            yield {
                 type: "commit",
                 info: commitInfo,
                 hash: commitInfo.hash,
             };
         }
-
-        return false;
     }
 
     private newCommit(
-        potentialHash: string,
+        hash: string,
         nextLine: string | undefined,
         commitInfo: GitCommitInfo,
     ): boolean {
-        return this.isHash(potentialHash)
-            && nextLine !== undefined
-            && (
-                nextLine.startsWith("author")
-                || nextLine.startsWith("committer")
-            )
-            && commitInfo.hash !== "";
+        if (nextLine === undefined || commitInfo.hash === "") {
+            return false;
+        }
+
+        return this.isHash(hash) && /^(author|committer)/.test(nextLine);
     }
 
-    private isHash(potentialHash: string): boolean {
-        return /^[a-z0-9]{40}$/.test(potentialHash);
+    private isHash(hash: string): boolean {
+        return /^[a-z0-9]{40}$/.test(hash);
     }
 
     private fillOwner(

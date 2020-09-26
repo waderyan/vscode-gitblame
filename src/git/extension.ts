@@ -53,7 +53,6 @@ export interface GitExtension {
     defaultWebPath(
         url: string,
         hash: string,
-        isPlural: boolean,
     ): string | false;
     projectNameFromOrigin(origin: string): string;
     dispose(): void;
@@ -175,8 +174,8 @@ export class GitExtensionImpl implements GitExtension {
     public defaultWebPath(
         url: string,
         hash: string,
-        isPlural: boolean,
     ): string | false {
+        const isPlural = this.isToolUrlPlural(url);
         const httpProtocol = httpOrHttps(url);
         const gitlessUrl = stripGitRemoteUrl(url);
 
@@ -336,8 +335,10 @@ export class GitExtensionImpl implements GitExtension {
 
         if (isUrl(parsedUrl)) {
             return Uri.parse(parsedUrl, true);
-        } else if (parsedUrl === '' && inferCommitUrl) {
+        } else if (parsedUrl === '' && inferCommitUrl && origin) {
             return this.getDefaultToolUrl(origin, commitInfo);
+        } else if (!origin) {
+            return undefined;
         } else {
             void container.resolve<MessageService>("MessageService").showError(
                 `Malformed URL in gitblame.commitUrl. ` +
@@ -350,16 +351,13 @@ export class GitExtensionImpl implements GitExtension {
         origin: string,
         commitInfo: GitCommitInfo,
     ): Uri | undefined {
-        if (origin) {
-            const attemptedURL = this.defaultWebPath(
-                origin,
-                commitInfo.hash,
-                this.isToolUrlPlural(origin),
-            );
+        const attemptedURL = this.defaultWebPath(
+            origin,
+            commitInfo.hash,
+        );
 
-            if (attemptedURL) {
-                return Uri.parse(attemptedURL, true);
-            }
+        if (attemptedURL) {
+            return Uri.parse(attemptedURL, true);
         }
     }
 
@@ -405,7 +403,7 @@ export class GitExtensionImpl implements GitExtension {
             return await this.blame.blameLine(
                 activeEditor.document,
                 activeEditor.selection.active.line,
-                );
+            );
         } catch (err) {
             return blankCommitInfo();
         }
@@ -413,17 +411,13 @@ export class GitExtensionImpl implements GitExtension {
 
     private isToolUrlPlural(origin: string): boolean {
         const property = container.resolve<Property>("Property");
-        const isWebPathPlural = property.get(
-            "isWebPathPlural",
-        );
+        const isWebPathPlural = property.get("isWebPathPlural");
 
         if (isWebPathPlural === true) {
             return true;
         }
 
-        const urlParts = property.get(
-            "pluralWebPathSubstrings",
-        );
+        const urlParts = property.get("pluralWebPathSubstrings");
 
         if (urlParts === undefined) {
             return false;

@@ -24,12 +24,13 @@ export class GitFileFactoryImpl implements GitFileFactory {
         document: PartialDocument,
     ): Promise<GitFile> {
         const inWorkspace = this.inWorkspace(document.fileName);
-        const exists = inWorkspace ?
-            this.exists(document.fileName) : false;
-        const inGitWorktree = inWorkspace ?
-            this.inGitWorktree(document.fileName) : false;
-        const realFile = (await Promise.all([exists, inGitWorktree]))
-            .every((fileStatus): boolean => fileStatus === true);
+
+        if (inWorkspace === false) {
+            return new GitFileDummy(document.fileName);
+        }
+
+        const realFile = await this.exists(document.fileName)
+            && await this.inGitWorktree(document.fileName);
 
         if (realFile) {
             return new GitFilePhysical(document.fileName);

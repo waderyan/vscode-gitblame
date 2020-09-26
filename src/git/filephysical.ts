@@ -4,14 +4,15 @@ import { container } from "tsyringe";
 import { ErrorHandler } from "../util/errorhandler";
 import { StatusBarView } from "../view/view";
 import { GitFile } from "./filefactory";
-import { GitBlameStream } from "./stream";
+import { ChunkyGenerator, GitBlameStream } from "./stream";
 import { blankBlameInfo, GitBlameInfo } from "./util/blanks";
 
 export class GitFilePhysical implements GitFile {
     private readonly fileName: string;
     private readonly fileSystemWatcher: FSWatcher;
     private blameInfoPromise?: Promise<GitBlameInfo>;
-    private terminate = false;
+    private activeBlamer: GitBlameStream | undefined;
+    private terminatedBlame = false;
     private clearFromCache?: () => void;
 
     public constructor(fileName: string) {
@@ -34,12 +35,10 @@ export class GitFilePhysical implements GitFile {
     }
 
     public dispose(): void {
-        this.terminate = true;
+        this.terminateActiveBlamer();
 
-        if (this.clearFromCache) {
-            this.clearFromCache();
-            this.clearFromCache = undefined;
-        }
+        this.clearFromCache?.();
+        this.clearFromCache = undefined;
 
         this.fileSystemWatcher.close();
     }
@@ -57,49 +56,59 @@ export class GitFilePhysical implements GitFile {
     }
 
     private changed(): void {
+        this.terminateActiveBlamer();
         this.blameInfoPromise = undefined;
     }
 
     private async findBlameInfo(): Promise<GitBlameInfo> {
         container.resolve<StatusBarView>("StatusBarView").startProgress();
 
-        const { commits, lines } = blankBlameInfo();
-        const blamer = container.resolve<GitBlameStream>("GitBlameStream");
+        const blameInfo = blankBlameInfo();
+        this.activeBlamer = container.resolve<GitBlameStream>("GitBlameStream");
 
         try {
-            const blameStream = blamer.blame(this.fileName);
-            let reachedDone = false;
+            const blameStream = this.activeBlamer.blame(this.fileName);
 
-            while (!reachedDone) {
-                const {done, value} = await blameStream.next(this.terminate);
-
-                if (done || value === undefined) {
-                    reachedDone = true;
-                } else if (value.type === "commit") {
-                    commits[value.hash] = value.info;
-                } else {
-                    lines[value.line] = value.hash;
-                }
+            for await (const chunk of blameStream) {
+                this.fillBlameInfo(blameInfo, chunk);
             }
         } catch (err) {
             container.resolve<ErrorHandler>("ErrorHandler").logError(err);
-            return blankBlameInfo();
+            this.terminateActiveBlamer();
         }
 
-        if (this.terminate) {
+        if (this.terminatedBlame) {
             // Don't return partial git blame info when terminating a blame
             return blankBlameInfo();
         }
 
-        const numberOfCommits = Object.keys(commits).length;
         container.resolve<ErrorHandler>("ErrorHandler").logInfo(
             `Blamed file "${
                 this.fileName
             }" and found ${
-                numberOfCommits
+                Object.keys(blameInfo.commits).length
             } commits`,
         );
 
-        return { commits, lines };
+        return blameInfo;
+    }
+
+    private fillBlameInfo(
+        blameInfo: GitBlameInfo,
+        chunkResult: ChunkyGenerator,
+    ): void {
+        for (const lineOrCommit of chunkResult) {
+            if (lineOrCommit.type === "commit") {
+                blameInfo.commits[lineOrCommit.hash] = lineOrCommit.info;
+            } else {
+                blameInfo.lines[lineOrCommit.line] = lineOrCommit.hash;
+            }
+        }
+    }
+
+    private terminateActiveBlamer(): void {
+        this.activeBlamer?.dispose();
+        this.activeBlamer = undefined;
+        this.terminatedBlame = true;
     }
 }

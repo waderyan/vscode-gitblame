@@ -36,7 +36,7 @@ export class StatusBarViewImpl implements StatusBarView {
     }
 
     public clear(): void {
-        this.setText("");
+        this.setTextWithoutBlame("");
     }
 
     public update(commitInfo: GitCommitInfo): void {
@@ -44,31 +44,36 @@ export class StatusBarViewImpl implements StatusBarView {
             this.clear();
         } else {
             const clickable = !isBlankCommit(commitInfo);
+            const newText = TextDecorator.toTextView(commitInfo);
 
-            this.setText(TextDecorator.toTextView(commitInfo), clickable);
+            if (clickable) {
+                this.setTextWithBlame(newText);
+            } else {
+                this.setTextWithoutBlame(newText);
+            }
         }
     }
 
     public startProgress(): void {
-        this.setText('$(sync~spin) Waiting for git blame response');
+        this.setTextWithoutBlame('$(sync~spin) Waiting for git blame response');
     }
 
     public dispose(): void {
         this.statusBarItem.dispose();
     }
 
-    private setText(text: string, hasCommand = false): void {
+    private setTextWithoutBlame(text: string): void {
+        const noInfo = "git blame - No info about the current line";
         this.statusBarItem.text = `$(git-commit) ${text}`.trimEnd();
-
-        if (hasCommand) {
-            this.statusBarItem.tooltip = "git blame";
-            this.statusBarItem.command = "gitblame.quickInfo";
-        } else {
-            this.statusBarItem.tooltip =
-                "git blame - No info about the current line";
-            this.statusBarItem.command = undefined;
-        }
+        this.statusBarItem.tooltip = noInfo;
+        this.statusBarItem.command = undefined;
 
         this.statusBarItem.show();
+    }
+
+    private setTextWithBlame(text: string): void {
+        this.statusBarItem.text = `$(git-commit) ${text}`.trimEnd();
+        this.statusBarItem.tooltip = "git blame";
+        this.statusBarItem.command = "gitblame.quickInfo";
     }
 }
