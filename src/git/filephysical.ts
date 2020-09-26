@@ -1,10 +1,12 @@
 import { FSWatcher, watch } from "fs";
 import { container } from "tsyringe";
 
-import { ErrorHandler } from "../util/errorhandler";
-import { StatusBarView } from "../view/view";
+import type { ChunkyGenerator } from "./util/stream-parsing";
+import type { ErrorHandler } from "../util/errorhandler";
+import type { StatusBarView } from "../view/view";
+import type { GitBlameStream } from "./stream";
+
 import { GitFile } from "./filefactory";
-import { ChunkyGenerator, GitBlameStream } from "./stream";
 import { blankBlameInfo, GitBlameInfo } from "./util/blanks";
 
 export class GitFilePhysical implements GitFile {

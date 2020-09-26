@@ -40,9 +40,7 @@ export class GitFileFactoryImpl implements GitFileFactory {
     }
 
     private inWorkspace(fileName: string): boolean {
-        const uriFileName = Uri.file(fileName);
-
-        return container.resolve<Workspace>("Workspace").in(uriFileName);
+        return container.resolve<Workspace>("Workspace").in(Uri.file(fileName));
     }
 
     private exists(fileName: string): Promise<boolean> {
