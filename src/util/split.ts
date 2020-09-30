@@ -8,8 +8,8 @@ export function split(target: string, char = " "): [string, string] {
         return [target, ""];
     }
 
-    const left = target.substr(0, targetIndex);
-    const rest = target.substr(targetIndex + 1).trim();
-
-    return [left, rest];
+    return [
+        target.substr(0, targetIndex),
+        target.substr(targetIndex + 1).trim(),
+    ];
 }

@@ -1,67 +1,65 @@
-import { HASH_NO_COMMIT_GIT } from "../../constants";
+export const HASH_NO_COMMIT = "0000000000000000000000000000000000000000";
 
-export interface GitCommitAuthor {
+export type CommitAuthor = {
     name: string;
     mail: string;
     timestamp: number;
     tz: string;
 }
 
-export interface GitCommitInfo {
+export type CommitInfo = {
     hash: string;
-    author: GitCommitAuthor;
-    committer: GitCommitAuthor;
+    author: CommitAuthor;
+    committer: CommitAuthor;
     summary: string;
-    filename: string;
     generated: boolean;
 }
 
-export interface GitCommitInfoArray {
-    [hash: string]: GitCommitInfo;
+export type CommitInfoArray = {
+    [hash: string]: CommitInfo;
 }
 
-export interface GitCommitLineArray {
+export type CommitLineArray = {
     [lineNumber: number]: string;
 }
 
-export interface GitBlameInfo {
-    commits: GitCommitInfoArray;
-    lines: GitCommitLineArray;
+export type BlameInfo = {
+    commits: CommitInfoArray;
+    lines: CommitLineArray;
 }
 
-export function blankBlameInfo(): GitBlameInfo {
+export function blankBlameInfo(): BlameInfo {
     return {
         commits: {},
         lines: {},
     };
 }
 
-export function blankCommitInfo(real = false): GitCommitInfo {
-    const emptyAuthor: GitCommitAuthor = {
+export function blankCommitInfo(generated = true): CommitInfo {
+    const emptyAuthor: CommitAuthor = {
         mail: "",
         name: "",
         timestamp: 0,
         tz: "",
     };
-    const emptyCommitter: GitCommitAuthor = {
+    const emptyCommitter: CommitAuthor = {
         mail: "",
         name: "",
         timestamp: 0,
         tz: "",
     };
 
-    const commitInfo: GitCommitInfo = {
+    const commitInfo: CommitInfo = {
         author: emptyAuthor,
         committer: emptyCommitter,
-        filename: "",
-        generated: !real,
-        hash: HASH_NO_COMMIT_GIT,
+        generated,
+        hash: HASH_NO_COMMIT,
         summary: "",
     };
 
     return commitInfo;
 }
 
-export function isBlankCommit(commit: GitCommitInfo): boolean {
-    return commit.hash === HASH_NO_COMMIT_GIT;
+export function isBlankCommit(commit: CommitInfo): boolean {
+    return commit.hash === HASH_NO_COMMIT;
 }

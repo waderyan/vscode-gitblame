@@ -71,6 +71,11 @@
         "no-sync": "error",
         "no-lonely-if": "error",
         "arrow-spacing": "error",
-        "eol-last": ["error", "always"]
+        "eol-last": ["error", "always"],
+        "no-redeclare": "off",
+        "@typescript-eslint/no-redeclare": ["error"],
+        "@typescript-eslint/prefer-optional-chain": ["error"],
+        "@typescript-eslint/prefer-readonly": ["error"],
+        "@typescript-eslint/prefer-for-of": ["error"]
     }
 }

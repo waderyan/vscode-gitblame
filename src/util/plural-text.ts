@@ -3,9 +3,5 @@ export function pluralText(
     singular: string,
     plural: string,
 ): string {
-    if (count === 1) {
-        return `${ count } ${ singular }`;
-    }
-
-    return `${ count } ${ plural }`;
+    return `${ count } ${ count === 1 ? singular : plural }`;
 }

@@ -1,37 +1,25 @@
-import {
-    StatusBarAlignment,
-    StatusBarItem,
-} from "vscode";
-import {
-    container, inject, injectable,
-} from "tsyringe";
+import { StatusBarAlignment, StatusBarItem, window } from "vscode";
 
-import { Property } from "../util/property";
-import { TextDecorator } from "../util/textdecorator";
-import {
-    GitCommitInfo,
-    isBlankCommit,
-} from "../git/util/blanks";
-import { StatusBarItemFactory } from "./statusbar-item-factory";
+import { getProperty } from "./util/property";
+import { toTextView } from "./util/textdecorator";
+import { CommitInfo, isBlankCommit } from "./git/util/blanks";
 
-export interface StatusBarView {
-    clear(): void;
-    update(commitInfo: GitCommitInfo): void;
-    startProgress(): void;
-    dispose(): void;
-}
-
-@injectable()
-export class StatusBarViewImpl implements StatusBarView {
+export class StatusBarView {
+    private static instance?: StatusBarView;
     private readonly statusBarItem: StatusBarItem;
 
-    public constructor(
-        @inject("StatusBarItemFactory") itemFactory: StatusBarItemFactory,
-    ) {
-        this.statusBarItem = itemFactory.createStatusBarItem(
+    static getInstance(): StatusBarView {
+        if (StatusBarView.instance === undefined) {
+            StatusBarView.instance = new StatusBarView;
+        }
+
+        return StatusBarView.instance;
+    }
+
+    private constructor() {
+        this.statusBarItem = window.createStatusBarItem(
             StatusBarAlignment.Left,
-            container.resolve<Property>("Property")
-                .get("statusBarPositionPriority"),
+            getProperty("statusBarPositionPriority"),
         );
     }
 
@@ -39,18 +27,20 @@ export class StatusBarViewImpl implements StatusBarView {
         this.setTextWithoutBlame("");
     }
 
-    public update(commitInfo: GitCommitInfo): void {
+    public update(commitInfo: CommitInfo): void {
         if (commitInfo.generated) {
             this.clear();
         } else {
             const clickable = !isBlankCommit(commitInfo);
-            const newText = TextDecorator.toTextView(commitInfo);
+            const newText = toTextView(commitInfo);
 
             if (clickable) {
                 this.setTextWithBlame(newText);
             } else {
                 this.setTextWithoutBlame(newText);
             }
+
+            this.statusBarItem.show();
         }
     }
 
@@ -67,8 +57,6 @@ export class StatusBarViewImpl implements StatusBarView {
         this.statusBarItem.text = `$(git-commit) ${text}`.trimEnd();
         this.statusBarItem.tooltip = noInfo;
         this.statusBarItem.command = undefined;
-
-        this.statusBarItem.show();
     }
 
     private setTextWithBlame(text: string): void {

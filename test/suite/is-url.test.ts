@@ -17,5 +17,10 @@ suite('Is URL', (): void => {
         assert.strictEqual(isUrl("http:github.com"), false);
         assert.strictEqual(isUrl("http:github.com/some-path"), false);
         assert.strictEqual(isUrl("%"), false);
+        assert.strictEqual(isUrl("/file.ext"), false);
+        assert.strictEqual(isUrl("protocol:user@/file.ext"), false);
+        assert.strictEqual(isUrl("http://"), false);
+        assert.strictEqual(isUrl("This is not an URL"), false);
+        assert.strictEqual(isUrl("http://🐆.com/"), false);
     });
 });

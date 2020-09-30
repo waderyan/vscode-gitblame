@@ -16,13 +16,5 @@ export function isUrl(check: string): boolean {
         return false;
     }
 
-    if (url.hostname === '') {
-        return false;
-    }
-
-    if (url.pathname === '') {
-        return false;
-    }
-
-    return true;
+    return !!(url.hostname && url.pathname);
 }

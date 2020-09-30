@@ -1,33 +1,34 @@
 import { FSWatcher, watch } from "fs";
-import { container } from "tsyringe";
 
 import type { ChunkyGenerator } from "./util/stream-parsing";
-import type { ErrorHandler } from "../util/errorhandler";
-import type { StatusBarView } from "../view/view";
-import type { GitBlameStream } from "./stream";
 
+import { ErrorHandler } from "../util/errorhandler";
+import { GitBlameStream } from "./stream";
+import { StatusBarView } from "../view";
 import { GitFile } from "./filefactory";
-import { blankBlameInfo, GitBlameInfo } from "./util/blanks";
+import { BlameInfo, blankBlameInfo } from "./util/blanks";
 
 export class GitFilePhysical implements GitFile {
     private readonly fileName: string;
     private readonly fileSystemWatcher: FSWatcher;
-    private blameInfoPromise?: Promise<GitBlameInfo>;
+    private blameInfoPromise?: Promise<BlameInfo>;
     private activeBlamer: GitBlameStream | undefined;
     private terminatedBlame = false;
     private clearFromCache?: () => void;
 
     public constructor(fileName: string) {
         this.fileName = fileName;
-        this.fileSystemWatcher = this.setupWatcher();
+        this.fileSystemWatcher = watch(fileName, (): void => {
+            this.dispose();
+        });
     }
 
     public registerDisposeFunction(dispose: () => void): void {
         this.clearFromCache = dispose;
     }
 
-    public async blame(): Promise<GitBlameInfo> {
-        container.resolve<StatusBarView>("StatusBarView").startProgress();
+    public async blame(): Promise<BlameInfo> {
+        StatusBarView.getInstance().startProgress();
 
         if (this.blameInfoPromise === undefined) {
             this.blameInfoPromise = this.findBlameInfo();
@@ -45,28 +46,11 @@ export class GitFilePhysical implements GitFile {
         this.fileSystemWatcher.close();
     }
 
-    private setupWatcher(): FSWatcher {
-        const fsWatcher = watch(this.fileName, (event: string): void => {
-            if (event === "rename") {
-                this.dispose();
-            } else if (event === "change") {
-                this.changed();
-            }
-        });
-
-        return fsWatcher;
-    }
-
-    private changed(): void {
-        this.terminateActiveBlamer();
-        this.blameInfoPromise = undefined;
-    }
-
-    private async findBlameInfo(): Promise<GitBlameInfo> {
-        container.resolve<StatusBarView>("StatusBarView").startProgress();
+    private async findBlameInfo(): Promise<BlameInfo> {
+        StatusBarView.getInstance().startProgress();
 
         const blameInfo = blankBlameInfo();
-        this.activeBlamer = container.resolve<GitBlameStream>("GitBlameStream");
+        this.activeBlamer = new GitBlameStream();
 
         try {
             const blameStream = this.activeBlamer.blame(this.fileName);
@@ -75,7 +59,7 @@ export class GitFilePhysical implements GitFile {
                 this.fillBlameInfo(blameInfo, chunk);
             }
         } catch (err) {
-            container.resolve<ErrorHandler>("ErrorHandler").logError(err);
+            ErrorHandler.getInstance().logError(err);
             this.terminateActiveBlamer();
         }
 
@@ -84,7 +68,7 @@ export class GitFilePhysical implements GitFile {
             return blankBlameInfo();
         }
 
-        container.resolve<ErrorHandler>("ErrorHandler").logInfo(
+        ErrorHandler.getInstance().logInfo(
             `Blamed file "${
                 this.fileName
             }" and found ${
@@ -96,7 +80,7 @@ export class GitFilePhysical implements GitFile {
     }
 
     private fillBlameInfo(
-        blameInfo: GitBlameInfo,
+        blameInfo: BlameInfo,
         chunkResult: ChunkyGenerator,
     ): void {
         for (const lineOrCommit of chunkResult) {

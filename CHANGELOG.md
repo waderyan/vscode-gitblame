@@ -1,5 +1,11 @@
 # Change Log
 
+## 5.0.1 (xxx xx, 2020)
+* Feature: Faster load times
+* Feature: Deactivation function for easier and faster uninstalls
+* Fix: Reducing the number of dependencies
+* Fix: Updating dependencies
+
 ## 5.0.0 (September 10, 2020)
 * Breaking change: Previously we stripped the port from git origin. We now keep the port if the protocol is http or https.
 * Feature Support HTTP git origins with port [#89](https://github.com/Sertion/vscode-gitblame/issues/89) (Thanks to [xgdgsc](https://github.com/xgdgsc))

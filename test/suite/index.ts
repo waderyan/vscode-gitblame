@@ -3,12 +3,6 @@ import { promises } from 'fs';
 
 import * as Mocha from 'mocha';
 
-import '@abraham/reflection';
-
-import { registerContainer } from '../../src/container-registry';
-
-registerContainer();
-
 export async function run(): Promise<void> {
     const mocha = new Mocha({
         ui: 'tdd',

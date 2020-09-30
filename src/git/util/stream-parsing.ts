@@ -1,17 +1,18 @@
 import {
     blankCommitInfo,
-    GitCommitAuthor,
-    GitCommitInfo,
+    CommitAuthor,
+    CommitInfo,
+    isBlankCommit,
 } from "./blanks";
 import { split } from "../../util/split";
 
-type BlamedCommit = {
+export type BlamedCommit = {
     readonly type: "commit";
     readonly hash: string;
-    readonly info: GitCommitInfo;
+    readonly info: CommitInfo;
 }
 
-type BlamedLine = {
+export type BlamedLine = {
     readonly type: "line";
     readonly line: number;
     readonly hash: string;
@@ -33,7 +34,7 @@ function * splitChunk(
 }
 
 function fillOwner(
-    owner: GitCommitAuthor,
+    owner: CommitAuthor,
     dataPoint: string,
     value: string,
 ): void {
@@ -49,7 +50,7 @@ function fillOwner(
 function processAuthorLine(
     key: string,
     value: string,
-    commitInfo: GitCommitInfo,
+    commitInfo: CommitInfo,
 ): void {
     const [author, dataPoint] = split(key, "-");
 
@@ -75,10 +76,10 @@ function * lineGroupToIndividualLines(
 }
 
 function * commitDeduplicator(
-    commitInfo: GitCommitInfo,
+    commitInfo: CommitInfo,
     emittedCommits: Set<string>,
 ): Generator<BlamedCommit> {
-    if (emittedCommits.has(commitInfo.hash) === false) {
+    if (!isBlankCommit(commitInfo) && !emittedCommits.has(commitInfo.hash)) {
         emittedCommits.add(commitInfo.hash);
 
         yield {
@@ -96,7 +97,7 @@ function isHash(hash: string): boolean {
 function newCommit(
     hash: string,
     nextLine: string | undefined,
-    commitInfo: GitCommitInfo,
+    commitInfo: CommitInfo,
 ): boolean {
     if (nextLine === undefined || commitInfo.hash === "") {
         return false;
@@ -108,7 +109,7 @@ function newCommit(
 function * processLine(
     hashOrKey: string,
     value: string,
-    commitInfo: GitCommitInfo,
+    commitInfo: CommitInfo,
 ): Generator<BlamedLine> {
     if (hashOrKey === "summary") {
         commitInfo.summary = value;
@@ -136,10 +137,10 @@ export function * processChunk(
     for (const [key, value, nextLine] of splitChunk(dataChunk)) {
         if (newCommit(key, nextLine, commitInfo)) {
             yield commitDeduplicator(commitInfo, emittedCommits);
-            commitInfo = blankCommitInfo(true);
+            commitInfo = blankCommitInfo(false);
+        } else {
+            yield processLine(key, value, commitInfo);
         }
-
-        yield processLine(key, value, commitInfo);
     }
 
     yield commitDeduplicator(commitInfo, emittedCommits);

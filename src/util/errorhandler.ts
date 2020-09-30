@@ -1,16 +1,6 @@
-import {
-    container,
-    inject,
-    singleton,
-} from "tsyringe";
+import { OutputChannel, window } from "vscode";
 
-import { TITLE_SHOW_LOG } from "../constants";
-import { Property } from "./property";
-import { MessageService } from "../view/messages";
-import {
-    OutputChannel,
-    OutputChannelFactory,
-} from "../view/output-channel-factory";
+import { getProperty } from "./property";
 
 enum Level {
     Info = "info",
@@ -19,22 +9,20 @@ enum Level {
     Critical = "critical",
 }
 
-export interface ErrorHandler {
-    logInfo(message: string): void;
-    logCommand(message: string): void;
-    logError(error: Error): void;
-    logCritical(error: Error, message: string): void;
-    dispose(): void;
-}
-
-@singleton()
-export class ErrorHandlerImpl implements ErrorHandler {
+export class ErrorHandler {
+    private static instance?: ErrorHandler;
     private readonly outputChannel: OutputChannel;
 
-    public constructor(
-        @inject("OutputChannelFactory") channelFactory: OutputChannelFactory,
-    ) {
-        this.outputChannel = channelFactory.create("Extension: gitblame");
+    public static getInstance(): ErrorHandler {
+        if (ErrorHandler.instance === undefined) {
+            ErrorHandler.instance = new ErrorHandler();
+        }
+
+        return ErrorHandler.instance;
+    }
+
+    private constructor() {
+        this.outputChannel = window.createOutputChannel("Extension: gitblame");
     }
 
     public logInfo(message: string): void {
@@ -46,62 +34,34 @@ export class ErrorHandlerImpl implements ErrorHandler {
     }
 
     public logError(error: Error): void {
-        this.writeToLog(
-            Level.Error,
-            error.toString(),
-        );
+        this.writeToLog(Level.Error, error.toString());
     }
 
     public logCritical(error: Error, message: string): void {
-        this.writeToLog(
-            Level.Critical,
-            error.toString(),
-        );
+        this.writeToLog(Level.Critical, error.toString());
         void this.showErrorMessage(message);
     }
 
     public dispose(): void {
+        ErrorHandler.instance = undefined;
         this.outputChannel.dispose();
     }
 
-    private timestamp(): string {
-        const now = new Date();
-        const hour = now
-            .getHours()
-            .toString()
-            .padStart(2, "0");
-        const minute = now
-            .getMinutes()
-            .toString()
-            .padStart(2, "0");
-        const second = now
-            .getSeconds()
-            .toString()
-            .padStart(2, "0");
-
-        return `${hour}:${minute}:${second}`;
-    }
-
     private async showErrorMessage(message: string): Promise<void> {
-        const selectedItem = await container
-            .resolve<MessageService>("MessageService")
-            .showError(
-                message,
-                TITLE_SHOW_LOG,
-            );
+        const button = "Show Log";
+        const selected = await window.showErrorMessage(message, button);
 
-        if (selectedItem === TITLE_SHOW_LOG) {
+        if (selected === button) {
             this.outputChannel.show();
         }
     }
 
     private writeToLog(level: Level, message: string): void {
-        const logNonCritical = container.resolve<Property>("Property")
-            .get("logNonCritical");
+        const logNonCritical = getProperty("logNonCritical");
 
         if (logNonCritical || level === Level.Critical) {
             const trimmedMessage = message.trim();
-            const timestamp = this.timestamp();
+            const timestamp = (new Date).toTimeString().substr(0,8);
             this.outputChannel.appendLine(
                 `[ ${timestamp} | ${level} ] ${trimmedMessage}`,
             );

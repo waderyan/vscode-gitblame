@@ -11,7 +11,6 @@
             "es2018",
             "es2019"
         ],
-        "sourceMap": true,
         "rootDir": ".",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
