@@ -1,5 +1,3 @@
-export const HASH_NO_COMMIT = "0000000000000000000000000000000000000000";
-
 export type CommitAuthor = {
     name: string;
     mail: string;
@@ -12,15 +10,14 @@ export type CommitInfo = {
     author: CommitAuthor;
     committer: CommitAuthor;
     summary: string;
-    generated: boolean;
 }
 
 export type CommitInfoArray = {
-    [hash: string]: CommitInfo;
+    [hash: string]: CommitInfo | undefined;
 }
 
 export type CommitLineArray = {
-    [lineNumber: number]: string;
+    [lineNumber: number]: string | undefined;
 }
 
 export type BlameInfo = {
@@ -35,31 +32,27 @@ export function blankBlameInfo(): BlameInfo {
     };
 }
 
-export function blankCommitInfo(generated = true): CommitInfo {
-    const emptyAuthor: CommitAuthor = {
-        mail: "",
-        name: "",
-        timestamp: 0,
-        tz: "",
-    };
-    const emptyCommitter: CommitAuthor = {
-        mail: "",
-        name: "",
-        timestamp: 0,
-        tz: "",
-    };
-
+export function blankCommitInfo(): CommitInfo {
     const commitInfo: CommitInfo = {
-        author: emptyAuthor,
-        committer: emptyCommitter,
-        generated,
-        hash: HASH_NO_COMMIT,
+        author: {
+            mail: "",
+            name: "",
+            timestamp: 0,
+            tz: "",
+        },
+        committer: {
+            mail: "",
+            name: "",
+            timestamp: 0,
+            tz: "",
+        },
+        hash: "EMPTY",
         summary: "",
     };
 
     return commitInfo;
 }
 
-export function isBlankCommit(commit: CommitInfo): boolean {
-    return commit.hash === HASH_NO_COMMIT;
+export function isUncomitted(commit: CommitInfo): boolean {
+    return /^0{40}$/.test(commit.hash);
 }

@@ -2,7 +2,7 @@ import { Uri, window } from "vscode";
 import { URL } from "url";
 
 import { isUrl } from "../../util/is-url";
-import { CommitInfo, isBlankCommit } from "./blanks";
+import { CommitInfo, isUncomitted } from "./blanks";
 import { defaultWebPath } from "./default-web-path";
 import { getProperty } from "../../util/property";
 import {
@@ -44,9 +44,9 @@ function gitOriginHostname(origin: string): (index: string) => string {
 }
 
 export async function getToolUrl(
-    commitInfo: CommitInfo,
+    commitInfo?: CommitInfo,
 ): Promise<Uri | undefined> {
-    if (isBlankCommit(commitInfo)) {
+    if (!commitInfo || isUncomitted(commitInfo)) {
         return;
     }
 

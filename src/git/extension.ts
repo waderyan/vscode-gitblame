@@ -8,12 +8,15 @@ import {
     workspace,
 } from "vscode";
 
-import type { Document } from "../util/editorvalidator";
+import { Document, validEditor } from "../util/editorvalidator";
 
 import { ErrorHandler } from "../util/errorhandler";
 import { normalizeCommitInfoTokens, parseTokens } from "../util/textdecorator";
 import { StatusBarView } from "../view";
-import { blankCommitInfo, CommitInfo, isBlankCommit } from "./util/blanks";
+import {
+    CommitInfo,
+    isUncomitted,
+} from "./util/blanks";
 import { GitBlame } from "./blame";
 import { getProperty } from "../util/property";
 import { getToolUrl } from "./util/get-tool-url";
@@ -29,7 +32,7 @@ export class GitExtension {
 
     private readonly disposable: Disposable;
     private readonly blame: GitBlame;
-    private readonly statusBarView: StatusBarView;
+    private readonly view: StatusBarView;
 
     public static getInstance(): GitExtension {
         if (GitExtension.instance === undefined) {
@@ -41,7 +44,7 @@ export class GitExtension {
 
     private constructor() {
         this.blame = new GitBlame;
-        this.statusBarView = StatusBarView.getInstance();
+        this.view = StatusBarView.getInstance();
 
         this.disposable = this.setupListeners();
 
@@ -64,8 +67,8 @@ export class GitExtension {
     public async showMessage(): Promise<void> {
         const commitInfo = await this.getCommitInfo();
 
-        if (isBlankCommit(commitInfo)) {
-            this.statusBarView.clear();
+        if (!commitInfo || isUncomitted(commitInfo)) {
+            this.view.clear();
             return;
         }
 
@@ -84,10 +87,12 @@ export class GitExtension {
             });
         }
 
-        this.updateView(commitInfo);
+        this.view.update(commitInfo);
 
-        const selected = await window
-            .showInformationMessage<ActionableMessageItem>(message, ...actions);
+        const selected = await window.showInformationMessage(
+            message,
+            ...actions,
+        );
 
         if (selected) {
             selected.action();
@@ -97,7 +102,7 @@ export class GitExtension {
     public async copyHash(): Promise<void> {
         const commitInfo = await this.getCommitInfo();
 
-        if (isBlankCommit(commitInfo)) {
+        if (!commitInfo || isUncomitted(commitInfo)) {
             return;
         }
 
@@ -140,7 +145,7 @@ export class GitExtension {
     }
 
     public dispose(): void {
-        this.statusBarView.dispose();
+        this.view.dispose();
         this.disposable.dispose();
         this.blame.dispose();
     }
@@ -168,7 +173,7 @@ export class GitExtension {
                      */
                     changeTextEditorSelection(textEditor);
                 } else {
-                    this.statusBarView.clear();
+                    this.view.clear();
                 }
             }),
             window.onDidChangeTextEditorSelection(({ textEditor }) => {
@@ -192,19 +197,26 @@ export class GitExtension {
     private async renderStatusBarView(
         textEditor = window.activeTextEditor,
     ): Promise<void> {
+        if (!validEditor(textEditor)) {
+            this.view.update();
+            return;
+        }
         const before = this.getCurrentActiveFilePosition(textEditor);
-        const commitInfo = await this.getCurrentLineInfo(textEditor);
+        const commitInfo = await this.blame.blameLine(
+            textEditor.document,
+            textEditor.selection.active.line,
+        );
         const after = this.getCurrentActiveFilePosition(textEditor);
 
         // Only update if we haven't moved since we started blaming
         // or if we no longer have focus on any file
         if (before === after || after === NO_FILE_OR_PLACE) {
-            this.updateView(commitInfo);
+            this.view.update(commitInfo);
         }
     }
 
-    private getCurrentActiveFilePosition(editor?: TextEditor): string {
-        if (editor?.document.uri.scheme !== "file") {
+    private getCurrentActiveFilePosition(editor: TextEditor): string {
+        if (editor.document.uri.scheme !== "file") {
             return NO_FILE_OR_PLACE;
         }
 
@@ -213,32 +225,13 @@ export class GitExtension {
         return `${document.fileName}:${selection.active.line}`;
     }
 
-    private async generateMessageActions(
-        commitInfo: CommitInfo,
-    ): Promise<ActionableMessageItem[]> {
-        const commitToolUrl = await getToolUrl(commitInfo);
-        const extraActions: ActionableMessageItem[] = [];
-
-        if (commitToolUrl?.toString()) {
-            const viewOnlineAction: ActionableMessageItem = {
-                title: "View",
-                action: (): void => {
-                    void commands.executeCommand("vscode.open", commitToolUrl);
-                },
-            }
-
-            extraActions.push(viewOnlineAction);
-        }
-
-        return extraActions;
-    }
-
-    private async getCommitInfo(): Promise<CommitInfo> {
+    private async getCommitInfo(
+    ): Promise<CommitInfo | undefined> {
         const commitInfo = await this.getCurrentLineInfo(
             window.activeTextEditor,
         );
 
-        if (commitInfo.generated) {
+        if (!commitInfo) {
             void window.showErrorMessage(
                 "The current file and line can not be blamed.",
             );
@@ -247,19 +240,11 @@ export class GitExtension {
         return commitInfo;
     }
 
-    private updateView(commitInfo: CommitInfo): void {
-        if (commitInfo.generated) {
-            this.statusBarView.clear();
-        } else {
-            this.statusBarView.update(commitInfo);
-        }
-    }
-
     private async getCurrentLineInfo(
         editor?: TextEditor,
-    ): Promise<CommitInfo> {
+    ): Promise<CommitInfo | undefined> {
         if (editor === undefined) {
-            return blankCommitInfo();
+            return undefined;
         }
 
         return this.blame.blameLine(

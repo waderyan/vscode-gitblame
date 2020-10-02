@@ -11,7 +11,7 @@ export class GitFileDummy implements GitFile {
         );
     }
 
-    public registerDisposeFunction(): void {
+    public setDisposeCallback(): void {
         // noop
     }
 

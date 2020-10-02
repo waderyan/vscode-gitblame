@@ -4,7 +4,7 @@ import { spawnGitBlameStreamProcess } from "./util/gitcommand";
 import { ChunkyGenerator, processChunk } from "./util/stream-parsing";
 
 export class GitBlameStream {
-    private process: ChildProcess | undefined;
+    private process?: ChildProcess;
     private killBeforeSpawn = false;
 
     public async * blame(

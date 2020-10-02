@@ -1,4 +1,4 @@
-import { BlameInfo, blankCommitInfo, CommitInfo } from "./util/blanks";
+import { BlameInfo, CommitInfo } from "./util/blanks";
 import { Document } from "../util/editorvalidator";
 import { GitFile, gitFileFactory } from "./filefactory";
 import { ErrorHandler } from "../util/errorhandler";
@@ -13,14 +13,13 @@ export class GitBlame {
     public async blameLine(
         document: Document,
         lineNumber: number,
-    ): Promise<CommitInfo> {
+    ): Promise<CommitInfo | undefined> {
         const commitLineNumber = lineNumber + 1;
         const blameInfo = await this.getBlameInfo(document);
-
         const hash = blameInfo.lines[commitLineNumber];
 
         if (hash === undefined) {
-            return blankCommitInfo();
+            return undefined;
         }
 
         return blameInfo.commits[hash];
@@ -53,10 +52,10 @@ export class GitBlame {
 
         const gitFile = gitFileFactory(document);
         void gitFile.then(
-            (file): void => file.registerDisposeFunction((): void => {
+            (file): void => file.setDisposeCallback((): void => {
                 void this.removeDocument(document);
             }),
-            (err) => ErrorHandler.getInstance().logError(err),
+            (err): void => ErrorHandler.getInstance().logError(err),
         );
         this.files.set(document, gitFile);
 

@@ -2,18 +2,14 @@ import {
     blankCommitInfo,
     CommitAuthor,
     CommitInfo,
-    isBlankCommit,
 } from "./blanks";
 import { split } from "../../util/split";
 
 export type BlamedCommit = {
-    readonly type: "commit";
-    readonly hash: string;
     readonly info: CommitInfo;
 }
 
 export type BlamedLine = {
-    readonly type: "line";
     readonly line: number;
     readonly hash: string;
 }
@@ -68,7 +64,6 @@ function * lineGroupToIndividualLines(
 ): Generator<BlamedLine> {
     for (let i = 0; i < lines; i++) {
         yield {
-            type: "line",
             line: finalLine + i,
             hash,
         };
@@ -79,13 +74,11 @@ function * commitDeduplicator(
     commitInfo: CommitInfo,
     emittedCommits: Set<string>,
 ): Generator<BlamedCommit> {
-    if (!isBlankCommit(commitInfo) && !emittedCommits.has(commitInfo.hash)) {
+    if (commitInfo.hash !== undefined && !emittedCommits.has(commitInfo.hash)) {
         emittedCommits.add(commitInfo.hash);
 
         yield {
-            type: "commit",
             info: commitInfo,
-            hash: commitInfo.hash,
         };
     }
 }
@@ -96,10 +89,9 @@ function isHash(hash: string): boolean {
 
 function newCommit(
     hash: string,
-    nextLine: string | undefined,
-    commitInfo: CommitInfo,
+    nextLine?: string,
 ): boolean {
-    if (nextLine === undefined || commitInfo.hash === "") {
+    if (nextLine === undefined) {
         return false;
     }
 
@@ -135,12 +127,12 @@ export function * processChunk(
     let commitInfo = blankCommitInfo();
 
     for (const [key, value, nextLine] of splitChunk(dataChunk)) {
-        if (newCommit(key, nextLine, commitInfo)) {
+        if (newCommit(key, nextLine)) {
             yield commitDeduplicator(commitInfo, emittedCommits);
-            commitInfo = blankCommitInfo(false);
-        } else {
-            yield processLine(key, value, commitInfo);
+            commitInfo = blankCommitInfo();
         }
+
+        yield processLine(key, value, commitInfo);
     }
 
     yield commitDeduplicator(commitInfo, emittedCommits);

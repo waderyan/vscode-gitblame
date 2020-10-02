@@ -7,7 +7,7 @@ import {
     monthsBetween,
     yearsBetween,
 } from "./ago";
-import { CommitInfo, isBlankCommit } from "../git/util/blanks";
+import { CommitInfo } from "../git/util/blanks";
 
 type InfoTokenFunctionWithParameter = (value: string) => string;
 type InfoTokenFunctionWithoutParameter = () => string;
@@ -121,10 +121,6 @@ function modify(value: string, modifier: string): string {
 }
 
 export function toTextView(commit: CommitInfo): string {
-    if (isBlankCommit(commit)) {
-        return getProperty("statusBarMessageNoCommit", "Not Committed Yet");
-    }
-
     const normalizedCommitInfo = normalizeCommitInfoTokens(
         commit,
     );

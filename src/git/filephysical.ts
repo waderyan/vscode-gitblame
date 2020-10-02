@@ -12,7 +12,7 @@ export class GitFilePhysical implements GitFile {
     private readonly fileName: string;
     private readonly fileSystemWatcher: FSWatcher;
     private blameInfoPromise?: Promise<BlameInfo>;
-    private activeBlamer: GitBlameStream | undefined;
+    private activeBlamer?: GitBlameStream;
     private terminatedBlame = false;
     private clearFromCache?: () => void;
 
@@ -23,7 +23,7 @@ export class GitFilePhysical implements GitFile {
         });
     }
 
-    public registerDisposeFunction(dispose: () => void): void {
+    public setDisposeCallback(dispose: () => void): void {
         this.clearFromCache = dispose;
     }
 
@@ -84,8 +84,8 @@ export class GitFilePhysical implements GitFile {
         chunkResult: ChunkyGenerator,
     ): void {
         for (const lineOrCommit of chunkResult) {
-            if (lineOrCommit.type === "commit") {
-                blameInfo.commits[lineOrCommit.hash] = lineOrCommit.info;
+            if ("info" in lineOrCommit) {
+                blameInfo.commits[lineOrCommit.info.hash] = lineOrCommit.info;
             } else {
                 blameInfo.lines[lineOrCommit.line] = lineOrCommit.hash;
             }

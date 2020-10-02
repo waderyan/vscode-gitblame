@@ -9,7 +9,7 @@ import { BlameInfo } from "./util/blanks";
 import { getWorkTree } from "./util/gitcommand";
 
 export interface GitFile {
-    registerDisposeFunction(dispose: () => void): void;
+    setDisposeCallback(dispose: () => void): void;
     blame(): Promise<BlameInfo>;
     dispose(): void;
 }

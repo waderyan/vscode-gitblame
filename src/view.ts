@@ -2,7 +2,7 @@ import { StatusBarAlignment, StatusBarItem, window } from "vscode";
 
 import { getProperty } from "./util/property";
 import { toTextView } from "./util/textdecorator";
-import { CommitInfo, isBlankCommit } from "./git/util/blanks";
+import { CommitInfo, isUncomitted } from "./git/util/blanks";
 
 export class StatusBarView {
     private static instance?: StatusBarView;
@@ -27,25 +27,26 @@ export class StatusBarView {
         this.setTextWithoutBlame("");
     }
 
-    public update(commitInfo: CommitInfo): void {
-        if (commitInfo.generated) {
+    public update(commitInfo?: CommitInfo): void {
+        if (commitInfo === undefined) {
             this.clear();
+        } else if (isUncomitted(commitInfo)) {
+            this.setTextWithoutBlame(
+                getProperty("statusBarMessageNoCommit", "Not Committed Yet"),
+            );
         } else {
-            const clickable = !isBlankCommit(commitInfo);
-            const newText = toTextView(commitInfo);
+            const text = toTextView(commitInfo);
 
-            if (clickable) {
-                this.setTextWithBlame(newText);
-            } else {
-                this.setTextWithoutBlame(newText);
-            }
-
-            this.statusBarItem.show();
+            this.statusBarItem.text = `$(git-commit) ${text}`.trimEnd();
+            this.statusBarItem.tooltip = "git blame";
+            this.statusBarItem.command = "gitblame.quickInfo";
         }
+        this.statusBarItem.show();
     }
 
     public startProgress(): void {
         this.setTextWithoutBlame('$(sync~spin) Waiting for git blame response');
+        this.statusBarItem.show();
     }
 
     public dispose(): void {
@@ -57,11 +58,5 @@ export class StatusBarView {
         this.statusBarItem.text = `$(git-commit) ${text}`.trimEnd();
         this.statusBarItem.tooltip = noInfo;
         this.statusBarItem.command = undefined;
-    }
-
-    private setTextWithBlame(text: string): void {
-        this.statusBarItem.text = `$(git-commit) ${text}`.trimEnd();
-        this.statusBarItem.tooltip = "git blame";
-        this.statusBarItem.command = "gitblame.quickInfo";
     }
 }

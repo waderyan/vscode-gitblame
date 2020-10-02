@@ -11,9 +11,7 @@ export type PartialTextEditor = {
 }
 
 export function validEditor(
-    editor: PartialTextEditor | undefined,
+    editor?: PartialTextEditor,
 ): editor is PartialTextEditor {
-    const doc = editor?.document;
-
-    return !!doc && !doc.isUntitled;
+    return editor?.document.uri.scheme === "file";
 }
