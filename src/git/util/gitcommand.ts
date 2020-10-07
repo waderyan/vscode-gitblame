@@ -55,7 +55,7 @@ export async function getActiveFileOrigin(remoteName: string): Promise<string> {
             activeFileFolder,
         );
 
-        return originUrl.trim();
+        return originUrl;
     } catch (e) {
         ErrorHandler.getInstance().logError(e);
         return "";
@@ -82,16 +82,16 @@ export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
                 "config",
                 "--local",
                 "--get",
-                `branch.${ currentBranch.trim() }.remote`,
+                `branch.${ currentBranch }.remote`,
             ], activeFileFolder);
         const remoteUrl = await executeWithCWD(gitCommand, [
                 "config",
                 "--local",
                 "--get",
-                `remote.${ curRemote.trim() || fallbackRemote }.url`,
+                `remote.${ curRemote || fallbackRemote }.url`,
             ], activeFileFolder);
 
-        return remoteUrl.trim();
+        return remoteUrl;
     } catch (e) {
         ErrorHandler.getInstance().logError(e);
         return "";
@@ -101,22 +101,20 @@ export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
 export async function getWorkTree(fileName: string): Promise<string> {
     const gitCommand = await getGitCommand();
     try {
-        const unTrimmedWorkTree = await executeWithCWD(
+        const workTree = await executeWithCWD(
                 gitCommand,
                 ["rev-parse", "--show-toplevel"],
                 dirname(fileName),
             );
-        const workTree = unTrimmedWorkTree.trim();
 
-        if (workTree === "") {
-            return "";
-        } else {
+        if (workTree) {
             return normalize(workTree);
         }
     } catch (e) {
         ErrorHandler.getInstance().logError(e);
-        return "";
     }
+
+    return "";
 }
 
 export async function spawnGitBlameStreamProcess(
@@ -134,16 +132,14 @@ export async function spawnGitBlameStreamProcess(
     args.push(fileName);
 
     const gitCommand = await getGitCommand();
-    const spawnOptions = {
-        cwd: dirname(fileName),
-    };
-
-    ErrorHandler.getInstance().logCommand(
-        `${gitCommand} ${args.join(" ")}`,
-    );
 
     if (!lastSecondAbort()) {
-        return spawn(gitCommand, args, spawnOptions);
+        ErrorHandler.getInstance().logCommand(
+            `${gitCommand} ${args.join(" ")}`,
+        );
+        return spawn(gitCommand, args, {
+            cwd: dirname(fileName),
+        });
     }
 }
 
@@ -165,7 +161,7 @@ export async function getRelativePathOfActiveFile(): Promise<string> {
             activeFileFolder,
         );
 
-        return relativePath.trim();
+        return relativePath;
     } catch (e) {
         ErrorHandler.getInstance().logError(e);
         return "";

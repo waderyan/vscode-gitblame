@@ -1,4 +1,4 @@
-import { ChildProcess } from "child_process";
+import type { ChildProcess } from "child_process";
 
 import { spawnGitBlameStreamProcess } from "./util/gitcommand";
 import { ChunkyGenerator, processChunk } from "./util/stream-parsing";
@@ -24,7 +24,7 @@ export class GitBlameStream {
         const emittedCommits = new Set<string>();
 
         for await (const chunk of this.process.stdout) {
-            yield * processChunk(String(chunk), emittedCommits);
+            yield * processChunk(chunk, emittedCommits);
         }
 
         for await (const error of this.process.stderr) {

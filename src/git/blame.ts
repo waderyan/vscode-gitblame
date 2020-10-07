@@ -6,7 +6,7 @@ import { ErrorHandler } from "../util/errorhandler";
 export class GitBlame {
     private readonly files = new Map<Document, Promise<GitFile>>();
 
-    public async blameFile(document: Document): Promise<BlameInfo> {
+    public async blameFile(document: Document): Promise<BlameInfo | undefined> {
         return this.getBlameInfo(document);
     }
 
@@ -16,13 +16,8 @@ export class GitBlame {
     ): Promise<CommitInfo | undefined> {
         const commitLineNumber = lineNumber + 1;
         const blameInfo = await this.getBlameInfo(document);
-        const hash = blameInfo.lines[commitLineNumber];
 
-        if (hash === undefined) {
-            return undefined;
-        }
-
-        return blameInfo.commits[hash];
+        return blameInfo?.[commitLineNumber];
     }
 
     public async removeDocument(document: Document): Promise<void> {
@@ -37,7 +32,9 @@ export class GitBlame {
         }
     }
 
-    private async getBlameInfo(document: Document): Promise<BlameInfo> {
+    private async getBlameInfo(
+        document: Document,
+    ): Promise<BlameInfo | undefined> {
         const blameFile = await this.ensureGitFile(document);
 
         return blameFile.blame();

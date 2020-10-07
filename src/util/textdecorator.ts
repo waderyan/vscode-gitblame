@@ -44,7 +44,7 @@ type TokenReplaceGroup = {
     mod: string;
 }
 
-enum MODE {
+const enum MODE {
     OUT,
     IN,
 }
@@ -113,7 +113,7 @@ function modify(value: string, modifier: string): string {
         return value.toUpperCase();
     } else if (modifier === "l") {
         return value.toLowerCase();
-    } else if (modifier.length) {
+    } else if (modifier) {
         return `${value}|${modifier}`;
     }
 
@@ -121,16 +121,11 @@ function modify(value: string, modifier: string): string {
 }
 
 export function toTextView(commit: CommitInfo): string {
-    const normalizedCommitInfo = normalizeCommitInfoTokens(
-        commit,
-    );
+    const normalizedCommitInfo = normalizeCommitInfoTokens(commit);
     const messageFormat = getProperty("statusBarMessageFormat");
 
     if (messageFormat) {
-        return parseTokens(
-            messageFormat,
-            normalizedCommitInfo,
-        );
+        return parseTokens(messageFormat, normalizedCommitInfo);
     } else {
         return "No configured message format for gitblame";
     }

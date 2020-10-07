@@ -12,24 +12,8 @@ export type CommitInfo = {
     summary: string;
 }
 
-export type CommitInfoArray = {
-    [hash: string]: CommitInfo | undefined;
-}
-
-export type CommitLineArray = {
-    [lineNumber: number]: string | undefined;
-}
-
 export type BlameInfo = {
-    commits: CommitInfoArray;
-    lines: CommitLineArray;
-}
-
-export function blankBlameInfo(): BlameInfo {
-    return {
-        commits: {},
-        lines: {},
-    };
+    [lineNumber: number]: CommitInfo | undefined;
 }
 
 export function blankCommitInfo(): CommitInfo {

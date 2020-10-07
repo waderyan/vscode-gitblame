@@ -1,6 +1,5 @@
 import { ErrorHandler } from "../util/errorhandler";
 import { GitFile } from "./filefactory";
-import { BlameInfo, blankBlameInfo } from "./util/blanks";
 
 export class GitFileDummy implements GitFile {
     public constructor(fileName: string) {
@@ -15,8 +14,8 @@ export class GitFileDummy implements GitFile {
         // noop
     }
 
-    public blame(): Promise<BlameInfo> {
-        return Promise.resolve(blankBlameInfo());
+    public blame(): Promise<undefined> {
+        return Promise.resolve(undefined);
     }
 
     public dispose(): void {

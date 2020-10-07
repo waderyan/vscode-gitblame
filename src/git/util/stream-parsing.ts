@@ -14,18 +14,22 @@ export type BlamedLine = {
     readonly hash: string;
 }
 
-export type ChunkyGenerator = Generator<BlamedCommit> | Generator<BlamedLine>;
+export type ChunkyGenerator = Generator<CommitInfo> | Generator<BlamedLine>;
 
 function * splitChunk(
-    chunk: string,
-): Generator<[string, string, string | undefined]> {
-    const lines = chunk.split("\n");
-
+    chunk: Buffer,
+): Generator<[string, string, string]> {
     for (let index = 0; index < chunk.length; index++) {
-        if (lines[index]) {
-            const [key, value] = split(lines[index]);
-            yield [key, value, lines[index + 1]];
-        }
+        const nextIndex = chunk.indexOf("\n", index);
+        const startSecond = nextIndex + 1;
+        const secondIndex = chunk.indexOf("\n", startSecond);
+
+        const currentLine = chunk.slice(index, nextIndex).toString("utf8");
+        const nextLine = chunk.slice(startSecond, secondIndex).toString("utf8");
+
+        index = nextIndex;
+
+        yield [...split(currentLine), nextLine];
     }
 }
 
@@ -57,11 +61,57 @@ function processAuthorLine(
     }
 }
 
-function * lineGroupToIndividualLines(
+function * commitDeduplicator(
+    commitInfo: CommitInfo,
+    emittedCommits: Set<string>,
+): Generator<CommitInfo> {
+    if (commitInfo.hash !== "EMPTY" && !emittedCommits.has(commitInfo.hash)) {
+        emittedCommits.add(commitInfo.hash);
+
+        yield commitInfo;
+    }
+}
+
+function isHash(hash: string): boolean {
+    return /^[a-z0-9]{40}$/.test(hash);
+}
+
+function isCoverageLine(
     hash: string,
-    lines: number,
-    finalLine: number,
+    coverage: string,
+): boolean {
+    return isHash(hash) && /^\d+ \d+ \d+$/.test(coverage);
+}
+
+function isNewCommit(
+    hash: string,
+    coverage: string,
+    nextLine: string,
+): boolean {
+    const commitBlock = /^(author|committer)/;
+    return isCoverageLine(hash, coverage) && commitBlock.test(nextLine);
+}
+
+function processLine(
+    hashOrKey: string,
+    value: string,
+    commitInfo: CommitInfo,
+): void {
+    if (hashOrKey === "summary") {
+        commitInfo.summary = value;
+    } else if (isHash(hashOrKey)) {
+        commitInfo.hash = hashOrKey;
+    } else {
+        processAuthorLine(hashOrKey, value, commitInfo);
+    }
+}
+
+function * processCoverage(
+    hash: string,
+    coverage: string,
 ): Generator<BlamedLine> {
+    const [, finalLine, lines] = coverage.split(" ").map(Number);
+
     for (let i = 0; i < lines; i++) {
         yield {
             line: finalLine + i,
@@ -70,70 +120,31 @@ function * lineGroupToIndividualLines(
     }
 }
 
-function * commitDeduplicator(
-    commitInfo: CommitInfo,
-    emittedCommits: Set<string>,
-): Generator<BlamedCommit> {
-    if (commitInfo.hash !== undefined && !emittedCommits.has(commitInfo.hash)) {
-        emittedCommits.add(commitInfo.hash);
-
-        yield {
-            info: commitInfo,
-        };
-    }
-}
-
-function isHash(hash: string): boolean {
-    return /^[a-z0-9]{40}$/.test(hash);
-}
-
-function newCommit(
-    hash: string,
-    nextLine?: string,
-): boolean {
-    if (nextLine === undefined) {
-        return false;
-    }
-
-    return isHash(hash) && /^(author|committer)/.test(nextLine);
-}
-
-function * processLine(
-    hashOrKey: string,
-    value: string,
-    commitInfo: CommitInfo,
-): Generator<BlamedLine> {
-    if (hashOrKey === "summary") {
-        commitInfo.summary = value;
-    } else if (isHash(hashOrKey)) {
-        commitInfo.hash = hashOrKey;
-
-        const [, finalLine, lines] = value.split(" ").map(Number);
-
-        yield* lineGroupToIndividualLines(
-            hashOrKey,
-            lines,
-            finalLine,
-        );
-    } else {
-        processAuthorLine(hashOrKey, value, commitInfo);
-    }
-}
-
 export function * processChunk(
-    dataChunk: string,
+    dataChunk: Buffer,
     emittedCommits: Set<string>,
 ): Generator<ChunkyGenerator> {
     let commitInfo = blankCommitInfo();
+    let coverageGenerator: Generator<BlamedLine> | undefined = undefined;
 
     for (const [key, value, nextLine] of splitChunk(dataChunk)) {
-        if (newCommit(key, nextLine)) {
+        if (isCoverageLine(key, value)) {
             yield commitDeduplicator(commitInfo, emittedCommits);
-            commitInfo = blankCommitInfo();
+            if (coverageGenerator) {
+                yield coverageGenerator;
+            }
+            coverageGenerator = processCoverage(key, value);
+            if (isNewCommit(key, value, nextLine)) {
+                commitInfo = blankCommitInfo();
+                processLine(key, value, commitInfo);
+            }
+        } else {
+            processLine(key, value, commitInfo);
         }
-
-        yield processLine(key, value, commitInfo);
     }
 
     yield commitDeduplicator(commitInfo, emittedCommits);
+    if (coverageGenerator) {
+        yield coverageGenerator;
+    }
 }

@@ -10,7 +10,7 @@ import { getWorkTree } from "./util/gitcommand";
 
 export interface GitFile {
     setDisposeCallback(dispose: () => void): void;
-    blame(): Promise<BlameInfo>;
+    blame(): Promise<BlameInfo | undefined>;
     dispose(): void;
 }
 
