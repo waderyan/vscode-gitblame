@@ -1,10 +1,10 @@
 import * as assert from "assert";
 import { readFileSync } from "fs";
 import { resolve } from "path";
-import { CommitInfo } from "../../src/git/util/blanks";
 
 import {
     BlamedLine,
+    CommitInfo,
     processChunk,
 } from "../../src/git/util/stream-parsing";
 

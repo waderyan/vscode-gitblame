@@ -1,13 +1,14 @@
 import { ChildProcess, spawn } from "child_process";
 import { basename, dirname, normalize } from "path";
 
-import { extensions, window } from "vscode";
+import { extensions } from "vscode";
 
 import { validEditor } from "../../util/editorvalidator";
 import { getProperty } from "../../util/property";
-import { ErrorHandler } from "../../util/errorhandler";
+import { Logger } from "../../util/logger";
 import { execute } from "../../util/execcommand";
 import { GitExtension } from "../../../types/git";
+import { getActiveTextEditor } from "../../util/get-active";
 
 export async function getGitCommand(): Promise<string> {
     const vscodeGit = extensions.getExtension<GitExtension>("vscode.git");
@@ -18,9 +19,10 @@ export async function getGitCommand(): Promise<string> {
             return Promise.resolve(api.git.path);
         } else {
             return new Promise((resolve): void => {
-                api.onDidChangeState((newState): void => {
+                const change = api.onDidChangeState((newState): void => {
                     if (newState === "initialized") {
                         resolve(api.git.path);
+                        change.dispose();
                     }
                 });
             });
@@ -30,40 +32,35 @@ export async function getGitCommand(): Promise<string> {
     return Promise.resolve("git");
 }
 
-function executeWithCWD(
-    command: string,
+async function executeWithCWD(
+    command: Promise<string> | string,
     args: string[],
     cwd: string,
 ): Promise<string> {
-    return execute(command, args, { cwd });
+    return execute(await command, args, { cwd });
 }
 
 export async function getActiveFileOrigin(remoteName: string): Promise<string> {
-    const activeEditor = window.activeTextEditor;
+    const activeEditor = getActiveTextEditor();
 
     if (!validEditor(activeEditor)) {
         return "";
     }
 
     try {
-        const gitCommand = await getGitCommand();
-        const activeFile = activeEditor.document.fileName;
-        const activeFileFolder = dirname(activeFile);
-        const originUrl = await executeWithCWD(
-            gitCommand,
+        return await executeWithCWD(
+            getGitCommand(),
             ["ls-remote", "--get-url", remoteName],
-            activeFileFolder,
+            dirname(activeEditor.document.fileName),
         );
-
-        return originUrl;
     } catch (e) {
-        ErrorHandler.getInstance().logError(e);
+        Logger.getInstance().error(e);
         return "";
     }
 }
 
 export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
-    const activeEditor = window.activeTextEditor;
+    const activeEditor = getActiveTextEditor();
 
     if (!validEditor(activeEditor)) {
         return "";
@@ -72,69 +69,62 @@ export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
     try {
         const gitCommand = await getGitCommand();
         const activeFileFolder = dirname(activeEditor.document.fileName);
-        const currentBranch = await executeWithCWD(gitCommand, [
-                "symbolic-ref",
-                "-q",
-                "--short",
-                "HEAD",
-            ], activeFileFolder);
-        const curRemote = await executeWithCWD(gitCommand, [
-                "config",
-                "--local",
-                "--get",
-                `branch.${ currentBranch }.remote`,
-            ], activeFileFolder);
-        const remoteUrl = await executeWithCWD(gitCommand, [
-                "config",
-                "--local",
-                "--get",
-                `remote.${ curRemote || fallbackRemote }.url`,
-            ], activeFileFolder);
+        const currentBranch = await executeWithCWD(
+            gitCommand,
+            ["symbolic-ref", "-q", "--short", "HEAD"],
+            activeFileFolder,
+        );
+        const curRemote = await executeWithCWD(
+            gitCommand,
+            ["config", "--local", "--get", `branch.${ currentBranch }.remote`],
+            activeFileFolder,
+        );
+        const remote = curRemote || fallbackRemote;
+        const remoteUrl = await executeWithCWD(
+            gitCommand,
+            ["config", "--local", "--get", `remote.${ remote }.url`],
+            activeFileFolder,
+        );
 
         return remoteUrl;
     } catch (e) {
-        ErrorHandler.getInstance().logError(e);
+        Logger.getInstance().error(e);
         return "";
     }
 }
 
 export async function getWorkTree(fileName: string): Promise<string> {
-    const gitCommand = await getGitCommand();
     try {
         const workTree = await executeWithCWD(
-                gitCommand,
-                ["rev-parse", "--show-toplevel"],
-                dirname(fileName),
-            );
+            getGitCommand(),
+            ["rev-parse", "--show-toplevel"],
+            dirname(fileName),
+        );
 
         if (workTree) {
             return normalize(workTree);
         }
     } catch (e) {
-        ErrorHandler.getInstance().logError(e);
+        Logger.getInstance().error(e);
     }
 
     return "";
 }
 
-export async function spawnGitBlameStreamProcess(
+export async function blameProcess(
     fileName: string,
-    lastSecondAbort = (): boolean => false,
+    lastSecondAbort = () => false,
 ): Promise<ChildProcess | undefined> {
-    const args = ["blame"];
+    const args = ["blame", "--incremental", "--", fileName];
 
     if (getProperty("ignoreWhitespace")) {
-        args.push("-w");
+        args.splice(1, 0, "-w");
     }
-
-    args.push("--incremental");
-    args.push("--");
-    args.push(fileName);
 
     const gitCommand = await getGitCommand();
 
     if (!lastSecondAbort()) {
-        ErrorHandler.getInstance().logCommand(
+        Logger.getInstance().command(
             `${gitCommand} ${args.join(" ")}`,
         );
         return spawn(gitCommand, args, {
@@ -144,26 +134,21 @@ export async function spawnGitBlameStreamProcess(
 }
 
 export async function getRelativePathOfActiveFile(): Promise<string> {
-    const activeEditor = window.activeTextEditor;
+    const activeEditor = getActiveTextEditor();
 
     if (!validEditor(activeEditor)) {
         return "";
     }
 
     try {
-        const gitCommand = await getGitCommand();
-        const activeFile = activeEditor.document.fileName;
-        const activeFileFolder = dirname(activeFile);
-        const activeFileName = basename(activeFile);
-        const relativePath = await executeWithCWD(
-            gitCommand,
-            ["ls-files", "--full-name", activeFileName],
-            activeFileFolder,
+        const { fileName } = activeEditor.document;
+        return await executeWithCWD(
+            getGitCommand(),
+            ["ls-files", "--full-name", basename(fileName)],
+            dirname(fileName),
         );
-
-        return relativePath;
     } catch (e) {
-        ErrorHandler.getInstance().logError(e);
+        Logger.getInstance().error(e);
         return "";
     }
 }

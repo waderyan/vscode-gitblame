@@ -1,16 +1,16 @@
-import { ErrorHandler } from "../util/errorhandler";
+import { Logger } from "../util/logger";
 import { GitFile } from "./filefactory";
 
 export class GitFileDummy implements GitFile {
     public constructor(fileName: string) {
-        ErrorHandler.getInstance().logInfo(
+        Logger.getInstance().info(
             `Will not try to blame file "${
                 fileName
             }" as it is outside of the current workspace`,
         );
     }
 
-    public setDisposeCallback(): void {
+    public onDispose(): void {
         // noop
     }
 

@@ -1,76 +1,85 @@
 import { FSWatcher, watch } from "fs";
 
-import type { ChunkyGenerator } from "./util/stream-parsing";
+import type { ChunkyGenerator, CommitInfo } from "./util/stream-parsing";
+import type { GitFile } from "./filefactory";
 
-import { ErrorHandler } from "../util/errorhandler";
+import { Logger } from "../util/logger";
 import { GitBlameStream } from "./stream";
-import { StatusBarView } from "../view";
-import { GitFile } from "./filefactory";
-import { CommitInfo } from "./util/blanks";
 
 export type BlameInfo = Record<number, CommitInfo | undefined>;
 type Registry = Map<string, CommitInfo>
 
+const fillBlameInfo = (
+    blameInfo: BlameInfo,
+    registry: Registry,
+    chunkResult: ChunkyGenerator,
+): void => {
+    for (const lineOrCommit of chunkResult) {
+        if ("line" in lineOrCommit) {
+            blameInfo[lineOrCommit.line] = registry.get(lineOrCommit.hash);
+        } else {
+            registry.set(lineOrCommit.hash, lineOrCommit);
+        }
+    }
+}
+
 export class GitFilePhysical implements GitFile {
     private readonly fileName: string;
-    private readonly fileSystemWatcher: FSWatcher;
-    private blameInfoPromise?: Promise<BlameInfo | undefined>;
-    private activeBlamer?: GitBlameStream;
-    private terminatedBlame = false;
-    private clearFromCache?: () => void;
+    private readonly fsWatch: FSWatcher;
+    private info?: Promise<BlameInfo | undefined>;
+    private blamer?: GitBlameStream;
+    private terminated = false;
+    private clean?: () => void;
 
     public constructor(fileName: string) {
         this.fileName = fileName;
-        this.fileSystemWatcher = watch(fileName, (): void => this.dispose());
+        this.fsWatch = watch(fileName, (): void => this.dispose());
     }
 
-    public setDisposeCallback(dispose: () => void): void {
-        this.clearFromCache = dispose;
+    public onDispose(dispose: () => void): void {
+        this.clean = dispose;
     }
 
     public async blame(): Promise<BlameInfo | undefined> {
-        StatusBarView.getInstance().startProgress();
-
-        if (this.blameInfoPromise === undefined) {
-            this.blameInfoPromise = this.findBlameInfo();
+        if (this.info === undefined) {
+            this.info = this.runBlame();
         }
 
-        return this.blameInfoPromise;
+        return this.info;
     }
 
     public dispose(): void {
-        this.terminateActiveBlamer();
+        this.terminate();
 
-        this.clearFromCache?.();
-        this.clearFromCache = undefined;
+        this.clean?.();
+        this.clean = undefined;
 
-        this.fileSystemWatcher.close();
+        this.fsWatch.close();
     }
 
-    private async findBlameInfo(): Promise<BlameInfo | undefined> {
-        StatusBarView.getInstance().startProgress();
-
+    private async runBlame(): Promise<BlameInfo | undefined> {
+        const logger = Logger.getInstance();
         const blameInfo: BlameInfo = {};
         const commitRegistry: Registry = new Map<string, CommitInfo>();
-        this.activeBlamer = new GitBlameStream();
+        this.blamer = new GitBlameStream();
 
         try {
-            const blameStream = this.activeBlamer.blame(this.fileName);
+            const blameStream = this.blamer.blame(this.fileName);
 
             for await (const chunk of blameStream) {
-                this.fillBlameInfo(blameInfo, commitRegistry, chunk);
+                fillBlameInfo(blameInfo, commitRegistry, chunk);
             }
         } catch (err) {
-            ErrorHandler.getInstance().logError(err);
-            this.terminateActiveBlamer();
+            logger.error(err);
+            this.terminate();
         }
 
-        if (this.terminatedBlame) {
+        if (this.terminated) {
             // Don't return partial git blame info when terminating a blame
             return undefined;
         }
 
-        ErrorHandler.getInstance().logInfo(
+        logger.info(
             `Blamed file "${
                 this.fileName
             }" and found ${
@@ -81,23 +90,9 @@ export class GitFilePhysical implements GitFile {
         return blameInfo;
     }
 
-    private fillBlameInfo(
-        blameInfo: BlameInfo,
-        registry: Registry,
-        chunkResult: ChunkyGenerator,
-    ): void {
-        for (const lineOrCommit of chunkResult) {
-            if ("line" in lineOrCommit) {
-                blameInfo[lineOrCommit.line] = registry.get(lineOrCommit.hash);
-            } else {
-                registry.set(lineOrCommit.hash, lineOrCommit);
-            }
-        }
-    }
-
-    private terminateActiveBlamer(): void {
-        this.activeBlamer?.dispose();
-        this.activeBlamer = undefined;
-        this.terminatedBlame = true;
+    private terminate(): void {
+        this.blamer?.dispose();
+        this.blamer = undefined;
+        this.terminated = true;
     }
 }

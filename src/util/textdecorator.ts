@@ -1,4 +1,4 @@
-import { pluralText } from "./plural-text";
+import { appendOrNot } from "./append-or-not";
 import { getProperty } from "./property";
 import {
     daysBetween,
@@ -7,7 +7,7 @@ import {
     monthsBetween,
     yearsBetween,
 } from "./ago";
-import { CommitInfo } from "../git/util/blanks";
+import { CommitInfo } from "../git/util/stream-parsing";
 
 type InfoTokenFunctionWithParameter = (value: string) => string;
 type InfoTokenFunctionWithoutParameter = () => string;
@@ -52,24 +52,25 @@ const enum MODE {
 function tokenParser(token: string): TokenReplaceGroup {
     const parameterIndex = token.indexOf(",");
     const modifierIndex = token.indexOf("|");
+    const subToken = (a: number, b?: number) => token.substring(a, b);
 
     if (parameterIndex !== -1 && modifierIndex !== -1) {
         return {
-            func: token.substring(0, parameterIndex),
-            param: token.substring(parameterIndex + 1, modifierIndex),
-            mod: token.substring(modifierIndex + 1),
+            func: subToken(0, parameterIndex),
+            param: subToken(parameterIndex + 1, modifierIndex),
+            mod: subToken(modifierIndex + 1),
         };
     } else if (parameterIndex !== -1) {
         return {
-            func: token.substring(0, parameterIndex),
-            param: token.substring(parameterIndex + 1),
+            func: subToken(0, parameterIndex),
+            param: subToken(parameterIndex + 1),
             mod: "",
         };
     } else if (modifierIndex !== -1) {
         return {
-            func: token.substring(0, modifierIndex),
+            func: subToken(0, modifierIndex),
             param: "",
-            mod: token.substring(modifierIndex + 1),
+            mod: subToken(modifierIndex + 1),
         };
     }
 
@@ -121,11 +122,13 @@ function modify(value: string, modifier: string): string {
 }
 
 export function toTextView(commit: CommitInfo): string {
-    const normalizedCommitInfo = normalizeCommitInfoTokens(commit);
     const messageFormat = getProperty("statusBarMessageFormat");
 
     if (messageFormat) {
-        return parseTokens(messageFormat, normalizedCommitInfo);
+        return parseTokens(
+            messageFormat,
+            normalizeCommitInfoTokens(commit),
+        );
     } else {
         return "No configured message format for gitblame";
     }
@@ -143,13 +146,13 @@ export function toDateText(dateNow: Date, dateThen: Date): string {
     } else if (minutes < 60) {
         return `${minutes} minutes ago`;
     } else if (hours < 24) {
-        return pluralText(hours, "hour", "hours") + " ago";
+        return appendOrNot(hours, "hour") + " ago";
     } else if (days < 31) {
-        return pluralText(days, "day", "days") + " ago";
+        return appendOrNot(days, "day") + " ago";
     } else if (months < 12) {
-        return pluralText(months, "month", "months") + " ago";
+        return appendOrNot(months, "month") + " ago";
     } else {
-        return pluralText(years, "year", "years") + " ago";
+        return appendOrNot(years, "year") + " ago";
     }
 }
 

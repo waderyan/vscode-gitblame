@@ -1,9 +1,18 @@
-import {
-    blankCommitInfo,
-    CommitAuthor,
-    CommitInfo,
-} from "./blanks";
 import { split } from "../../util/split";
+
+export type CommitAuthor = {
+    name: string;
+    mail: string;
+    timestamp: number;
+    tz: string;
+}
+
+export type CommitInfo = {
+    hash: string;
+    author: CommitAuthor;
+    committer: CommitAuthor;
+    summary: string;
+}
 
 export type BlamedCommit = {
     readonly info: CommitInfo;
@@ -16,6 +25,27 @@ export type BlamedLine = {
 
 export type ChunkyGenerator = Generator<CommitInfo> | Generator<BlamedLine>;
 
+function blankCommitInfo(): CommitInfo {
+    const commitInfo: CommitInfo = {
+        author: {
+            mail: "",
+            name: "",
+            timestamp: 0,
+            tz: "",
+        },
+        committer: {
+            mail: "",
+            name: "",
+            timestamp: 0,
+            tz: "",
+        },
+        hash: "EMPTY",
+        summary: "",
+    };
+
+    return commitInfo;
+}
+
 function * splitChunk(
     chunk: Buffer,
 ): Generator<[string, string, string]> {
@@ -24,12 +54,12 @@ function * splitChunk(
         const startSecond = nextIndex + 1;
         const secondIndex = chunk.indexOf("\n", startSecond);
 
-        const currentLine = chunk.slice(index, nextIndex).toString("utf8");
-        const nextLine = chunk.slice(startSecond, secondIndex).toString("utf8");
+        yield [
+            ...split(chunk.slice(index, nextIndex).toString("utf8")),
+            chunk.slice(startSecond, secondIndex).toString("utf8"),
+        ];
 
         index = nextIndex;
-
-        yield [...split(currentLine), nextLine];
     }
 }
 
@@ -73,7 +103,7 @@ function * commitDeduplicator(
 }
 
 function isHash(hash: string): boolean {
-    return /^[a-z0-9]{40}$/.test(hash);
+    return /^\w{40}$/.test(hash);
 }
 
 function isCoverageLine(
@@ -93,16 +123,16 @@ function isNewCommit(
 }
 
 function processLine(
-    hashOrKey: string,
+    key: string,
     value: string,
     commitInfo: CommitInfo,
 ): void {
-    if (hashOrKey === "summary") {
+    if (key === "summary") {
         commitInfo.summary = value;
-    } else if (isHash(hashOrKey)) {
-        commitInfo.hash = hashOrKey;
+    } else if (isHash(key)) {
+        commitInfo.hash = key;
     } else {
-        processAuthorLine(hashOrKey, value, commitInfo);
+        processAuthorLine(key, value, commitInfo);
     }
 }
 
@@ -130,10 +160,9 @@ export function * processChunk(
     for (const [key, value, nextLine] of splitChunk(dataChunk)) {
         if (isCoverageLine(key, value)) {
             yield commitDeduplicator(commitInfo, emittedCommits);
-            if (coverageGenerator) {
-                yield coverageGenerator;
-            }
+            if (coverageGenerator) yield coverageGenerator;
             coverageGenerator = processCoverage(key, value);
+
             if (isNewCommit(key, value, nextLine)) {
                 commitInfo = blankCommitInfo();
                 processLine(key, value, commitInfo);
@@ -144,7 +173,5 @@ export function * processChunk(
     }
 
     yield commitDeduplicator(commitInfo, emittedCommits);
-    if (coverageGenerator) {
-        yield coverageGenerator;
-    }
+    if (coverageGenerator) yield coverageGenerator;
 }

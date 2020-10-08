@@ -1,52 +1,34 @@
-import { access } from "fs";
-import { Uri, workspace } from "vscode";
+import { promises } from "fs";
+import { workspace } from "vscode";
 
 import type { Document } from "../util/editorvalidator";
 
 import { GitFileDummy } from "./filedummy";
-import { GitFilePhysical } from "./filephysical";
-import { BlameInfo } from "./util/blanks";
+import { BlameInfo, GitFilePhysical } from "./filephysical";
 import { getWorkTree } from "./util/gitcommand";
 
 export interface GitFile {
-    setDisposeCallback(dispose: () => void): void;
+    onDispose(dispose: () => void): void;
     blame(): Promise<BlameInfo | undefined>;
     dispose(): void;
 }
 
-function inWorkspace(fileName: string): boolean {
-    return workspace.getWorkspaceFolder(Uri.file(fileName)) !== undefined;
-}
-
-function exists(fileName: string): Promise<boolean> {
-    return new Promise<boolean>((resolve): void => {
-        access(fileName, (err): void => {
-            resolve(!err);
-        });
-    });
-}
-
-async function inGitWorktree(fileName: string): Promise<boolean> {
-    const workTree = await getWorkTree(fileName);
-
-    return workTree !== "";
-}
-
 export async function gitFileFactory(
-    document: Document,
+    {uri, fileName}: Document,
 ): Promise<GitFile> {
-    const isInWorkspace = inWorkspace(document.fileName);
-
-    if (!isInWorkspace) {
-        return new GitFileDummy(document.fileName);
+    if (!workspace.getWorkspaceFolder(uri)) {
+        return new GitFileDummy(fileName);
     }
 
-    const realFile = await exists(document.fileName)
-        && await inGitWorktree(document.fileName);
+    try {
+        await promises.access(fileName);
+    } catch {
+        return new GitFileDummy(fileName);
+    }
 
-    if (realFile) {
-        return new GitFilePhysical(document.fileName);
+    if (await getWorkTree(fileName)) {
+        return new GitFilePhysical(fileName);
     } else {
-        return new GitFileDummy(document.fileName);
+        return new GitFileDummy(fileName);
     }
 }

@@ -1,28 +1,32 @@
-import { commands, ExtensionContext, workspace } from "vscode";
+import { commands, Disposable, ExtensionContext, workspace } from "vscode";
 
 import { GitExtension } from "./git/extension";
-import { ErrorHandler } from "./util/errorhandler";
+import { Logger } from "./util/logger";
+
+const registerCommand = (name: string, callback: () => void): Disposable => {
+    return commands.registerCommand(name, callback);
+}
 
 export function activate(context: ExtensionContext): void {
     if (workspace.workspaceFolders) {
-        const errorHandler = ErrorHandler.getInstance();
-        const app = GitExtension.getInstance();
+        const app = new GitExtension;
 
         context.subscriptions.push(
-            errorHandler,
-            commands.registerCommand(
+            app,
+            Logger.getInstance(),
+            registerCommand(
                 "gitblame.quickInfo",
                 (): void => void app.showMessage(),
             ),
-            commands.registerCommand(
+            registerCommand(
                 "gitblame.online",
                 (): void => void app.blameLink(),
             ),
-            commands.registerCommand(
+            registerCommand(
                 "gitblame.addCommitHashToClipboard",
                 (): void => void app.copyHash(),
             ),
-            commands.registerCommand(
+            registerCommand(
                 "gitblame.addToolUrlToClipboard",
                 (): void => void app.copyToolUrl(),
             ),
@@ -31,6 +35,5 @@ export function activate(context: ExtensionContext): void {
 }
 
 export function deactivate(): void {
-    const app = GitExtension.getInstance();
-    app.dispose();
+    // noop
 }

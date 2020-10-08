@@ -8,47 +8,38 @@ import {
     workspace,
 } from "vscode";
 
-import { Document, validEditor } from "../util/editorvalidator";
+import type { CommitInfo } from "./util/stream-parsing";
 
-import { ErrorHandler } from "../util/errorhandler";
+import { Document, validEditor } from "../util/editorvalidator";
 import { normalizeCommitInfoTokens, parseTokens } from "../util/textdecorator";
 import { StatusBarView } from "../view";
-import {
-    CommitInfo,
-    isUncomitted,
-} from "./util/blanks";
 import { GitBlame } from "./blame";
 import { getProperty } from "../util/property";
 import { getToolUrl } from "./util/get-tool-url";
+import { isUncomitted } from "./util/uncommitted";
+import { errorMessage, infoMessage } from "../util/message";
+import {
+    getActiveTextEditor,
+    getCurrentActiveFilePosition,
+    NO_FILE_OR_PLACE,
+} from "../util/get-active";
 
 type ActionableMessageItem = MessageItem & {
     action: () => void;
 }
 
-const NO_FILE_OR_PLACE = "no-file:-1";
-
 export class GitExtension {
-    public static instance?: GitExtension;
-
     private readonly disposable: Disposable;
     private readonly blame: GitBlame;
     private readonly view: StatusBarView;
 
-    public static getInstance(): GitExtension {
-        if (GitExtension.instance === undefined) {
-            GitExtension.instance = new GitExtension;
-        }
-
-        return GitExtension.instance;
-    }
-
-    private constructor() {
+    constructor() {
         this.blame = new GitBlame;
-        this.view = StatusBarView.getInstance();
+        this.view = new StatusBarView;
 
         this.disposable = this.setupListeners();
 
-        this.init();
+        void this.updateView();
     }
 
     public async blameLink(): Promise<void> {
@@ -58,8 +49,8 @@ export class GitExtension {
         if (commitToolUrl) {
             await commands.executeCommand("vscode.open", commitToolUrl);
         } else {
-            void window.showErrorMessage(
-                "Missing gitblame.commitUrl configuration value.",
+            void errorMessage(
+                "Missing gitblame.commitUrl config value.",
             );
         }
     }
@@ -81,7 +72,7 @@ export class GitExtension {
         if (commitToolUrl?.toString()) {
             actions.push({
                 title: "View",
-                action: (): void => {
+                action: () => {
                     void commands.executeCommand("vscode.open", commitToolUrl);
                 },
             });
@@ -89,7 +80,7 @@ export class GitExtension {
 
         this.view.update(commitInfo);
 
-        const selected = await window.showInformationMessage(
+        const selected = await infoMessage(
             message,
             ...actions,
         );
@@ -102,20 +93,9 @@ export class GitExtension {
     public async copyHash(): Promise<void> {
         const commitInfo = await this.getCommitInfo();
 
-        if (!commitInfo || isUncomitted(commitInfo)) {
-            return;
-        }
-
-        try {
+        if (commitInfo && isUncomitted(commitInfo)) {
             await env.clipboard.writeText(commitInfo.hash);
-            void window.showInformationMessage("Copied hash to clipboard");
-        } catch (err) {
-            ErrorHandler.getInstance().logCritical(
-                err,
-                `Unable to copy hash to clipboard. hash: ${
-                    commitInfo.hash
-                }`,
-            );
+            void infoMessage("Copied hash to clipboard");
         }
     }
 
@@ -124,23 +104,10 @@ export class GitExtension {
         const commitToolUrl = await getToolUrl(commitInfo);
 
         if (commitToolUrl) {
-            try {
-                await env.clipboard.writeText(commitToolUrl.toString());
-                void window.showInformationMessage(
-                    "Copied tool URL to clipboard",
-                );
-            } catch (err) {
-                ErrorHandler.getInstance().logCritical(
-                    err,
-                    `Unable to copy tool URL to clipboard. URL: ${
-                        commitToolUrl.toString()
-                    }`,
-                );
-            }
+            await env.clipboard.writeText(commitToolUrl.toString());
+            void infoMessage("Copied tool URL to clipboard");
         } else {
-            void window.showErrorMessage(
-                "Missing gitblame.commitUrl configuration value.",
-            );
+            void errorMessage("Missing gitblame.commitUrl config value.");
         }
     }
 
@@ -151,19 +118,18 @@ export class GitExtension {
     }
 
     private setupListeners(): Disposable {
-        const disposables: Disposable[] = [];
-
         const changeTextEditorSelection = (textEditor: TextEditor): void => {
             const { scheme } = textEditor.document.uri;
             if (scheme === "file" || scheme === "untitled") {
-                void this.renderStatusBarView(textEditor);
+                void this.updateView(textEditor);
             }
         }
 
-        disposables.push(
+        return Disposable.from(
             window.onDidChangeActiveTextEditor((textEditor): void => {
                 if (textEditor?.document.uri.scheme === "file") {
-                    void this.blame.blameFile(textEditor.document);
+                    this.view.activity();
+                    void this.blame.file(textEditor.document);
                     /**
                      * For unknown reasons files without previously or stored
                      * selection locations don't trigger the change selection
@@ -180,33 +146,28 @@ export class GitExtension {
                 changeTextEditorSelection(textEditor);
             }),
             workspace.onDidSaveTextDocument((): void => {
-                void this.renderStatusBarView();
+                void this.updateView();
             }),
             workspace.onDidCloseTextDocument((document: Document): void => {
                 void this.blame.removeDocument(document);
             }),
         );
-
-        return Disposable.from(...disposables);
     }
 
-    private init(): void {
-        void this.renderStatusBarView();
-    }
-
-    private async renderStatusBarView(
-        textEditor = window.activeTextEditor,
+    private async updateView(
+        textEditor = getActiveTextEditor(),
     ): Promise<void> {
         if (!validEditor(textEditor)) {
             this.view.update();
             return;
         }
-        const before = this.getCurrentActiveFilePosition(textEditor);
-        const commitInfo = await this.blame.blameLine(
+        this.view.activity();
+        const before = getCurrentActiveFilePosition(textEditor);
+        const commitInfo = await this.blame.getLine(
             textEditor.document,
             textEditor.selection.active.line,
         );
-        const after = this.getCurrentActiveFilePosition(textEditor);
+        const after = getCurrentActiveFilePosition(textEditor);
 
         // Only update if we haven't moved since we started blaming
         // or if we no longer have focus on any file
@@ -215,29 +176,14 @@ export class GitExtension {
         }
     }
 
-    private getCurrentActiveFilePosition(editor: TextEditor): string {
-        if (editor.document.uri.scheme !== "file") {
-            return NO_FILE_OR_PLACE;
+    private async getCommitInfo(): Promise<CommitInfo | undefined> {
+        const commitInfo = await this.getCurrentLineInfo(getActiveTextEditor());
+
+        if (commitInfo) {
+            return commitInfo;
         }
 
-        const {document, selection} = editor;
-
-        return `${document.fileName}:${selection.active.line}`;
-    }
-
-    private async getCommitInfo(
-    ): Promise<CommitInfo | undefined> {
-        const commitInfo = await this.getCurrentLineInfo(
-            window.activeTextEditor,
-        );
-
-        if (!commitInfo) {
-            void window.showErrorMessage(
-                "The current file and line can not be blamed.",
-            );
-        }
-
-        return commitInfo;
+        void errorMessage("The current editor can not be blamed.");
     }
 
     private async getCurrentLineInfo(
@@ -247,7 +193,8 @@ export class GitExtension {
             return undefined;
         }
 
-        return this.blame.blameLine(
+        this.view.activity();
+        return this.blame.getLine(
             editor.document,
             editor.selection.active.line,
         );

@@ -33,19 +33,15 @@ suite("Split", (): void => {
         );
     });
     test("Short second parameter", (): void => {
-        assert.throws(
-            (): void => {
-                split("bad second argument", "");
-            },
-            new Error(`Invalid split character argument ""`),
+        assert.deepStrictEqual(
+            split("bad second argument", ""),
+            ["bad second argument", ""],
         );
     });
     test("Long second parameter", (): void => {
-        assert.throws(
-            (): void => {
-                split("bad second argument", "long");
-            },
-            new Error(`Invalid split character argument "long"`),
+        assert.deepStrictEqual(
+            split("bad second argument long", "long"),
+            ["bad second argument ", "ong"],
         );
     });
 });

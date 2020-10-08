@@ -1,13 +1,14 @@
 import { ChildProcess, execFile, ExecOptions } from "child_process";
 
-import { ErrorHandler } from "./errorhandler";
+import { Logger } from "./logger";
 
 export async function execute(
     command: string,
     args: string[],
     options: ExecOptions = {},
 ): Promise<string> {
-    ErrorHandler.getInstance().logCommand(`${command} ${args.join(" ")}`);
+    const logger = Logger.getInstance();
+    logger.command(`${command} ${args.join(" ")}`);
 
     let execution: ChildProcess;
 
@@ -18,7 +19,7 @@ export async function execute(
             { ...options, encoding: "utf8" },
         );
     } catch (err) {
-        ErrorHandler.getInstance().logError(err);
+        logger.error(err);
         return "";
     }
 

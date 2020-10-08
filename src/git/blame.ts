@@ -1,21 +1,23 @@
-import { BlameInfo, CommitInfo } from "./util/blanks";
-import { Document } from "../util/editorvalidator";
+import type { CommitInfo } from "./util/stream-parsing";
+import type { Document } from "../util/editorvalidator";
+import type { BlameInfo } from "./filephysical";
+
 import { GitFile, gitFileFactory } from "./filefactory";
-import { ErrorHandler } from "../util/errorhandler";
+import { Logger } from "../util/logger";
 
 export class GitBlame {
     private readonly files = new Map<Document, Promise<GitFile>>();
 
-    public async blameFile(document: Document): Promise<BlameInfo | undefined> {
-        return this.getBlameInfo(document);
+    public async file(document: Document): Promise<BlameInfo | undefined> {
+        return this.getInfo(document);
     }
 
-    public async blameLine(
+    public async getLine(
         document: Document,
         lineNumber: number,
     ): Promise<CommitInfo | undefined> {
         const commitLineNumber = lineNumber + 1;
-        const blameInfo = await this.getBlameInfo(document);
+        const blameInfo = await this.getInfo(document);
 
         return blameInfo?.[commitLineNumber];
     }
@@ -32,15 +34,15 @@ export class GitBlame {
         }
     }
 
-    private async getBlameInfo(
+    private async getInfo(
         document: Document,
     ): Promise<BlameInfo | undefined> {
-        const blameFile = await this.ensureGitFile(document);
+        const blameFile = await this.getFile(document);
 
         return blameFile.blame();
     }
 
-    private ensureGitFile(document: Document): Promise<GitFile> {
+    private getFile(document: Document): Promise<GitFile> {
         const potentialGitFile = this.files.get(document);
 
         if (potentialGitFile) {
@@ -49,10 +51,10 @@ export class GitBlame {
 
         const gitFile = gitFileFactory(document);
         void gitFile.then(
-            (file): void => file.setDisposeCallback((): void => {
+            (file): void => file.onDispose((): void => {
                 void this.removeDocument(document);
             }),
-            (err): void => ErrorHandler.getInstance().logError(err),
+            (err): void => Logger.getInstance().error(err),
         );
         this.files.set(document, gitFile);
 

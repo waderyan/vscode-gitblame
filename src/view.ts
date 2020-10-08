@@ -1,26 +1,20 @@
 import { StatusBarAlignment, StatusBarItem, window } from "vscode";
 
+import type { CommitInfo } from "./git/util/stream-parsing";
+
+import { isUncomitted } from "./git/util/uncommitted";
 import { getProperty } from "./util/property";
 import { toTextView } from "./util/textdecorator";
-import { CommitInfo, isUncomitted } from "./git/util/blanks";
 
 export class StatusBarView {
-    private static instance?: StatusBarView;
     private readonly statusBarItem: StatusBarItem;
 
-    static getInstance(): StatusBarView {
-        if (StatusBarView.instance === undefined) {
-            StatusBarView.instance = new StatusBarView;
-        }
-
-        return StatusBarView.instance;
-    }
-
-    private constructor() {
+    constructor() {
         this.statusBarItem = window.createStatusBarItem(
             StatusBarAlignment.Left,
             getProperty("statusBarPositionPriority"),
         );
+        this.statusBarItem.show();
     }
 
     public clear(): void {
@@ -41,12 +35,10 @@ export class StatusBarView {
             this.statusBarItem.tooltip = "git blame";
             this.statusBarItem.command = "gitblame.quickInfo";
         }
-        this.statusBarItem.show();
     }
 
-    public startProgress(): void {
+    public activity(): void {
         this.setTextWithoutBlame('$(sync~spin) Waiting for git blame response');
-        this.statusBarItem.show();
     }
 
     public dispose(): void {

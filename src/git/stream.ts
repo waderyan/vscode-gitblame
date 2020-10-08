@@ -1,24 +1,19 @@
 import type { ChildProcess } from "child_process";
 
-import { spawnGitBlameStreamProcess } from "./util/gitcommand";
+import { blameProcess } from "./util/gitcommand";
 import { ChunkyGenerator, processChunk } from "./util/stream-parsing";
 
 export class GitBlameStream {
     private process?: ChildProcess;
-    private killBeforeSpawn = false;
+    private prevent = false;
 
     public async * blame(
         fileName: string,
     ): AsyncGenerator<ChunkyGenerator> {
-        this.process = await spawnGitBlameStreamProcess(
-            fileName,
-            () => this.killBeforeSpawn,
-        );
+        this.process = await blameProcess(fileName, () => this.prevent);
 
         if (!this.process?.stdout || !this.process?.stderr) {
-            throw new Error(
-                'Unable to setup stdout and/or stderr for git blame process',
-            );
+            throw new Error('Unable to setup stdout and/or stderr for git');
         }
 
         const emittedCommits = new Set<string>();
@@ -33,7 +28,7 @@ export class GitBlameStream {
     }
 
     public dispose(): void {
-        this.killBeforeSpawn = true;
+        this.prevent = true;
         this.process?.kill();
     }
 }
