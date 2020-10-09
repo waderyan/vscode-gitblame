@@ -5,7 +5,7 @@ import { getGitCommand } from "../../src/git/util/gitcommand";
 
 suite("Execute Command", (): void => {
     test("Simple command", async (): Promise<void> => {
-        const gitCommand = await getGitCommand();
+        const gitCommand = getGitCommand();
         const commandResult = await execute(gitCommand, ["--version"]);
 
         assert.ok(commandResult);
