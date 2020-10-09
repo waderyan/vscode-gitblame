@@ -91,16 +91,16 @@ export class Extension {
     }
 
     public async copyHash(): Promise<void> {
-        const commit = await this.getCommit();
+        const commit = await this.getCommit(true);
 
-        if (commit && isUncomitted(commit)) {
+        if (commit && !isUncomitted(commit)) {
             await env.clipboard.writeText(commit.hash);
             void infoMessage("Copied hash to clipboard");
         }
     }
 
     public async copyToolUrl(): Promise<void> {
-        const commit = await this.getCommit();
+        const commit = await this.getCommit(true);
         const toolUrl = await getToolUrl(commit);
 
         if (toolUrl) {
@@ -176,27 +176,29 @@ export class Extension {
         }
     }
 
-    private async getCommit(): Promise<Commit | undefined> {
-        const commit = await this.getActiveLine(getActiveTextEditor());
+    private async getCommit(undercover = false): Promise<Commit | undefined> {
+        const notBlame = () => void errorMessage(
+            "The current editor can not be blamed.",
+        );
+        const editor = getActiveTextEditor();
 
-        if (commit) {
-            return commit;
-        }
-
-        void errorMessage("The current editor can not be blamed.");
-    }
-
-    private async getActiveLine(
-        editor?: TextEditor,
-    ): Promise<Commit | undefined> {
         if (!editor) {
-            return undefined;
+            notBlame();
+            return;
         }
 
-        this.view.activity();
-        return this.blame.getLine(
+        if (!undercover) {
+            this.view.activity();
+        }
+        const line = await this.blame.getLine(
             editor.document,
             editor.selection.active.line,
         );
+
+        if (!line) {
+            notBlame();
+        }
+
+        return line;
     }
 }
