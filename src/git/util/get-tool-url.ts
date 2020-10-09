@@ -1,7 +1,7 @@
 import { Uri } from "vscode";
 import { URL } from "url";
 
-import type { CommitInfo } from "./stream-parsing";
+import type { Commit } from "./stream-parsing";
 
 import { isUrl } from "../../util/is-url";
 import { defaultWebPath } from "./default-web-path";
@@ -19,7 +19,7 @@ import { errorMessage } from "../../util/message";
 
 function getDefaultToolUrl(
     origin: string,
-    commitInfo: CommitInfo,
+    commitInfo: Commit,
 ): Uri | undefined {
     const attemptedURL = defaultWebPath(origin, commitInfo.hash);
 
@@ -43,9 +43,9 @@ function gitOriginHostname(origin: string): (index?: string) => string {
 }
 
 export async function getToolUrl(
-    commitInfo?: CommitInfo,
+    commit?: Commit,
 ): Promise<Uri | undefined> {
-    if (!commitInfo || isUncomitted(commitInfo)) {
+    if (!commit || isUncomitted(commit)) {
         return;
     }
 
@@ -59,7 +59,7 @@ export async function getToolUrl(
     const projectName = projectNameFromOrigin(origin);
     const remoteUrl = stripGitRemoteUrl(await remote);
     const parsedUrl = parseTokens(commitUrl, {
-        "hash": (): string => commitInfo.hash,
+        "hash": (): string => commit.hash,
         "project.name": (): string => projectName,
         "project.remote": (): string => remoteUrl,
         "gitorigin.hostname": gitOriginHostname(origin),
@@ -69,7 +69,7 @@ export async function getToolUrl(
     if (isUrl(parsedUrl)) {
         return Uri.parse(parsedUrl, true);
     } else if (!parsedUrl && inferCommitUrl && origin) {
-        return getDefaultToolUrl(origin, commitInfo);
+        return getDefaultToolUrl(origin, commit);
     } else if (!origin) {
         return undefined;
     } else {

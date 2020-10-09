@@ -7,26 +7,19 @@ export type CommitAuthor = {
     tz: string;
 }
 
-export type CommitInfo = {
+export type Commit = {
     hash: string;
     author: CommitAuthor;
     committer: CommitAuthor;
     summary: string;
 }
 
-export type BlamedCommit = {
-    readonly info: CommitInfo;
-}
+export type Line = [number, string];
 
-export type BlamedLine = {
-    readonly line: number;
-    readonly hash: string;
-}
+export type ChunkyGenerator = Generator<Commit> | Generator<Line>;
 
-export type ChunkyGenerator = Generator<CommitInfo> | Generator<BlamedLine>;
-
-function blankCommitInfo(): CommitInfo {
-    const commitInfo: CommitInfo = {
+function blankCommitInfo(): Commit {
+    const commitInfo: Commit = {
         author: {
             mail: "",
             name: "",
@@ -80,7 +73,7 @@ function fillOwner(
 function processAuthorLine(
     key: string,
     value: string,
-    commitInfo: CommitInfo,
+    commitInfo: Commit,
 ): void {
     const [author, dataPoint] = split(key, "-");
 
@@ -92,9 +85,9 @@ function processAuthorLine(
 }
 
 function * commitDeduplicator(
-    commitInfo: CommitInfo,
+    commitInfo: Commit,
     emittedCommits: Set<string>,
-): Generator<CommitInfo> {
+): Generator<Commit> {
     if (commitInfo.hash !== "EMPTY" && !emittedCommits.has(commitInfo.hash)) {
         emittedCommits.add(commitInfo.hash);
 
@@ -125,7 +118,7 @@ function isNewCommit(
 function processLine(
     key: string,
     value: string,
-    commitInfo: CommitInfo,
+    commitInfo: Commit,
 ): void {
     if (key === "summary") {
         commitInfo.summary = value;
@@ -139,14 +132,11 @@ function processLine(
 function * processCoverage(
     hash: string,
     coverage: string,
-): Generator<BlamedLine> {
+): Generator<Line> {
     const [, finalLine, lines] = coverage.split(" ").map(Number);
 
     for (let i = 0; i < lines; i++) {
-        yield {
-            line: finalLine + i,
-            hash,
-        };
+        yield [finalLine + i, hash];
     }
 }
 
@@ -155,7 +145,7 @@ export function * processChunk(
     emittedCommits: Set<string>,
 ): Generator<ChunkyGenerator> {
     let commitInfo = blankCommitInfo();
-    let coverageGenerator: Generator<BlamedLine> | undefined = undefined;
+    let coverageGenerator: Generator<Line> | undefined = undefined;
 
     for (const [key, value, nextLine] of splitChunk(dataChunk)) {
         if (isCoverageLine(key, value)) {

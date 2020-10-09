@@ -2,10 +2,10 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "publisher": "waderyan",
   "engines": {
-    "vscode": "^1.48.1"
+    "vscode": "^1.49.0"
   },
   "categories": [
     "Other"
@@ -16,12 +16,15 @@
   },
   "icon": "images/git_icon.png",
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "keywords": [
     "git",
     "gitblame",
-    "blame"
+    "blame",
+    "github",
+    "gitlab",
+    "bitbucket"
   ],
   "qna": false,
   "main": "./dist/index",
@@ -29,7 +32,7 @@
     "vscode:prepublish": "npm run build",
     "build": "rollup -c",
     "test-build": "tsc -p tsconfig.test.json",
-    "package": "vsce package",
+    "package": "npx vsce package",
     "lint": "eslint --no-inline-config --ext .js,.ts ./src ./test",
     "test": "npm run test-build && node ./out/test/run-test.js"
   },

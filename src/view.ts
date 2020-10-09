@@ -1,54 +1,47 @@
-import { StatusBarAlignment, StatusBarItem, window } from "vscode";
+import { StatusBarItem, window } from "vscode";
 
-import type { CommitInfo } from "./git/util/stream-parsing";
+import type { Commit } from "./git/util/stream-parsing";
 
 import { isUncomitted } from "./git/util/uncommitted";
 import { getProperty } from "./util/property";
 import { toTextView } from "./util/textdecorator";
 
 export class StatusBarView {
-    private readonly statusBarItem: StatusBarItem;
+    private readonly out: StatusBarItem;
 
     constructor() {
-        this.statusBarItem = window.createStatusBarItem(
-            StatusBarAlignment.Left,
+        this.out = window.createStatusBarItem(
+            1 /*StatusBarAlignment.Left*/,
             getProperty("statusBarPositionPriority"),
         );
-        this.statusBarItem.show();
+        this.out.show();
     }
 
-    public clear(): void {
-        this.setTextWithoutBlame("");
-    }
-
-    public update(commitInfo?: CommitInfo): void {
-        if (commitInfo === undefined) {
-            this.clear();
-        } else if (isUncomitted(commitInfo)) {
-            this.setTextWithoutBlame(
+    public update(commit?: Commit): void {
+        if (!commit) {
+            this.setText("", false);
+        } else if (isUncomitted(commit)) {
+            this.setText(
                 getProperty("statusBarMessageNoCommit", "Not Committed Yet"),
+                false,
             );
         } else {
-            const text = toTextView(commitInfo);
-
-            this.statusBarItem.text = `$(git-commit) ${text}`.trimEnd();
-            this.statusBarItem.tooltip = "git blame";
-            this.statusBarItem.command = "gitblame.quickInfo";
+            this.setText(toTextView(commit), true);
         }
     }
 
     public activity(): void {
-        this.setTextWithoutBlame('$(sync~spin) Waiting for git blame response');
+        this.setText('$(sync~spin) Waiting for git blame response', false);
     }
 
     public dispose(): void {
-        this.statusBarItem.dispose();
+        this.out.dispose();
     }
 
-    private setTextWithoutBlame(text: string): void {
-        const noInfo = "git blame - No info about the current line";
-        this.statusBarItem.text = `$(git-commit) ${text}`.trimEnd();
-        this.statusBarItem.tooltip = noInfo;
-        this.statusBarItem.command = undefined;
+    private setText(text: string, command: boolean): void {
+        const noInfo = " - No info about the current line";
+        this.out.text = "$(git-commit) " + text.trimEnd();
+        this.out.tooltip = `git blame${ command ? "" : noInfo }`;
+        this.out.command = command ? "gitblame.quickInfo" : undefined;
     }
 }

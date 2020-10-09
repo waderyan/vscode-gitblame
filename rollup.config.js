@@ -22,8 +22,11 @@ export default {
                 keep_classnames: false,
                 passes: 4,
                 toplevel: true,
+                keep_fargs: false,
                 unsafe_arrows: true,
                 unsafe_methods: true,
+                pure_getters: true,
+                module: true,
             },
             format: {
                 semicolons: false,

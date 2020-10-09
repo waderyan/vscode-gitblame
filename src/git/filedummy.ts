@@ -1,7 +1,7 @@
 import { Logger } from "../util/logger";
-import { GitFile } from "./filefactory";
+import { File } from "./filefactory";
 
-export class GitFileDummy implements GitFile {
+export class FileDummy implements File {
     public constructor(fileName: string) {
         Logger.getInstance().info(
             `Will not try to blame file "${

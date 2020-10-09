@@ -1,23 +1,23 @@
-import type { CommitInfo } from "./util/stream-parsing";
+import type { Commit } from "./util/stream-parsing";
 import type { Document } from "../util/editorvalidator";
-import type { BlameInfo } from "./filephysical";
+import type { Blame } from "./filephysical";
 
-import { GitFile, gitFileFactory } from "./filefactory";
+import { File, fileFactory } from "./filefactory";
 import { Logger } from "../util/logger";
 
-export class GitBlame {
-    private readonly files = new Map<Document, Promise<GitFile>>();
+export class Blamer {
+    private readonly files = new Map<Document, Promise<File>>();
 
-    public async file(document: Document): Promise<BlameInfo | undefined> {
-        return this.getInfo(document);
+    public async file(document: Document): Promise<Blame | undefined> {
+        return this.get(document);
     }
 
     public async getLine(
         document: Document,
         lineNumber: number,
-    ): Promise<CommitInfo | undefined> {
+    ): Promise<Commit | undefined> {
         const commitLineNumber = lineNumber + 1;
-        const blameInfo = await this.getInfo(document);
+        const blameInfo = await this.get(document);
 
         return blameInfo?.[commitLineNumber];
     }
@@ -34,30 +34,30 @@ export class GitBlame {
         }
     }
 
-    private async getInfo(
+    private async get(
         document: Document,
-    ): Promise<BlameInfo | undefined> {
+    ): Promise<Blame | undefined> {
         const blameFile = await this.getFile(document);
 
         return blameFile.blame();
     }
 
-    private getFile(document: Document): Promise<GitFile> {
-        const potentialGitFile = this.files.get(document);
+    private getFile(document: Document): Promise<File> {
+        const potentialFile = this.files.get(document);
 
-        if (potentialGitFile) {
-            return potentialGitFile;
+        if (potentialFile) {
+            return potentialFile;
         }
 
-        const gitFile = gitFileFactory(document);
-        void gitFile.then(
+        const file = fileFactory(document);
+        void file.then(
             (file): void => file.onDispose((): void => {
                 void this.removeDocument(document);
             }),
             (err): void => Logger.getInstance().error(err),
         );
-        this.files.set(document, gitFile);
+        this.files.set(document, file);
 
-        return gitFile;
+        return file;
     }
 }

@@ -10,34 +10,22 @@ import { execute } from "../../util/execcommand";
 import { GitExtension } from "../../../types/git";
 import { getActiveTextEditor } from "../../util/get-active";
 
-export async function getGitCommand(): Promise<string> {
+export function getGitCommand(): string {
     const vscodeGit = extensions.getExtension<GitExtension>("vscode.git");
 
     if (vscodeGit?.exports.enabled) {
-        const api = vscodeGit.exports.getAPI(1);
-        if (api.state === "initialized") {
-            return Promise.resolve(api.git.path);
-        } else {
-            return new Promise((resolve): void => {
-                const change = api.onDidChangeState((newState): void => {
-                    if (newState === "initialized") {
-                        resolve(api.git.path);
-                        change.dispose();
-                    }
-                });
-            });
-        }
+        return vscodeGit.exports.getAPI(1).git.path;
     }
 
-    return Promise.resolve("git");
+    return "git";
 }
 
 async function executeWithCWD(
-    command: Promise<string> | string,
+    command: string,
     args: string[],
     cwd: string,
 ): Promise<string> {
-    return execute(await command, args, { cwd });
+    return execute(command, args, { cwd });
 }
 
 export async function getActiveFileOrigin(remoteName: string): Promise<string> {
@@ -47,16 +35,11 @@ export async function getActiveFileOrigin(remoteName: string): Promise<string> {
         return "";
     }
 
-    try {
-        return await executeWithCWD(
-            getGitCommand(),
-            ["ls-remote", "--get-url", remoteName],
-            dirname(activeEditor.document.fileName),
-        );
-    } catch (e) {
-        Logger.getInstance().error(e);
-        return "";
-    }
+    return await executeWithCWD(
+        getGitCommand(),
+        ["ls-remote", "--get-url", remoteName],
+        dirname(activeEditor.document.fileName),
+    );
 }
 
 export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
@@ -66,71 +49,59 @@ export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
         return "";
     }
 
-    try {
-        const gitCommand = await getGitCommand();
-        const activeFileFolder = dirname(activeEditor.document.fileName);
-        const currentBranch = await executeWithCWD(
-            gitCommand,
-            ["symbolic-ref", "-q", "--short", "HEAD"],
-            activeFileFolder,
-        );
-        const curRemote = await executeWithCWD(
-            gitCommand,
-            ["config", "--local", "--get", `branch.${ currentBranch }.remote`],
-            activeFileFolder,
-        );
-        const remote = curRemote || fallbackRemote;
-        const remoteUrl = await executeWithCWD(
-            gitCommand,
-            ["config", "--local", "--get", `remote.${ remote }.url`],
-            activeFileFolder,
-        );
+    const gitCommand = getGitCommand();
+    const activeFileFolder = dirname(activeEditor.document.fileName);
+    const currentBranch = await executeWithCWD(
+        gitCommand,
+        ["symbolic-ref", "-q", "--short", "HEAD"],
+        activeFileFolder,
+    );
+    const curRemote = await executeWithCWD(
+        gitCommand,
+        ["config", "--local", "--get", `branch.${ currentBranch }.remote`],
+        activeFileFolder,
+    );
+    const remote = curRemote || fallbackRemote;
+    const remoteUrl = await executeWithCWD(
+        gitCommand,
+        ["config", "--local", "--get", `remote.${ remote }.url`],
+        activeFileFolder,
+    );
 
-        return remoteUrl;
-    } catch (e) {
-        Logger.getInstance().error(e);
-        return "";
-    }
+    return remoteUrl;
 }
 
 export async function getWorkTree(fileName: string): Promise<string> {
-    try {
-        const workTree = await executeWithCWD(
-            getGitCommand(),
-            ["rev-parse", "--show-toplevel"],
-            dirname(fileName),
-        );
+    const workTree = await executeWithCWD(
+        getGitCommand(),
+        ["rev-parse", "--show-toplevel"],
+        dirname(fileName),
+    );
 
-        if (workTree) {
-            return normalize(workTree);
-        }
-    } catch (e) {
-        Logger.getInstance().error(e);
+    if (workTree) {
+        return normalize(workTree);
     }
 
     return "";
 }
 
-export async function blameProcess(
+export function blameProcess(
     fileName: string,
-    lastSecondAbort = () => false,
-): Promise<ChildProcess | undefined> {
+): ChildProcess | undefined {
     const args = ["blame", "--incremental", "--", fileName];
 
     if (getProperty("ignoreWhitespace")) {
         args.splice(1, 0, "-w");
     }
 
-    const gitCommand = await getGitCommand();
+    const gitCommand = getGitCommand();
 
-    if (!lastSecondAbort()) {
-        Logger.getInstance().command(
-            `${gitCommand} ${args.join(" ")}`,
-        );
-        return spawn(gitCommand, args, {
-            cwd: dirname(fileName),
-        });
-    }
+    Logger.getInstance().command(
+        `${gitCommand} ${args.join(" ")}`,
+    );
+    return spawn(gitCommand, args, {
+        cwd: dirname(fileName),
+    });
 }
 
 export async function getRelativePathOfActiveFile(): Promise<string> {
@@ -140,15 +111,10 @@ export async function getRelativePathOfActiveFile(): Promise<string> {
         return "";
     }
 
-    try {
-        const { fileName } = activeEditor.document;
-        return await executeWithCWD(
-            getGitCommand(),
-            ["ls-files", "--full-name", basename(fileName)],
-            dirname(fileName),
-        );
-    } catch (e) {
-        Logger.getInstance().error(e);
-        return "";
-    }
+    const { fileName } = activeEditor.document;
+    return await executeWithCWD(
+        getGitCommand(),
+        ["ls-files", "--full-name", basename(fileName)],
+        dirname(fileName),
+    );
 }

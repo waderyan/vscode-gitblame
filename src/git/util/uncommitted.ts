@@ -1,5 +1,5 @@
-import type { CommitInfo } from "./stream-parsing";
+import type { Commit } from "./stream-parsing";
 
-export function isUncomitted(commit: CommitInfo): boolean {
+export function isUncomitted(commit: Commit): boolean {
     return /^0{40}$/.test(commit.hash);
 }

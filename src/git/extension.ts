@@ -8,12 +8,12 @@ import {
     workspace,
 } from "vscode";
 
-import type { CommitInfo } from "./util/stream-parsing";
+import type { Commit } from "./util/stream-parsing";
 
 import { Document, validEditor } from "../util/editorvalidator";
 import { normalizeCommitInfoTokens, parseTokens } from "../util/textdecorator";
 import { StatusBarView } from "../view";
-import { GitBlame } from "./blame";
+import { Blamer } from "./blame";
 import { getProperty } from "../util/property";
 import { getToolUrl } from "./util/get-tool-url";
 import { isUncomitted } from "./util/uncommitted";
@@ -28,13 +28,13 @@ type ActionableMessageItem = MessageItem & {
     action: () => void;
 }
 
-export class GitExtension {
+export class Extension {
     private readonly disposable: Disposable;
-    private readonly blame: GitBlame;
+    private readonly blame: Blamer;
     private readonly view: StatusBarView;
 
     constructor() {
-        this.blame = new GitBlame;
+        this.blame = new Blamer;
         this.view = new StatusBarView;
 
         this.disposable = this.setupListeners();
@@ -43,11 +43,11 @@ export class GitExtension {
     }
 
     public async blameLink(): Promise<void> {
-        const commitInfo = await this.getCommitInfo();
-        const commitToolUrl = await getToolUrl(commitInfo);
+        const commit = await this.getCommit();
+        const toolUrl = await getToolUrl(commit);
 
-        if (commitToolUrl) {
-            await commands.executeCommand("vscode.open", commitToolUrl);
+        if (toolUrl) {
+            void commands.executeCommand("vscode.open", toolUrl);
         } else {
             void errorMessage(
                 "Missing gitblame.commitUrl config value.",
@@ -56,29 +56,29 @@ export class GitExtension {
     }
 
     public async showMessage(): Promise<void> {
-        const commitInfo = await this.getCommitInfo();
+        const commit = await this.getCommit();
 
-        if (!commitInfo || isUncomitted(commitInfo)) {
-            this.view.clear();
+        if (!commit || isUncomitted(commit)) {
+            this.view.update();
             return;
         }
 
         const messageFormat = getProperty("infoMessageFormat", "");
-        const normalizedTokens = normalizeCommitInfoTokens(commitInfo);
+        const normalizedTokens = normalizeCommitInfoTokens(commit);
         const message = parseTokens(messageFormat, normalizedTokens);
-        const commitToolUrl = await getToolUrl(commitInfo);
+        const toolUrl = await getToolUrl(commit);
         const actions: ActionableMessageItem[] = [];
 
-        if (commitToolUrl?.toString()) {
+        if (toolUrl?.toString()) {
             actions.push({
                 title: "View",
                 action: () => {
-                    void commands.executeCommand("vscode.open", commitToolUrl);
+                    void commands.executeCommand("vscode.open", toolUrl);
                 },
             });
         }
 
-        this.view.update(commitInfo);
+        this.view.update(commit);
 
         const selected = await infoMessage(
             message,
@@ -91,20 +91,20 @@ export class GitExtension {
     }
 
     public async copyHash(): Promise<void> {
-        const commitInfo = await this.getCommitInfo();
+        const commit = await this.getCommit();
 
-        if (commitInfo && isUncomitted(commitInfo)) {
-            await env.clipboard.writeText(commitInfo.hash);
+        if (commit && isUncomitted(commit)) {
+            await env.clipboard.writeText(commit.hash);
             void infoMessage("Copied hash to clipboard");
         }
     }
 
     public async copyToolUrl(): Promise<void> {
-        const commitInfo = await this.getCommitInfo();
-        const commitToolUrl = await getToolUrl(commitInfo);
+        const commit = await this.getCommit();
+        const toolUrl = await getToolUrl(commit);
 
-        if (commitToolUrl) {
-            await env.clipboard.writeText(commitToolUrl.toString());
+        if (toolUrl) {
+            await env.clipboard.writeText(toolUrl.toString());
             void infoMessage("Copied tool URL to clipboard");
         } else {
             void errorMessage("Missing gitblame.commitUrl config value.");
@@ -139,7 +139,7 @@ export class GitExtension {
                      */
                     changeTextEditorSelection(textEditor);
                 } else {
-                    this.view.clear();
+                    this.view.update();
                 }
             }),
             window.onDidChangeTextEditorSelection(({ textEditor }) => {
@@ -163,7 +163,7 @@ export class GitExtension {
         }
         this.view.activity();
         const before = getCurrentActiveFilePosition(textEditor);
-        const commitInfo = await this.blame.getLine(
+        const commit = await this.blame.getLine(
             textEditor.document,
             textEditor.selection.active.line,
         );
@@ -172,24 +172,24 @@ export class GitExtension {
         // Only update if we haven't moved since we started blaming
         // or if we no longer have focus on any file
         if (before === after || after === NO_FILE_OR_PLACE) {
-            this.view.update(commitInfo);
+            this.view.update(commit);
         }
     }
 
-    private async getCommitInfo(): Promise<CommitInfo | undefined> {
-        const commitInfo = await this.getCurrentLineInfo(getActiveTextEditor());
+    private async getCommit(): Promise<Commit | undefined> {
+        const commit = await this.getActiveLine(getActiveTextEditor());
 
-        if (commitInfo) {
-            return commitInfo;
+        if (commit) {
+            return commit;
         }
 
         void errorMessage("The current editor can not be blamed.");
     }
 
-    private async getCurrentLineInfo(
+    private async getActiveLine(
         editor?: TextEditor,
-    ): Promise<CommitInfo | undefined> {
-        if (editor === undefined) {
+    ): Promise<Commit | undefined> {
+        if (!editor) {
             return undefined;
         }
 

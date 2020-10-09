@@ -23,7 +23,7 @@ export async function execute(
         return "";
     }
 
-    if (execution.stdout === null) {
+    if (!execution.stdout) {
         return "";
     }
 

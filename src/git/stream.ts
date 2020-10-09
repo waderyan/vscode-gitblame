@@ -3,14 +3,13 @@ import type { ChildProcess } from "child_process";
 import { blameProcess } from "./util/gitcommand";
 import { ChunkyGenerator, processChunk } from "./util/stream-parsing";
 
-export class GitBlameStream {
+export class Blamer {
     private process?: ChildProcess;
-    private prevent = false;
 
     public async * blame(
         fileName: string,
     ): AsyncGenerator<ChunkyGenerator> {
-        this.process = await blameProcess(fileName, () => this.prevent);
+        this.process = blameProcess(fileName);
 
         if (!this.process?.stdout || !this.process?.stderr) {
             throw new Error('Unable to setup stdout and/or stderr for git');
@@ -28,7 +27,6 @@ export class GitBlameStream {
     }
 
     public dispose(): void {
-        this.prevent = true;
         this.process?.kill();
     }
 }

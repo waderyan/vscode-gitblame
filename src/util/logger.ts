@@ -15,7 +15,7 @@ export class Logger {
     private readonly out: OutputChannel;
 
     public static getInstance(): Logger {
-        if (Logger.instance === undefined) {
+        if (!Logger.instance) {
             Logger.instance = new Logger();
         }
 

@@ -1,6 +1,6 @@
 # Change Log
 
-## 5.0.1 (xxx xx, 2020)
+## 5.0.1 (October 10, 2020)
 * Feature: Faster load times
 * Feature: Deactivation function for easier and faster uninstalls
 * Fix: Reducing the number of dependencies

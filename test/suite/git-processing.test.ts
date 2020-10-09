@@ -3,8 +3,8 @@ import { readFileSync } from "fs";
 import { resolve } from "path";
 
 import {
-    BlamedLine,
-    CommitInfo,
+    Commit,
+    Line,
     processChunk,
 } from "../../src/git/util/stream-parsing";
 
@@ -33,7 +33,7 @@ suite("Chunk Processing", (): void => {
         const result = load("git-stream-blame-incremental-result.json", false);
 
         const commits = new Set<string>();
-        const chunks: (CommitInfo | BlamedLine)[] = [];
+        const chunks: (Commit | Line)[] = [];
         for (const blamed of processChunk(chunk, commits)) {
             for (const blame of blamed) {
                 chunks.push(blame);
@@ -50,14 +50,14 @@ suite("Chunk Processing", (): void => {
         const chunk = load("git-stream-blame-incremental.chunks", true);
 
         const commits = new Set<string>();
-        const knownCommits: Record<string, CommitInfo> = {};
+        const knownCommits: Record<string, Commit> = {};
 
         for (const blamed of processChunk(chunk, commits)) {
             for (const blame of blamed) {
                 if ("author" in blame) {
                     knownCommits[blame.hash] = blame;
                 } else {
-                    assert.ok(blame.hash in knownCommits);
+                    assert.ok(blame[1] in knownCommits);
                 }
             }
         }

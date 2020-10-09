@@ -7,7 +7,7 @@ import {
     monthsBetween,
     yearsBetween,
 } from "./ago";
-import { CommitInfo } from "../git/util/stream-parsing";
+import { Commit } from "../git/util/stream-parsing";
 
 type InfoTokenFunctionWithParameter = (value: string) => string;
 type InfoTokenFunctionWithoutParameter = () => string;
@@ -121,7 +121,7 @@ function modify(value: string, modifier: string): string {
     return `${value}`;
 }
 
-export function toTextView(commit: CommitInfo): string {
+export function toTextView(commit: Commit): string {
     const messageFormat = getProperty("statusBarMessageFormat");
 
     if (messageFormat) {
@@ -157,7 +157,7 @@ export function toDateText(dateNow: Date, dateThen: Date): string {
 }
 
 export function normalizeCommitInfoTokens(
-    commit: CommitInfo,
+    commit: Commit,
 ): InfoTokenNormalizedCommitInfo {
     const now = new Date();
     const authorTime = new Date(commit.author.timestamp * 1000);
@@ -203,13 +203,9 @@ export function normalizeCommitInfoTokens(
 }
 
 export function parseTokens(
-    target: unknown,
+    target: string,
     infoTokens: InfoTokens,
 ): string {
-    if (typeof target !== "string") {
-        return "";
-    }
-
     const parsed = parse(target);
     let out = "";
 

@@ -15,12 +15,11 @@ function isToolUrlPlural(origin: string): boolean {
 function httpOrHttps(url: string): string | undefined {
     const matches = /^(https?):/.exec(url);
     if (matches !== null) {
-        return matches[0];
+        return matches[1];
     }
 }
 
 export function defaultWebPath(url: string, hash: string): string {
-    const isPlural = isToolUrlPlural(url);
     const httpProtocol = httpOrHttps(url);
     const gitlessUrl = stripGitRemoteUrl(url);
 
@@ -32,10 +31,9 @@ export function defaultWebPath(url: string, hash: string): string {
         return "";
     }
 
-    const commit = `commit${isPlural ? "s" : ""}`;
+    const commit = `commit${isToolUrlPlural(url) ? "s" : ""}`;
     const port = httpProtocol && uri.port ? `:${ uri.port }` : "";
 
-    return `${ uri.protocol }//` +
-        `${ uri.hostname }${ port }` +
+    return `${ uri.protocol }//${ uri.hostname }${ port }` +
         `${ uri.pathname }/${ commit }/${ hash }`;
 }

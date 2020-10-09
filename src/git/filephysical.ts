@@ -1,33 +1,33 @@
 import { FSWatcher, watch } from "fs";
 
-import type { ChunkyGenerator, CommitInfo } from "./util/stream-parsing";
-import type { GitFile } from "./filefactory";
+import type { ChunkyGenerator, Commit } from "./util/stream-parsing";
+import type { File } from "./filefactory";
 
 import { Logger } from "../util/logger";
-import { GitBlameStream } from "./stream";
+import { Blamer } from "./stream";
 
-export type BlameInfo = Record<number, CommitInfo | undefined>;
-type Registry = Map<string, CommitInfo>
+export type Blame = Record<number, Commit | undefined>;
+type Registry = Map<string, Commit>
 
 const fillBlameInfo = (
-    blameInfo: BlameInfo,
+    blameInfo: Blame,
     registry: Registry,
     chunkResult: ChunkyGenerator,
 ): void => {
     for (const lineOrCommit of chunkResult) {
-        if ("line" in lineOrCommit) {
-            blameInfo[lineOrCommit.line] = registry.get(lineOrCommit.hash);
+        if (Array.isArray(lineOrCommit)) {
+            blameInfo[lineOrCommit[0]] = registry.get(lineOrCommit[1]);
         } else {
             registry.set(lineOrCommit.hash, lineOrCommit);
         }
     }
 }
 
-export class GitFilePhysical implements GitFile {
+export class FilePhysical implements File {
     private readonly fileName: string;
     private readonly fsWatch: FSWatcher;
-    private info?: Promise<BlameInfo | undefined>;
-    private blamer?: GitBlameStream;
+    private info?: Promise<Blame | undefined>;
+    private blamer?: Blamer;
     private terminated = false;
     private clean?: () => void;
 
@@ -40,8 +40,8 @@ export class GitFilePhysical implements GitFile {
         this.clean = dispose;
     }
 
-    public async blame(): Promise<BlameInfo | undefined> {
-        if (this.info === undefined) {
+    public async blame(): Promise<Blame | undefined> {
+        if (!this.info) {
             this.info = this.runBlame();
         }
 
@@ -57,11 +57,11 @@ export class GitFilePhysical implements GitFile {
         this.fsWatch.close();
     }
 
-    private async runBlame(): Promise<BlameInfo | undefined> {
+    private async runBlame(): Promise<Blame | undefined> {
         const logger = Logger.getInstance();
-        const blameInfo: BlameInfo = {};
-        const commitRegistry: Registry = new Map<string, CommitInfo>();
-        this.blamer = new GitBlameStream();
+        const blameInfo: Blame = {};
+        const commitRegistry: Registry = new Map<string, Commit>();
+        this.blamer = new Blamer();
 
         try {
             const blameStream = this.blamer.blame(this.fileName);
