@@ -1,8 +1,8 @@
 # Git Blame
 
-[Build Status](https://github.com/Sertion/vscode-gitblame/actions?query=workflow%3ACI)
-
 See Git Blame information in the status bar for the currently selected line.
+
+Quick link to open the latest commit on the current line in the most popular online git tools.
 
 ![Feature Usage](https://raw.githubusercontent.com/Sertion/vscode-gitblame/master/images/GitBlamePreview.gif)
 

@@ -1,105 +1,98 @@
 import { FSWatcher, watch } from "fs";
-import { container } from "tsyringe";
 
-import { ErrorHandler } from "../util/errorhandler";
-import { StatusBarView } from "../view/view";
-import { GitFile } from "./filefactory";
-import { GitBlameStream } from "./stream";
-import { blankBlameInfo, GitBlameInfo } from "./util/blanks";
+import type { ChunkyGenerator, Commit } from "./util/stream-parsing";
+import type { File } from "./filefactory";
 
-export class GitFilePhysical implements GitFile {
+import { Logger } from "../util/logger";
+import { Blamer } from "./stream";
+
+export type Blame = Record<number, Commit | undefined>;
+type Registry = Map<string, Commit>
+
+const fillBlameInfo = (
+    blameInfo: Blame,
+    registry: Registry,
+    chunkResult: ChunkyGenerator,
+): void => {
+    for (const lineOrCommit of chunkResult) {
+        if (Array.isArray(lineOrCommit)) {
+            blameInfo[lineOrCommit[0]] = registry.get(lineOrCommit[1]);
+        } else {
+            registry.set(lineOrCommit.hash, lineOrCommit);
+        }
+    }
+}
+
+export class FilePhysical implements File {
     private readonly fileName: string;
-    private readonly fileSystemWatcher: FSWatcher;
-    private blameInfoPromise?: Promise<GitBlameInfo>;
-    private terminate = false;
-    private clearFromCache?: () => void;
+    private readonly fsWatch: FSWatcher;
+    private info?: Promise<Blame | undefined>;
+    private blamer?: Blamer;
+    private terminated = false;
+    private clean?: () => void;
 
     public constructor(fileName: string) {
         this.fileName = fileName;
-        this.fileSystemWatcher = this.setupWatcher();
+        this.fsWatch = watch(fileName, (): void => this.dispose());
     }
 
-    public registerDisposeFunction(dispose: () => void): void {
-        this.clearFromCache = dispose;
+    public onDispose(dispose: () => void): void {
+        this.clean = dispose;
     }
 
-    public async blame(): Promise<GitBlameInfo> {
-        container.resolve<StatusBarView>("StatusBarView").startProgress();
-
-        if (this.blameInfoPromise === undefined) {
-            this.blameInfoPromise = this.findBlameInfo();
+    public async blame(): Promise<Blame | undefined> {
+        if (!this.info) {
+            this.info = this.runBlame();
         }
 
-        return this.blameInfoPromise;
+        return this.info;
     }
 
     public dispose(): void {
-        this.terminate = true;
+        this.terminate();
 
-        if (this.clearFromCache) {
-            this.clearFromCache();
-            this.clearFromCache = undefined;
-        }
+        this.clean?.();
+        this.clean = undefined;
 
-        this.fileSystemWatcher.close();
+        this.fsWatch.close();
     }
 
-    private setupWatcher(): FSWatcher {
-        const fsWatcher = watch(this.fileName, (event: string): void => {
-            if (event === "rename") {
-                this.dispose();
-            } else if (event === "change") {
-                this.changed();
-            }
-        });
-
-        return fsWatcher;
-    }
-
-    private changed(): void {
-        this.blameInfoPromise = undefined;
-    }
-
-    private async findBlameInfo(): Promise<GitBlameInfo> {
-        container.resolve<StatusBarView>("StatusBarView").startProgress();
-
-        const { commits, lines } = blankBlameInfo();
-        const blamer = container.resolve<GitBlameStream>("GitBlameStream");
+    private async runBlame(): Promise<Blame | undefined> {
+        const logger = Logger.getInstance();
+        const blameInfo: Blame = {};
+        const commitRegistry: Registry = new Map<string, Commit>();
+        this.blamer = new Blamer();
 
         try {
-            const blameStream = blamer.blame(this.fileName);
-            let reachedDone = false;
+            const blameStream = this.blamer.blame(this.fileName);
 
-            while (!reachedDone) {
-                const {done, value} = await blameStream.next(this.terminate);
-
-                if (done || value === undefined) {
-                    reachedDone = true;
-                } else if (value.type === "commit") {
-                    commits[value.hash] = value.info;
-                } else {
-                    lines[value.line] = value.hash;
-                }
+            for await (const chunk of blameStream) {
+                fillBlameInfo(blameInfo, commitRegistry, chunk);
             }
         } catch (err) {
-            container.resolve<ErrorHandler>("ErrorHandler").logError(err);
-            return blankBlameInfo();
+            logger.error(err);
+            this.terminate();
         }
 
-        if (this.terminate) {
+        if (this.terminated) {
             // Don't return partial git blame info when terminating a blame
-            return blankBlameInfo();
+            return undefined;
         }
 
-        const numberOfCommits = Object.keys(commits).length;
-        container.resolve<ErrorHandler>("ErrorHandler").logInfo(
+        logger.info(
             `Blamed file "${
                 this.fileName
             }" and found ${
-                numberOfCommits
+                commitRegistry.size
             } commits`,
         );
 
-        return { commits, lines };
+        return blameInfo;
+    }
+
+    private terminate(): void {
+        this.blamer?.dispose();
+        this.blamer = undefined;
+        this.terminated = true;
     }
 }

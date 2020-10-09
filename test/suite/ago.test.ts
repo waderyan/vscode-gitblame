@@ -10,14 +10,14 @@ import {
 
 suite("Ago", (): void => {
     test("Minutes", (): void => {
-        assert.equal(
+        assert.strictEqual(
             minutesBetween(
                 new Date("1970-06-06 10:00:00"),
                 new Date("1970-06-06 10:00:20"),
             ),
-            0,
+            -0,
         );
-        assert.equal(
+        assert.strictEqual(
             minutesBetween(
                 new Date("1970-06-06 10:00:00"),
                 new Date("1970-06-06 10:20:00"),
@@ -27,28 +27,28 @@ suite("Ago", (): void => {
     });
 
     test("Hours", (): void => {
-        assert.equal(
+        assert.strictEqual(
             hoursBetween(
                 new Date("1970-06-06 10:00:00"),
                 new Date("1970-06-06 10:00:20"),
             ),
-            0,
+            -0,
         );
-        assert.equal(
+        assert.strictEqual(
             hoursBetween(
                 new Date("1970-06-06 10:00:00"),
                 new Date("1970-06-06 10:30:00"),
             ),
             -0,
         );
-        assert.equal(
+        assert.strictEqual(
             hoursBetween(
                 new Date("1970-06-06 10:30:00"),
                 new Date("1970-06-06 10:00:00"),
             ),
             1,
         );
-        assert.equal(
+        assert.strictEqual(
             hoursBetween(
                 new Date("1970-06-06 10:00:00"),
                 new Date("1970-06-06 20:00:00"),
@@ -58,14 +58,14 @@ suite("Ago", (): void => {
     });
 
     test("Days", (): void => {
-        assert.equal(
+        assert.strictEqual(
             daysBetween(
                 new Date("1970-06-06 10:00:00"),
                 new Date("1970-06-02 10:00:00"),
             ),
             4,
         );
-        assert.equal(
+        assert.strictEqual(
             daysBetween(
                 new Date("1970-06-06 10:00:00"),
                 new Date("1970-06-12 10:00:00"),
@@ -75,7 +75,7 @@ suite("Ago", (): void => {
     });
 
     test("Months", (): void => {
-        assert.equal(
+        assert.strictEqual(
             monthsBetween(
                 new Date("1970-06-06 10:00:00"),
                 new Date("1970-08-06 10:00:00"),
@@ -85,7 +85,7 @@ suite("Ago", (): void => {
     });
 
     test("Years", (): void => {
-        assert.equal(
+        assert.strictEqual(
             yearsBetween(
                 new Date("1970-06-06 10:00:00"),
                 new Date("1980-06-06 10:00:20"),

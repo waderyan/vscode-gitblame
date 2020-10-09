@@ -1,10 +1,6 @@
-import {
-    container,
-    injectable,
-} from "tsyringe";
-import { Workspace } from "../vscode-api/workspace";
+import { workspace } from "vscode";
 
-export interface PropertiesMap {
+export type PropertiesMap = {
     "inferCommitUrl": boolean;
     "commitUrl": string;
     "remoteName": string;
@@ -18,17 +14,16 @@ export interface PropertiesMap {
     "pluralWebPathSubstrings": string[];
 }
 
-export interface Property<M = PropertiesMap> {
-    get<K extends keyof M>(name: K): M[K] | undefined;
-}
-
-@injectable()
-export class PropertyImpl implements Property {
-    public get<K extends keyof PropertiesMap>(
-        name: K,
-    ): PropertiesMap[K] | undefined {
-        const properties = container.resolve<Workspace>("Workspace")
-            .properties();
-        return properties.get(name);
-    }
+export function getProperty<Key extends keyof PropertiesMap>(
+    name: Key,
+    fallback: PropertiesMap[Key],
+): PropertiesMap[Key];
+export function getProperty<Key extends keyof PropertiesMap>(
+    name: Key,
+): PropertiesMap[Key] | undefined;
+export function getProperty<Key extends keyof PropertiesMap>(
+    name: Key,
+    fallback?: PropertiesMap[Key],
+): PropertiesMap[Key] | undefined {
+    return workspace.getConfiguration("gitblame").get(name) ?? fallback;
 }

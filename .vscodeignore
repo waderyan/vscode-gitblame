@@ -1,14 +1,17 @@
+.github/**
 .vscode/**
 out/**
 test/**
 src/**
 types/**
+images/GitBlamePreview.gif
 **/*.map
 .gitignore
 .eslintrc
 .eslintignore
 .travis.yml
 tsconfig.json
+tsconfig.test.json
 package-lock.json
 node_modules
 rollup.config.js

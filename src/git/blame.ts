@@ -1,89 +1,63 @@
-import { container } from "tsyringe";
+import type { Commit } from "./util/stream-parsing";
+import type { Document } from "../util/editorvalidator";
+import type { Blame } from "./filephysical";
 
-import {
-    blankCommitInfo,
-    GitBlameInfo,
-    GitCommitInfo,
-} from "./util/blanks";
-import {
-    GitFile,
-    GitFileFactory,
-} from "./filefactory";
-import { PartialDocument } from "../vscode-api/active-text-editor";
+import { File, fileFactory } from "./filefactory";
+import { Logger } from "../util/logger";
 
-export interface GitBlame {
-    blameLine(
-        document: PartialDocument,
-        lineNumber: number,
-    ): Promise<GitCommitInfo>;
-    removeDocument(document: PartialDocument): Promise<void>;
-    dispose(): void;
-}
+export class Blamer {
+    private readonly files = new Map<Document, Promise<File>>();
 
-export class GitBlameImpl implements GitBlame {
-    private readonly files = new Map<PartialDocument, Promise<GitFile>>();
-
-    public async blameLine(
-        document: PartialDocument,
-        lineNumber: number,
-    ): Promise<GitCommitInfo> {
-        const commitLineNumber = lineNumber + 1;
-        const blameInfo = await this.getBlameInfo(document);
-
-        const hash = blameInfo.lines[commitLineNumber];
-
-        if (hash === undefined) {
-            return blankCommitInfo();
-        }
-
-        return blameInfo.commits[hash];
+    public async file(document: Document): Promise<Blame | undefined> {
+        return this.get(document);
     }
 
-    public async removeDocument(document: PartialDocument): Promise<void> {
+    public async getLine(
+        document: Document,
+        lineNumber: number,
+    ): Promise<Commit | undefined> {
+        const commitLineNumber = lineNumber + 1;
+        const blameInfo = await this.get(document);
+
+        return blameInfo?.[commitLineNumber];
+    }
+
+    public async removeDocument(document: Document): Promise<void> {
         const blamefile = await this.files.get(document);
-
-        if (blamefile === undefined) {
-            return;
-        }
-
         this.files.delete(document);
-        blamefile.dispose();
+        blamefile?.dispose();
     }
 
     public dispose(): void {
-        this.files.forEach((_gitFile, document): void => {
-            void this.removeDocument(document);
-        });
-    }
-
-    public createRemovalFunction(document: PartialDocument): () => void {
-        return (): void => {
+        for (const [document] of this.files) {
             void this.removeDocument(document);
         }
     }
 
-    private async getBlameInfo(
-        document: PartialDocument,
-    ): Promise<GitBlameInfo> {
-        const blameFile = await this.ensureGitFile(document);
-
-        blameFile.registerDisposeFunction(this.createRemovalFunction(document));
+    private async get(
+        document: Document,
+    ): Promise<Blame | undefined> {
+        const blameFile = await this.getFile(document);
 
         return blameFile.blame();
     }
 
-    private ensureGitFile(document: PartialDocument): Promise<GitFile> {
-        const potentialGitFile = this.files.get(document);
+    private getFile(document: Document): Promise<File> {
+        const potentialFile = this.files.get(document);
 
-        if (potentialGitFile) {
-            return potentialGitFile;
+        if (potentialFile) {
+            return potentialFile;
         }
 
-        const gitFile = container.resolve<GitFileFactory>("GitFileFactory")
-            .create(document);
+        const file = fileFactory(document);
+        void file.then(
+            (file): void => file.onDispose((): void => {
+                void this.removeDocument(document);
+            }),
+            (err): void => Logger.getInstance().error(err),
+        );
+        this.files.set(document, file);
 
-        this.files.set(document, gitFile);
-
-        return gitFile;
+        return file;
     }
 }

@@ -1,27 +1,21 @@
-import { container } from "tsyringe";
+import { Logger } from "../util/logger";
+import { File } from "./filefactory";
 
-import { ErrorHandler } from "../util/errorhandler";
-import { GitFile } from "./filefactory";
-import {
-    blankBlameInfo,
-    GitBlameInfo,
-} from "./util/blanks";
-
-export class GitFileDummy implements GitFile {
+export class FileDummy implements File {
     public constructor(fileName: string) {
-        container.resolve<ErrorHandler>("ErrorHandler").logInfo(
+        Logger.getInstance().info(
             `Will not try to blame file "${
                 fileName
             }" as it is outside of the current workspace`,
         );
     }
 
-    public registerDisposeFunction(): void {
+    public onDispose(): void {
         // noop
     }
 
-    public blame(): Promise<GitBlameInfo> {
-        return Promise.resolve(blankBlameInfo());
+    public blame(): Promise<undefined> {
+        return Promise.resolve(undefined);
     }
 
     public dispose(): void {

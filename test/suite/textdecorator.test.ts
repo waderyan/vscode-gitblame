@@ -2,20 +2,21 @@ import * as assert from "assert";
 
 import {
     InfoTokens,
-    TextDecorator,
+    parseTokens,
+    toDateText,
 } from "../../src/util/textdecorator";
 
 suite("Date Calculations", (): void => {
     test("Time ago in years", (): void => {
-        assert.equal(
-            TextDecorator.toDateText(
+        assert.strictEqual(
+            toDateText(
                 new Date(2015, 1),
                 new Date(2014, 1),
             ),
             "1 year ago",
         );
-        assert.equal(
-            TextDecorator.toDateText(
+        assert.strictEqual(
+            toDateText(
                 new Date(2015, 1),
                 new Date(2005, 1),
             ),
@@ -24,15 +25,15 @@ suite("Date Calculations", (): void => {
     });
 
     test("Time ago in months", (): void => {
-        assert.equal(
-            TextDecorator.toDateText(
+        assert.strictEqual(
+            toDateText(
                 new Date(2015, 1),
                 new Date(2015, 0),
             ),
             "1 month ago",
         );
-        assert.equal(
-            TextDecorator.toDateText(
+        assert.strictEqual(
+            toDateText(
                 new Date(2015, 11, 10),
                 new Date(2015, 0),
             ),
@@ -41,15 +42,15 @@ suite("Date Calculations", (): void => {
     });
 
     test("Time ago in days", (): void => {
-        assert.equal(
-            TextDecorator.toDateText(
+        assert.strictEqual(
+            toDateText(
                 new Date(2015, 1, 2),
                 new Date(2015, 1, 1),
             ),
             "1 day ago",
         );
-        assert.equal(
-            TextDecorator.toDateText(
+        assert.strictEqual(
+            toDateText(
                 new Date(2015, 1, 31),
                 new Date(2015, 1, 1),
             ),
@@ -58,15 +59,15 @@ suite("Date Calculations", (): void => {
     });
 
     test("Time ago in hours", (): void => {
-        assert.equal(
-            TextDecorator.toDateText(
+        assert.strictEqual(
+            toDateText(
                 new Date(2015, 1, 1, 1, 0, 0),
                 new Date(2015, 1, 1, 0, 0, 0),
             ),
             "1 hour ago",
         );
-        assert.equal(
-            TextDecorator.toDateText(
+        assert.strictEqual(
+            toDateText(
                 new Date(2015, 1, 1, 23, 29, 0),
                 new Date(2015, 1, 1, 0, 0, 0),
             ),
@@ -75,15 +76,15 @@ suite("Date Calculations", (): void => {
     });
 
     test("Time ago in minutes", (): void => {
-        assert.equal(
-            TextDecorator.toDateText(
+        assert.strictEqual(
+            toDateText(
                 new Date(2015, 1, 1, 1, 5, 0),
                 new Date(2015, 1, 1, 1, 0, 0),
             ),
             "5 minutes ago",
         );
-        assert.equal(
-            TextDecorator.toDateText(
+        assert.strictEqual(
+            toDateText(
                 new Date(2015, 1, 1, 1, 59, 29),
                 new Date(2015, 1, 1, 1, 0, 0),
             ),
@@ -92,15 +93,15 @@ suite("Date Calculations", (): void => {
     });
 
     test("Right now", (): void => {
-        assert.equal(
-            TextDecorator.toDateText(
+        assert.strictEqual(
+            toDateText(
                 new Date(2015, 1, 1, 1, 0, 1),
                 new Date(2015, 1, 1, 1, 0, 0),
             ),
             "right now",
         );
-        assert.equal(
-            TextDecorator.toDateText(
+        assert.strictEqual(
+            toDateText(
                 new Date(2015, 1, 1, 1, 4, 29),
                 new Date(2015, 1, 1, 1, 0, 0),
             ),
@@ -123,22 +124,22 @@ suite("Token Parser", (): void => {
     };
 
     test("No token", (): void => {
-        assert.equal(
-            TextDecorator.parseTokens("No token", normalizedInfo),
+        assert.strictEqual(
+            parseTokens("No token", normalizedInfo),
             "No token",
         );
     });
 
     test("Invalid token", (): void => {
-        assert.equal(
-            TextDecorator.parseTokens("Invalid ${token}", normalizedInfo),
+        assert.strictEqual(
+            parseTokens("Invalid ${token}", normalizedInfo),
             "Invalid token",
         );
     });
 
     test("Simple replace", (): void => {
-        assert.equal(
-            TextDecorator.parseTokens(
+        assert.strictEqual(
+            parseTokens(
                 "Simple ${example.token}",
                 normalizedInfo,
             ),
@@ -147,8 +148,8 @@ suite("Token Parser", (): void => {
     });
 
     test("Value replace", (): void => {
-        assert.equal(
-            TextDecorator.parseTokens(
+        assert.strictEqual(
+            parseTokens(
                 "Value ${value,some-value}",
                 normalizedInfo,
             ),
@@ -157,15 +158,15 @@ suite("Token Parser", (): void => {
     });
 
     test("Modifier replace", (): void => {
-        assert.equal(
-            TextDecorator.parseTokens(
+        assert.strictEqual(
+            parseTokens(
                 "Value ${mixed.token|u}",
                 normalizedInfo,
             ),
             "Value MIXED-TOKEN",
         );
-        assert.equal(
-            TextDecorator.parseTokens(
+        assert.strictEqual(
+            parseTokens(
                 "Value ${mixed.token|l}",
                 normalizedInfo,
             ),
@@ -175,15 +176,15 @@ suite("Token Parser", (): void => {
 
     test("Modifier replace with value", (): void => {
         test("Modifier replace", (): void => {
-            assert.equal(
-                TextDecorator.parseTokens(
+            assert.strictEqual(
+                parseTokens(
                     "Value ${value,mIxEd-ToKeN|u}",
                     normalizedInfo,
                 ),
                 "Value MIXED-TOKEN-EXAMPLE",
             );
-            assert.equal(
-                TextDecorator.parseTokens(
+            assert.strictEqual(
+                parseTokens(
                     "Value ${value,mIxEd-ToKeN|l}",
                     normalizedInfo,
                 ),
@@ -193,22 +194,22 @@ suite("Token Parser", (): void => {
     });
 
     test("Invalid modifier", (): void => {
-        assert.equal(
-            TextDecorator.parseTokens(
+        assert.strictEqual(
+            parseTokens(
                 "Value ${example.token|invalidModifier}",
                 normalizedInfo,
             ),
             "Value example-token|invalidModifier",
         );
-        assert.equal(
-            TextDecorator.parseTokens(
+        assert.strictEqual(
+            parseTokens(
                 "Value ${example.token|invalidModifier}",
                 normalizedInfo,
             ),
             "Value example-token|invalidModifier",
         );
-        assert.equal(
-            TextDecorator.parseTokens(
+        assert.strictEqual(
+            parseTokens(
                 "Value ${example.token|q}",
                 normalizedInfo,
             ),
@@ -217,8 +218,8 @@ suite("Token Parser", (): void => {
     });
 
     test("Modifier without token", (): void => {
-        assert.equal(
-            TextDecorator.parseTokens(
+        assert.strictEqual(
+            parseTokens(
                 "Value ${|mod}",
                 normalizedInfo,
             ),
@@ -227,8 +228,8 @@ suite("Token Parser", (): void => {
     });
 
     test("Token in the middle of string", (): void => {
-        assert.equal(
-            TextDecorator.parseTokens(
+        assert.strictEqual(
+            parseTokens(
                 "Simple ${example.token} in a longer text",
                 normalizedInfo,
             ),
@@ -237,8 +238,8 @@ suite("Token Parser", (): void => {
     });
 
     test("Multiple tokens", (): void => {
-        assert.equal(
-            TextDecorator.parseTokens(
+        assert.strictEqual(
+            parseTokens(
                 "Multiple ${example.token} in a ${length,longer} text",
                 normalizedInfo,
             ),

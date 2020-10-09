@@ -1,64 +1,34 @@
-import { access } from "fs";
-import { Uri } from "vscode";
-import { container } from "tsyringe";
+import { promises } from "fs";
+import { workspace } from "vscode";
 
-import { GitFileDummy } from "./filedummy";
-import { GitFilePhysical } from "./filephysical";
-import { GitBlameInfo } from "./util/blanks";
+import type { Document } from "../util/editorvalidator";
+
+import { FileDummy } from "./filedummy";
+import { Blame, FilePhysical } from "./filephysical";
 import { getWorkTree } from "./util/gitcommand";
-import { PartialDocument } from "../vscode-api/active-text-editor";
-import { Workspace } from "../vscode-api/workspace";
 
-export interface GitFile {
-    registerDisposeFunction(dispose: () => void): void;
-    blame(): Promise<GitBlameInfo>;
+export interface File {
+    onDispose(dispose: () => void): void;
+    blame(): Promise<Blame | undefined>;
     dispose(): void;
 }
 
-export interface GitFileFactory {
-    create(document: PartialDocument): Promise<GitFile>;
-}
-
-export class GitFileFactoryImpl implements GitFileFactory {
-    public async create(
-        document: PartialDocument,
-    ): Promise<GitFile> {
-        const inWorkspace = this.inWorkspace(document.fileName);
-        const exists = inWorkspace ?
-            this.exists(document.fileName) : false;
-        const inGitWorktree = inWorkspace ?
-            this.inGitWorktree(document.fileName) : false;
-        const realFile = (await Promise.all([exists, inGitWorktree]))
-            .every((fileStatus): boolean => fileStatus === true);
-
-        if (realFile) {
-            return new GitFilePhysical(document.fileName);
-        } else {
-            return new GitFileDummy(document.fileName);
-        }
+export async function fileFactory(
+    {uri, fileName}: Document,
+): Promise<File> {
+    if (!workspace.getWorkspaceFolder(uri)) {
+        return new FileDummy(fileName);
     }
 
-    private inWorkspace(fileName: string): boolean {
-        const uriFileName = Uri.file(fileName);
-
-        return container.resolve<Workspace>("Workspace").in(uriFileName);
+    try {
+        await promises.access(fileName);
+    } catch {
+        return new FileDummy(fileName);
     }
 
-    private exists(fileName: string): Promise<boolean> {
-        return new Promise((resolve): void => {
-            access(fileName, (err): void => {
-                if (err) {
-                    resolve(false);
-                } else {
-                    resolve(true);
-                }
-            });
-        });
-    }
-
-    private async inGitWorktree(fileName: string): Promise<boolean> {
-        const workTree = await getWorkTree(fileName);
-
-        return workTree !== "";
+    if (await getWorkTree(fileName)) {
+        return new FilePhysical(fileName);
+    } else {
+        return new FileDummy(fileName);
     }
 }
