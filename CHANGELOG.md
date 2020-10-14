@@ -1,5 +1,11 @@
 # Change Log
 
+## 6.0.0 (October 14, 2020)
+* Breaking change: Removing setting `gitblame.logNonCritical` as we no longer produce any ciritcal errors
+* Breaking change: The token `${|mod}` now expands to `|mod`, previously `${|mod}`
+* Breaking change: Renamed output channel from "Extension: gitblame" to "gitblame"
+* Bug: "Waiting for git blame response" (5.0.1) [#92](https://github.com/Sertion/vscode-gitblame/issues/92) (Thanks to [Dominik Zogg](https://github.com/dominikzogg) and [Alex Shelmire](https://github.com/shelmire))
+
 ## 5.0.1 (October 10, 2020)
 * Feature: Faster load times
 * Feature: Deactivation function for easier and faster uninstalls

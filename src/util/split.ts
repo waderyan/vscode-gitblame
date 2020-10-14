@@ -1,4 +1,4 @@
-export function split(target: string, char = " "): [string, string] {
+export const split = (target: string, char = " "): [string, string] => {
     const index = target.indexOf(char[0]);
 
     if (index === -1) {

@@ -10,32 +10,30 @@ import {
 import { Commit } from "../git/util/stream-parsing";
 
 type InfoTokenFunctionWithParameter = (value: string) => string;
-type InfoTokenFunctionWithoutParameter = () => string;
-type InfoTokenFunction =
-    InfoTokenFunctionWithParameter | InfoTokenFunctionWithoutParameter;
+type InfoTokenFunction = InfoTokenFunctionWithParameter | string;
 
 export type InfoTokens = {
     [key: string]: InfoTokenFunction | undefined;
 }
 
-export type InfoTokenNormalizedCommitInfo = InfoTokens & {
-    "author.mail": () => string;
-    "author.name": () => string;
-    "author.timestamp": () => string;
-    "author.tz": () => string;
-    "author.date": () => string;
-    "commit.hash": () => string;
+export type InfoTokenNormalizedCommitInfo = {
+    "author.mail": string;
+    "author.name": string;
+    "author.timestamp": string;
+    "author.tz": string;
+    "author.date": string;
+    "commit.hash": string;
     "commit.hash_short": (length: string) => string;
     "commit.summary": (length: string) => string;
-    "committer.mail": () => string;
-    "committer.name": () => string;
-    "committer.timestamp": () => string;
-    "committer.tz": () => string;
-    "committer.date": () => string;
-    "time.ago": () => string;
-    "time.c_ago": () => string;
-    "time.c_from": () => string;
-    "time.from": () => string;
+    "committer.mail": string;
+    "committer.name": string;
+    "committer.timestamp": string;
+    "committer.tz": string;
+    "committer.date": string;
+    "time.ago": string;
+    "time.c_ago": string;
+    "time.c_from": string;
+    "time.from": string;
 }
 
 type TokenReplaceGroup = {
@@ -87,7 +85,7 @@ function parse(target: string): (string | TokenReplaceGroup)[] {
     let mode = MODE.OUT;
 
     for (let index = 0; index < target.length; index++) {
-        if (mode === MODE.OUT && /^\$\{[a-z]$/i.test(target.substr(index, 3))) {
+        if (mode === MODE.OUT && "${" === target.substr(index, 2)) {
             mode = MODE.IN;
             tokenized.push(target.substring(lastSplit, index));
             lastSplit = index;
@@ -112,26 +110,24 @@ function parse(target: string): (string | TokenReplaceGroup)[] {
 function modify(value: string, modifier: string): string {
     if (modifier === "u") {
         return value.toUpperCase();
-    } else if (modifier === "l") {
+    }
+    if (modifier === "l") {
         return value.toLowerCase();
-    } else if (modifier) {
+    }
+    if (modifier) {
         return `${value}|${modifier}`;
     }
 
-    return `${value}`;
+    return value;
 }
 
 export function toTextView(commit: Commit): string {
-    const messageFormat = getProperty("statusBarMessageFormat");
+    const messageFormat = getProperty("statusBarMessageFormat", "");
 
-    if (messageFormat) {
-        return parseTokens(
-            messageFormat,
-            normalizeCommitInfoTokens(commit),
-        );
-    } else {
-        return "No configured message format for gitblame";
-    }
+    return parseTokens(
+        messageFormat,
+        normalizeCommitInfoTokens(commit),
+    );
 }
 
 export function toDateText(dateNow: Date, dateThen: Date): string {
@@ -143,17 +139,21 @@ export function toDateText(dateNow: Date, dateThen: Date): string {
 
     if (minutes < 5) {
         return "right now";
-    } else if (minutes < 60) {
-        return `${minutes} minutes ago`;
-    } else if (hours < 24) {
-        return appendOrNot(hours, "hour") + " ago";
-    } else if (days < 31) {
-        return appendOrNot(days, "day") + " ago";
-    } else if (months < 12) {
-        return appendOrNot(months, "month") + " ago";
-    } else {
-        return appendOrNot(years, "year") + " ago";
     }
+    if (minutes < 60) {
+        return `${minutes} minutes ago`;
+    }
+    if (hours < 24) {
+        return appendOrNot(hours, "hour");
+    }
+    if (days < 31) {
+        return appendOrNot(days, "day");
+    }
+    if (months < 12) {
+        return appendOrNot(months, "month");
+    }
+
+    return appendOrNot(years, "year");
 }
 
 export function normalizeCommitInfoTokens(
@@ -163,13 +163,8 @@ export function normalizeCommitInfoTokens(
     const authorTime = new Date(commit.author.timestamp * 1000);
     const committerTime = new Date(commit.committer.timestamp * 1000);
 
-    const valueFrom = (value: { toString: () => string }): () => string => {
-        return (): string => value.toString();
-    }
-    const ago = valueFrom(toDateText(now, authorTime));
-    const cAgo = valueFrom(toDateText(now, committerTime));
-    const authorDate = valueFrom(authorTime.toISOString().slice(0, 10));
-    const cDate = valueFrom(committerTime.toISOString().slice(0, 10));
+    const ago = toDateText(now, authorTime);
+    const cAgo = toDateText(now, committerTime);
     const shortness = (
         target: string,
         fallbackLength: string,
@@ -182,19 +177,19 @@ export function normalizeCommitInfoTokens(
     };
 
     return {
-        "author.mail": valueFrom(commit.author.mail),
-        "author.name": valueFrom(commit.author.name),
-        "author.timestamp": valueFrom(commit.author.timestamp),
-        "author.tz": valueFrom(commit.author.tz),
-        "author.date": authorDate,
-        "commit.hash": valueFrom(commit.hash),
+        "author.mail": commit.author.mail,
+        "author.name": commit.author.name,
+        "author.timestamp": commit.author.timestamp.toString(),
+        "author.tz": commit.author.tz,
+        "author.date": authorTime.toISOString().slice(0, 10),
+        "commit.hash": commit.hash,
         "commit.hash_short": shortness(commit.hash, "7"),
         "commit.summary": shortness(commit.summary, "65536"),
-        "committer.mail": valueFrom(commit.committer.mail),
-        "committer.name": valueFrom(commit.committer.name),
-        "committer.timestamp": valueFrom(commit.committer.timestamp),
-        "committer.tz": valueFrom(commit.committer.tz),
-        "committer.date": cDate,
+        "committer.mail": commit.committer.mail,
+        "committer.name": commit.committer.name,
+        "committer.timestamp": commit.committer.timestamp.toString(),
+        "committer.tz": commit.committer.tz,
+        "committer.date": committerTime.toISOString().slice(0, 10),
         "time.ago": ago,
         "time.c_ago": cAgo,
         "time.from": ago,
@@ -202,19 +197,22 @@ export function normalizeCommitInfoTokens(
     };
 }
 
-export function parseTokens(
+export function parseTokens<T extends InfoTokens>(
     target: string,
-    infoTokens: InfoTokens,
+    infoTokens: T,
 ): string {
-    const parsed = parse(target);
     let out = "";
 
-    for (const piece of parsed) {
+    for (const piece of parse(target)) {
         let func: InfoTokenFunction | undefined;
         if (typeof piece === "string") {
             out += piece;
         } else if (func = infoTokens[piece.func], func) {
-            out += modify(func(piece.param), piece.mod);
+            if (typeof func === "function") {
+                out += modify(func(piece.param), piece.mod);
+            } else {
+                out += modify(func, piece.mod);
+            }
         } else {
             out += modify(piece.func, piece.mod);
         }

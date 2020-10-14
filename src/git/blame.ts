@@ -1,12 +1,30 @@
+import { FSWatcher, promises, watch } from "fs";
+import { workspace } from "vscode";
+
 import type { Commit } from "./util/stream-parsing";
 import type { Document } from "../util/editorvalidator";
-import type { Blame } from "./filephysical";
 
-import { File, fileFactory } from "./filefactory";
+import { Blame, File } from "./file";
 import { Logger } from "../util/logger";
+import { isGitTracked } from "./util/gitcommand";
+
+function dummy(fileName: string): void {
+    Logger.info(
+        `Will not try to blame file "${
+            fileName
+        }" as it is outside of the current workspace`,
+    );
+}
 
 export class Blamer {
-    private readonly files = new Map<Document, Promise<File>>();
+    private readonly files = new Map<
+        Document,
+        Promise<File | undefined>
+    >();
+    private readonly fsWatchers = new Map<
+        Document,
+        FSWatcher
+    >();
 
     public async file(document: Document): Promise<Blame | undefined> {
         return this.get(document);
@@ -22,42 +40,65 @@ export class Blamer {
         return blameInfo?.[commitLineNumber];
     }
 
-    public async removeDocument(document: Document): Promise<void> {
+    public async remove(document: Document): Promise<void> {
         const blamefile = await this.files.get(document);
+        const fsWatcher = this.fsWatchers.get(document);
         this.files.delete(document);
+        this.fsWatchers.delete(document);
         blamefile?.dispose();
+        fsWatcher?.close();
     }
 
     public dispose(): void {
         for (const [document] of this.files) {
-            void this.removeDocument(document);
+            void this.remove(document);
         }
     }
 
     private async get(
         document: Document,
     ): Promise<Blame | undefined> {
-        const blameFile = await this.getFile(document);
-
-        return blameFile.blame();
-    }
-
-    private getFile(document: Document): Promise<File> {
-        const potentialFile = this.files.get(document);
-
-        if (potentialFile) {
-            return potentialFile;
+        if (this.files.has(document)) {
+            return (await this.files.get(document))?.blame;
         }
 
-        const file = fileFactory(document);
-        void file.then(
-            (file): void => file.onDispose((): void => {
-                void this.removeDocument(document);
-            }),
-            (err): void => Logger.getInstance().error(err),
-        );
+        const file = this.create(document);
+
+        void file.then((file) => {
+            if (file) {
+                this.fsWatchers.set(
+                    document,
+                    watch(document.fileName, () => this.remove(document)),
+                )
+            } else {
+                this.files.delete(document);
+            }
+        });
+
         this.files.set(document, file);
 
-        return file;
+        return (await file)?.blame;
+    }
+
+    private async create(
+        {fileName, uri}: Document,
+    ): Promise<File | undefined> {
+        if (!workspace.getWorkspaceFolder(uri)) {
+            dummy(fileName);
+            return;
+        }
+
+        try {
+            await promises.access(fileName);
+        } catch {
+            dummy(fileName);
+            return;
+        }
+
+        if (await isGitTracked(fileName)) {
+            return new File(fileName);
+        } else {
+            dummy(fileName);
+        }
     }
 }

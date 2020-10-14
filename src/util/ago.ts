@@ -5,28 +5,33 @@ const DAY = 24 * HOUR;
 const YEAR = 365.25 * DAY;
 const MONTH = YEAR / 12;
 
-function unitsBetween(unit: number, now: Date, compareTo: Date): number {
-    const diffMilliseconds = now.valueOf() - compareTo.valueOf();
+function between(unit: number, now: Date, compare: Date): number {
+    const diffMilliseconds = now.valueOf() - compare.valueOf();
 
     return Math.round(diffMilliseconds / unit);
 }
 
-export function minutesBetween(now: Date, compareTo: Date): number {
-    return unitsBetween(MINUTE, now, compareTo);
-}
+export const minutesBetween = (
+    now: Date,
+    compare: Date,
+): number => between(MINUTE, now, compare);
 
-export function hoursBetween(now: Date, compareTo: Date): number {
-    return unitsBetween(HOUR, now, compareTo);
-}
+export const hoursBetween = (
+    now: Date,
+    compare: Date,
+): number => between(HOUR, now, compare);
 
-export function daysBetween(now: Date, compareTo: Date): number {
-    return unitsBetween(DAY, now, compareTo);
-}
+export const daysBetween = (
+    now: Date,
+    compare: Date,
+): number => between(DAY, now, compare);
 
-export function monthsBetween(now: Date, compareTo: Date): number {
-    return unitsBetween(MONTH, now, compareTo);
-}
+export const monthsBetween = (
+    now: Date,
+    compare: Date,
+): number => between(MONTH, now, compare);
 
-export function yearsBetween(now: Date, compareTo: Date): number {
-    return unitsBetween(YEAR, now, compareTo);
-}
+export const yearsBetween = (
+    now: Date,
+    compare: Date,
+): number => between(YEAR, now, compare);

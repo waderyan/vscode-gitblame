@@ -223,7 +223,7 @@ suite("Token Parser", (): void => {
                 "Value ${|mod}",
                 normalizedInfo,
             ),
-            "Value ${|mod}",
+            "Value |mod",
         );
     });
 
