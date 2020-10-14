@@ -7,8 +7,7 @@ export async function execute(
     args: string[],
     options: ExecOptions = {},
 ): Promise<string> {
-    const logger = Logger.getInstance();
-    logger.command(`${command} ${args.join(" ")}`);
+    Logger.command(`${command} ${args.join(" ")}`);
 
     let execution: ChildProcess;
 
@@ -19,7 +18,7 @@ export async function execute(
             { ...options, encoding: "utf8" },
         );
     } catch (err) {
-        logger.error(err);
+        Logger.error(err);
         return "";
     }
 

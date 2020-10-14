@@ -20,7 +20,7 @@ import { isUncomitted } from "./util/uncommitted";
 import { errorMessage, infoMessage } from "../util/message";
 import {
     getActiveTextEditor,
-    getCurrentActiveFilePosition,
+    getFilePosition,
     NO_FILE_OR_PLACE,
 } from "../util/get-active";
 
@@ -43,20 +43,20 @@ export class Extension {
     }
 
     public async blameLink(): Promise<void> {
-        const commit = await this.getCommit();
+        const commit = await this.commit();
         const toolUrl = await getToolUrl(commit);
 
         if (toolUrl) {
             void commands.executeCommand("vscode.open", toolUrl);
         } else {
             void errorMessage(
-                "Missing gitblame.commitUrl config value.",
+                "Empty gitblame.commitUrl",
             );
         }
     }
 
     public async showMessage(): Promise<void> {
-        const commit = await this.getCommit();
+        const commit = await this.commit();
 
         if (!commit || isUncomitted(commit)) {
             this.view.update();
@@ -91,23 +91,23 @@ export class Extension {
     }
 
     public async copyHash(): Promise<void> {
-        const commit = await this.getCommit(true);
+        const commit = await this.commit(true);
 
         if (commit && !isUncomitted(commit)) {
             await env.clipboard.writeText(commit.hash);
-            void infoMessage("Copied hash to clipboard");
+            void infoMessage("Copied hash");
         }
     }
 
     public async copyToolUrl(): Promise<void> {
-        const commit = await this.getCommit(true);
+        const commit = await this.commit(true);
         const toolUrl = await getToolUrl(commit);
 
         if (toolUrl) {
             await env.clipboard.writeText(toolUrl.toString());
-            void infoMessage("Copied tool URL to clipboard");
+            void infoMessage("Copied tool URL");
         } else {
-            void errorMessage("Missing gitblame.commitUrl config value.");
+            void errorMessage("gitblame.commitUrl config empty");
         }
     }
 
@@ -149,7 +149,7 @@ export class Extension {
                 void this.updateView();
             }),
             workspace.onDidCloseTextDocument((document: Document): void => {
-                void this.blame.removeDocument(document);
+                void this.blame.remove(document);
             }),
         );
     }
@@ -162,12 +162,12 @@ export class Extension {
             return;
         }
         this.view.activity();
-        const before = getCurrentActiveFilePosition(textEditor);
+        const before = getFilePosition(textEditor);
         const commit = await this.blame.getLine(
             textEditor.document,
             textEditor.selection.active.line,
         );
-        const after = getCurrentActiveFilePosition(textEditor);
+        const after = getFilePosition(textEditor);
 
         // Only update if we haven't moved since we started blaming
         // or if we no longer have focus on any file
@@ -176,13 +176,13 @@ export class Extension {
         }
     }
 
-    private async getCommit(undercover = false): Promise<Commit | undefined> {
+    private async commit(undercover = false): Promise<Commit | undefined> {
         const notBlame = () => void errorMessage(
-            "The current editor can not be blamed.",
+            "Unable to blame current line",
         );
         const editor = getActiveTextEditor();
 
-        if (!editor) {
+        if (!validEditor(editor)) {
             notBlame();
             return;
         }

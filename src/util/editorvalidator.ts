@@ -10,8 +10,6 @@ export type PartialTextEditor = {
     selection: PartialSelection;
 }
 
-export function validEditor(
+export const validEditor = (
     editor?: PartialTextEditor,
-): editor is PartialTextEditor {
-    return editor?.document.uri.scheme === "file";
-}
+): editor is PartialTextEditor => editor?.document.uri.scheme === "file";

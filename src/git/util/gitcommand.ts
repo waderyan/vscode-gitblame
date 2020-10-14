@@ -1,5 +1,5 @@
 import { ChildProcess, spawn } from "child_process";
-import { basename, dirname, normalize } from "path";
+import { basename, dirname } from "path";
 
 import { extensions } from "vscode";
 
@@ -58,31 +58,24 @@ export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
     );
     const curRemote = await executeWithCWD(
         gitCommand,
-        ["config", "--local", "--get", `branch.${ currentBranch }.remote`],
+        ["config", `branch.${ currentBranch }.remote`],
         activeFileFolder,
     );
-    const remote = curRemote || fallbackRemote;
     const remoteUrl = await executeWithCWD(
         gitCommand,
-        ["config", "--local", "--get", `remote.${ remote }.url`],
+        ["config", `remote.${ curRemote || fallbackRemote }.url`],
         activeFileFolder,
     );
 
     return remoteUrl;
 }
 
-export async function getWorkTree(fileName: string): Promise<string> {
-    const workTree = await executeWithCWD(
+export async function isGitTracked(fileName: string): Promise<boolean> {
+    return !!await executeWithCWD(
         getGitCommand(),
-        ["rev-parse", "--show-toplevel"],
+        ["rev-parse", "--git-dir"],
         dirname(fileName),
     );
-
-    if (workTree) {
-        return normalize(workTree);
-    }
-
-    return "";
 }
 
 export function blameProcess(
@@ -96,9 +89,7 @@ export function blameProcess(
 
     const gitCommand = getGitCommand();
 
-    Logger.getInstance().command(
-        `${gitCommand} ${args.join(" ")}`,
-    );
+    Logger.command(`${gitCommand} ${args.join(" ")}`);
     return spawn(gitCommand, args, {
         cwd: dirname(fileName),
     });

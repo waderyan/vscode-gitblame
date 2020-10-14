@@ -2,7 +2,7 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "5.0.1",
+  "version": "6.0.0",
   "publisher": "waderyan",
   "engines": {
     "vscode": "^1.49.0"
@@ -139,11 +139,6 @@
             "atlassian"
           ],
           "markdownDescription": "An array of substrings that, when present in the git origin URL, activates `gitblame.isWebPathPlural`"
-        },
-        "gitblame.logNonCritical": {
-          "type": "boolean",
-          "default": true,
-          "description": "If enabled it logs all messages to the log. If disabled only critical messages gets logged."
         }
       }
     }

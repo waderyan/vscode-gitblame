@@ -36,15 +36,7 @@ Quick link to open the latest commit on the current line in the most popular onl
       <td colspan="3">
         <ul>
           <li>Url where you can see the commit by hash</li>
-          <li><code>"guess"</code> will try to guess the URL based on your remote origin
-            <ul>
-              <li>Can only support servers that fulfill the following requirements:
-                <ul>
-                  <li>Url is https</li>
-                  <li>No auth or port required</li>
-                </ul>
-              </li>
-          </ul>
+          <li><code>"guess"</code> will try to guess the URL based on your remote origin. Can only support servers that don't require auth</li>
           <li><code>"no"</code> will not guess and will not show a link</li>
           <li>Available tokens:
             <ul>
@@ -138,17 +130,6 @@ Quick link to open the latest commit on the current line in the most popular onl
         Priority where the status bar view should be placed. Higher value should be placed further to the left.
       </td>
     </tr>
-    <tr>
-      <td><code>gitblame.logNonCritical</code></td>
-      <td><code>boolean</code></td>
-      <td><code>true</code></td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        Log non-critical messages to the <em>Extension: gitblame</em> output
-      </td>
-    </tr>
-    <tr>
   </tbody>
 </table>
 

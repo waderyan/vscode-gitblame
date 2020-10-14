@@ -58,12 +58,13 @@ export async function getToolUrl(
     const relativePath = await getRelativePathOfActiveFile();
     const projectName = projectNameFromOrigin(origin);
     const remoteUrl = stripGitRemoteUrl(await remote);
+
     const parsedUrl = parseTokens(commitUrl, {
-        "hash": (): string => commit.hash,
-        "project.name": (): string => projectName,
-        "project.remote": (): string => remoteUrl,
-        "gitorigin.hostname": gitOriginHostname(origin),
-        "file.path": (): string => relativePath,
+        "hash": commit.hash,
+        "project.name": projectName,
+        "project.remote": remoteUrl,
+        "gitorigin.hostname": gitOriginHostname(defaultWebPath(remoteUrl, "")),
+        "file.path": relativePath,
     });
 
     if (isUrl(parsedUrl)) {
@@ -74,8 +75,7 @@ export async function getToolUrl(
         return undefined;
     } else {
         void errorMessage(
-            `Malformed URL in gitblame.commitUrl. ` +
-                `Currently expands to: '${ parsedUrl }'`,
+            `Malformed gitblame.commitUrl. Expands to: '${ parsedUrl }'`,
         );
     }
 }

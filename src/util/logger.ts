@@ -1,13 +1,9 @@
 import { OutputChannel, window } from "vscode";
-import { errorMessage } from "./message";
-
-import { getProperty } from "./property";
 
 const enum Level {
     Info = "info",
     Error = "error",
     Command = "command",
-    Critical = "critical",
 }
 
 export class Logger {
@@ -23,24 +19,19 @@ export class Logger {
     }
 
     private constructor() {
-        this.out = window.createOutputChannel("Extension: gitblame");
+        this.out = window.createOutputChannel("gitblame");
     }
 
-    public info(message: string): void {
-        this.write(Level.Info, message);
+    public static info(message: string): void {
+        Logger.write(Level.Info, message);
     }
 
-    public command(message: string): void {
-        this.write(Level.Command, message);
+    public static command(message: string): void {
+        Logger.write(Level.Command, message);
     }
 
-    public error(error: Error): void {
-        this.write(Level.Error, error.toString());
-    }
-
-    public critical(error: Error, message: string): void {
-        this.write(Level.Critical, error.toString());
-        void this.showErrorMessage(message);
+    public static error(error: Error): void {
+        Logger.write(Level.Error, error.toString());
     }
 
     public dispose(): void {
@@ -48,23 +39,10 @@ export class Logger {
         this.out.dispose();
     }
 
-    private async showErrorMessage(message: string): Promise<void> {
-        const button = "Show Log";
-        const selected = await errorMessage(message, button);
-
-        if (selected === button) {
-            this.out.show();
-        }
-    }
-
-    private write(level: Level, message: string): void {
-        const logNonCritical = getProperty("logNonCritical");
-
-        if (logNonCritical || level === Level.Critical) {
-            const timestamp = (new Date).toTimeString().substr(0,8);
-            this.out.appendLine(
-                `[ ${timestamp} | ${level} ] ${message.trim()}`,
-            );
-        }
+    private static write(level: Level, message: string): void {
+        const timestamp = (new Date).toTimeString().substr(0,8);
+        Logger.getInstance().out.appendLine(
+            `[ ${timestamp} | ${level} ] ${message.trim()}`,
+        );
     }
 }
