@@ -49,25 +49,29 @@ export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
         return "";
     }
 
-    const gitCommand = getGitCommand();
-    const activeFileFolder = dirname(activeEditor.document.fileName);
-    const currentBranch = await executeWithCWD(
-        gitCommand,
-        ["symbolic-ref", "-q", "--short", "HEAD"],
-        activeFileFolder,
-    );
-    const curRemote = await executeWithCWD(
-        gitCommand,
-        ["config", `branch.${ currentBranch }.remote`],
-        activeFileFolder,
-    );
-    const remoteUrl = await executeWithCWD(
-        gitCommand,
-        ["config", `remote.${ curRemote || fallbackRemote }.url`],
-        activeFileFolder,
-    );
+    try {
+        const gitCommand = getGitCommand();
+        const activeFileFolder = dirname(activeEditor.document.fileName);
+        const currentBranch = await executeWithCWD(
+            gitCommand,
+            ["symbolic-ref", "-q", "--short", "HEAD"],
+            activeFileFolder,
+        );
+        const curRemote = await executeWithCWD(
+            gitCommand,
+            ["config", `branch.${ currentBranch }.remote`],
+            activeFileFolder,
+        );
+        const remoteUrl = await executeWithCWD(
+            gitCommand,
+            ["config", `remote.${ curRemote || fallbackRemote }.url`],
+            activeFileFolder,
+        );
 
-    return remoteUrl;
+        return remoteUrl;
+    } catch {
+        return "";
+    }
 }
 
 export async function isGitTracked(fileName: string): Promise<boolean> {
@@ -90,6 +94,7 @@ export function blameProcess(
     const gitCommand = getGitCommand();
 
     Logger.command(`${gitCommand} ${args.join(" ")}`);
+
     return spawn(gitCommand, args, {
         cwd: dirname(fileName),
     });

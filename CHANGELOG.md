@@ -1,5 +1,8 @@
 # Change Log
 
+## 6.0.1 (Deceomber 19, 2020)
+* Bug: Stuck Waiting for git blame response (6.0.0) [#95](https://github.com/Sertion/vscode-gitblame/issues/95) (Thanks to [Vadzim Dambrouski](https://github.com/pftbest))
+
 ## 6.0.0 (October 14, 2020)
 * Breaking change: Removing setting `gitblame.logNonCritical` as we no longer produce any ciritcal errors
 * Breaking change: The token `${|mod}` now expands to `|mod`, previously `${|mod}`
