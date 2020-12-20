@@ -29,17 +29,21 @@ function getDefaultToolUrl(
 }
 
 function gitOriginHostname(origin: string): (index?: string) => string {
-    const { hostname } = new URL(origin);
-    return (index?: string): string => {
+    try {
+        const { hostname } = new URL(origin);
+        return (index?: string): string => {
 
-        if (index === '') {
-            return hostname;
-        }
+            if (index === '') {
+                return hostname;
+            }
 
-        const parts = hostname.split('.');
+            const parts = hostname.split('.');
 
-        return parts[Number(index)] || 'invalid-index';
-    };
+            return parts[Number(index)] || 'invalid-index';
+        };
+    } catch {
+        return () => 'no-origin-url'
+    }
 }
 
 export async function getToolUrl(
