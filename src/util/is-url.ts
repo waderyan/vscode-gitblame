@@ -8,11 +8,7 @@ export function isUrl(check: string): boolean {
         return false;
     }
 
-    if (url.href !== check) {
-        return false;
-    }
-
-    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    if (url.href !== check || (url.protocol !== 'http:' && url.protocol !== 'https:')) {
         return false;
     }
 

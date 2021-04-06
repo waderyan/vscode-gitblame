@@ -3,7 +3,7 @@ import { split } from "../../util/split";
 export type CommitAuthor = {
     name: string;
     mail: string;
-    timestamp: number;
+    time: number;
     tz: string;
 }
 
@@ -16,20 +16,20 @@ export type Commit = {
 
 export type Line = [number, string];
 
-export type ChunkyGenerator = Generator<Commit> | Generator<Line>;
+export type ChunkyGenerator = [Commit, Generator<Line>];
 
 function blankCommitInfo(): Commit {
     const commitInfo: Commit = {
         author: {
             mail: "",
             name: "",
-            timestamp: 0,
+            time: 0,
             tz: "",
         },
         committer: {
             mail: "",
             name: "",
-            timestamp: 0,
+            time: 0,
             tz: "",
         },
         hash: "EMPTY",
@@ -62,7 +62,7 @@ function fillOwner(
     value: string,
 ): void {
     if (dataPoint === "time") {
-        owner.timestamp = parseInt(value, 10);
+        owner.time = parseInt(value, 10);
     } else if (dataPoint === "tz" || dataPoint === "mail") {
         owner[dataPoint] = value;
     } else if (dataPoint === "") {
@@ -81,17 +81,6 @@ function processAuthorLine(
         fillOwner(commitInfo.author, dataPoint, value);
     } else if (author === "committer") {
         fillOwner(commitInfo.committer, dataPoint, value);
-    }
-}
-
-function * commitDeduplicator(
-    commitInfo: Commit,
-    emittedCommits: Set<string>,
-): Generator<Commit> {
-    if (commitInfo.hash !== "EMPTY" && !emittedCommits.has(commitInfo.hash)) {
-        emittedCommits.add(commitInfo.hash);
-
-        yield commitInfo;
     }
 }
 
@@ -140,17 +129,23 @@ function * processCoverage(
     }
 }
 
-export function * processChunk(
-    dataChunk: Buffer,
-    emittedCommits: Set<string>,
-): Generator<ChunkyGenerator> {
+function * commitFilter(commitInfo: Commit, coverageGenerator: Generator<Line>): Generator<ChunkyGenerator> {
+    if (commitInfo.hash !== "EMPTY") {
+        yield [commitInfo, coverageGenerator];
+    }
+}
+
+function * protoLine(): Generator<Line> {
+    // noop
+}
+
+export function * processChunk(dataChunk: Buffer): Generator<ChunkyGenerator> {
     let commitInfo = blankCommitInfo();
-    let coverageGenerator: Generator<Line> | undefined = undefined;
+    let coverageGenerator: Generator<Line> = protoLine();
 
     for (const [key, value, nextLine] of splitChunk(dataChunk)) {
         if (isCoverageLine(key, value)) {
-            yield commitDeduplicator(commitInfo, emittedCommits);
-            if (coverageGenerator) yield coverageGenerator;
+            yield * commitFilter(commitInfo, coverageGenerator);
             coverageGenerator = processCoverage(key, value);
 
             if (isNewCommit(key, value, nextLine)) {
@@ -162,6 +157,5 @@ export function * processChunk(
         }
     }
 
-    yield commitDeduplicator(commitInfo, emittedCommits);
-    if (coverageGenerator) yield coverageGenerator;
+    yield * commitFilter(commitInfo, coverageGenerator);
 }

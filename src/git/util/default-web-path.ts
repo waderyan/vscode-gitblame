@@ -34,6 +34,5 @@ export function defaultWebPath(url: string, hash: string): string {
     const commit = `commit${isToolUrlPlural(url) ? "s" : ""}`;
     const port = httpProtocol && uri.port ? `:${ uri.port }` : "";
 
-    return `${ uri.protocol }//${ uri.hostname }${ port }` +
-        `${ uri.pathname }/${ commit }/${ hash }`;
+    return `${ uri.protocol }//${ uri.hostname }${ port }${ uri.pathname }/${ commit }/${ hash }`;
 }

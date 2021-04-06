@@ -23,6 +23,7 @@ import {
     getFilePosition,
     NO_FILE_OR_PLACE,
 } from "../util/get-active";
+import { extensionName } from "..";
 
 type ActionableMessageItem = MessageItem & {
     action: () => void;
@@ -49,9 +50,7 @@ export class Extension {
         if (toolUrl) {
             void commands.executeCommand("vscode.open", toolUrl);
         } else {
-            void errorMessage(
-                "Empty gitblame.commitUrl",
-            );
+            void errorMessage(`Empty ${extensionName}.commitUrl`);
         }
     }
 
@@ -80,14 +79,9 @@ export class Extension {
 
         this.view.update(commit);
 
-        const selected = await infoMessage(
-            message,
-            ...actions,
-        );
+        const selected = await infoMessage(message, ...actions);
 
-        if (selected) {
-            selected.action();
-        }
+        selected?.action();
     }
 
     public async copyHash(): Promise<void> {
@@ -107,7 +101,7 @@ export class Extension {
             await env.clipboard.writeText(toolUrl.toString());
             void infoMessage("Copied tool URL");
         } else {
-            void errorMessage("gitblame.commitUrl config empty");
+            void errorMessage(`${extensionName}.commitUrl config empty`);
         }
     }
 
@@ -163,10 +157,7 @@ export class Extension {
         }
         this.view.activity();
         const before = getFilePosition(textEditor);
-        const commit = await this.blame.getLine(
-            textEditor.document,
-            textEditor.selection.active.line,
-        );
+        const commit = await this.blame.getLine(textEditor.document, textEditor.selection.active.line);
         const after = getFilePosition(textEditor);
 
         // Only update if we haven't moved since we started blaming
@@ -177,9 +168,7 @@ export class Extension {
     }
 
     private async commit(undercover = false): Promise<Commit | undefined> {
-        const notBlame = () => void errorMessage(
-            "Unable to blame current line",
-        );
+        const notBlame = () => void errorMessage("Unable to blame current line");
         const editor = getActiveTextEditor();
 
         if (!validEditor(editor)) {
@@ -190,10 +179,7 @@ export class Extension {
         if (!undercover) {
             this.view.activity();
         }
-        const line = await this.blame.getLine(
-            editor.document,
-            editor.selection.active.line,
-        );
+        const line = await this.blame.getLine(editor.document, editor.selection.active.line);
 
         if (!line) {
             notBlame();

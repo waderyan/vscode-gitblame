@@ -1,5 +1,8 @@
 # Change Log
 
+## 7.0.0 (XXX XX, 2021)
+* Breaking change: Removing setting `gitblame.inferCommitUrl`. We will now always make an attempt at the URL.
+
 ## 6.0.2 (December 20, 2020)
 * Fix: Spelling error in CHANGELOG.md
 * Bug: Stuck Waiting for git blame response (6.0.0) [#95](https://github.com/Sertion/vscode-gitblame/issues/95) (Thanks to [Vadzim Dambrouski](https://github.com/pftbest))

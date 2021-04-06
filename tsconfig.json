@@ -11,9 +11,7 @@
             "es2018",
             "es2019"
         ],
-        "rootDir": ".",
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "rootDir": "."
     },
     "exclude": [
         "node_modules"

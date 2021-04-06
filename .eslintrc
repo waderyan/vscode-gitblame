@@ -19,7 +19,7 @@
     "rules": {
         "complexity": ["error", 10],
         "max-len": ["error", {
-            "code": 80
+            "code": 120
         }],
         "@typescript-eslint/no-require-imports": 2,
         "no-duplicate-imports": ["error"],

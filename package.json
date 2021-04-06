@@ -107,15 +107,10 @@
           "type": "number",
           "description": "Priority where the status bar view should be placed"
         },
-        "gitblame.inferCommitUrl": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "When enabled it inferes online commit tool URL based on a remote's URL. Disabled whenever `gitblame.commitUrl` isn't empty."
-        },
         "gitblame.remoteName": {
           "type": "string",
           "default": "origin",
-          "markdownDescription": "The name of the git remote used by inferCommitUrl to build the URL."
+          "markdownDescription": "The name of the git remote used to build the URL."
         },
         "gitblame.commitUrl": {
           "type": "string",
@@ -125,12 +120,12 @@
         "gitblame.ignoreWhitespace": {
           "type": "boolean",
           "default": false,
-          "description": "Ignore whitespace changes when blaming (-w flag)"
+          "markdownDescription": "Ignore whitespace changes when blaming (`-w` flag)"
         },
         "gitblame.isWebPathPlural": {
           "type": "boolean",
           "default": false,
-          "description": "BitBucket uses commits instead of commit in their web interface. Turn this on if you want the View button to work for BitBucket."
+          "markdownDescription": "BitBucket uses _commits_ instead of _commit_ in their web interface. Turn this on if you want the View button to work for BitBucket."
         },
         "gitblame.pluralWebPathSubstrings": {
           "type": "array",

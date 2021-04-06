@@ -11,27 +11,8 @@ function between(unit: number, now: Date, compare: Date): number {
     return Math.round(diffMilliseconds / unit);
 }
 
-export const minutesBetween = (
-    now: Date,
-    compare: Date,
-): number => between(MINUTE, now, compare);
-
-export const hoursBetween = (
-    now: Date,
-    compare: Date,
-): number => between(HOUR, now, compare);
-
-export const daysBetween = (
-    now: Date,
-    compare: Date,
-): number => between(DAY, now, compare);
-
-export const monthsBetween = (
-    now: Date,
-    compare: Date,
-): number => between(MONTH, now, compare);
-
-export const yearsBetween = (
-    now: Date,
-    compare: Date,
-): number => between(YEAR, now, compare);
+export const minutesBetween = (now: Date,compare: Date): number => between(MINUTE, now, compare);
+export const hoursBetween = (now: Date,compare: Date): number => between(HOUR, now, compare);
+export const daysBetween = (now: Date,compare: Date): number => between(DAY, now, compare);
+export const monthsBetween = (now: Date,compare: Date): number => between(MONTH, now, compare);
+export const yearsBetween = (now: Date,compare: Date): number => between(YEAR, now, compare);

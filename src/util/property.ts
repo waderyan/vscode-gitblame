@@ -1,7 +1,7 @@
 import { workspace } from "vscode";
+import { extensionName } from "..";
 
 export type PropertiesMap = {
-    "inferCommitUrl": boolean;
     "commitUrl": string;
     "remoteName": string;
     "ignoreWhitespace": boolean;
@@ -20,12 +20,10 @@ type PropertyFunction = {
     ): PropertiesMap[Key];
     <Key extends keyof PropertiesMap>(
         name: Key,
-    ): PropertiesMap[Key];
+    ): PropertiesMap[Key] | undefined;
 }
 
 export const getProperty: PropertyFunction = <Key extends keyof PropertiesMap>(
     name: Key,
     fallback?: PropertiesMap[Key],
-): PropertiesMap[Key] | undefined => workspace.getConfiguration(
-        "gitblame",
-    ).get(name) ?? fallback;
+): PropertiesMap[Key] | undefined => workspace.getConfiguration(extensionName).get(name) ?? fallback;

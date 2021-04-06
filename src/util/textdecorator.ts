@@ -7,7 +7,8 @@ import {
     monthsBetween,
     yearsBetween,
 } from "./ago";
-import { Commit } from "../git/util/stream-parsing";
+
+import type { Commit } from "../git/util/stream-parsing";
 
 type InfoTokenFunctionWithParameter = (value: string) => string;
 type InfoTokenFunction = InfoTokenFunctionWithParameter | string;
@@ -23,8 +24,8 @@ export type InfoTokenNormalizedCommitInfo = {
     "author.tz": string;
     "author.date": string;
     "commit.hash": string;
-    "commit.hash_short": (length: string) => string;
-    "commit.summary": (length: string) => string;
+    "commit.hash_short": InfoTokenFunctionWithParameter;
+    "commit.summary": InfoTokenFunctionWithParameter;
     "committer.mail": string;
     "committer.name": string;
     "committer.timestamp": string;
@@ -37,7 +38,7 @@ export type InfoTokenNormalizedCommitInfo = {
 }
 
 type TokenReplaceGroup = {
-    func: string;
+    func: InfoTokenFunction;
     param: string;
     mod: string;
 }
@@ -47,64 +48,37 @@ const enum MODE {
     IN,
 }
 
-function tokenParser(token: string): TokenReplaceGroup {
+function tokenParser<T extends InfoTokens>(token: string, infoTokens: T): TokenReplaceGroup {
     const parameterIndex = token.indexOf(",");
     const modifierIndex = token.indexOf("|");
-    const subToken = (a: number, b?: number) => token.substring(a, b);
-
-    if (parameterIndex !== -1 && modifierIndex !== -1) {
-        return {
-            func: subToken(0, parameterIndex),
-            param: subToken(parameterIndex + 1, modifierIndex),
-            mod: subToken(modifierIndex + 1),
-        };
-    } else if (parameterIndex !== -1) {
-        return {
-            func: subToken(0, parameterIndex),
-            param: subToken(parameterIndex + 1),
-            mod: "",
-        };
-    } else if (modifierIndex !== -1) {
-        return {
-            func: subToken(0, modifierIndex),
-            param: "",
-            mod: subToken(modifierIndex + 1),
-        };
-    }
+    const subToken = (a: number, b = -1) => token.substring(a, b === -1 ? undefined : b);
+    const functionName = subToken(0, Math.max(parameterIndex, modifierIndex));
 
     return {
-        func: token,
-        param: "",
-        mod: "",
+        func: infoTokens[functionName] || functionName,
+        param: subToken(parameterIndex + 1, modifierIndex),
+        mod: modifierIndex === -1 ? "" : subToken(modifierIndex + 1),
     };
 }
 
-function parse(target: string): (string | TokenReplaceGroup)[] {
-    const tokenized = [];
+function * parse<T extends InfoTokens>(target: string, infoTokens: T): Generator<string | TokenReplaceGroup> {
     let lastSplit = 0;
     let mode = MODE.OUT;
 
     for (let index = 0; index < target.length; index++) {
-        if (mode === MODE.OUT && "${" === target.substr(index, 2)) {
+        if (mode === MODE.OUT && target.substr(index, 2) === "${") {
             mode = MODE.IN;
-            tokenized.push(target.substring(lastSplit, index));
+            yield target.substring(lastSplit, index);
             lastSplit = index;
             index = index + 1;
         } else if (mode === MODE.IN && target[index] === "}") {
             mode = MODE.OUT;
-            const newSplitIndex = index + 1;
-            tokenized.push(
-                tokenParser(
-                    target.substring(lastSplit + 2, newSplitIndex - 1),
-                ),
-            );
-            lastSplit = newSplitIndex;
+            yield tokenParser(target.substring(lastSplit + 2, index), infoTokens);
+            lastSplit = index + 1;
         }
     }
 
-    tokenized.push(target.substring(lastSplit));
-
-    return tokenized;
+    yield target.substring(lastSplit);
 }
 
 function modify(value: string, modifier: string): string {
@@ -121,20 +95,7 @@ function modify(value: string, modifier: string): string {
     return value;
 }
 
-export function toTextView(commit: Commit): string {
-    const messageFormat = getProperty("statusBarMessageFormat", "");
-
-    return parseTokens(
-        messageFormat,
-        normalizeCommitInfoTokens(commit),
-    );
-}
-
 export function toDateText(dateNow: Date, dateThen: Date): string {
-    const years = yearsBetween(dateNow, dateThen);
-    const months = monthsBetween(dateNow, dateThen);
-    const days = daysBetween(dateNow, dateThen);
-    const hours = hoursBetween(dateNow, dateThen);
     const minutes = minutesBetween(dateNow, dateThen);
 
     if (minutes < 5) {
@@ -143,52 +104,51 @@ export function toDateText(dateNow: Date, dateThen: Date): string {
     if (minutes < 60) {
         return `${minutes} minutes ago`;
     }
+
+    const hours = hoursBetween(dateNow, dateThen);
     if (hours < 24) {
         return appendOrNot(hours, "hour");
     }
+
+    const days = daysBetween(dateNow, dateThen);
     if (days < 31) {
         return appendOrNot(days, "day");
     }
+
+    const months = monthsBetween(dateNow, dateThen);
     if (months < 12) {
         return appendOrNot(months, "month");
     }
 
-    return appendOrNot(years, "year");
+    return appendOrNot(yearsBetween(dateNow, dateThen), "year");
 }
 
 export function normalizeCommitInfoTokens(
-    commit: Commit,
+    {author, committer, hash, summary}: Commit,
 ): InfoTokenNormalizedCommitInfo {
     const now = new Date();
-    const authorTime = new Date(commit.author.timestamp * 1000);
-    const committerTime = new Date(commit.committer.timestamp * 1000);
+    const authorTime = new Date(author.time * 1000);
+    const committerTime = new Date(committer.time * 1000);
 
     const ago = toDateText(now, authorTime);
     const cAgo = toDateText(now, committerTime);
-    const shortness = (
-        target: string,
-        fallbackLength: string,
-    ) => (length: string): string => {
-        const cutoffPoint = (length || fallbackLength).toString();
-        return target.substr(
-            0,
-            parseInt(cutoffPoint, 10),
-        );
+    const shortness = (target: string, fallbackLength: string) => (length: string): string => {
+        return target.substr(0, parseInt(length ?? fallbackLength, 10));
     };
 
     return {
-        "author.mail": commit.author.mail,
-        "author.name": commit.author.name,
-        "author.timestamp": commit.author.timestamp.toString(),
-        "author.tz": commit.author.tz,
+        "author.mail": author.mail,
+        "author.name": author.name,
+        "author.timestamp": author.time.toString(),
+        "author.tz": author.tz,
         "author.date": authorTime.toISOString().slice(0, 10),
-        "commit.hash": commit.hash,
-        "commit.hash_short": shortness(commit.hash, "7"),
-        "commit.summary": shortness(commit.summary, "65536"),
-        "committer.mail": commit.committer.mail,
-        "committer.name": commit.committer.name,
-        "committer.timestamp": commit.committer.timestamp.toString(),
-        "committer.tz": commit.committer.tz,
+        "commit.hash": hash,
+        "commit.hash_short": shortness(hash, "7"),
+        "commit.summary": shortness(summary, "65536"),
+        "committer.mail": committer.mail,
+        "committer.name": committer.name,
+        "committer.timestamp": committer.time.toString(),
+        "committer.tz": committer.tz,
         "committer.date": committerTime.toISOString().slice(0, 10),
         "time.ago": ago,
         "time.c_ago": cAgo,
@@ -203,20 +163,21 @@ export function parseTokens<T extends InfoTokens>(
 ): string {
     let out = "";
 
-    for (const piece of parse(target)) {
-        let func: InfoTokenFunction | undefined;
+    for (const piece of parse(target, infoTokens)) {
         if (typeof piece === "string") {
             out += piece;
-        } else if (func = infoTokens[piece.func], func) {
-            if (typeof func === "function") {
-                out += modify(func(piece.param), piece.mod);
-            } else {
-                out += modify(func, piece.mod);
-            }
+        } else if (typeof piece.func === "function") {
+            out += modify(piece.func(piece.param), piece.mod);
         } else {
             out += modify(piece.func, piece.mod);
         }
     }
 
     return out;
+}
+
+export function toTextView(commit: Commit): string {
+    const messageFormat = getProperty("statusBarMessageFormat", "");
+
+    return parseTokens(messageFormat, normalizeCommitInfoTokens(commit));
 }
