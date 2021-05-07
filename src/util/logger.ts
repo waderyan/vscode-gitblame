@@ -1,5 +1,5 @@
 import { OutputChannel, window } from "vscode";
-import { extensionName } from "..";
+import { extensionName } from "../extension-name";
 
 export class Logger {
     private static instance?: Logger;

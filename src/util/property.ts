@@ -1,5 +1,5 @@
 import { workspace } from "vscode";
-import { extensionName } from "..";
+import { extensionName } from "../extension-name";
 
 export type PropertiesMap = {
     "commitUrl": string;

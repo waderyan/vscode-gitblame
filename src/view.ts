@@ -1,5 +1,5 @@
 import { StatusBarItem, window } from "vscode";
-import { extensionName } from ".";
+import { extensionName } from "./extension-name";
 
 import type { Commit } from "./git/util/stream-parsing";
 

@@ -4,6 +4,7 @@ import { URL } from "url";
 import type { Commit } from "./stream-parsing";
 
 import { isUrl } from "../../util/is-url";
+import { split } from "../../util/split";
 import { defaultWebPath } from "./default-web-path";
 import { getProperty } from "../../util/property";
 import {
@@ -16,13 +17,14 @@ import { stripGitRemoteUrl } from "./strip-git-remote-url";
 import { InfoTokens, parseTokens } from "../../util/textdecorator";
 import { isUncomitted } from "./uncommitted";
 import { errorMessage } from "../../util/message";
-import { extensionName } from "../..";
+import { extensionName } from "../../extension-name";
 
 type ToolUrlTokens = {
     "hash": string;
     "project.name": string;
     "project.remote": string;
     "gitorigin.hostname": (index?: string) => string | undefined;
+    "gitorigin.path": (index?: string) => string | undefined;
     "file.path": string;
 } & InfoTokens;
 
@@ -55,6 +57,34 @@ function gitOriginHostname(origin: string): (index?: string) => string {
     }
 }
 
+export function gitRemotePath(remote: string): (index?: string) => string {
+    if (/^[a-z]+?@/.test(remote)) {
+        const [, path] = split(remote, ':');
+        return (index?: string): string => {
+            if (index === '') {
+                return "";
+            }
+
+            const parts = path.split('/').filter(a => !!a);
+            return parts[Number(index)] || 'invalid-index';
+        }
+    }
+    try {
+        const { pathname } = new URL(remote);
+        return (index?: string): string => {
+
+            if (index === '') {
+                return pathname;
+            }
+
+            const parts = pathname.split('/').filter(a => !!a);
+            return parts[Number(index)] || 'invalid-index';
+        };
+    } catch {
+        return () => 'no-remote-url'
+    }
+}
+
 async function generateUrlTokens(commit: Commit): Promise<[string, ToolUrlTokens]> {
     const remoteName = getProperty("remoteName", "origin");
 
@@ -69,6 +99,7 @@ async function generateUrlTokens(commit: Commit): Promise<[string, ToolUrlTokens
         "project.name": projectName,
         "project.remote": remoteUrl,
         "gitorigin.hostname": gitOriginHostname(defaultWebPath(remoteUrl, "")),
+        "gitorigin.path": gitRemotePath(remoteUrl),
         "file.path": relativePath,
     }];
 }

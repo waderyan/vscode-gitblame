@@ -23,7 +23,7 @@ import {
     getFilePosition,
     NO_FILE_OR_PLACE,
 } from "../util/get-active";
-import { extensionName } from "..";
+import { extensionName } from "../extension-name";
 
 type ActionableMessageItem = MessageItem & {
     action: () => void;

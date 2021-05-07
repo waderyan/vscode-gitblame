@@ -1,7 +1,10 @@
 # Change Log
 
-## 7.0.0 (XXX XX, 2021)
+## 7.0.0 (May 07, 2021)
 * Breaking change: Removing setting `gitblame.inferCommitUrl`. We will now always make an attempt at the URL.
+* Feature: Added new token (`${gitorigin.path,n}`) for `gitblame.commitUrl`.
+* Feature: Adding a tag to show we don't support the new virtual workspaces
+* Fix: Updating dependencies
 
 ## 6.0.2 (December 20, 2020)
 * Fix: Spelling error in CHANGELOG.md
