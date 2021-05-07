@@ -32,11 +32,11 @@ suite("Chunk Processing", (): void => {
         const chunk = load("git-stream-blame-incremental.chunks", true);
         const result = load("git-stream-blame-incremental-result.json", false);
 
-        const commits = new Set<string>();
         const chunks: (Commit | Line)[] = [];
-        for (const blamed of processChunk(chunk, commits)) {
-            for (const blame of blamed) {
-                chunks.push(blame);
+        for (const [commit, lines] of processChunk(chunk)) {
+            chunks.push(commit);
+            for (const line of lines) {
+                chunks.push(line);
             }
         }
 
@@ -49,16 +49,12 @@ suite("Chunk Processing", (): void => {
     test("All lines should have known commits", (): void => {
         const chunk = load("git-stream-blame-incremental.chunks", true);
 
-        const commits = new Set<string>();
         const knownCommits: Record<string, Commit> = {};
 
-        for (const blamed of processChunk(chunk, commits)) {
-            for (const blame of blamed) {
-                if ("author" in blame) {
-                    knownCommits[blame.hash] = blame;
-                } else {
-                    assert.ok(blame[1] in knownCommits);
-                }
+        for (const [commit, lines] of processChunk(chunk)) {
+            knownCommits[commit.hash] = commit;
+            for (const blame of lines) {
+                assert.ok(blame[1] in knownCommits);
             }
         }
     });

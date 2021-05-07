@@ -1,39 +1,22 @@
-import { commands, Disposable, ExtensionContext, workspace } from "vscode";
+import { commands, Disposable, ExtensionContext } from "vscode";
 
+import { extensionName } from "./extension-name";
 import { Extension } from "./git/extension";
 import { Logger } from "./util/logger";
 
 const registerCommand = (name: string, callback: () => void): Disposable => {
-    return commands.registerCommand(name, callback);
+    return commands.registerCommand(`${extensionName}.${name}`, callback);
 }
 
 export function activate(context: ExtensionContext): void {
-    if (workspace.workspaceFolders) {
-        const app = new Extension;
+    const app = new Extension;
 
-        context.subscriptions.push(
-            app,
-            Logger.getInstance(),
-            registerCommand(
-                "gitblame.quickInfo",
-                (): void => void app.showMessage(),
-            ),
-            registerCommand(
-                "gitblame.online",
-                (): void => void app.blameLink(),
-            ),
-            registerCommand(
-                "gitblame.addCommitHashToClipboard",
-                (): void => void app.copyHash(),
-            ),
-            registerCommand(
-                "gitblame.addToolUrlToClipboard",
-                (): void => void app.copyToolUrl(),
-            ),
-        );
-    }
-}
-
-export function deactivate(): void {
-    // noop
+    context.subscriptions.push(
+        app,
+        Logger.getInstance(),
+        registerCommand("quickInfo", () => void app.showMessage()),
+        registerCommand("online", () => void app.blameLink()),
+        registerCommand("addCommitHashToClipboard", () => void app.copyHash()),
+        registerCommand("addToolUrlToClipboard", () => void app.copyToolUrl()),
+    );
 }

@@ -12,11 +12,7 @@ export async function execute(
     let execution: ChildProcess;
 
     try {
-        execution = execFile(
-            command,
-            args,
-            { ...options, encoding: "utf8" },
-        );
+        execution = execFile(command, args, { ...options, encoding: "utf8" });
     } catch (err) {
         Logger.error(err);
         return "";

@@ -1,5 +1,4 @@
 import { FSWatcher, promises, watch } from "fs";
-import { workspace } from "vscode";
 
 import type { Commit } from "./util/stream-parsing";
 import type { Document } from "../util/editorvalidator";
@@ -17,14 +16,8 @@ function dummy(fileName: string): void {
 }
 
 export class Blamer {
-    private readonly files = new Map<
-        Document,
-        Promise<File | undefined>
-    >();
-    private readonly fsWatchers = new Map<
-        Document,
-        FSWatcher
-    >();
+    private readonly files = new Map<Document, Promise<File | undefined>>();
+    private readonly fsWatchers = new Map<Document, FSWatcher>();
 
     public async file(document: Document): Promise<Blame | undefined> {
         return this.get(document);
@@ -58,36 +51,25 @@ export class Blamer {
     private async get(
         document: Document,
     ): Promise<Blame | undefined> {
-        if (this.files.has(document)) {
-            return (await this.files.get(document))?.blame;
+        if (!this.files.has(document)) {
+            const file = this.create(document);
+            void file.then((file) => {
+                if (file) {
+                    this.fsWatchers.set(
+                        document,
+                        watch(document.fileName, () => this.remove(document)),
+                    );
+                }
+            });
+            this.files.set(document, file);
         }
 
-        const file = this.create(document);
-
-        void file.then((file) => {
-            if (file) {
-                this.fsWatchers.set(
-                    document,
-                    watch(document.fileName, () => this.remove(document)),
-                )
-            } else {
-                this.files.delete(document);
-            }
-        });
-
-        this.files.set(document, file);
-
-        return (await file)?.blame;
+        return (await this.files.get(document))?.blame;
     }
 
     private async create(
-        {fileName, uri}: Document,
+        {fileName}: Document,
     ): Promise<File | undefined> {
-        if (!workspace.getWorkspaceFolder(uri)) {
-            dummy(fileName);
-            return;
-        }
-
         try {
             await promises.access(fileName);
         } catch {
@@ -97,8 +79,8 @@ export class Blamer {
 
         if (await isGitTracked(fileName)) {
             return new File(fileName);
-        } else {
-            dummy(fileName);
         }
+
+        dummy(fileName);
     }
 }

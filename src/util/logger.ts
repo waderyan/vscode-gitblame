@@ -1,10 +1,5 @@
 import { OutputChannel, window } from "vscode";
-
-const enum Level {
-    Info = "info",
-    Error = "error",
-    Command = "command",
-}
+import { extensionName } from "../extension-name";
 
 export class Logger {
     private static instance?: Logger;
@@ -19,19 +14,19 @@ export class Logger {
     }
 
     private constructor() {
-        this.out = window.createOutputChannel("gitblame");
+        this.out = window.createOutputChannel(extensionName);
     }
 
     public static info(message: string): void {
-        Logger.write(Level.Info, message);
+        Logger.write("info", message);
     }
 
     public static command(message: string): void {
-        Logger.write(Level.Command, message);
+        Logger.write("command", message);
     }
 
     public static error(error: Error): void {
-        Logger.write(Level.Error, error.toString());
+        Logger.write("error", error.toString());
     }
 
     public dispose(): void {
@@ -39,10 +34,8 @@ export class Logger {
         this.out.dispose();
     }
 
-    private static write(level: Level, message: string): void {
+    private static write(level: string, message: string): void {
         const timestamp = (new Date).toTimeString().substr(0,8);
-        Logger.getInstance().out.appendLine(
-            `[ ${timestamp} | ${level} ] ${message.trim()}`,
-        );
+        Logger.getInstance().out.appendLine(`[ ${timestamp} | ${level} ] ${message.trim()}`);
     }
 }

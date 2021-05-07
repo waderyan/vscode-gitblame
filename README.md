@@ -46,7 +46,8 @@ Quick link to open the latest commit on the current line in the most popular onl
               <li><code>${project.remote}</code> - the current default remote's URL with the
               protocol, port-specifiers, and trailing <code>.git</code> stripped. (e.g.
               <code>https://<strong>github.com/user/project_name</strong>.git</code>)</li>
-              <li><code>${gitorigin.hostname,n}</code> - the nth part of the git origin domain (e.g. if the git origin is <code>https://github.com/ckb-next/ckb-next.git</code> <code>${gitorigin.path,1}</code> will return <code>com</code>)</li>
+              <li><code>${gitorigin.hostname,n}</code> - the nth part of the git origin domain (e.g. if the git origin is <code>https://github.com/ckb-next/ckb-next.git</code> <code>${gitorigin.hostname,1}</code> will return <code>com</code>)</li>
+              <li><code>${gitorigin.path,n}</code> - the nth part of the git origin path (e.g. if the git origin is <code>https://github.com/ckb-next/ckb-next.git</code> <code>${gitorigin.path,1}</code> will return <code>ckb-next.git</code>)</li>
             </ul>
           </li>
           <li><em>Example:</em> <code>https://github.com/Sertion/vscode-gitblame/commit/${hash}</code></li>

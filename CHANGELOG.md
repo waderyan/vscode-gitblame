@@ -1,5 +1,11 @@
 # Change Log
 
+## 7.0.0 (May 07, 2021)
+* Breaking change: Removing setting `gitblame.inferCommitUrl`. We will now always make an attempt at the URL.
+* Feature: Added new token (`${gitorigin.path,n}`) for `gitblame.commitUrl`.
+* Feature: Adding a tag to show we don't support the new virtual workspaces
+* Fix: Updating dependencies
+
 ## 6.0.2 (December 20, 2020)
 * Fix: Spelling error in CHANGELOG.md
 * Bug: Stuck Waiting for git blame response (6.0.0) [#95](https://github.com/Sertion/vscode-gitblame/issues/95) (Thanks to [Vadzim Dambrouski](https://github.com/pftbest))

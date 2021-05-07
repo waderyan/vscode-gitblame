@@ -1,4 +1,5 @@
 import { StatusBarItem, window } from "vscode";
+import { extensionName } from "./extension-name";
 
 import type { Commit } from "./git/util/stream-parsing";
 
@@ -21,10 +22,7 @@ export class StatusBarView {
         if (!commit) {
             this.setText("", false);
         } else if (isUncomitted(commit)) {
-            this.setText(
-                getProperty("statusBarMessageNoCommit", "Not Committed Yet"),
-                false,
-            );
+            this.setText(getProperty("statusBarMessageNoCommit", "Not Committed Yet"), false);
         } else {
             this.setText(toTextView(commit), true);
         }
@@ -42,6 +40,6 @@ export class StatusBarView {
         const noInfo = " - No info about the current line";
         this.out.text = "$(git-commit) " + text.trimEnd();
         this.out.tooltip = `git blame${ command ? "" : noInfo }`;
-        this.out.command = command ? "gitblame.quickInfo" : undefined;
+        this.out.command = command ? `${extensionName}.quickInfo` : undefined;
     }
 }
