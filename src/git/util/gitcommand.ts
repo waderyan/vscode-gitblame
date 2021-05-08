@@ -63,7 +63,7 @@ export function blameProcess(fileName: string): ChildProcess {
     Logger.command(`${gitCommand} ${args.join(" ")}`);
 
     return spawn(gitCommand, args, {
-        cwd: fileName,
+        cwd: dirname(fileName),
     });
 }
 
