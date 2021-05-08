@@ -1,5 +1,8 @@
 # Change Log
 
+## 7.0.1 (May 08, 2021)
+* Bug: Git blame status bar info disappears on 7.0.0 [#101](https://github.com/Sertion/vscode-gitblame/issues/101) (Thanks to [Ben Reinhart](https://github.com/benjreinhart))
+
 ## 7.0.0 (May 07, 2021)
 * Breaking change: Removing setting `gitblame.inferCommitUrl`. We will now always make an attempt at the URL.
 * Feature: Added new token (`${gitorigin.path,n}`) for `gitblame.commitUrl`.
