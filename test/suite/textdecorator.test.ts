@@ -147,6 +147,26 @@ suite("Token Parser", (): void => {
         );
     });
 
+    test("Simple replace at the start of string", (): void => {
+        assert.strictEqual(
+            parseTokens(
+                "${example.token} simple",
+                normalizedInfo,
+            ),
+            "example-token simple",
+        );
+    });
+
+    test("Simple replace only token", (): void => {
+        assert.strictEqual(
+            parseTokens(
+                "${example.token}",
+                normalizedInfo,
+            ),
+            "example-token",
+        );
+    });
+
     test("Value replace", (): void => {
         assert.strictEqual(
             parseTokens(
@@ -154,6 +174,16 @@ suite("Token Parser", (): void => {
                 normalizedInfo,
             ),
             "Value some-value-example",
+        );
+    });
+
+    test("Function without parameter", (): void => {
+        assert.strictEqual(
+            parseTokens(
+                "Value ${value}",
+                normalizedInfo,
+            ),
+            "Value -example",
         );
     });
 

@@ -1,5 +1,9 @@
 # Change Log
 
+## 7.0.3 (May 09, 2021)
+* Bug: Git blame status bar info disappears on 7.0.2 [#102](https://github.com/Sertion/vscode-gitblame/issues/102) (Thanks to [smcdef](https://github.com/smcdef) and [Gene](https://github.com/geneaiello))
+* Bug: Quick link not working [#103](https://github.com/Sertion/vscode-gitblame/issues/103) (Thanks to [Ricardo Faria](https://github.com/RicardoFariaSilva))
+
 ## 7.0.2 (May 08, 2021)
 * Fix: Adding the fix from the previous release
 

@@ -56,7 +56,7 @@ function tokenParser<T extends InfoTokens>(token: string, infoTokens: T): TokenR
 
     return {
         func: infoTokens[functionName] || functionName,
-        param: subToken(parameterIndex + 1, modifierIndex),
+        param: parameterIndex === modifierIndex ? '' : subToken(parameterIndex + 1, modifierIndex),
         mod: modifierIndex === -1 ? "" : subToken(modifierIndex + 1),
     };
 }
@@ -167,7 +167,8 @@ export function parseTokens<T extends InfoTokens>(
         if (typeof piece === "string") {
             out += piece;
         } else if (typeof piece.func === "function") {
-            out += modify(piece.func(piece.param), piece.mod);
+            const val = piece.func(piece.param);
+            out += modify(val, piece.mod);
         } else {
             out += modify(piece.func, piece.mod);
         }
