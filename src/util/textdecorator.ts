@@ -132,8 +132,8 @@ export function normalizeCommitInfoTokens(
 
     const ago = toDateText(now, authorTime);
     const cAgo = toDateText(now, committerTime);
-    const shortness = (target: string, fallbackLength: string) => (length: string): string => {
-        return target.substr(0, parseInt(length ?? fallbackLength, 10));
+    const shortness = (target: string, fallbackLength: string) => (length = ''): string => {
+        return target.substr(0, parseInt(length || fallbackLength, 10));
     };
 
     return {
