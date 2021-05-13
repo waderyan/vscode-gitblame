@@ -1,5 +1,8 @@
 # Change Log
 
+## 7.0.4 (May 13, 2021)
+* Bug: Some lines are not blameable (Thanks to [smcdef](https://github.com/smcdef))
+
 ## 7.0.4 (May 09, 2021)
 * Bug: Fix issue in token length function
 

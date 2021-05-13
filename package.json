@@ -2,7 +2,7 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "7.0.4",
+  "version": "7.0.5",
   "publisher": "waderyan",
   "engines": {
     "vscode": "^1.49.0"

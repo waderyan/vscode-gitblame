@@ -39,9 +39,7 @@ function blankCommitInfo(): Commit {
     return commitInfo;
 }
 
-function * splitChunk(
-    chunk: Buffer,
-): Generator<[string, string, string]> {
+function * splitChunk(chunk: Buffer): Generator<[string, string, string]> {
     for (let index = 0; index < chunk.length; index++) {
         const nextIndex = chunk.indexOf("\n", index);
         const startSecond = nextIndex + 1;
@@ -56,11 +54,7 @@ function * splitChunk(
     }
 }
 
-function fillOwner(
-    owner: CommitAuthor,
-    dataPoint: string,
-    value: string,
-): void {
+function fillOwner(owner: CommitAuthor, dataPoint: string, value: string): void {
     if (dataPoint === "time") {
         owner.time = parseInt(value, 10);
     } else if (dataPoint === "tz" || dataPoint === "mail") {
@@ -70,11 +64,7 @@ function fillOwner(
     }
 }
 
-function processAuthorLine(
-    key: string,
-    value: string,
-    commitInfo: Commit,
-): void {
+function processAuthorLine(key: string, value: string, commitInfo: Commit): void {
     const [author, dataPoint] = split(key, "-");
 
     if (author === "author") {
@@ -88,27 +78,16 @@ function isHash(hash: string): boolean {
     return /^\w{40}$/.test(hash);
 }
 
-function isCoverageLine(
-    hash: string,
-    coverage: string,
-): boolean {
+function isCoverageLine(hash: string, coverage: string): boolean {
     return isHash(hash) && /^\d+ \d+ \d+$/.test(coverage);
 }
 
-function isNewCommit(
-    hash: string,
-    coverage: string,
-    nextLine: string,
-): boolean {
+function isNewCommit(hash: string, coverage: string, nextLine: string): boolean {
     const commitBlock = /^(author|committer)/;
     return isCoverageLine(hash, coverage) && commitBlock.test(nextLine);
 }
 
-function processLine(
-    key: string,
-    value: string,
-    commitInfo: Commit,
-): void {
+function processLine(key: string, value: string, commitInfo: Commit): void {
     if (key === "summary") {
         commitInfo.summary = value;
     } else if (isHash(key)) {
@@ -118,10 +97,7 @@ function processLine(
     }
 }
 
-function * processCoverage(
-    hash: string,
-    coverage: string,
-): Generator<Line> {
+function * processCoverage(hash: string, coverage: string): Generator<Line> {
     const [, finalLine, lines] = coverage.split(" ").map(Number);
 
     for (let i = 0; i < lines; i++) {
@@ -150,11 +126,9 @@ export function * processChunk(dataChunk: Buffer): Generator<ChunkyGenerator> {
 
             if (isNewCommit(key, value, nextLine)) {
                 commitInfo = blankCommitInfo();
-                processLine(key, value, commitInfo);
             }
-        } else {
-            processLine(key, value, commitInfo);
         }
+        processLine(key, value, commitInfo);
     }
 
     yield * commitFilter(commitInfo, coverageGenerator);
