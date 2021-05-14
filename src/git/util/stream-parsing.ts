@@ -115,7 +115,7 @@ function * protoLine(): Generator<Line> {
     // noop
 }
 
-export function * processChunk(dataChunk: Buffer): Generator<ChunkyGenerator> {
+export function * processChunk(dataChunk: Buffer): Generator<ChunkyGenerator, void> {
     let commitInfo = blankCommitInfo();
     let coverageGenerator: Generator<Line> = protoLine();
 
