@@ -1,6 +1,10 @@
 # Change Log
 
-## 7.0.4 (May 13, 2021)
+## 7.0.6 (May 13, 2021)
+* Bug: Issue with large blames caused some commits to be overwritten by empty versions of themselves (Thanks to [smcdef](https://github.com/smcdef) for reporting this)
+* Bug: Last version was incorrectly marked as 7.0.4 in CHANGELOG.md
+
+## 7.0.5 (May 13, 2021)
 * Bug: Some lines are not blameable (Thanks to [smcdef](https://github.com/smcdef))
 
 ## 7.0.4 (May 09, 2021)

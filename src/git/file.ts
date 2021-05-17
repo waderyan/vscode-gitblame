@@ -1,4 +1,4 @@
-import { ChunkyGenerator, Commit, processChunk } from "./util/stream-parsing";
+import { ChunkyGenerator, Commit, CommitRegistry, processChunk } from "./util/stream-parsing";
 
 import { Logger } from "../util/logger";
 import { ChildProcess } from "child_process";
@@ -23,13 +23,14 @@ export class File {
 
     private async * runProcess(fileName: string): AsyncGenerator<ChunkyGenerator> {
         this.process = blameProcess(fileName);
+        const commitRegistry: CommitRegistry = {};
 
         if (!this.process.stdout || !this.process.stderr) {
             return;
         }
 
         for await (const chunk of this.process.stdout) {
-            yield * processChunk(chunk);
+            yield * processChunk(chunk, commitRegistry);
         }
 
         for await (const error of this.process.stderr) {

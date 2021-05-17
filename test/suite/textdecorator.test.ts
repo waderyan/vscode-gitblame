@@ -1,7 +1,10 @@
 import * as assert from "assert";
+import { useFakeTimers } from "sinon";
 
+import { Commit } from "../../src/git/util/stream-parsing";
 import {
     InfoTokens,
+    normalizeCommitInfoTokens,
     parseTokens,
     toDateText,
 } from "../../src/util/textdecorator";
@@ -276,4 +279,59 @@ suite("Token Parser", (): void => {
             "Multiple example-token in a length text",
         );
     });
+});
+
+suite("Text Decorator with CommitInfoToken", (): void => {
+    useFakeTimers(1621014626000);
+    const exampleCommit: Commit = {
+        "author": {
+            "mail": "<vdavydov.dev@gmail.com>",
+            "name": "Vladimir Davydov",
+            "time": 1423781950,
+            "tz": "-0800",
+        },
+        "committer": {
+            "mail": "<torvalds@linux-foundation.org>",
+            "name": "Linus Torvalds",
+            "time": 1423796049,
+            "tz": "-0800",
+        },
+        "hash": "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce",
+        "summary": "list_lru: introduce per-memcg lists",
+    };
+    const normalizedCommitInfoTokens = normalizeCommitInfoTokens(exampleCommit);
+    const check = (token: string, expect: string): void => {
+        test(
+            `Parse "\${${token}}"`,
+            (): void => assert.strictEqual(
+                parseTokens(`\${${token}}`, normalizedCommitInfoTokens),
+                expect,
+            ),
+        );
+    }
+
+    check("author.mail", "<vdavydov.dev@gmail.com>");
+    check("author.name", "Vladimir Davydov");
+    check("author.tz", "-0800");
+    check("author.date", "2015-02-12");
+
+    check("committer.mail", "<torvalds@linux-foundation.org>");
+    check("committer.name", "Linus Torvalds");
+    check("committer.tz", "-0800");
+    check("committer.date", "2015-02-13");
+
+    check("commit.summary", "list_lru: introduce per-memcg lists");
+    check("commit.hash", "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce");
+    check("commit.hash_short", "60d3fd3");
+
+    check("time.ago", "6 years ago");
+    check("time.c_ago", "6 years ago");
+    check("time.from", "6 years ago");
+    check("time.c_from", "6 years ago");
+
+    check("commit.summary,0", "");
+    check("commit.summary,5", "list_");
+    check("commit.hash_short,0", "");
+    check("commit.hash_short,2", "60");
+    check("commit.hash_short,39", "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65c");
 });

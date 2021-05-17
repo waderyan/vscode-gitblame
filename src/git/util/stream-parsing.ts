@@ -18,6 +18,8 @@ export type Line = [number, string];
 
 export type ChunkyGenerator = [Commit, Generator<Line>];
 
+export type CommitRegistry = Record<string, Commit>;
+
 function blankCommitInfo(): Commit {
     const commitInfo: Commit = {
         author: {
@@ -105,23 +107,33 @@ function * processCoverage(hash: string, coverage: string): Generator<Line> {
     }
 }
 
-function * commitFilter(commitInfo: Commit, coverageGenerator: Generator<Line>): Generator<ChunkyGenerator> {
-    if (commitInfo.hash !== "EMPTY") {
-        yield [commitInfo, coverageGenerator];
+function * commitFilter(
+    commitInfo: Commit,
+    lines: Generator<Line>,
+    registry: CommitRegistry,
+): Generator<ChunkyGenerator> {
+    if (commitInfo.hash === "EMPTY") {
+        return;
     }
+
+    if (registry[commitInfo.hash] === undefined) {
+        registry[commitInfo.hash] = commitInfo;
+    }
+
+    yield [registry[commitInfo.hash], lines];
 }
 
 function * protoLine(): Generator<Line> {
     // noop
 }
 
-export function * processChunk(dataChunk: Buffer): Generator<ChunkyGenerator> {
+export function * processChunk(dataChunk: Buffer, commitRegistry: CommitRegistry): Generator<ChunkyGenerator, void> {
     let commitInfo = blankCommitInfo();
     let coverageGenerator: Generator<Line> = protoLine();
 
     for (const [key, value, nextLine] of splitChunk(dataChunk)) {
         if (isCoverageLine(key, value)) {
-            yield * commitFilter(commitInfo, coverageGenerator);
+            yield * commitFilter(commitInfo, coverageGenerator, commitRegistry);
             coverageGenerator = processCoverage(key, value);
 
             if (isNewCommit(key, value, nextLine)) {
@@ -131,5 +143,5 @@ export function * processChunk(dataChunk: Buffer): Generator<ChunkyGenerator> {
         processLine(key, value, commitInfo);
     }
 
-    yield * commitFilter(commitInfo, coverageGenerator);
+    yield * commitFilter(commitInfo, coverageGenerator, commitRegistry);
 }

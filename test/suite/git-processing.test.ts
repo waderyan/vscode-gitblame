@@ -4,6 +4,7 @@ import { resolve } from "path";
 
 import {
     Commit,
+    CommitRegistry,
     Line,
     processChunk,
 } from "../../src/git/util/stream-parsing";
@@ -32,8 +33,9 @@ suite("Chunk Processing", (): void => {
         const chunk = load("git-stream-blame-incremental.chunks", true);
         const result = load("git-stream-blame-incremental-result.json", false);
 
+        const registry: CommitRegistry = {};
         const chunks: (Commit | Line)[] = [];
-        for (const [commit, lines] of processChunk(chunk)) {
+        for (const [commit, lines] of processChunk(chunk, registry)) {
             chunks.push(commit);
             for (const line of lines) {
                 chunks.push(line);
@@ -51,7 +53,8 @@ suite("Chunk Processing", (): void => {
 
         const knownCommits: Record<string, Commit> = {};
 
-        for (const [commit, lines] of processChunk(chunk)) {
+        const registry: CommitRegistry = {};
+        for (const [commit, lines] of processChunk(chunk, registry)) {
             knownCommits[commit.hash] = commit;
             for (const blame of lines) {
                 assert.ok(blame[1] in knownCommits);
@@ -59,3 +62,24 @@ suite("Chunk Processing", (): void => {
         }
     });
 });
+
+suite("Processing Errors", (): void => {
+    test("Git chunk not starting with commit information", (): void => {
+        const chunks = JSON.parse(load("git-stream-blame-incremental-multi-chunk.json", false)) as string[];
+        const result = JSON.parse(load("git-stream-blame-incremental-multi-chunk-result.json", false)) as string[];
+
+        const registry: CommitRegistry = {};
+
+        const foundChunks: (Commit | Line)[] = [];
+        for (const chunk of chunks) {
+            for (const [commit, lines] of processChunk(Buffer.from(chunk, "utf-8"), registry)) {
+                foundChunks.push(commit);
+                for (const line of lines) {
+                    foundChunks.push(line);
+                }
+            }
+        }
+
+        assert.deepStrictEqual(foundChunks, result);
+    });
+})
