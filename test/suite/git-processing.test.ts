@@ -3,8 +3,8 @@ import { readFileSync } from "fs";
 import { resolve } from "path";
 
 import {
-    ChunkyGenerator,
     Commit,
+    CommitRegistry,
     Line,
     processChunk,
 } from "../../src/git/util/stream-parsing";
@@ -33,8 +33,9 @@ suite("Chunk Processing", (): void => {
         const chunk = load("git-stream-blame-incremental.chunks", true);
         const result = load("git-stream-blame-incremental-result.json", false);
 
+        const registry: CommitRegistry = {};
         const chunks: (Commit | Line)[] = [];
-        for (const [commit, lines] of processChunk(chunk)) {
+        for (const [commit, lines] of processChunk(chunk, registry)) {
             chunks.push(commit);
             for (const line of lines) {
                 chunks.push(line);
@@ -52,7 +53,8 @@ suite("Chunk Processing", (): void => {
 
         const knownCommits: Record<string, Commit> = {};
 
-        for (const [commit, lines] of processChunk(chunk)) {
+        const registry: CommitRegistry = {};
+        for (const [commit, lines] of processChunk(chunk, registry)) {
             knownCommits[commit.hash] = commit;
             for (const blame of lines) {
                 assert.ok(blame[1] in knownCommits);
@@ -62,43 +64,22 @@ suite("Chunk Processing", (): void => {
 });
 
 suite("Processing Errors", (): void => {
-    test("Incorrect timestamp", (): void => {
-        const buffer = Buffer.from(`60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce 454 548 1
-author Vladimir Davydov
-author-mail <vdavydov.dev@gmail.com>
-author-time 1423781950
-author-tz -0800
-committer Linus Torvalds
-committer-mail <torvalds@linux-foundation.org>
-committer-time 1423796049
-committer-tz -0800
-summary list_lru: introduce per-memcg lists
-previous c0a5b560938a0f2fd2fbf66ddc446c7c2b41383a mm/list_lru.c
-filename mm/list_lru.c
-`);
+    test("Git chunk not starting with commit information", (): void => {
+        const chunks = JSON.parse(load("git-stream-blame-incremental-multi-chunk.json", false)) as string[];
+        const result = JSON.parse(load("git-stream-blame-incremental-multi-chunk-result.json", false)) as string[];
 
-        const process = processChunk(buffer);
-        const [commit, lines] = process.next().value as ChunkyGenerator;
+        const registry: CommitRegistry = {};
 
-        assert.deepStrictEqual(commit, {
-            "author": {
-                "mail": "<vdavydov.dev@gmail.com>",
-                "name": "Vladimir Davydov",
-                "time": 1423781950,
-                "tz": "-0800",
-            },
-            "committer": {
-                "mail": "<torvalds@linux-foundation.org>",
-                "name": "Linus Torvalds",
-                "time": 1423796049,
-                "tz": "-0800",
-            },
-            "hash": "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce",
-            "summary": "list_lru: introduce per-memcg lists",
-        });
-        assert.ok(process.next().done);
+        const foundChunks: (Commit | Line)[] = [];
+        for (const chunk of chunks) {
+            for (const [commit, lines] of processChunk(Buffer.from(chunk, "utf-8"), registry)) {
+                foundChunks.push(commit);
+                for (const line of lines) {
+                    foundChunks.push(line);
+                }
+            }
+        }
 
-        assert.deepStrictEqual(lines.next().value, [548, "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce"]);
-        assert.ok(lines.next().done);
+        assert.deepStrictEqual(foundChunks, result);
     });
 })
