@@ -5,7 +5,7 @@ const DAY = 24 * HOUR;
 const YEAR = 365.25 * DAY;
 const MONTH = YEAR / 12;
 
-function between(unit: number, now: Date, compare: Date): number {
+const between = (unit: number, now: Date, compare: Date): number => {
     const diffMilliseconds = now.valueOf() - compare.valueOf();
 
     return Math.round(diffMilliseconds / unit);

@@ -3,7 +3,7 @@ import { split } from "../../util/split";
 export type CommitAuthor = {
     name: string;
     mail: string;
-    time: number;
+    timestamp: number;
     tz: string;
 }
 
@@ -25,13 +25,13 @@ function blankCommitInfo(): Commit {
         author: {
             mail: "",
             name: "",
-            time: 0,
+            timestamp: 0,
             tz: "",
         },
         committer: {
             mail: "",
             name: "",
-            time: 0,
+            timestamp: 0,
             tz: "",
         },
         hash: "EMPTY",
@@ -41,24 +41,20 @@ function blankCommitInfo(): Commit {
     return commitInfo;
 }
 
-function * splitChunk(chunk: Buffer): Generator<[string, string, string]> {
-    for (let index = 0; index < chunk.length; index++) {
-        const nextIndex = chunk.indexOf("\n", index);
-        const startSecond = nextIndex + 1;
-        const secondIndex = chunk.indexOf("\n", startSecond);
+function * splitChunk(chunk: Buffer): Generator<[string, string]> {
+    let lastIndex = 0;
+    while (lastIndex < chunk.length) {
+        const nextIndex = chunk.indexOf("\n", lastIndex);
 
-        yield [
-            ...split(chunk.slice(index, nextIndex).toString("utf8")),
-            chunk.slice(startSecond, secondIndex).toString("utf8"),
-        ];
+        yield split(chunk.toString("utf8", lastIndex, nextIndex));
 
-        index = nextIndex;
+        lastIndex = nextIndex + 1;
     }
 }
 
 function fillOwner(owner: CommitAuthor, dataPoint: string, value: string): void {
     if (dataPoint === "time") {
-        owner.time = parseInt(value, 10);
+        owner.timestamp = parseInt(value, 10);
     } else if (dataPoint === "tz" || dataPoint === "mail") {
         owner[dataPoint] = value;
     } else if (dataPoint === "") {
@@ -69,10 +65,8 @@ function fillOwner(owner: CommitAuthor, dataPoint: string, value: string): void 
 function processAuthorLine(key: string, value: string, commitInfo: Commit): void {
     const [author, dataPoint] = split(key, "-");
 
-    if (author === "author") {
-        fillOwner(commitInfo.author, dataPoint, value);
-    } else if (author === "committer") {
-        fillOwner(commitInfo.committer, dataPoint, value);
+    if (author === "author" || author === "committer") {
+        fillOwner(commitInfo[author], dataPoint, value);
     }
 }
 
@@ -82,11 +76,6 @@ function isHash(hash: string): boolean {
 
 function isCoverageLine(hash: string, coverage: string): boolean {
     return isHash(hash) && /^\d+ \d+ \d+$/.test(coverage);
-}
-
-function isNewCommit(hash: string, coverage: string, nextLine: string): boolean {
-    const commitBlock = /^(author|committer)/;
-    return isCoverageLine(hash, coverage) && commitBlock.test(nextLine);
 }
 
 function processLine(key: string, value: string, commitInfo: Commit): void {
@@ -131,12 +120,12 @@ export function * processChunk(dataChunk: Buffer, commitRegistry: CommitRegistry
     let commitInfo = blankCommitInfo();
     let coverageGenerator: Generator<Line> = protoLine();
 
-    for (const [key, value, nextLine] of splitChunk(dataChunk)) {
+    for (const [key, value] of splitChunk(dataChunk)) {
         if (isCoverageLine(key, value)) {
             yield * commitFilter(commitInfo, coverageGenerator, commitRegistry);
             coverageGenerator = processCoverage(key, value);
 
-            if (isNewCommit(key, value, nextLine)) {
+            if (commitInfo.hash !== key) {
                 commitInfo = blankCommitInfo();
             }
         }

@@ -287,13 +287,13 @@ suite("Text Decorator with CommitInfoToken", (): void => {
         "author": {
             "mail": "<vdavydov.dev@gmail.com>",
             "name": "Vladimir Davydov",
-            "time": 1423781950,
+            "timestamp": 1423781950,
             "tz": "-0800",
         },
         "committer": {
             "mail": "<torvalds@linux-foundation.org>",
             "name": "Linus Torvalds",
-            "time": 1423796049,
+            "timestamp": 1423796049,
             "tz": "-0800",
         },
         "hash": "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce",

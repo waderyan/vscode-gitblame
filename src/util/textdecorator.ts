@@ -8,10 +8,10 @@ import {
     yearsBetween,
 } from "./ago";
 
-import type { Commit } from "../git/util/stream-parsing";
+import type { Commit, CommitAuthor } from "../git/util/stream-parsing";
 
 type InfoTokenFunctionWithParameter = (value: string) => string;
-type InfoTokenFunction = InfoTokenFunctionWithParameter | string;
+type InfoTokenFunction = InfoTokenFunctionWithParameter | string | number;
 
 export type InfoTokens = {
     [key: string]: InfoTokenFunction | undefined;
@@ -20,7 +20,7 @@ export type InfoTokens = {
 export type InfoTokenNormalizedCommitInfo = {
     "author.mail": string;
     "author.name": string;
-    "author.timestamp": string;
+    "author.timestamp": number;
     "author.tz": string;
     "author.date": string;
     "commit.hash": string;
@@ -28,7 +28,7 @@ export type InfoTokenNormalizedCommitInfo = {
     "commit.summary": InfoTokenFunctionWithParameter;
     "committer.mail": string;
     "committer.name": string;
-    "committer.timestamp": string;
+    "committer.timestamp": number;
     "committer.tz": string;
     "committer.date": string;
     "time.ago": string;
@@ -127,8 +127,10 @@ export function normalizeCommitInfoTokens(
     {author, committer, hash, summary}: Commit,
 ): InfoTokenNormalizedCommitInfo {
     const now = new Date();
-    const authorTime = new Date(author.time * 1000);
-    const committerTime = new Date(committer.time * 1000);
+    const toTime = ({timestamp: time}: CommitAuthor) => new Date(time * 1000);
+    const authorTime = toTime(author);
+    const committerTime = toTime(committer);
+    const toIso = (author: CommitAuthor) => toTime(author).toISOString().slice(0, 10);
 
     const ago = toDateText(now, authorTime);
     const cAgo = toDateText(now, committerTime);
@@ -139,17 +141,17 @@ export function normalizeCommitInfoTokens(
     return {
         "author.mail": author.mail,
         "author.name": author.name,
-        "author.timestamp": author.time.toString(),
+        "author.timestamp": author.timestamp,
         "author.tz": author.tz,
-        "author.date": authorTime.toISOString().slice(0, 10),
+        "author.date": toIso(author),
+        "committer.mail": committer.mail,
+        "committer.name": committer.name,
+        "committer.timestamp": committer.timestamp,
+        "committer.tz": committer.tz,
+        "committer.date": toIso(committer),
         "commit.hash": hash,
         "commit.hash_short": shortness(hash, "7"),
         "commit.summary": shortness(summary, "65536"),
-        "committer.mail": committer.mail,
-        "committer.name": committer.name,
-        "committer.timestamp": committer.time.toString(),
-        "committer.tz": committer.tz,
-        "committer.date": committerTime.toISOString().slice(0, 10),
         "time.ago": ago,
         "time.c_ago": cAgo,
         "time.from": ago,
@@ -164,13 +166,13 @@ export function parseTokens<T extends InfoTokens>(
     let out = "";
 
     for (const piece of parse(target, infoTokens)) {
-        if (typeof piece === "string") {
+        if (typeof piece === "string" || typeof piece === "number") {
             out += piece;
         } else if (typeof piece.func === "function") {
             const val = piece.func(piece.param);
             out += modify(val, piece.mod);
         } else {
-            out += modify(piece.func, piece.mod);
+            out += modify(piece.func.toString(), piece.mod);
         }
     }
 

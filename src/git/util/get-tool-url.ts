@@ -39,18 +39,20 @@ function getDefaultToolUrl(
     }
 }
 
+function getPathIndex(path: string, index?: string, splitOn = '/'): string {
+    const parts = path.split(splitOn).filter(a => !!a);
+    return parts[Number(index)] || 'invalid-index';
+}
+
 function gitOriginHostname(origin: string): (index?: string) => string {
     try {
         const { hostname } = new URL(origin);
         return (index = ''): string => {
-
             if (index === '') {
                 return hostname;
             }
 
-            const parts = hostname.split('.');
-
-            return parts[Number(index)] || 'invalid-index';
+            return getPathIndex(hostname, index, '.');
         };
     } catch {
         return () => 'no-origin-url'
@@ -65,20 +67,17 @@ export function gitRemotePath(remote: string): (index?: string) => string {
                 return '/' + path;
             }
 
-            const parts = path.split('/').filter(a => !!a);
-            return parts[Number(index)] || 'invalid-index';
+            return getPathIndex(path, index);
         }
     }
     try {
         const { pathname } = new URL(remote);
         return (index = ''): string => {
-
             if (index === '') {
                 return pathname;
             }
 
-            const parts = pathname.split('/').filter(a => !!a);
-            return parts[Number(index)] || 'invalid-index';
+            return getPathIndex(pathname, index);
         };
     } catch {
         console.log(remote);
@@ -112,11 +111,9 @@ export async function getToolUrl(
         return;
     }
 
-    const commitUrl = getProperty("commitUrl", "");
-
     const [origin, tokens] = await generateUrlTokens(commit);
 
-    const parsedUrl = parseTokens(commitUrl, tokens);
+    const parsedUrl = parseTokens(getProperty("commitUrl", ""), tokens);
 
     if (isUrl(parsedUrl)) {
         return Uri.parse(parsedUrl, true);
