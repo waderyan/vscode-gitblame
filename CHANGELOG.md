@@ -1,5 +1,16 @@
 # Change Log
 
+## 8.0.0 (July xx, 2021)
+* Breaking change: Removed `${time.c_from}` and `${time.from}`, please use `${time.c_ago}` and `${time.ago}` instead. They have been aliases since version 3.0.0
+* Breaking change: Dangling tokens (non-closed) now resolve correctly to their literal text instead of breaking
+* Breaking change: Modifiers on tokens with parameters now work as expected
+* Breaking change: Using Intl.RelativeTimeFormat to get relative time messages. This will change some things in the output:
+  * Before `1 hour ago`, after `60 minutes ago`
+  * Before `right now`, after `4 minutes ago`
+  * etc.
+* Feature: Some info messages have changed.
+* Feature: Now compiling for Node 14 and vscode ^1.57.0
+
 ## 7.0.6 (May 13, 2021)
 * Bug: Issue with large blames caused some commits to be overwritten by empty versions of themselves (Thanks to [smcdef](https://github.com/smcdef) for reporting this)
 * Bug: Last version was incorrectly marked as 7.0.4 in CHANGELOG.md

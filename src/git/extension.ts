@@ -44,8 +44,7 @@ export class Extension {
     }
 
     public async blameLink(): Promise<void> {
-        const commit = await this.commit();
-        const toolUrl = await getToolUrl(commit);
+        const toolUrl = await getToolUrl(await this.commit());
 
         if (toolUrl) {
             void commands.executeCommand("vscode.open", toolUrl);
@@ -62,26 +61,21 @@ export class Extension {
             return;
         }
 
-        const messageFormat = getProperty("infoMessageFormat", "");
-        const normalizedTokens = normalizeCommitInfoTokens(commit);
-        const message = parseTokens(messageFormat, normalizedTokens);
+        const message = parseTokens(
+            getProperty("infoMessageFormat"),
+            normalizeCommitInfoTokens(commit),
+        );
         const toolUrl = await getToolUrl(commit);
-        const actions: ActionableMessageItem[] = [];
-
-        if (toolUrl?.toString()) {
-            actions.push({
-                title: "View",
-                action: () => {
-                    void commands.executeCommand("vscode.open", toolUrl);
-                },
-            });
-        }
+        const action: ActionableMessageItem[] | undefined = toolUrl ? [{
+            title: "View",
+            action() {
+                void commands.executeCommand("vscode.open", toolUrl);
+            },
+        }] : undefined;
 
         this.view.update(commit);
 
-        const selected = await infoMessage(message, ...actions);
-
-        selected?.action();
+        (await infoMessage(message, action))?.action();
     }
 
     public async copyHash(): Promise<void> {
@@ -121,7 +115,7 @@ export class Extension {
 
         return Disposable.from(
             window.onDidChangeActiveTextEditor((textEditor): void => {
-                if (textEditor?.document.uri.scheme === "file") {
+                if (validEditor(textEditor)) {
                     this.view.activity();
                     void this.blame.file(textEditor.document);
                     /**

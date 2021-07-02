@@ -4,7 +4,7 @@ import { Logger } from "../util/logger";
 import { ChildProcess } from "child_process";
 import { blameProcess } from "./util/gitcommand";
 
-export type Blame = Record<number, Commit | undefined>;
+export type Blame = Map<number, Commit | undefined>;
 
 export class File {
     public readonly blame: Promise<Blame | undefined>;
@@ -23,31 +23,27 @@ export class File {
 
     private async * runProcess(fileName: string): AsyncGenerator<ChunkyGenerator> {
         this.process = blameProcess(fileName);
-        const commitRegistry: CommitRegistry = {};
+        const commitRegistry: CommitRegistry = new Map;
 
-        if (!this.process.stdout || !this.process.stderr) {
-            return;
-        }
-
-        for await (const chunk of this.process.stdout) {
+        for await (const chunk of this.process?.stdout ?? []) {
             yield * processChunk(chunk, commitRegistry);
         }
 
-        for await (const error of this.process.stderr) {
+        for await (const error of this.process?.stderr ?? []) {
             throw new Error(error);
         }
     }
 
     private async runBlame(fileName: string): Promise<Blame | undefined> {
-        const blameInfo: Blame = {};
+        const blameInfo: Blame = new Map;
         const registry = new Map<string, Commit>();
 
         try {
             for await (const [commit, lines] of this.runProcess(fileName)) {
                 registry.set(commit.hash, commit);
 
-                for (const line of lines) {
-                    blameInfo[line[0]] = registry.get(line[1]);
+                for (const [lineNumber, hash] of lines) {
+                    blameInfo.set(lineNumber, registry.get(hash));
                 }
             }
         } catch (err) {

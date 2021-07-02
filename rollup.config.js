@@ -19,13 +19,13 @@ export default {
         terser({
             ecma: 2020,
             compress: {
-                inline: false,
-                keep_classnames: false,
+                inline: 2,
                 keep_fargs: false,
                 module: true,
                 passes: 4,
                 pure_getters: true,
                 toplevel: true,
+                unsafe: true,
                 unsafe_arrows: true,
                 unsafe_methods: true,
             },

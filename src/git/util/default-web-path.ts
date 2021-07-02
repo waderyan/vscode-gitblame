@@ -3,23 +3,12 @@ import { URL } from "url";
 import { getProperty } from "../../util/property";
 import { stripGitRemoteUrl } from "./strip-git-remote-url";
 
-function isToolUrlPlural(origin: string): boolean {
-    const isWebPathPlural = getProperty("isWebPathPlural");
-    const urlParts = getProperty("pluralWebPathSubstrings", []);
+const isToolUrlPlural = (origin: string): boolean => getProperty("isWebPathPlural")
+    || getProperty("pluralWebPathSubstrings").some((substring) => origin.includes(substring));
 
-    return isWebPathPlural || urlParts.some(
-        (substring) => origin.includes(substring),
-    );
-}
+const httpOrHttps = (url: string): string | undefined => /^(https?):/.exec(url)?.[1];
 
-function httpOrHttps(url: string): string | undefined {
-    const matches = /^(https?):/.exec(url);
-    if (matches !== null) {
-        return matches[1];
-    }
-}
-
-export function defaultWebPath(url: string, hash: string): string {
+export const defaultWebPath = (url: string, hash: string): string => {
     const httpProtocol = httpOrHttps(url);
     const gitlessUrl = stripGitRemoteUrl(url);
 

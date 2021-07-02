@@ -3,6 +3,10 @@
         "module": "ES2020",
         "moduleResolution": "node",
         "target": "es2020",
+        "lib": [
+            "ES2020",
+            "ESNext.Intl"
+        ],
         "strict": true,
         "outDir": "./dist",
         "rootDir": "."

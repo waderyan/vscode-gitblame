@@ -7,14 +7,6 @@ import { Blame, File } from "./file";
 import { Logger } from "../util/logger";
 import { isGitTracked } from "./util/gitcommand";
 
-function dummy(fileName: string): void {
-    Logger.info(
-        `Will not try to blame file "${
-            fileName
-        }" as it is outside of the current workspace`,
-    );
-}
-
 export class Blamer {
     private readonly files = new Map<Document, Promise<File | undefined>>();
     private readonly fsWatchers = new Map<Document, FSWatcher>();
@@ -23,23 +15,18 @@ export class Blamer {
         return this.get(document);
     }
 
-    public async getLine(
-        document: Document,
-        lineNumber: number,
-    ): Promise<Commit | undefined> {
+    public async getLine(document: Document, lineNumber: number): Promise<Commit | undefined> {
         const commitLineNumber = lineNumber + 1;
         const blameInfo = await this.get(document);
 
-        return blameInfo?.[commitLineNumber];
+        return blameInfo?.get(commitLineNumber);
     }
 
     public async remove(document: Document): Promise<void> {
-        const blamefile = await this.files.get(document);
-        const fsWatcher = this.fsWatchers.get(document);
+        (await this.files.get(document))?.dispose();
+        this.fsWatchers.get(document)?.close();
         this.files.delete(document);
         this.fsWatchers.delete(document);
-        blamefile?.dispose();
-        fsWatcher?.close();
     }
 
     public dispose(): void {
@@ -48,9 +35,7 @@ export class Blamer {
         }
     }
 
-    private async get(
-        document: Document,
-    ): Promise<Blame | undefined> {
+    private async get(document: Document): Promise<Blame | undefined> {
         if (!this.files.has(document)) {
             const file = this.create(document);
             void file.then((file) => {
@@ -67,20 +52,19 @@ export class Blamer {
         return (await this.files.get(document))?.blame;
     }
 
-    private async create(
-        {fileName}: Document,
-    ): Promise<File | undefined> {
+    private async create({fileName}: Document): Promise<File | undefined> {
         try {
             await promises.access(fileName);
+
+            if (await isGitTracked(fileName)) {
+                return new File(fileName);
+            }
         } catch {
-            dummy(fileName);
-            return;
+            // NOOP
         }
 
-        if (await isGitTracked(fileName)) {
-            return new File(fileName);
-        }
-
-        dummy(fileName);
+        Logger.info(
+            `Will not blame '${fileName}'. Outside the current workspace.`,
+        );
     }
 }

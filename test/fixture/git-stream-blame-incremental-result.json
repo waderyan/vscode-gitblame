@@ -3,13 +3,15 @@
         "author": {
             "mail": "<not.committed.yet>",
             "name": "Not Committed Yet",
-            "timestamp": 1601475715,
+            "timestamp": "1601475715",
+            "date": "2020-09-30T14:21:55.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<not.committed.yet>",
             "name": "Not Committed Yet",
-            "timestamp": 1601475715,
+            "timestamp": "1601475715",
+            "date": "2020-09-30T14:21:55.000Z",
             "tz": "+0200"
         },
         "hash": "0000000000000000000000000000000000000000",
@@ -23,13 +25,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601153539,
+            "timestamp": "1601153539",
+            "date": "2020-09-26T20:52:19.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601153539,
+            "timestamp": "1601153539",
+            "date": "2020-09-26T20:52:19.000Z",
             "tz": "+0200"
         },
         "hash": "57463acc9ac14a81020067da1979b34c502b7478",
@@ -43,13 +47,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601153539,
+            "timestamp": "1601153539",
+            "date": "2020-09-26T20:52:19.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601153539,
+            "timestamp": "1601153539",
+            "date": "2020-09-26T20:52:19.000Z",
             "tz": "+0200"
         },
         "hash": "57463acc9ac14a81020067da1979b34c502b7478",
@@ -67,13 +73,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601153539,
+            "timestamp": "1601153539",
+            "date": "2020-09-26T20:52:19.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601153539,
+            "timestamp": "1601153539",
+            "date": "2020-09-26T20:52:19.000Z",
             "tz": "+0200"
         },
         "hash": "57463acc9ac14a81020067da1979b34c502b7478",
@@ -87,13 +95,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601138853,
+            "timestamp": "1601138853",
+            "date": "2020-09-26T16:47:33.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601138853,
+            "timestamp": "1601138853",
+            "date": "2020-09-26T16:47:33.000Z",
             "tz": "+0200"
         },
         "hash": "78049765bd69de4b7fc535ee4aeabb644bcf3028",
@@ -107,13 +117,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601138853,
+            "timestamp": "1601138853",
+            "date": "2020-09-26T16:47:33.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601138853,
+            "timestamp": "1601138853",
+            "date": "2020-09-26T16:47:33.000Z",
             "tz": "+0200"
         },
         "hash": "78049765bd69de4b7fc535ee4aeabb644bcf3028",
@@ -127,13 +139,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601138853,
+            "timestamp": "1601138853",
+            "date": "2020-09-26T16:47:33.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601138853,
+            "timestamp": "1601138853",
+            "date": "2020-09-26T16:47:33.000Z",
             "tz": "+0200"
         },
         "hash": "78049765bd69de4b7fc535ee4aeabb644bcf3028",
@@ -163,13 +177,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601138853,
+            "timestamp": "1601138853",
+            "date": "2020-09-26T16:47:33.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601138853,
+            "timestamp": "1601138853",
+            "date": "2020-09-26T16:47:33.000Z",
             "tz": "+0200"
         },
         "hash": "78049765bd69de4b7fc535ee4aeabb644bcf3028",
@@ -195,13 +211,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601138853,
+            "timestamp": "1601138853",
+            "date": "2020-09-26T16:47:33.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1601138853,
+            "timestamp": "1601138853",
+            "date": "2020-09-26T16:47:33.000Z",
             "tz": "+0200"
         },
         "hash": "78049765bd69de4b7fc535ee4aeabb644bcf3028",
@@ -219,13 +237,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1579705267,
+            "timestamp": "1579705267",
+            "date": "2020-01-22T15:01:07.000Z",
             "tz": "+0100"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1579705267,
+            "timestamp": "1579705267",
+            "date": "2020-01-22T15:01:07.000Z",
             "tz": "+0100"
         },
         "hash": "09bf1237bf2290188cc626eddf9aa13c62593b4b",
@@ -243,13 +263,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1579705267,
+            "timestamp": "1579705267",
+            "date": "2020-01-22T15:01:07.000Z",
             "tz": "+0100"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1579705267,
+            "timestamp": "1579705267",
+            "date": "2020-01-22T15:01:07.000Z",
             "tz": "+0100"
         },
         "hash": "09bf1237bf2290188cc626eddf9aa13c62593b4b",
@@ -271,13 +293,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1579705267,
+            "timestamp": "1579705267",
+            "date": "2020-01-22T15:01:07.000Z",
             "tz": "+0100"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1579705267,
+            "timestamp": "1579705267",
+            "date": "2020-01-22T15:01:07.000Z",
             "tz": "+0100"
         },
         "hash": "09bf1237bf2290188cc626eddf9aa13c62593b4b",
@@ -291,13 +315,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1579705267,
+            "timestamp": "1579705267",
+            "date": "2020-01-22T15:01:07.000Z",
             "tz": "+0100"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1579705267,
+            "timestamp": "1579705267",
+            "date": "2020-01-22T15:01:07.000Z",
             "tz": "+0100"
         },
         "hash": "09bf1237bf2290188cc626eddf9aa13c62593b4b",
@@ -319,13 +345,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1579705267,
+            "timestamp": "1579705267",
+            "date": "2020-01-22T15:01:07.000Z",
             "tz": "+0100"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1579705267,
+            "timestamp": "1579705267",
+            "date": "2020-01-22T15:01:07.000Z",
             "tz": "+0100"
         },
         "hash": "09bf1237bf2290188cc626eddf9aa13c62593b4b",
@@ -339,13 +367,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1562163115,
+            "timestamp": "1562163115",
+            "date": "2019-07-03T14:11:55.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1562163115,
+            "timestamp": "1562163115",
+            "date": "2019-07-03T14:11:55.000Z",
             "tz": "+0200"
         },
         "hash": "f6d2b098174aa630d59eae5fc99a01f3a591b8ad",
@@ -359,13 +389,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1562163115,
+            "timestamp": "1562163115",
+            "date": "2019-07-03T14:11:55.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1562163115,
+            "timestamp": "1562163115",
+            "date": "2019-07-03T14:11:55.000Z",
             "tz": "+0200"
         },
         "hash": "f6d2b098174aa630d59eae5fc99a01f3a591b8ad",
@@ -379,13 +411,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1562163115,
+            "timestamp": "1562163115",
+            "date": "2019-07-03T14:11:55.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1562163115,
+            "timestamp": "1562163115",
+            "date": "2019-07-03T14:11:55.000Z",
             "tz": "+0200"
         },
         "hash": "f6d2b098174aa630d59eae5fc99a01f3a591b8ad",
@@ -403,13 +437,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1561587471,
+            "timestamp": "1561587471",
+            "date": "2019-06-26T22:17:51.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1561588275,
+            "timestamp": "1561588275",
+            "date": "2019-06-26T22:31:15.000Z",
             "tz": "+0200"
         },
         "hash": "41b858cfcf019fa34597e14719c910fa1409ee66",
@@ -423,13 +459,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1561587471,
+            "timestamp": "1561587471",
+            "date": "2019-06-26T22:17:51.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1561588275,
+            "timestamp": "1561588275",
+            "date": "2019-06-26T22:31:15.000Z",
             "tz": "+0200"
         },
         "hash": "41b858cfcf019fa34597e14719c910fa1409ee66",
@@ -443,13 +481,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1520550992,
+            "timestamp": "1520550992",
+            "date": "2018-03-08T23:16:32.000Z",
             "tz": "+0100"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1520550992,
+            "timestamp": "1520550992",
+            "date": "2018-03-08T23:16:32.000Z",
             "tz": "+0100"
         },
         "hash": "a8cb1e0ba4f8f03ab685bb51a1ac83cc299c020d",
@@ -463,13 +503,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1500502996,
+            "timestamp": "1500502996",
+            "date": "2017-07-19T22:23:16.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1500502996,
+            "timestamp": "1500502996",
+            "date": "2017-07-19T22:23:16.000Z",
             "tz": "+0200"
         },
         "hash": "3d238f6c9309c7314b3be7be7a4c3f6b3e3de80b",
@@ -483,13 +525,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1500502996,
+            "timestamp": "1500502996",
+            "date": "2017-07-19T22:23:16.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1500502996,
+            "timestamp": "1500502996",
+            "date": "2017-07-19T22:23:16.000Z",
             "tz": "+0200"
         },
         "hash": "3d238f6c9309c7314b3be7be7a4c3f6b3e3de80b",
@@ -503,13 +547,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1500502996,
+            "timestamp": "1500502996",
+            "date": "2017-07-19T22:23:16.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1500502996,
+            "timestamp": "1500502996",
+            "date": "2017-07-19T22:23:16.000Z",
             "tz": "+0200"
         },
         "hash": "3d238f6c9309c7314b3be7be7a4c3f6b3e3de80b",
@@ -527,13 +573,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1500502996,
+            "timestamp": "1500502996",
+            "date": "2017-07-19T22:23:16.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1500502996,
+            "timestamp": "1500502996",
+            "date": "2017-07-19T22:23:16.000Z",
             "tz": "+0200"
         },
         "hash": "3d238f6c9309c7314b3be7be7a4c3f6b3e3de80b",
@@ -547,13 +595,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1500502996,
+            "timestamp": "1500502996",
+            "date": "2017-07-19T22:23:16.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1500502996,
+            "timestamp": "1500502996",
+            "date": "2017-07-19T22:23:16.000Z",
             "tz": "+0200"
         },
         "hash": "3d238f6c9309c7314b3be7be7a4c3f6b3e3de80b",
@@ -567,13 +617,15 @@
         "author": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1500502996,
+            "timestamp": "1500502996",
+            "date": "2017-07-19T22:23:16.000Z",
             "tz": "+0200"
         },
         "committer": {
             "mail": "<albin.jacobsson@gmail.com>",
             "name": "Albin Jacobsson",
-            "timestamp": 1500502996,
+            "timestamp": "1500502996",
+            "date": "2017-07-19T22:23:16.000Z",
             "tz": "+0200"
         },
         "hash": "3d238f6c9309c7314b3be7be7a4c3f6b3e3de80b",

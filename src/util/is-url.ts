@@ -1,6 +1,6 @@
 import { URL } from "url";
 
-export function isUrl(check: string): boolean {
+export const isUrl = (check: string): boolean => {
     let url: URL;
     try {
         url = new URL(check);

@@ -23,15 +23,12 @@ export type ToolUrlTokens = {
     "hash": string;
     "project.name": string;
     "project.remote": string;
-    "gitorigin.hostname": (index?: string) => string | undefined;
-    "gitorigin.path": (index?: string) => string | undefined;
+    "gitorigin.hostname": string | ((index?: string) => string | undefined);
+    "gitorigin.path": string | ((index?: string) => string | undefined);
     "file.path": string;
 } & InfoTokens;
 
-function getDefaultToolUrl(
-    origin: string,
-    commitInfo: Commit,
-): Uri | undefined {
+const getDefaultToolUrl = (origin: string, commitInfo: Commit): Uri | undefined => {
     const attemptedURL = defaultWebPath(origin, commitInfo.hash);
 
     if (attemptedURL) {
@@ -39,12 +36,12 @@ function getDefaultToolUrl(
     }
 }
 
-function getPathIndex(path: string, index?: string, splitOn = '/'): string {
+const getPathIndex = (path: string, index?: string, splitOn = '/'): string => {
     const parts = path.split(splitOn).filter(a => !!a);
     return parts[Number(index)] || 'invalid-index';
 }
 
-function gitOriginHostname(origin: string): (index?: string) => string {
+const gitOriginHostname = (origin: string): string | ((index?: string) => string) => {
     try {
         const { hostname } = new URL(origin);
         return (index = ''): string => {
@@ -55,11 +52,11 @@ function gitOriginHostname(origin: string): (index?: string) => string {
             return getPathIndex(hostname, index, '.');
         };
     } catch {
-        return () => 'no-origin-url'
+        return 'no-origin-url';
     }
 }
 
-export function gitRemotePath(remote: string): (index?: string) => string {
+export const gitRemotePath = (remote: string): string | ((index?: string) => string) => {
     if (/^[a-z]+?@/.test(remote)) {
         const [, path] = split(remote, ':');
         return (index = ''): string => {
@@ -80,50 +77,40 @@ export function gitRemotePath(remote: string): (index?: string) => string {
             return getPathIndex(pathname, index);
         };
     } catch {
-        console.log(remote);
         return () => 'no-remote-url'
     }
 }
 
-export async function generateUrlTokens(commit: Commit): Promise<[string, ToolUrlTokens]> {
-    const remoteName = getProperty("remoteName", "origin");
+const generateUrlTokens = async (commit: Commit): Promise<[string, ToolUrlTokens]> => {
+    const remoteName = getProperty("remoteName");
 
-    const remote = getRemoteUrl(remoteName);
     const origin = await getActiveFileOrigin(remoteName);
-    const relativePath = await getRelativePathOfActiveFile();
-    const projectName = projectNameFromOrigin(origin);
-    const remoteUrl = stripGitRemoteUrl(await remote);
+    const remoteUrl = stripGitRemoteUrl(await getRemoteUrl(remoteName));
 
     return [origin, {
         "hash": commit.hash,
-        "project.name": projectName,
+        "project.name": projectNameFromOrigin(origin),
         "project.remote": remoteUrl,
         "gitorigin.hostname": gitOriginHostname(defaultWebPath(remoteUrl, "")),
         "gitorigin.path": gitRemotePath(stripGitSuffix(origin)),
-        "file.path": relativePath,
+        "file.path": await getRelativePathOfActiveFile(),
     }];
 }
 
-export async function getToolUrl(
-    commit?: Commit,
-): Promise<Uri | undefined> {
+export const getToolUrl = async (commit?: Commit): Promise<Uri | undefined> => {
     if (!commit || isUncomitted(commit)) {
         return;
     }
 
     const [origin, tokens] = await generateUrlTokens(commit);
 
-    const parsedUrl = parseTokens(getProperty("commitUrl", ""), tokens);
+    const parsedUrl = parseTokens(getProperty("commitUrl"), tokens);
 
     if (isUrl(parsedUrl)) {
         return Uri.parse(parsedUrl, true);
     } else if (!parsedUrl && origin) {
         return getDefaultToolUrl(origin, commit);
-    } else if (!origin) {
-        return undefined;
-    } else {
-        void errorMessage(
-            `Malformed ${ extensionName }.commitUrl. Expands to: '${ parsedUrl }'`,
-        );
+    } else if (origin) {
+        void errorMessage(`Malformed ${ extensionName }.commitUrl: '${ parsedUrl }'`);
     }
 }

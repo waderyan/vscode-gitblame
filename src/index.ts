@@ -8,7 +8,7 @@ const registerCommand = (name: string, callback: () => void): Disposable => {
     return commands.registerCommand(`${extensionName}.${name}`, callback);
 }
 
-export function activate(context: ExtensionContext): void {
+export const activate = (context: ExtensionContext): void => {
     const app = new Extension;
 
     context.subscriptions.push(

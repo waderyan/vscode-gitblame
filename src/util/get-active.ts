@@ -1,10 +1,9 @@
 import { window } from "vscode";
 import { PartialTextEditor } from "./editorvalidator";
 
-export const getActiveTextEditor = (
-): PartialTextEditor | undefined => window.activeTextEditor;
+export const getActiveTextEditor = (): PartialTextEditor | undefined => window.activeTextEditor;
 
-export const NO_FILE_OR_PLACE = "no-file:-1";
+export const NO_FILE_OR_PLACE = "N:-1";
 
 export const getFilePosition = (
     { document, selection }: PartialTextEditor,

@@ -2,11 +2,11 @@ import { ChildProcess, execFile, ExecOptions } from "child_process";
 
 import { Logger } from "./logger";
 
-export async function execute(
+export const execute = async (
     command: string,
     args: string[],
     options: ExecOptions = {},
-): Promise<string> {
+): Promise<string> => {
     Logger.command(`${command} ${args.join(" ")}`);
 
     let execution: ChildProcess;
@@ -18,13 +18,9 @@ export async function execute(
         return "";
     }
 
-    if (!execution.stdout) {
-        return "";
-    }
-
     let data = "";
 
-    for await (const chunk of execution.stdout) {
+    for await (const chunk of execution?.stdout ?? []) {
         data += chunk;
     }
 

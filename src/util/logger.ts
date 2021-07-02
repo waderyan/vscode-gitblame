@@ -6,11 +6,7 @@ export class Logger {
     private readonly out: OutputChannel;
 
     public static getInstance(): Logger {
-        if (!Logger.instance) {
-            Logger.instance = new Logger();
-        }
-
-        return Logger.instance;
+        return Logger.instance = Logger.instance ?? new Logger();
     }
 
     private constructor() {
@@ -35,7 +31,8 @@ export class Logger {
     }
 
     private static write(level: string, message: string): void {
-        const timestamp = (new Date).toTimeString().substr(0,8);
-        Logger.getInstance().out.appendLine(`[ ${timestamp} | ${level} ] ${message.trim()}`);
+        Logger.getInstance().out.appendLine(
+            `[ ${(new Date).toTimeString().substr(0, 8)} | ${level} ] ${message.trim()}`,
+        );
     }
 }
