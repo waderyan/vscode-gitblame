@@ -7,7 +7,7 @@ export const execute = async (
     args: string[],
     options: ExecOptions = {},
 ): Promise<string> => {
-    Logger.command(`${command} ${args.join(" ")}`);
+    Logger.write("command", `${command} ${args.join(" ")}`);
 
     let execution: ChildProcess;
 

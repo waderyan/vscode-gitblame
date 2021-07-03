@@ -56,6 +56,23 @@ suite("Web URL formatting", (): void => {
         );
     });
 
+    test("username:password@", (): void => {
+        assert.strictEqual(
+            defaultWebPath(
+                "username:password@example.com:user/repo.git",
+                "hash",
+            ),
+            "https://example.com/user/repo/commit/hash",
+        );
+        assert.strictEqual(
+            defaultWebPath(
+                "username@example.com:user/repo",
+                "hash",
+            ),
+            "https://example.com/user/repo/commit/hash",
+        );
+    });
+
     test("https:// with port", (): void => {
         assert.strictEqual(
             defaultWebPath(
@@ -101,6 +118,43 @@ suite("Web URL formatting", (): void => {
         assert.strictEqual(
             defaultWebPath(
                 "git@example.com:8080/user/repo",
+                "hash",
+            ),
+            "https://example.com/user/repo/commit/hash",
+        );
+    });
+
+    test("git@ with port and password", (): void => {
+        assert.strictEqual(
+            defaultWebPath(
+                "git:pass@example.com:8080/user/repo.git",
+                "hash",
+            ),
+            "https://example.com/user/repo/commit/hash",
+        );
+        assert.strictEqual(
+            defaultWebPath(
+                "git@example.com:8080/user/repo",
+                "hash",
+            ),
+            "https://example.com/user/repo/commit/hash",
+        );
+    });
+
+    test("https:// with port, username and password", (): void => {
+        assert.strictEqual(
+            defaultWebPath(
+                "https://user:pass@example.com:8080/user/repo.git",
+                "hash",
+            ),
+            "https://example.com:8080/user/repo/commit/hash",
+        );
+    });
+
+    test("https:// with username and password", (): void => {
+        assert.strictEqual(
+            defaultWebPath(
+                "https://user:pass@example.com/user/repo.git",
                 "hash",
             ),
             "https://example.com/user/repo/commit/hash",

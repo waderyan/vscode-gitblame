@@ -57,7 +57,7 @@ export class Extension {
         const commit = await this.commit();
 
         if (!commit || isUncomitted(commit)) {
-            this.view.update();
+            this.view.set();
             return;
         }
 
@@ -73,7 +73,7 @@ export class Extension {
             },
         }] : undefined;
 
-        this.view.update(commit);
+        this.view.set(commit);
 
         (await infoMessage(message, action))?.action();
     }
@@ -127,7 +127,7 @@ export class Extension {
                      */
                     changeTextEditorSelection(textEditor);
                 } else {
-                    this.view.update();
+                    this.view.set();
                 }
             }),
             window.onDidChangeTextEditorSelection(({ textEditor }) => {
@@ -146,7 +146,7 @@ export class Extension {
         textEditor = getActiveTextEditor(),
     ): Promise<void> {
         if (!validEditor(textEditor)) {
-            this.view.update();
+            this.view.set();
             return;
         }
         this.view.activity();
@@ -157,7 +157,7 @@ export class Extension {
         // Only update if we haven't moved since we started blaming
         // or if we no longer have focus on any file
         if (before === after || after === NO_FILE_OR_PLACE) {
-            this.view.update(commit);
+            this.view.set(commit);
         }
     }
 

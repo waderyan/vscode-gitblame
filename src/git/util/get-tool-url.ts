@@ -32,7 +32,7 @@ const getDefaultToolUrl = (origin: string, commitInfo: Commit): Uri | undefined 
     const attemptedURL = defaultWebPath(origin, commitInfo.hash);
 
     if (attemptedURL) {
-        return Uri.parse(attemptedURL, true);
+        return Uri.parse(attemptedURL.toString(), true);
     }
 }
 
@@ -41,19 +41,14 @@ const getPathIndex = (path: string, index?: string, splitOn = '/'): string => {
     return parts[Number(index)] || 'invalid-index';
 }
 
-const gitOriginHostname = (origin: string): string | ((index?: string) => string) => {
-    try {
-        const { hostname } = new URL(origin);
-        return (index = ''): string => {
-            if (index === '') {
-                return hostname;
-            }
+const gitOriginHostname = ({ hostname }: URL): string | ((index?: string) => string) => {
+    return (index?: string): string => {
+        if (index === '') {
+            return hostname;
+        }
 
-            return getPathIndex(hostname, index, '.');
-        };
-    } catch {
-        return 'no-origin-url';
-    }
+        return getPathIndex(hostname, index, '.');
+    };
 }
 
 export const gitRemotePath = (remote: string): string | ((index?: string) => string) => {
@@ -86,12 +81,13 @@ const generateUrlTokens = async (commit: Commit): Promise<[string, ToolUrlTokens
 
     const origin = await getActiveFileOrigin(remoteName);
     const remoteUrl = stripGitRemoteUrl(await getRemoteUrl(remoteName));
+    const defaultPath = defaultWebPath(remoteUrl, "");
 
     return [origin, {
         "hash": commit.hash,
         "project.name": projectNameFromOrigin(origin),
         "project.remote": remoteUrl,
-        "gitorigin.hostname": gitOriginHostname(defaultWebPath(remoteUrl, "")),
+        "gitorigin.hostname": defaultPath ? gitOriginHostname(defaultPath) : "no-origin-url",
         "gitorigin.path": gitRemotePath(stripGitSuffix(origin)),
         "file.path": await getRelativePathOfActiveFile(),
     }];

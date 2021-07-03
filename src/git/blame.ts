@@ -49,7 +49,7 @@ export class Blamer {
             this.files.set(document, file);
         }
 
-        return (await this.files.get(document))?.blame;
+        return (await this.files.get(document))?.store;
     }
 
     private async create({fileName}: Document): Promise<File | undefined> {
@@ -63,8 +63,6 @@ export class Blamer {
             // NOOP
         }
 
-        Logger.info(
-            `Will not blame '${fileName}'. Outside the current workspace.`,
-        );
+        Logger.write("info", `Will not blame '${fileName}'. Outside the current workspace.`);
     }
 }

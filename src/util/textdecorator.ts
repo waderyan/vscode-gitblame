@@ -137,10 +137,10 @@ export const parseTokens = <T extends InfoTokens>(
     let out = "";
 
     for (const [funcStr, mod, param] of parse(target, infoTokens)) {
-        if (typeof funcStr === "function") {
-            out += modify(funcStr(param), mod);
-        } else {
+        if (typeof funcStr === "string") {
             out += modify(funcStr, mod);
+        } else {
+            out += modify(funcStr(param), mod);
         }
     }
 

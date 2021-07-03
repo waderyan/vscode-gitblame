@@ -7,21 +7,21 @@ import { blameProcess } from "./util/gitcommand";
 export type Blame = Map<number, Commit | undefined>;
 
 export class File {
-    public readonly blame: Promise<Blame | undefined>;
+    public readonly store: Promise<Blame | undefined>;
 
     private process?: ChildProcess;
-    private terminated = false;
+    private killed = false;
 
     public constructor(fileName: string) {
-        this.blame = this.runBlame(fileName);
+        this.store = this.blame(fileName);
     }
 
     public dispose(): void {
         this.process?.kill();
-        this.terminated = true;
+        this.killed = true;
     }
 
-    private async * runProcess(fileName: string): AsyncGenerator<ChunkyGenerator> {
+    private async * run(fileName: string): AsyncGenerator<ChunkyGenerator> {
         this.process = blameProcess(fileName);
         const commitRegistry: CommitRegistry = new Map;
 
@@ -34,12 +34,12 @@ export class File {
         }
     }
 
-    private async runBlame(fileName: string): Promise<Blame | undefined> {
+    private async blame(fileName: string): Promise<Blame | undefined> {
         const blameInfo: Blame = new Map;
         const registry = new Map<string, Commit>();
 
         try {
-            for await (const [commit, lines] of this.runProcess(fileName)) {
+            for await (const [commit, lines] of this.run(fileName)) {
                 registry.set(commit.hash, commit);
 
                 for (const [lineNumber, hash] of lines) {
@@ -52,8 +52,8 @@ export class File {
         }
 
         // Don't return partial git blame info when terminating a blame
-        if (!this.terminated) {
-            Logger.info(`Blamed "${fileName}": ${registry.size} commits`);
+        if (!this.killed) {
+            Logger.write("info", `Blamed "${fileName}": ${registry.size} commits`);
             return blameInfo;
         }
     }

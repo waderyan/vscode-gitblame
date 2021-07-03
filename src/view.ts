@@ -18,25 +18,25 @@ export class StatusBarView {
         this.out.show();
     }
 
-    public update(commit?: Commit): void {
+    public set(commit?: Commit): void {
         if (!commit) {
-            this.setText("", false);
+            this.text("", false);
         } else if (isUncomitted(commit)) {
-            this.setText(getProperty("statusBarMessageNoCommit"), false);
+            this.text(getProperty("statusBarMessageNoCommit"), false);
         } else {
-            this.setText(toTextView(commit), true);
+            this.text(toTextView(commit), true);
         }
     }
 
     public activity(): void {
-        this.setText('$(sync~spin) Waiting for git blame response', false);
+        this.text('$(sync~spin) Waiting for git blame response', false);
     }
 
     public dispose(): void {
         this.out.dispose();
     }
 
-    private setText(text: string, command: boolean): void {
+    private text(text: string, command: boolean): void {
         this.out.text = "$(git-commit) " + text.trimEnd();
         this.out.tooltip = `git blame${ command ? "" : " - No info about the current line" }`;
         this.out.command = command ? `${extensionName}.quickInfo` : undefined;
