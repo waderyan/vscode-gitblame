@@ -13,13 +13,13 @@ import {
     getRemoteUrl,
 } from "./gitcommand";
 import { projectNameFromOrigin } from "./project-name-from-origin";
-import { stripGitRemoteUrl } from "./strip-git-remote-url";
+import { stripGitRemoteUrl, stripGitSuffix } from "./strip-git-remote-url";
 import { InfoTokens, parseTokens } from "../../util/textdecorator";
 import { isUncomitted } from "./uncommitted";
 import { errorMessage } from "../../util/message";
 import { extensionName } from "../../extension-name";
 
-type ToolUrlTokens = {
+export type ToolUrlTokens = {
     "hash": string;
     "project.name": string;
     "project.remote": string;
@@ -42,7 +42,7 @@ function getDefaultToolUrl(
 function gitOriginHostname(origin: string): (index?: string) => string {
     try {
         const { hostname } = new URL(origin);
-        return (index?: string): string => {
+        return (index = ''): string => {
 
             if (index === '') {
                 return hostname;
@@ -60,9 +60,9 @@ function gitOriginHostname(origin: string): (index?: string) => string {
 export function gitRemotePath(remote: string): (index?: string) => string {
     if (/^[a-z]+?@/.test(remote)) {
         const [, path] = split(remote, ':');
-        return (index?: string): string => {
+        return (index = ''): string => {
             if (index === '') {
-                return "";
+                return '/' + path;
             }
 
             const parts = path.split('/').filter(a => !!a);
@@ -71,7 +71,7 @@ export function gitRemotePath(remote: string): (index?: string) => string {
     }
     try {
         const { pathname } = new URL(remote);
-        return (index?: string): string => {
+        return (index = ''): string => {
 
             if (index === '') {
                 return pathname;
@@ -81,11 +81,12 @@ export function gitRemotePath(remote: string): (index?: string) => string {
             return parts[Number(index)] || 'invalid-index';
         };
     } catch {
+        console.log(remote);
         return () => 'no-remote-url'
     }
 }
 
-async function generateUrlTokens(commit: Commit): Promise<[string, ToolUrlTokens]> {
+export async function generateUrlTokens(commit: Commit): Promise<[string, ToolUrlTokens]> {
     const remoteName = getProperty("remoteName", "origin");
 
     const remote = getRemoteUrl(remoteName);
@@ -99,7 +100,7 @@ async function generateUrlTokens(commit: Commit): Promise<[string, ToolUrlTokens
         "project.name": projectName,
         "project.remote": remoteUrl,
         "gitorigin.hostname": gitOriginHostname(defaultWebPath(remoteUrl, "")),
-        "gitorigin.path": gitRemotePath(remoteUrl),
+        "gitorigin.path": gitRemotePath(stripGitSuffix(origin)),
         "file.path": relativePath,
     }];
 }
