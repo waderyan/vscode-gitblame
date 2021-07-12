@@ -1,5 +1,4 @@
 import { OutputChannel, window } from "vscode";
-import { extensionName } from "../extension-name";
 
 export class Logger {
     private static instance?: Logger;
@@ -11,7 +10,7 @@ export class Logger {
     }
 
     private constructor() {
-        this.out = window.createOutputChannel(extensionName);
+        this.out = window.createOutputChannel("Git Blame");
     }
 
     public static error(error: Error): void {

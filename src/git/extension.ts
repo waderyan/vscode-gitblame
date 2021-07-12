@@ -23,7 +23,6 @@ import {
     getFilePosition,
     NO_FILE_OR_PLACE,
 } from "../util/get-active";
-import { extensionName } from "../extension-name";
 
 type ActionableMessageItem = MessageItem & {
     action: () => void;
@@ -44,12 +43,12 @@ export class Extension {
     }
 
     public async blameLink(): Promise<void> {
-        const toolUrl = await getToolUrl(await this.commit());
+        const toolUrl = await getToolUrl(await this.commit(true));
 
         if (toolUrl) {
             commands.executeCommand("vscode.open", toolUrl);
         } else {
-            errorMessage(`Empty ${extensionName}.commitUrl`);
+            errorMessage("Empty gitblame.commitUrl");
         }
     }
 
@@ -95,7 +94,7 @@ export class Extension {
             await env.clipboard.writeText(toolUrl.toString());
             infoMessage("Copied tool URL");
         } else {
-            errorMessage(`${extensionName}.commitUrl config empty`);
+            errorMessage("gitblame.commitUrl config empty");
         }
     }
 

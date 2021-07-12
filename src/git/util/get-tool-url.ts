@@ -17,7 +17,6 @@ import { stripGitRemoteUrl, stripGitSuffix } from "./strip-git-remote-url";
 import { InfoTokens, parseTokens } from "../../util/textdecorator";
 import { isUncomitted } from "./uncommitted";
 import { errorMessage } from "../../util/message";
-import { extensionName } from "../../extension-name";
 
 export type ToolUrlTokens = {
     "hash": string;
@@ -107,6 +106,6 @@ export const getToolUrl = async (commit?: Commit): Promise<Uri | undefined> => {
     } else if (!parsedUrl && origin) {
         return getDefaultToolUrl(origin, commit);
     } else if (origin) {
-        errorMessage(`Malformed ${ extensionName }.commitUrl: '${ parsedUrl }'`);
+        errorMessage(`Malformed gitblame.commitUrl: '${ parsedUrl }'`);
     }
 }

@@ -8,7 +8,9 @@
   * Before `1 hour ago`, after `60 minutes ago`
   * Before `right now`, after `4 minutes ago`
   * etc.
+* Breaking change: Output channel renamed from "gitblame" to "Git Blame"
 * Feature: New setting (`gitblame.statusBarMessageDisplayRight`) will show status bar message to the right (Thanks to [João Moreno](https://github.com/joaomoreno))
+* Feature: New setting (`gitblame.statusBarMessageClickAction`) will allow you to make clicks on the status bar directly open the tool URL (Thanks to [João Moreno](https://github.com/joaomoreno))
 * Feature: Some info messages have changed.
 * Feature: Now compiling for Node 14 and vscode ^1.57.0
 

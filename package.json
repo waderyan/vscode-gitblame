@@ -102,6 +102,18 @@
           "default": false,
           "description": "Display status bar message to the right (requires reload)"
         },
+        "gitblame.statusBarMessageClickAction": {
+          "type": "string",
+          "default": "Show info message",
+          "enum": [
+            "Show info message",
+            "Open tool URL"
+          ],
+          "enumDescriptions": [
+            "Show a info message with a short summary of the commit",
+            "Attempty to directly open the tool URL"
+          ]
+        },
         "gitblame.statusBarMessageFormat": {
           "type": "string",
           "default": "Blame ${author.name} ( ${time.ago} )",
