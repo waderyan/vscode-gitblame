@@ -40,16 +40,16 @@ export class Extension {
 
         this.disposable = this.setupListeners();
 
-        void this.updateView();
+        this.updateView();
     }
 
     public async blameLink(): Promise<void> {
         const toolUrl = await getToolUrl(await this.commit());
 
         if (toolUrl) {
-            void commands.executeCommand("vscode.open", toolUrl);
+            commands.executeCommand("vscode.open", toolUrl);
         } else {
-            void errorMessage(`Empty ${extensionName}.commitUrl`);
+            errorMessage(`Empty ${extensionName}.commitUrl`);
         }
     }
 
@@ -69,7 +69,7 @@ export class Extension {
         const action: ActionableMessageItem[] | undefined = toolUrl ? [{
             title: "View",
             action() {
-                void commands.executeCommand("vscode.open", toolUrl);
+                commands.executeCommand("vscode.open", toolUrl);
             },
         }] : undefined;
 
@@ -83,7 +83,7 @@ export class Extension {
 
         if (commit && !isUncomitted(commit)) {
             await env.clipboard.writeText(commit.hash);
-            void infoMessage("Copied hash");
+            infoMessage("Copied hash");
         }
     }
 
@@ -93,9 +93,9 @@ export class Extension {
 
         if (toolUrl) {
             await env.clipboard.writeText(toolUrl.toString());
-            void infoMessage("Copied tool URL");
+            infoMessage("Copied tool URL");
         } else {
-            void errorMessage(`${extensionName}.commitUrl config empty`);
+            errorMessage(`${extensionName}.commitUrl config empty`);
         }
     }
 
@@ -109,7 +109,7 @@ export class Extension {
         const changeTextEditorSelection = (textEditor: TextEditor): void => {
             const { scheme } = textEditor.document.uri;
             if (scheme === "file" || scheme === "untitled") {
-                void this.updateView(textEditor);
+                this.updateView(textEditor);
             }
         }
 
@@ -117,7 +117,7 @@ export class Extension {
             window.onDidChangeActiveTextEditor((textEditor): void => {
                 if (validEditor(textEditor)) {
                     this.view.activity();
-                    void this.blame.file(textEditor.document);
+                    this.blame.file(textEditor.document);
                     /**
                      * For unknown reasons files without previously or stored
                      * selection locations don't trigger the change selection
@@ -134,10 +134,10 @@ export class Extension {
                 changeTextEditorSelection(textEditor);
             }),
             workspace.onDidSaveTextDocument((): void => {
-                void this.updateView();
+                this.updateView();
             }),
             workspace.onDidCloseTextDocument((document: Document): void => {
-                void this.blame.remove(document);
+                this.blame.remove(document);
             }),
         );
     }
@@ -162,7 +162,7 @@ export class Extension {
     }
 
     private async commit(undercover = false): Promise<Commit | undefined> {
-        const notBlame = () => void errorMessage("Unable to blame current line");
+        const notBlame = () => errorMessage("Unable to blame current line");
         const editor = getActiveTextEditor();
 
         if (!validEditor(editor)) {

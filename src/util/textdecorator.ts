@@ -64,18 +64,38 @@ export const normalizeCommitInfoTokens = (
 const enum MODE {
     OUT,
     IN,
+    START,
+}
+
+const createIndexOrEnd = (target: string, index: number, endIndex: number) => (char: string) => {
+    const indexOfChar = target.indexOf(char, index);
+    if (indexOfChar === -1) {
+        return endIndex;
+    }
+
+    return indexOfChar;
+};
+const createSubSectionOrEmpty = (target: string, endIndex: number) => (startIndex: number, lastIndex: number) => {
+    if (lastIndex === startIndex || endIndex === startIndex) {
+        return "";
+    }
+
+    return target.substring(startIndex + 1, lastIndex);
 }
 
 function * parse<T extends InfoTokens>(target: string, infoTokens: T): Generator<TokenReplaceGroup> {
     let lastSplit = 0;
+    let startIndex = 0;
     let mode = MODE.OUT;
 
     for (let index = 0; index < target.length; index++) {
-        if (mode === MODE.OUT && target.substr(index, 2) === "${") {
+        if (mode === MODE.OUT && target[index] === "$") {
+            mode = MODE.START;
+        } else if (mode === MODE.START && target[index] === "{") {
             mode = MODE.IN;
-            yield [target.slice(lastSplit, index)];
-            lastSplit = index;
-            index += 1;
+            startIndex = index - 1;
+            yield [target.slice(lastSplit, startIndex)];
+            lastSplit = startIndex;
         } else if (mode === MODE.IN) {
             mode = MODE.OUT;
             const endIndex = target.indexOf("}", index);
@@ -83,21 +103,8 @@ function * parse<T extends InfoTokens>(target: string, infoTokens: T): Generator
                 break;
             }
 
-            const indexOrEnd = (char: string) => {
-                const indexOfChar = target.indexOf(char, index);
-                if (indexOfChar === -1) {
-                    return endIndex;
-                }
-
-                return indexOfChar;
-            };
-            const subSectionOrEmpty = (startIndex: number, lastIndex: number): string => {
-                if (lastIndex === startIndex || endIndex === startIndex) {
-                    return "";
-                }
-
-                return target.substring(startIndex + 1, lastIndex);
-            }
+            const indexOrEnd = createIndexOrEnd(target, index, endIndex);
+            const subSectionOrEmpty = createSubSectionOrEmpty(target, endIndex);
 
             const parameterIndex = indexOrEnd(",");
             const modifierIndex = indexOrEnd("|");
@@ -110,6 +117,8 @@ function * parse<T extends InfoTokens>(target: string, infoTokens: T): Generator
             ];
 
             lastSplit = endIndex + 1;
+        } else if (mode === MODE.START) {
+            mode = MODE.OUT;
         }
     }
 

@@ -31,15 +31,15 @@ export class Blamer {
 
     public dispose(): void {
         for (const [document] of this.files) {
-            void this.remove(document);
+            this.remove(document);
         }
     }
 
     private async get(document: Document): Promise<Blame | undefined> {
         if (!this.files.has(document)) {
             const file = this.create(document);
-            void file.then((file) => {
-                if (file) {
+            file.then((createdFile) => {
+                if (createdFile) {
                     this.fsWatchers.set(
                         document,
                         watch(document.fileName, () => this.remove(document)),

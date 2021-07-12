@@ -22,6 +22,7 @@
             "code": 120
         }],
         "@typescript-eslint/no-require-imports": 2,
+        "@typescript-eslint/no-floating-promises": "off",
         "no-duplicate-imports": ["error"],
         "sort-imports": ["error", {
             "ignoreCase": true,

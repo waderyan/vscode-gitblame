@@ -6,7 +6,8 @@ export class Logger {
     private readonly out: OutputChannel;
 
     public static getInstance(): Logger {
-        return Logger.instance = Logger.instance ?? new Logger();
+        Logger.instance = Logger.instance ?? new Logger()
+        return Logger.instance;
     }
 
     private constructor() {

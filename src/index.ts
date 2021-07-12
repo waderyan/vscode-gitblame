@@ -14,9 +14,17 @@ export const activate = (context: ExtensionContext): void => {
     context.subscriptions.push(
         app,
         Logger.getInstance(),
-        registerCommand("quickInfo", () => void app.showMessage()),
-        registerCommand("online", () => void app.blameLink()),
-        registerCommand("addCommitHashToClipboard", () => void app.copyHash()),
-        registerCommand("addToolUrlToClipboard", () => void app.copyToolUrl()),
+        registerCommand("quickInfo", () => {
+            app.showMessage()
+        }),
+        registerCommand("online", () => {
+            app.blameLink()
+        }),
+        registerCommand("addCommitHashToClipboard", () => {
+            app.copyHash()
+        }),
+        registerCommand("addToolUrlToClipboard", () => {
+            app.copyToolUrl()
+        }),
     );
 }

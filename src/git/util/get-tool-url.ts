@@ -76,7 +76,7 @@ export const gitRemotePath = (remote: string): string | ((index?: string) => str
     }
 }
 
-const generateUrlTokens = async (commit: Commit): Promise<[string, ToolUrlTokens]> => {
+export const generateUrlTokens = async (commit: Commit): Promise<[string, ToolUrlTokens]> => {
     const remoteName = getProperty("remoteName");
 
     const origin = await getActiveFileOrigin(remoteName);
@@ -107,6 +107,6 @@ export const getToolUrl = async (commit?: Commit): Promise<Uri | undefined> => {
     } else if (!parsedUrl && origin) {
         return getDefaultToolUrl(origin, commit);
     } else if (origin) {
-        void errorMessage(`Malformed ${ extensionName }.commitUrl: '${ parsedUrl }'`);
+        errorMessage(`Malformed ${ extensionName }.commitUrl: '${ parsedUrl }'`);
     }
 }

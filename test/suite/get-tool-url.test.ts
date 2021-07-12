@@ -68,13 +68,13 @@ suite('Get tool URL: gitRemotePath', (): void => {
     test('Empty input', (): void => {
         const func = gitRemotePath('');
 
-        assert.strictEqual(func, 'no-remote-url');
-        assert.strictEqual(func, 'no-remote-url');
+        assert.strictEqual(call(func), 'no-remote-url');
+        assert.strictEqual(call(func), 'no-remote-url');
     });
     test('Weird input', (): void => {
         const func = gitRemotePath('weird input');
 
-        assert.strictEqual(func, 'no-remote-url');
-        assert.strictEqual(func, 'no-remote-url');
+        assert.strictEqual(call(func), 'no-remote-url');
+        assert.strictEqual(call(func), 'no-remote-url');
     });
 });

@@ -32,7 +32,7 @@ export const getActiveFileOrigin = async (remoteName: string): Promise<string> =
         return "";
     }
 
-    return await runGit(activeEditor.document.fileName, "ls-remote", "--get-url", remoteName);
+    return runGit(activeEditor.document.fileName, "ls-remote", "--get-url", remoteName);
 }
 
 export const getRemoteUrl = async (fallbackRemote: string): Promise<string> => {
@@ -74,5 +74,5 @@ export const getRelativePathOfActiveFile = async (): Promise<string> => {
     }
 
     const { fileName } = activeEditor.document;
-    return await runGit(fileName, "ls-files", "--full-name", "--", fileName);
+    return runGit(fileName, "ls-files", "--full-name", "--", fileName);
 }
