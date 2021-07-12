@@ -4,7 +4,7 @@ import { getProperty } from "../../util/property";
 import { stripGitRemoteUrl } from "./strip-git-remote-url";
 
 const isToolUrlPlural = (origin: string): boolean => getProperty("isWebPathPlural")
-    || getProperty("pluralWebPathSubstrings").some((substring) => origin.includes(substring));
+    || (getProperty("pluralWebPathSubstrings") ?? []).some((substring) => origin.includes(substring));
 
 export const defaultWebPath = (url: string, hash: string): URL | undefined => {
     const httpProtocol = /^(https?):/.exec(url)?.[1];
