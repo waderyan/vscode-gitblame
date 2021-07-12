@@ -11,6 +11,7 @@ export type PropertiesMap = {
     "statusBarMessageNoCommit": string;
     "statusBarPositionPriority": number | undefined;
     "pluralWebPathSubstrings": string[];
+    "statusBarMessageDisplayRight": boolean;
 }
 
 // getConfiguration has an unfortunate typing that does not

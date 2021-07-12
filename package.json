@@ -2,7 +2,7 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "7.0.6",
+  "version": "8.0.0",
   "publisher": "waderyan",
   "engines": {
     "vscode": "^1.57.0"
@@ -42,7 +42,7 @@
     "@types/mocha": "^8.2.2",
     "@types/node": "^12.12.62",
     "@types/sinon": "^10.0.2",
-    "@types/vscode": "^1.49.0",
+    "@types/vscode": "1.57.0",
     "@typescript-eslint/eslint-plugin": "^4.28.1",
     "@typescript-eslint/parser": "^4.28.1",
     "eslint": "^7.29.0",
@@ -96,6 +96,11 @@
           "type": "string",
           "default": "${commit.summary}",
           "description": "Customize the info message"
+        },
+        "gitblame.statusBarMessageDisplayRight": {
+          "type": "boolean",
+          "default": false,
+          "description": "Display status bar message to the right (requires reload)"
         },
         "gitblame.statusBarMessageFormat": {
           "type": "string",

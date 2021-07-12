@@ -1,4 +1,4 @@
-import { StatusBarItem, window } from "vscode";
+import { StatusBarAlignment, StatusBarItem, window } from "vscode";
 import { extensionName } from "./extension-name";
 
 import type { Commit } from "./git/util/stream-parsing";
@@ -12,7 +12,7 @@ export class StatusBarView {
 
     constructor() {
         this.out = window.createStatusBarItem(
-            1 /*StatusBarAlignment.Left*/,
+            getProperty("statusBarMessageDisplayRight") ? StatusBarAlignment.Right : StatusBarAlignment.Left,
             getProperty("statusBarPositionPriority"),
         );
         this.out.show();

@@ -8,6 +8,7 @@
   * Before `1 hour ago`, after `60 minutes ago`
   * Before `right now`, after `4 minutes ago`
   * etc.
+* Feature: New setting (`gitblame.statusBarMessageDisplayRight`) will show status bar message to the right (Thanks to [João Moreno](https://github.com/joaomoreno))
 * Feature: Some info messages have changed.
 * Feature: Now compiling for Node 14 and vscode ^1.57.0
 
