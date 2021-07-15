@@ -6,6 +6,7 @@ import { generateUrlTokens } from "../../src/git/util/get-tool-url";
 import { Commit } from "../../src/git/util/stream-parsing";
 import * as execcommand from "../../src/util/execcommand";
 import * as getActive from "../../src/util/get-active";
+import * as property from "../../src/util/property";
 
 suite("Generate URL Tokens", () => {
     const call = (func: string | ((index: string | undefined) => string | undefined), arg?: string) =>
@@ -31,7 +32,8 @@ suite("Generate URL Tokens", () => {
     };
     test("http:// origin", async () => {
         const activeEditorStub = stub(getActive, "getActiveTextEditor");
-        const propertyStub = stub(execcommand, "execute");
+        const execcommandStub = stub(execcommand, "execute");
+        const propertyStub = stub(property, "getProperty");
         activeEditorStub.returns({
             document: {
                 isUntitled: false,
@@ -44,20 +46,22 @@ suite("Generate URL Tokens", () => {
                 },
             },
         });
-        propertyStub.withArgs(match.string, ["symbolic-ref", "-q", "--short", "HEAD"], match.object)
+        execcommandStub.withArgs(match.string, ["symbolic-ref", "-q", "--short", "HEAD"], match.object)
             .resolves("master");
-        propertyStub.withArgs(match.string, ["config", "branch.master.remote"], match.object)
+        execcommandStub.withArgs(match.string, ["config", "branch.master.remote"], match.object)
             .resolves("origin");
-        propertyStub.withArgs(match.string, ["config", "remote.origin.url"], match.object)
+        execcommandStub.withArgs(match.string, ["config", "remote.origin.url"], match.object)
             .resolves("https://github.com/Sertion/vscode-gitblame.git");
-        propertyStub.withArgs(match.string, ["ls-remote", "--get-url", "origin"], match.object)
+        execcommandStub.withArgs(match.string, ["ls-remote", "--get-url", "origin"], match.object)
             .resolves("https://github.com/Sertion/vscode-gitblame.git");
-        propertyStub.withArgs(match.string, ["ls-files", "--full-name", "--", "/fake.file"], match.object)
+        execcommandStub.withArgs(match.string, ["ls-files", "--full-name", "--", "/fake.file"], match.object)
             .resolves("/fake.file");
+        propertyStub.withArgs("remoteName").returns("origin");
 
         const [origin, tokens] = await generateUrlTokens(exampleCommit);
 
         activeEditorStub.restore();
+        execcommandStub.restore();
         propertyStub.restore();
 
         assert.strictEqual(origin, "https://github.com/Sertion/vscode-gitblame.git");
@@ -76,7 +80,8 @@ suite("Generate URL Tokens", () => {
 
     test("git@ origin", async () => {
         const activeEditorStub = stub(getActive, "getActiveTextEditor");
-        const propertyStub = stub(execcommand, "execute");
+        const execcommandStub = stub(execcommand, "execute");
+        const propertyStub = stub(property, "getProperty");
         activeEditorStub.returns({
             document: {
                 isUntitled: false,
@@ -89,20 +94,22 @@ suite("Generate URL Tokens", () => {
                 },
             },
         });
-        propertyStub.withArgs(match.string, ["symbolic-ref", "-q", "--short", "HEAD"], match.object)
+        execcommandStub.withArgs(match.string, ["symbolic-ref", "-q", "--short", "HEAD"], match.object)
             .resolves("master");
-        propertyStub.withArgs(match.string, ["config", "branch.master.remote"], match.object)
+        execcommandStub.withArgs(match.string, ["config", "branch.master.remote"], match.object)
             .resolves("origin");
-        propertyStub.withArgs(match.string, ["config", "remote.origin.url"], match.object)
+        execcommandStub.withArgs(match.string, ["config", "remote.origin.url"], match.object)
             .resolves("git@github.com:Sertion/vscode-gitblame.git");
-        propertyStub.withArgs(match.string, ["ls-remote", "--get-url", "origin"], match.object)
+        execcommandStub.withArgs(match.string, ["ls-remote", "--get-url", "origin"], match.object)
             .resolves("git@github.com:Sertion/vscode-gitblame.git");
-        propertyStub.withArgs(match.string, ["ls-files", "--full-name", "--", "/fake.file"], match.object)
+        execcommandStub.withArgs(match.string, ["ls-files", "--full-name", "--", "/fake.file"], match.object)
             .resolves("/fake.file");
+        propertyStub.withArgs("remoteName").returns("origin");
 
         const [origin, tokens] = await generateUrlTokens(exampleCommit);
 
         activeEditorStub.restore();
+        execcommandStub.restore();
         propertyStub.restore();
 
         assert.strictEqual(origin, "git@github.com:Sertion/vscode-gitblame.git");

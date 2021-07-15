@@ -20,7 +20,7 @@ export const getGitCommand = (): string => {
     return "git";
 }
 
-const runGit = async (
+const runGit = (
     cwd: string,
     ...args: string[]
 ): Promise<string> => execute(getGitCommand(), args, { cwd: dirname(cwd) });

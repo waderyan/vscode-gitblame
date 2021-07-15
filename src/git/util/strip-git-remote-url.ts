@@ -1,5 +1,4 @@
 export const stripGitSuffix = (rawUrl: string): string => rawUrl
-// Remove protocol, username and/or password, and .git-suffix
     .replace(/\.git$/i, "");
 
 export const stripGitRemoteUrl = (rawUrl: string): string => stripGitSuffix(rawUrl)
