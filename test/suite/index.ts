@@ -17,12 +17,12 @@ export async function run(): Promise<void> {
         }
     }
 
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolvePromise, reject): void => {
         mocha.run((failures): void => {
             if (failures > 0) {
                 reject(new Error(`${failures} tests failed.`));
             } else {
-                resolve();
+                resolvePromise();
             }
         });
     });

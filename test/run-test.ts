@@ -4,13 +4,17 @@ import { runTests } from 'vscode-test';
 async function main(): Promise<void> {
     try {
         // Download VS Code, unzip it and run the integration test
-        await runTests({
+        const exitCode = await runTests({
             extensionDevelopmentPath: resolve(__dirname, '..'),
             extensionTestsPath: resolve(__dirname, 'suite', 'index'),
             launchArgs: [
                 "--disable-extensions",
             ],
         });
+
+        if (exitCode !== 0) {
+            process.exit(1);
+        }
     } catch (err) {
         process.exit(1);
     }
