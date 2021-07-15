@@ -3,36 +3,22 @@ import { URL } from "url";
 import { getProperty } from "../../util/property";
 import { stripGitRemoteUrl } from "./strip-git-remote-url";
 
-function isToolUrlPlural(origin: string): boolean {
-    const isWebPathPlural = getProperty("isWebPathPlural");
-    const urlParts = getProperty("pluralWebPathSubstrings", []);
+const isToolUrlPlural = (origin: string): boolean => getProperty("isWebPathPlural")
+    || (getProperty("pluralWebPathSubstrings") ?? []).some((substring) => origin.includes(substring));
 
-    return isWebPathPlural || urlParts.some(
-        (substring) => origin.includes(substring),
-    );
-}
-
-function httpOrHttps(url: string): string | undefined {
-    const matches = /^(https?):/.exec(url);
-    if (matches !== null) {
-        return matches[1];
-    }
-}
-
-export function defaultWebPath(url: string, hash: string): string {
-    const httpProtocol = httpOrHttps(url);
-    const gitlessUrl = stripGitRemoteUrl(url);
+export const defaultWebPath = (url: string, hash: string): URL | undefined => {
+    const httpProtocol = /^(https?):/.exec(url)?.[1];
 
     let uri: URL;
 
     try {
-        uri = new URL(`${ httpProtocol || "https" }://${ gitlessUrl }`);
+        uri = new URL(`${ httpProtocol ?? "https" }://${ stripGitRemoteUrl(url) }`);
     } catch (err) {
-        return "";
+        return;
     }
 
-    const commit = `commit${isToolUrlPlural(url) ? "s" : ""}`;
-    const port = httpProtocol && uri.port ? `:${ uri.port }` : "";
+    uri.port = httpProtocol ? uri.port : "";
+    uri.pathname += `/commit${isToolUrlPlural(url) ? "s" : ""}/${ hash }`;
 
-    return `${ uri.protocol }//${ uri.hostname }${ port }${ uri.pathname }/${ commit }/${ hash }`;
+    return uri;
 }

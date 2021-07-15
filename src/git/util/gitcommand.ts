@@ -1,5 +1,5 @@
 import { ChildProcess, spawn } from "child_process";
-import { basename, dirname } from "path";
+import { dirname } from "path";
 
 import { extensions } from "vscode";
 
@@ -10,7 +10,7 @@ import { execute } from "../../util/execcommand";
 import { GitExtension } from "../../../types/git";
 import { getActiveTextEditor } from "../../util/get-active";
 
-export function getGitCommand(): string {
+export const getGitCommand = (): string => {
     const vscodeGit = extensions.getExtension<GitExtension>("vscode.git");
 
     if (vscodeGit?.exports.enabled) {
@@ -20,21 +20,22 @@ export function getGitCommand(): string {
     return "git";
 }
 
-async function runGit(cwd: string, ...args: string[]): Promise<string> {
-    return execute(getGitCommand(), args, { cwd: dirname(cwd) });
-}
+const runGit = (
+    cwd: string,
+    ...args: string[]
+): Promise<string> => execute(getGitCommand(), args, { cwd: dirname(cwd) });
 
-export async function getActiveFileOrigin(remoteName: string): Promise<string> {
+export const getActiveFileOrigin = async (remoteName: string): Promise<string> => {
     const activeEditor = getActiveTextEditor();
 
     if (!validEditor(activeEditor)) {
         return "";
     }
 
-    return await runGit(activeEditor.document.fileName, "ls-remote", "--get-url", remoteName);
+    return runGit(activeEditor.document.fileName, "ls-remote", "--get-url", remoteName);
 }
 
-export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
+export const getRemoteUrl = async (fallbackRemote: string): Promise<string> => {
     const activeEditor = getActiveTextEditor();
 
     if (!validEditor(activeEditor)) {
@@ -47,27 +48,25 @@ export async function getRemoteUrl(fallbackRemote: string): Promise<string> {
     return runGit(fileName, "config", `remote.${ curRemote || fallbackRemote }.url`);
 }
 
-export async function isGitTracked(fileName: string): Promise<boolean> {
-    return !!await runGit(fileName, "rev-parse", "--git-dir");
-}
+export const isGitTracked = async (
+    fileName: string,
+): Promise<boolean> => !!await runGit(fileName, "rev-parse", "--git-dir");
 
-export function blameProcess(fileName: string): ChildProcess {
+export const blameProcess = (fileName: string): ChildProcess => {
     const args = ["blame", "--incremental", "--", fileName];
 
     if (getProperty("ignoreWhitespace")) {
         args.splice(1, 0, "-w");
     }
 
-    const gitCommand = getGitCommand();
+    Logger.write("command", `${getGitCommand()} ${args.join(" ")}`);
 
-    Logger.command(`${gitCommand} ${args.join(" ")}`);
-
-    return spawn(gitCommand, args, {
+    return spawn(getGitCommand(), args, {
         cwd: dirname(fileName),
     });
 }
 
-export async function getRelativePathOfActiveFile(): Promise<string> {
+export const getRelativePathOfActiveFile = async (): Promise<string> => {
     const activeEditor = getActiveTextEditor();
 
     if (!validEditor(activeEditor)) {
@@ -75,5 +74,5 @@ export async function getRelativePathOfActiveFile(): Promise<string> {
     }
 
     const { fileName } = activeEditor.document;
-    return await runGit(fileName, "ls-files", "--full-name", basename(fileName));
+    return runGit(fileName, "ls-files", "--full-name", "--", fileName);
 }

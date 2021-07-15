@@ -1,9 +1,12 @@
 import { split } from "../../util/split";
 
+const EMPTY_COMMIT_HASH = "E";
+
 export type CommitAuthor = {
     name: string;
     mail: string;
-    time: number;
+    timestamp: string;
+    date: Date;
     tz: string;
 }
 
@@ -18,47 +21,42 @@ export type Line = [number, string];
 
 export type ChunkyGenerator = [Commit, Generator<Line>];
 
-export type CommitRegistry = Record<string, Commit>;
+export type CommitRegistry = Map<string, Commit>;
 
-function blankCommitInfo(): Commit {
-    const commitInfo: Commit = {
-        author: {
-            mail: "",
-            name: "",
-            time: 0,
-            tz: "",
-        },
-        committer: {
-            mail: "",
-            name: "",
-            time: 0,
-            tz: "",
-        },
-        hash: "EMPTY",
-        summary: "",
-    };
+const blankCommitInfo = (): Commit => ({
+    author: {
+        mail: "",
+        name: "",
+        timestamp: "",
+        date: new Date,
+        tz: "",
+    },
+    committer: {
+        mail: "",
+        name: "",
+        timestamp: "",
+        date: new Date,
+        tz: "",
+    },
+    hash: EMPTY_COMMIT_HASH,
+    summary: "",
+});
 
-    return commitInfo;
-}
+function * splitChunk(chunk: Buffer): Generator<[string, string]> {
+    let lastIndex = 0;
+    while (lastIndex < chunk.length) {
+        const nextIndex = chunk.indexOf("\n", lastIndex);
 
-function * splitChunk(chunk: Buffer): Generator<[string, string, string]> {
-    for (let index = 0; index < chunk.length; index++) {
-        const nextIndex = chunk.indexOf("\n", index);
-        const startSecond = nextIndex + 1;
-        const secondIndex = chunk.indexOf("\n", startSecond);
+        yield split(chunk.toString("utf8", lastIndex, nextIndex));
 
-        yield [
-            ...split(chunk.slice(index, nextIndex).toString("utf8")),
-            chunk.slice(startSecond, secondIndex).toString("utf8"),
-        ];
-
-        index = nextIndex;
+        lastIndex = nextIndex + 1;
     }
 }
 
-function fillOwner(owner: CommitAuthor, dataPoint: string, value: string): void {
+const fillOwner = (owner: CommitAuthor, dataPoint: string, value: string): void => {
     if (dataPoint === "time") {
-        owner.time = parseInt(value, 10);
+        owner.timestamp = value;
+        owner.date = new Date(parseInt(value, 10) * 1000);
     } else if (dataPoint === "tz" || dataPoint === "mail") {
         owner[dataPoint] = value;
     } else if (dataPoint === "") {
@@ -66,30 +64,18 @@ function fillOwner(owner: CommitAuthor, dataPoint: string, value: string): void 
     }
 }
 
-function processAuthorLine(key: string, value: string, commitInfo: Commit): void {
+const processAuthorLine = (key: string, value: string, commitInfo: Commit): void => {
     const [author, dataPoint] = split(key, "-");
 
-    if (author === "author") {
-        fillOwner(commitInfo.author, dataPoint, value);
-    } else if (author === "committer") {
-        fillOwner(commitInfo.committer, dataPoint, value);
+    if (author === "author" || author === "committer") {
+        fillOwner(commitInfo[author], dataPoint, value);
     }
 }
 
-function isHash(hash: string): boolean {
-    return /^\w{40}$/.test(hash);
-}
+const isHash = (hash: string): boolean => /^\w{40}$/.test(hash);
+const isCoverageLine = (hash: string, coverage: string): boolean => isHash(hash) && /^\d+ \d+ \d+$/.test(coverage);
 
-function isCoverageLine(hash: string, coverage: string): boolean {
-    return isHash(hash) && /^\d+ \d+ \d+$/.test(coverage);
-}
-
-function isNewCommit(hash: string, coverage: string, nextLine: string): boolean {
-    const commitBlock = /^(author|committer)/;
-    return isCoverageLine(hash, coverage) && commitBlock.test(nextLine);
-}
-
-function processLine(key: string, value: string, commitInfo: Commit): void {
+const processLine = (key: string, value: string, commitInfo: Commit): void => {
     if (key === "summary") {
         commitInfo.summary = value;
     } else if (isHash(key)) {
@@ -112,15 +98,15 @@ function * commitFilter(
     lines: Generator<Line>,
     registry: CommitRegistry,
 ): Generator<ChunkyGenerator> {
-    if (commitInfo.hash === "EMPTY") {
+    if (commitInfo.hash === EMPTY_COMMIT_HASH) {
         return;
     }
 
-    if (registry[commitInfo.hash] === undefined) {
-        registry[commitInfo.hash] = commitInfo;
-    }
+    const oldCommitInfo = registry.get(commitInfo.hash);
 
-    yield [registry[commitInfo.hash], lines];
+    registry.set(commitInfo.hash, oldCommitInfo ?? commitInfo);
+
+    yield [oldCommitInfo ?? commitInfo, lines];
 }
 
 function * protoLine(): Generator<Line> {
@@ -131,12 +117,12 @@ export function * processChunk(dataChunk: Buffer, commitRegistry: CommitRegistry
     let commitInfo = blankCommitInfo();
     let coverageGenerator: Generator<Line> = protoLine();
 
-    for (const [key, value, nextLine] of splitChunk(dataChunk)) {
+    for (const [key, value] of splitChunk(dataChunk)) {
         if (isCoverageLine(key, value)) {
             yield * commitFilter(commitInfo, coverageGenerator, commitRegistry);
             coverageGenerator = processCoverage(key, value);
 
-            if (isNewCommit(key, value, nextLine)) {
+            if (commitInfo.hash !== key) {
                 commitInfo = blankCommitInfo();
             }
         }

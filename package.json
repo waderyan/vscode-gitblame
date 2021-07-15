@@ -2,10 +2,10 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "7.0.6",
+  "version": "8.0.0",
   "publisher": "waderyan",
   "engines": {
-    "vscode": "^1.49.0"
+    "vscode": "^1.57.0"
   },
   "categories": [
     "Other"
@@ -41,16 +41,17 @@
     "@rollup/plugin-typescript": "^8.2.1",
     "@types/mocha": "^8.2.2",
     "@types/node": "^12.12.62",
-    "@types/sinon": "^10.0.0",
-    "@types/vscode": "^1.49.0",
-    "@typescript-eslint/eslint-plugin": "^4.22.1",
-    "@typescript-eslint/parser": "^4.22.1",
-    "eslint": "^7.25.0",
-    "mocha": "^8.4.0",
-    "rollup": "^2.47.0",
+    "@types/sinon": "^10.0.2",
+    "@types/vscode": "1.57.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.1",
+    "@typescript-eslint/parser": "^4.28.1",
+    "eslint": "^7.29.0",
+    "mocha": "^9.0.1",
+    "rollup": "^2.52.3",
     "rollup-plugin-terser": "^7.0.2",
-    "sinon": "^10.0.0",
-    "typescript": "^4.2.4",
+    "sinon": "^11.1.1",
+    "terser": "^5.7.1",
+    "typescript": "^4.3.4",
     "vscode-test": "^1.5.2"
   },
   "homepage": "https://github.com/Sertion/vscode-gitblame/blob/master/README.md",
@@ -95,6 +96,23 @@
           "type": "string",
           "default": "${commit.summary}",
           "description": "Customize the info message"
+        },
+        "gitblame.statusBarMessageDisplayRight": {
+          "type": "boolean",
+          "default": false,
+          "description": "Display status bar message to the right (requires reload)"
+        },
+        "gitblame.statusBarMessageClickAction": {
+          "type": "string",
+          "default": "Show info message",
+          "enum": [
+            "Show info message",
+            "Open tool URL"
+          ],
+          "enumDescriptions": [
+            "Show a info message with a short summary of the commit",
+            "Attempty to directly open the tool URL"
+          ]
         },
         "gitblame.statusBarMessageFormat": {
           "type": "string",

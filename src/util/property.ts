@@ -1,5 +1,4 @@
 import { workspace } from "vscode";
-import { extensionName } from "../extension-name";
 
 export type PropertiesMap = {
     "commitUrl": string;
@@ -11,19 +10,12 @@ export type PropertiesMap = {
     "statusBarMessageNoCommit": string;
     "statusBarPositionPriority": number | undefined;
     "pluralWebPathSubstrings": string[];
+    "statusBarMessageDisplayRight": boolean;
+    "statusBarMessageClickAction": "Show info message" | "Open tool URL";
 }
 
-type PropertyFunction = {
-    <Key extends keyof PropertiesMap>(
-        name: Key,
-        fallback: PropertiesMap[Key],
-    ): PropertiesMap[Key];
-    <Key extends keyof PropertiesMap>(
-        name: Key,
-    ): PropertiesMap[Key] | undefined;
-}
-
-export const getProperty: PropertyFunction = <Key extends keyof PropertiesMap>(
+// getConfiguration has an unfortunate typing that does not
+// take any possible default values into consideration.
+export const getProperty = <Key extends keyof PropertiesMap>(
     name: Key,
-    fallback?: PropertiesMap[Key],
-): PropertiesMap[Key] | undefined => workspace.getConfiguration(extensionName).get(name) ?? fallback;
+): PropertiesMap[Key] => workspace.getConfiguration("gitblame").get(name) as PropertiesMap[Key];

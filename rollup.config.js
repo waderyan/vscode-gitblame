@@ -17,19 +17,20 @@ export default {
     plugins: [
         typescript(),
         terser({
-            ecma: 2019,
+            ecma: 2020,
             compress: {
-                keep_classnames: false,
+                inline: 2,
                 keep_fargs: false,
                 module: true,
                 passes: 4,
                 pure_getters: true,
                 toplevel: true,
+                unsafe: true,
                 unsafe_arrows: true,
                 unsafe_methods: true,
             },
             format: {
-                ecma: 2019,
+                ecma: 2020,
                 semicolons: false,
             },
         }),

@@ -2,14 +2,12 @@
     "compilerOptions": {
         "module": "CommonJS",
         "moduleResolution": "node",
-        "target": "es2018",
+        "target": "es2020",
         "strict": true,
         "outDir": "./out",
         "lib": [
-            "es2016",
-            "es2017",
-            "es2018",
-            "es2019"
+            "ES2020",
+            "ESNext.Intl"
         ],
         "sourceMap": true,
         "experimentalDecorators": true,
