@@ -25,6 +25,9 @@ jobs:
     - name: Install Node Dependencies
       run: npm ci
 
+    - name: Code quality
+      run: npm run lint
+
     - name: Run tests
       uses: GabrielBB/xvfb-action@v1.2
       with:
