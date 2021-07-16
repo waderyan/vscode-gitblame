@@ -1,4 +1,4 @@
-import { StatusBarAlignment, StatusBarItem, window } from "vscode";
+import { StatusBarAlignment, StatusBarItem, window, workspace } from "vscode";
 
 import type { Commit } from "./git/util/stream-parsing";
 
@@ -7,13 +7,27 @@ import { getProperty } from "./util/property";
 import { toTextView } from "./util/textdecorator";
 
 export class StatusBarView {
-    private readonly out: StatusBarItem;
+    private out!: StatusBarItem;
 
     constructor() {
+        this.createStatusBarItem();
+        workspace.onDidChangeConfiguration(e => {
+            if (e.affectsConfiguration('gitblame')) {
+                this.createStatusBarItem();
+            }
+        });
+    }
+
+    private createStatusBarItem(): void {
+        if (this.out) {
+            this.out.dispose();
+        }
+
         this.out = window.createStatusBarItem(
             getProperty("statusBarMessageDisplayRight") ? StatusBarAlignment.Right : StatusBarAlignment.Left,
             getProperty("statusBarPositionPriority"),
         );
+
         this.out.show();
     }
 
@@ -32,7 +46,7 @@ export class StatusBarView {
     }
 
     public dispose(): void {
-        this.out.dispose();
+        this.out?.dispose();
     }
 
     private command(): string {

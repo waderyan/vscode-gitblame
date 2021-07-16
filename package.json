@@ -100,7 +100,7 @@
         "gitblame.statusBarMessageDisplayRight": {
           "type": "boolean",
           "default": false,
-          "description": "Display status bar message to the right (requires reload)"
+          "description": "Display status bar message to the right"
         },
         "gitblame.statusBarMessageClickAction": {
           "type": "string",
