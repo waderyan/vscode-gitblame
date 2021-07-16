@@ -1,12 +1,17 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"target": "ES5",
-		"outDir": "out",
-		"noLib": true,
-		"sourceMap": true
-	},
-	"exclude": [
-		"node_modules"
-	]
+    "compilerOptions": {
+        "module": "ES2020",
+        "moduleResolution": "node",
+        "target": "es2020",
+        "lib": [
+            "ES2020",
+            "ESNext.Intl"
+        ],
+        "strict": true,
+        "outDir": "./dist",
+        "rootDir": "."
+    },
+    "exclude": [
+        "node_modules"
+    ]
 }

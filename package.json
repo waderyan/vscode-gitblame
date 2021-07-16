@@ -2,50 +2,161 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "1.3.0",
+  "version": "8.0.1",
   "publisher": "waderyan",
   "engines": {
-    "vscode": "^1.0.0"
+    "vscode": "^1.57.0"
   },
   "categories": [
     "Other"
   ],
   "galleryBanner": {
-      "color": "#f0efe7",
-      "theme": "light"
+    "color": "#f0efe7",
+    "theme": "light"
   },
   "icon": "images/git_icon.png",
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "keywords": [
-    "git", "gitblame", "blame"  
+    "git",
+    "gitblame",
+    "blame",
+    "github",
+    "gitlab",
+    "bitbucket"
   ],
-  "main": "./out/src/extension",
+  "qna": false,
+  "main": "./dist/index",
   "scripts": {
-    "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-    "compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
+    "vscode:prepublish": "npm run build",
+    "build": "rollup -c",
+    "test-build": "tsc -p tsconfig.test.json",
+    "package": "npx vsce package",
+    "lint": "eslint --no-inline-config --ext .js,.ts ./src ./test",
+    "test": "npm run test-build && node ./out/test/run-test.js"
   },
-  "dependencies": {
-    "git-blame": "^0.1.1",
-    "moment": "^2.10.6",
-    "path": "^0.12.7",
-    "typescript": "^1.6.2",
-    "vscode": "0.10.x"
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^8.2.1",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^12.12.62",
+    "@types/sinon": "^10.0.2",
+    "@types/vscode": "1.57.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.1",
+    "@typescript-eslint/parser": "^4.28.1",
+    "eslint": "^7.29.0",
+    "mocha": "^9.0.1",
+    "rollup": "^2.52.3",
+    "rollup-plugin-terser": "^7.0.2",
+    "sinon": "^11.1.1",
+    "terser": "^5.7.1",
+    "tslib": "^2.3.0",
+    "typescript": "^4.3.4",
+    "vscode-test": "^1.5.2"
   },
-  "homepage": "https://github.com/wadeanderson7/vscode-gitblame/blob/master/README.md",
+  "homepage": "https://github.com/Sertion/vscode-gitblame/blob/master/README.md",
   "bugs": {
-      "url": "https://github.com/wadeanderson7/vscode-gitblame/issues"
+    "url": "https://github.com/Sertion/vscode-gitblame/issues"
   },
-  "license": "SEE LICENSE IN LICENSE.md",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wadeanderson7/vscode-gitblame"
+    "url": "https://github.com/Sertion/vscode-gitblame"
+  },
+  "extensionDependencies": [
+    "vscode.git"
+  ],
+  "capabilities": {
+    "virtualWorkspaces": false
   },
   "contributes": {
-    "commands": [{
-        "command": "extension.blame",
-        "title": "Git Blame"
-    }]
+    "commands": [
+      {
+        "command": "gitblame.quickInfo",
+        "title": "Git Blame: Show quick info"
+      },
+      {
+        "command": "gitblame.online",
+        "title": "Git Blame: View last change online"
+      },
+      {
+        "command": "gitblame.addCommitHashToClipboard",
+        "title": "Git Blame: Copy hash to clipboard"
+      },
+      {
+        "command": "gitblame.addToolUrlToClipboard",
+        "title": "Git Blame: Copy tool URL to clipboard"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Git Blame",
+      "properties": {
+        "gitblame.infoMessageFormat": {
+          "type": "string",
+          "default": "${commit.summary}",
+          "description": "Customize the info message"
+        },
+        "gitblame.statusBarMessageDisplayRight": {
+          "type": "boolean",
+          "default": false,
+          "description": "Display status bar message to the right (requires reload)"
+        },
+        "gitblame.statusBarMessageClickAction": {
+          "type": "string",
+          "default": "Show info message",
+          "enum": [
+            "Show info message",
+            "Open tool URL"
+          ],
+          "enumDescriptions": [
+            "Show a info message with a short summary of the commit",
+            "Attempty to directly open the tool URL"
+          ]
+        },
+        "gitblame.statusBarMessageFormat": {
+          "type": "string",
+          "default": "Blame ${author.name} ( ${time.ago} )",
+          "description": "Customize the status bar message"
+        },
+        "gitblame.statusBarMessageNoCommit": {
+          "type": "string",
+          "default": "Not Committed Yet",
+          "description": "Customize the status bar message"
+        },
+        "gitblame.statusBarPositionPriority": {
+          "type": "number",
+          "description": "Priority where the status bar view should be placed"
+        },
+        "gitblame.remoteName": {
+          "type": "string",
+          "default": "origin",
+          "markdownDescription": "The name of the git remote used to build the URL."
+        },
+        "gitblame.commitUrl": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "The link to an online tool to view a commit (use `${hash}` for the commit hash)."
+        },
+        "gitblame.ignoreWhitespace": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Ignore whitespace changes when blaming (`-w` flag)"
+        },
+        "gitblame.isWebPathPlural": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "BitBucket uses _commits_ instead of _commit_ in their web interface. Turn this on if you want the View button to work for BitBucket."
+        },
+        "gitblame.pluralWebPathSubstrings": {
+          "type": "array",
+          "default": [
+            "bitbucket",
+            "atlassian"
+          ],
+          "markdownDescription": "An array of substrings that, when present in the git origin URL, activates `gitblame.isWebPathPlural`"
+        }
+      }
+    }
   }
 }
