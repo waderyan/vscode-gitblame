@@ -25,7 +25,7 @@ export class StatusBarView {
 
         this.out = window.createStatusBarItem(
             getProperty("statusBarMessageDisplayRight") ? StatusBarAlignment.Right : StatusBarAlignment.Left,
-            getProperty("statusBarPositionPriority")
+            getProperty("statusBarPositionPriority"),
         );
 
         this.out.show();
