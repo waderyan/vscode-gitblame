@@ -1,3 +1,5 @@
+import { env } from "vscode";
+
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 const HOUR = 60 * MINUTE;
@@ -17,7 +19,8 @@ export const between = (now: Date, compare: Date): string => {
 
     for (const [currentUnit, scale] of timeUnits) {
         if (diffMilliseconds > scale) {
-            return (new Intl.RelativeTimeFormat).format(-1 * Math.round(diffMilliseconds / scale), currentUnit);
+            return (new Intl.RelativeTimeFormat(env.language))
+                .format(-1 * Math.round(diffMilliseconds / scale), currentUnit);
         }
     }
 

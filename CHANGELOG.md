@@ -1,6 +1,10 @@
 # Change Log
 
-## 8.0.0 (July xx, 2021)
+## 8.0.1 (July 16, 2021)
+* Feature: We now use vscodes language for Intl.RelativeTimeFormat locale [#111](https://github.com/Sertion/vscode-gitblame/issues/111) (Thanks to [AmosChenYQ](https://github.com/AmosChenYQ))
+* Fix: CHANGELOG.md now has correct release date for 8.0.0
+
+## 8.0.0 (July 15, 2021)
 * Breaking change: Removed `${time.c_from}` and `${time.from}`, please use `${time.c_ago}` and `${time.ago}` instead. They have been aliases since version 3.0.0
 * Breaking change: Dangling tokens (non-closed) now resolve correctly to their literal text instead of breaking
 * Breaking change: Modifiers on tokens with parameters now work as expected
