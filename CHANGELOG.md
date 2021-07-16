@@ -1,5 +1,8 @@
 # Change Log
 
+# 8.1.0 (July 16, 2021)
+* Fix: Avoid reloading for settings change [#112](https://github.com/Sertion/vscode-gitblame/pull/112) (Thanks to [João Moreno](https://github.com/joaomoreno))
+
 ## 8.0.1 (July 16, 2021)
 * Feature: We now use vscodes language for Intl.RelativeTimeFormat locale [#111](https://github.com/Sertion/vscode-gitblame/issues/111) (Thanks to [AmosChenYQ](https://github.com/AmosChenYQ))
 * Fix: CHANGELOG.md now has correct release date for 8.0.0
