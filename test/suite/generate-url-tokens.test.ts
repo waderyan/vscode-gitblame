@@ -138,7 +138,7 @@ suite("Generate URL Tokens", () => {
             },
             selection: {
                 active: {
-                    line: 1,
+                    line: 22,
                 },
             },
         });
@@ -172,6 +172,7 @@ suite("Generate URL Tokens", () => {
         assert.strictEqual(call(tokens["project.name"]), "vscode-gitblame");
         assert.strictEqual(call(tokens["project.remote"]), "github.com/Sertion/vscode-gitblame");
         assert.strictEqual(call(tokens["file.path"]), "/fake.file");
+        assert.strictEqual(call(tokens["file.line"]), "22");
     });
 
     test("ssh://git@git.company.com/project_x/test-repository.git origin", async () => {
@@ -186,7 +187,7 @@ suite("Generate URL Tokens", () => {
             },
             selection: {
                 active: {
-                    line: 1,
+                    line: 9,
                 },
             },
         });
@@ -221,5 +222,6 @@ suite("Generate URL Tokens", () => {
         assert.strictEqual(call(tokens["project.name"]), "test-repository");
         assert.strictEqual(call(tokens["project.remote"]), "git.company.com/project_x/test-repository");
         assert.strictEqual(call(tokens["file.path"]), "/fake.file");
+        assert.strictEqual(call(tokens["file.line"]), "9");
     });
 });

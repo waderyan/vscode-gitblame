@@ -17,6 +17,7 @@ import { stripGitRemoteUrl, stripGitSuffix } from "./strip-git-remote-url";
 import { InfoTokens, parseTokens } from "../../util/textdecorator";
 import { isUncomitted } from "./uncommitted";
 import { errorMessage } from "../../util/message";
+import { getCurrentLineNumber } from "../../util/get-active";
 
 export type ToolUrlTokens = {
     "hash": string;
@@ -25,6 +26,7 @@ export type ToolUrlTokens = {
     "gitorigin.hostname": string | ((index?: string) => string | undefined);
     "gitorigin.path": string | ((index?: string) => string | undefined);
     "file.path": string;
+    "file.line": string;
 } & InfoTokens;
 
 const getDefaultToolUrl = (origin: string, commitInfo: Commit): Uri | undefined => {
@@ -89,6 +91,7 @@ export const generateUrlTokens = async (commit: Commit): Promise<[string, ToolUr
         "gitorigin.hostname": defaultPath ? gitOriginHostname(defaultPath) : "no-origin-url",
         "gitorigin.path": gitRemotePath(stripGitSuffix(origin)),
         "file.path": await getRelativePathOfActiveFile(),
+        "file.line": getCurrentLineNumber(),
     }];
 }
 
