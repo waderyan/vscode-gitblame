@@ -69,7 +69,7 @@ const enum MODE {
 
 const createIndexOrEnd = (target: string, index: number, endIndex: number) => (char: string) => {
     const indexOfChar = target.indexOf(char, index);
-    if (indexOfChar === -1) {
+    if (indexOfChar === -1 || indexOfChar > endIndex) {
         return endIndex;
     }
 

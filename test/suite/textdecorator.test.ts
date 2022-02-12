@@ -391,3 +391,117 @@ suite("Text Decorator with CommitInfoToken", (): void => {
     check("commit.hash_short,39", "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65c");
     check("commit.hash_short,100|u", "60D3FD32A7A9DA4C8C93A9F89CFDA22A0B4C65CE");
 });
+
+suite('issue #119 regressions', () => {
+    test('commit.summary before commit.hash_short', () => {
+        useFakeTimers(1621014626000);
+        const exampleCommit: Commit = {
+            "author": {
+                "mail": "<vdavydov.dev@gmail.com>",
+                "name": "Vladimir Davydov",
+                "timestamp": "1423781950",
+                "date": new Date(1_423_781_950_000),
+                "tz": "-0800",
+            },
+            "committer": {
+                "mail": "<torvalds@linux-foundation.org>",
+                "name": "Linus Torvalds",
+                "timestamp": "1423796049",
+                "date": new Date(1_423_796_049_000),
+                "tz": "-0800",
+            },
+            "hash": "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce",
+            "summary": "list_lru: introduce per-memcg lists",
+        };
+        const normalizedCommitInfoTokens = normalizeCommitInfoTokens(exampleCommit);
+
+        assert.strictEqual(
+            parseTokens('${commit.summary} ${commit.hash_short}', normalizedCommitInfoTokens),
+            'list_lru: introduce per-memcg lists 60d3fd3',
+        )
+    });
+
+    test('commit.summary before shortened commit.hash_short', () => {
+        useFakeTimers(1621014626000);
+        const exampleCommit: Commit = {
+            "author": {
+                "mail": "<vdavydov.dev@gmail.com>",
+                "name": "Vladimir Davydov",
+                "timestamp": "1423781950",
+                "date": new Date(1_423_781_950_000),
+                "tz": "-0800",
+            },
+            "committer": {
+                "mail": "<torvalds@linux-foundation.org>",
+                "name": "Linus Torvalds",
+                "timestamp": "1423796049",
+                "date": new Date(1_423_796_049_000),
+                "tz": "-0800",
+            },
+            "hash": "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce",
+            "summary": "list_lru: introduce per-memcg lists",
+        };
+        const normalizedCommitInfoTokens = normalizeCommitInfoTokens(exampleCommit);
+
+        assert.strictEqual(
+            parseTokens('${commit.summary} ${commit.hash_short,7}', normalizedCommitInfoTokens),
+            'list_lru: introduce per-memcg lists 60d3fd3',
+        )
+    });
+
+    test('commit.summary before shortened commit.hash', () => {
+        useFakeTimers(1621014626000);
+        const exampleCommit: Commit = {
+            "author": {
+                "mail": "<vdavydov.dev@gmail.com>",
+                "name": "Vladimir Davydov",
+                "timestamp": "1423781950",
+                "date": new Date(1_423_781_950_000),
+                "tz": "-0800",
+            },
+            "committer": {
+                "mail": "<torvalds@linux-foundation.org>",
+                "name": "Linus Torvalds",
+                "timestamp": "1423796049",
+                "date": new Date(1_423_796_049_000),
+                "tz": "-0800",
+            },
+            "hash": "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce",
+            "summary": "list_lru: introduce per-memcg lists",
+        };
+        const normalizedCommitInfoTokens = normalizeCommitInfoTokens(exampleCommit);
+
+        assert.strictEqual(
+            parseTokens('${commit.summary} ${commit.hash,7}', normalizedCommitInfoTokens),
+            'list_lru: introduce per-memcg lists 60d3fd3',
+        )
+    });
+
+    test('commit.summary before shortened commit.summary', () => {
+        useFakeTimers(1621014626000);
+        const exampleCommit: Commit = {
+            "author": {
+                "mail": "<vdavydov.dev@gmail.com>",
+                "name": "Vladimir Davydov",
+                "timestamp": "1423781950",
+                "date": new Date(1_423_781_950_000),
+                "tz": "-0800",
+            },
+            "committer": {
+                "mail": "<torvalds@linux-foundation.org>",
+                "name": "Linus Torvalds",
+                "timestamp": "1423796049",
+                "date": new Date(1_423_796_049_000),
+                "tz": "-0800",
+            },
+            "hash": "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce",
+            "summary": "list_lru: introduce per-memcg lists",
+        };
+        const normalizedCommitInfoTokens = normalizeCommitInfoTokens(exampleCommit);
+
+        assert.strictEqual(
+            parseTokens('${commit.summary} ${commit.summary,7}', normalizedCommitInfoTokens),
+            'list_lru: introduce per-memcg lists list_lr',
+        )
+    });
+});
