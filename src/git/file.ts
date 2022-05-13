@@ -26,11 +26,15 @@ export class File {
         const commitRegistry: CommitRegistry = new Map;
 
         for await (const chunk of this.process?.stdout ?? []) {
-            yield * processChunk(chunk, commitRegistry);
+            if (Buffer.isBuffer(chunk)) {
+                yield * processChunk(chunk, commitRegistry);
+            }
         }
 
         for await (const error of this.process?.stderr ?? []) {
-            throw new Error(error);
+            if (typeof error === "string") {
+                throw new Error(error);
+            }
         }
     }
 
