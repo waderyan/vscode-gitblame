@@ -23,6 +23,7 @@ import {
     getFilePosition,
     NO_FILE_OR_PLACE,
 } from "../util/get-active";
+import { HeadWatch } from "./head-watch";
 
 type ActionableMessageItem = MessageItem & {
     action: () => void;
@@ -32,10 +33,12 @@ export class Extension {
     private readonly disposable: Disposable;
     private readonly blame: Blamer;
     private readonly view: StatusBarView;
+    private readonly headWatcher: HeadWatch;
 
     constructor() {
         this.blame = new Blamer;
         this.view = new StatusBarView;
+        this.headWatcher = new HeadWatch;
 
         this.disposable = this.setupListeners();
 
@@ -102,6 +105,7 @@ export class Extension {
         this.view.dispose();
         this.disposable.dispose();
         this.blame.dispose();
+        this.headWatcher.dispose();
     }
 
     private setupListeners(): Disposable {
@@ -112,13 +116,17 @@ export class Extension {
             }
         }
 
+        this.headWatcher.onChange(({repositoryRoot}) => {
+            this.blame.removeFromRepository(repositoryRoot);
+        });
+
         return Disposable.from(
             window.onDidChangeActiveTextEditor((textEditor): void => {
                 if (validEditor(textEditor)) {
                     this.view.activity();
-                    this.blame.file(textEditor.document);
+                    this.blame.file(textEditor.document.fileName);
                     /**
-                     * For unknown reasons files without previously or stored
+                     * For unknown reasons files without previous or stored
                      * selection locations don't trigger the change selection
                      * event. I have not been able to find a way to detect when
                      * this happens. Running the event handler twice seames to
@@ -136,7 +144,7 @@ export class Extension {
                 this.updateView();
             }),
             workspace.onDidCloseTextDocument((document: Document): void => {
-                this.blame.remove(document);
+                this.blame.remove(document.fileName);
             }),
         );
     }
@@ -149,8 +157,10 @@ export class Extension {
             return;
         }
         this.view.activity();
+        this.headWatcher.addFile(textEditor.document.fileName);
+
         const before = getFilePosition(textEditor);
-        const commit = await this.blame.getLine(textEditor.document, textEditor.selection.active.line);
+        const commit = await this.blame.getLine(textEditor.document.fileName, textEditor.selection.active.line);
         const after = getFilePosition(textEditor);
 
         // Only update if we haven't moved since we started blaming
@@ -172,7 +182,8 @@ export class Extension {
         if (!undercover) {
             this.view.activity();
         }
-        const line = await this.blame.getLine(editor.document, editor.selection.active.line);
+        this.headWatcher.addFile(editor.document.fileName);
+        const line = await this.blame.getLine(editor.document.fileName, editor.selection.active.line);
 
         if (!line) {
             notBlame();

@@ -48,9 +48,11 @@ export const getRemoteUrl = async (fallbackRemote: string): Promise<string> => {
     return runGit(fileName, "config", `remote.${ curRemote || fallbackRemote }.url`);
 }
 
-export const isGitTracked = async (
+export const getGitFolder = async (
     fileName: string,
-): Promise<boolean> => !!await runGit(fileName, "rev-parse", "--git-dir");
+): Promise<string> => runGit(fileName, "rev-parse", "--git-dir");
+
+export const isGitTracked = async (fileName: string): Promise<boolean> => !!await getGitFolder(fileName);
 
 export const blameProcess = (fileName: string): ChildProcess => {
     const args = ["blame", "--incremental", "--", fileName];

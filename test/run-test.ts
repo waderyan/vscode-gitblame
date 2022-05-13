@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import { runTests } from 'vscode-test';
+import { runTests } from '@vscode/test-electron';
 
 async function main(): Promise<void> {
     try {
@@ -18,6 +18,8 @@ async function main(): Promise<void> {
     } catch (err) {
         process.exit(1);
     }
+
+    process.exit(0);
 }
 
 main();

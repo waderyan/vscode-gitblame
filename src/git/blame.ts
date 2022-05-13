@@ -1,58 +1,65 @@
 import { FSWatcher, promises, watch } from "fs";
 
 import type { Commit } from "./util/stream-parsing";
-import type { Document } from "../util/editorvalidator";
 
 import { Blame, File } from "./file";
 import { Logger } from "../util/logger";
 import { isGitTracked } from "./util/gitcommand";
 
 export class Blamer {
-    private readonly files = new Map<Document, Promise<File | undefined>>();
-    private readonly fsWatchers = new Map<Document, FSWatcher>();
+    private readonly files = new Map<string, Promise<File | undefined>>();
+    private readonly fsWatchers = new Map<string, FSWatcher>();
 
-    public async file(document: Document): Promise<Blame | undefined> {
-        return this.get(document);
+    public async file(fileName: string): Promise<Blame | undefined> {
+        return this.get(fileName);
     }
 
-    public async getLine(document: Document, lineNumber: number): Promise<Commit | undefined> {
+    public async getLine(fileName: string, lineNumber: number): Promise<Commit | undefined> {
         const commitLineNumber = lineNumber + 1;
-        const blameInfo = await this.get(document);
+        const blameInfo = await this.get(fileName);
 
         return blameInfo?.get(commitLineNumber);
     }
 
-    public async remove(document: Document): Promise<void> {
-        (await this.files.get(document))?.dispose();
-        this.fsWatchers.get(document)?.close();
-        this.files.delete(document);
-        this.fsWatchers.delete(document);
+    public removeFromRepository(gitRepositoryPath: string): void {
+        for (const [fileName] of this.files) {
+            if (fileName.startsWith(gitRepositoryPath)) {
+                this.remove(fileName);
+            }
+        }
+    }
+
+    public async remove(fileName: string): Promise<void> {
+        (await this.files.get(fileName))?.dispose();
+        this.fsWatchers.get(fileName)?.close();
+        this.files.delete(fileName);
+        this.fsWatchers.delete(fileName);
     }
 
     public dispose(): void {
-        for (const [document] of this.files) {
-            this.remove(document);
+        for (const [fileName] of this.files) {
+            this.remove(fileName);
         }
     }
 
-    private async get(document: Document): Promise<Blame | undefined> {
-        if (!this.files.has(document)) {
-            const file = this.create(document);
+    private async get(fileName: string): Promise<Blame | undefined> {
+        if (!this.files.has(fileName)) {
+            const file = this.create(fileName);
             file.then((createdFile) => {
                 if (createdFile) {
                     this.fsWatchers.set(
-                        document,
-                        watch(document.fileName, () => this.remove(document)),
+                        fileName,
+                        watch(fileName, () => this.remove(fileName)),
                     );
                 }
             });
-            this.files.set(document, file);
+            this.files.set(fileName, file);
         }
 
-        return (await this.files.get(document))?.store;
+        return (await this.files.get(fileName))?.store;
     }
 
-    private async create({fileName}: Document): Promise<File | undefined> {
+    private async create(fileName: string): Promise<File | undefined> {
         try {
             await promises.access(fileName);
 

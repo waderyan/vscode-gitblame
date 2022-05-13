@@ -13,8 +13,10 @@ export class Logger {
         this.out = window.createOutputChannel("Git Blame");
     }
 
-    public static error(error: Error): void {
-        Logger.write("error", error.toString());
+    public static error(error: unknown): void {
+        if (error instanceof Error) {
+            Logger.write("error", error.toString());
+        }
     }
 
     public static write(level: string, message: string): void {

@@ -8,7 +8,7 @@
             "ESNext.Intl"
         ],
         "strict": true,
-        "outDir": "./dist",
+        "outDir": "./out/src/",
         "rootDir": "."
     },
     "exclude": [

@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { useFakeTimers } from "sinon";
+import { SinonFakeTimers, useFakeTimers } from "sinon";
 
 import { Commit } from "../../src/git/util/stream-parsing";
 import { between } from "../../src/util/ago";
@@ -334,7 +334,17 @@ suite("Token Parser", (): void => {
 });
 
 suite("Text Decorator with CommitInfoToken", (): void => {
-    useFakeTimers(1621014626000);
+    let faketimer: SinonFakeTimers | undefined;
+    suiteSetup(() => {
+        faketimer = useFakeTimers({
+            now: 1_621_014_626_000,
+            toFake: ['Date'],
+            shouldAdvanceTime: false,
+        });
+    });
+    suiteTeardown(() => {
+        faketimer?.restore();
+    });
     const exampleCommit: Commit = {
         "author": {
             "mail": "<vdavydov.dev@gmail.com>",
@@ -380,8 +390,8 @@ suite("Text Decorator with CommitInfoToken", (): void => {
     check("commit.hash", "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce");
     check("commit.hash_short", "60d3fd3");
 
-    check("time.ago", "6 years ago");
-    check("time.c_ago", "6 years ago");
+    check("time.ago", "7 years ago");
+    check("time.c_ago", "7 years ago");
 
     check("commit.summary,0", "");
     check("commit.summary,5", "list_");
@@ -393,8 +403,18 @@ suite("Text Decorator with CommitInfoToken", (): void => {
 });
 
 suite('issue #119 regressions', () => {
+    let faketimer: SinonFakeTimers | undefined;
+    suiteSetup(() => {
+        faketimer = useFakeTimers({
+            now: 1_621_014_626_000,
+            toFake: ['Date'],
+            shouldAdvanceTime: false,
+        });
+    });
+    suiteTeardown(() => {
+        faketimer?.restore();
+    });
     test('commit.summary before commit.hash_short', () => {
-        useFakeTimers(1621014626000);
         const exampleCommit: Commit = {
             "author": {
                 "mail": "<vdavydov.dev@gmail.com>",
@@ -422,7 +442,6 @@ suite('issue #119 regressions', () => {
     });
 
     test('commit.summary before shortened commit.hash_short', () => {
-        useFakeTimers(1621014626000);
         const exampleCommit: Commit = {
             "author": {
                 "mail": "<vdavydov.dev@gmail.com>",
@@ -450,7 +469,6 @@ suite('issue #119 regressions', () => {
     });
 
     test('commit.summary before shortened commit.hash', () => {
-        useFakeTimers(1621014626000);
         const exampleCommit: Commit = {
             "author": {
                 "mail": "<vdavydov.dev@gmail.com>",
@@ -478,7 +496,6 @@ suite('issue #119 regressions', () => {
     });
 
     test('commit.summary before shortened commit.summary', () => {
-        useFakeTimers(1621014626000);
         const exampleCommit: Commit = {
             "author": {
                 "mail": "<vdavydov.dev@gmail.com>",
