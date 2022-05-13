@@ -1,5 +1,6 @@
 import { ChildProcess, spawn } from "child_process";
 import { dirname } from "path";
+import { realpathSync } from "fs";
 
 import { extensions } from "vscode";
 
@@ -55,7 +56,8 @@ export const getGitFolder = async (
 export const isGitTracked = async (fileName: string): Promise<boolean> => !!await getGitFolder(fileName);
 
 export const blameProcess = (fileName: string): ChildProcess => {
-    const args = ["blame", "--incremental", "--", fileName];
+    const realPath = realpathSync(fileName);
+    const args = ["blame", "--incremental", "--", realPath];
 
     if (getProperty("ignoreWhitespace")) {
         args.splice(1, 0, "-w");
@@ -64,7 +66,7 @@ export const blameProcess = (fileName: string): ChildProcess => {
     Logger.write("command", `${getGitCommand()} ${args.join(" ")}`);
 
     return spawn(getGitCommand(), args, {
-        cwd: dirname(fileName),
+        cwd: dirname(realPath),
     });
 }
 
