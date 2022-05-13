@@ -525,7 +525,6 @@ suite('issue #119 regressions', () => {
 
 suite('Text Sanitizing', () => {
     test('removes right-to-left override characters from text', () => {
-        useFakeTimers(1621014626000);
         const exampleCommit: Commit = {
             "author": {
                 "mail": "<vdavydov.dev@gmail.com>",

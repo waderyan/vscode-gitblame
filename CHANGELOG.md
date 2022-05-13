@@ -2,8 +2,10 @@
 
 # 8.2.0 (xxx xx, 2022)
 * Feature: Blame information as soon as it is avalible. This will allow some lines to show blame information while others still are waiting for `git blame`.
+* Feature: Allow blaming symlinked files [#121](https://github.com/Sertion/vscode-gitblame/pull/121) (Thanks to [Angel Fraga Parodi](https://github.com/angelfraga))
 * Bug: Blame info persistent over file change and file close [#115](https://github.com/Sertion/vscode-gitblame/issues/115) (Thanks to [Wenfang Du](https://github.com/wenfangdu) and [Viktor Stenqvist](https://github.com/Yottster))
 * Bug: commit.summary before commit.hash_short causes display bug [#119](https://github.com/Sertion/vscode-gitblame/issues/119) (Thanks to [Cathryne Linenweaver](https://github.com/Cathryne Linenweaver))
+* Bug: Remove right-to-left override characters from parsed text [#122](https://github.com/Sertion/vscode-gitblame/pull/122) (Thanks to [Chris Atkin](https://github.com/atkinchris))
 
 # 8.1.0 (July 16, 2021)
 * Fix: Avoid reloading for settings change [#112](https://github.com/Sertion/vscode-gitblame/pull/112) (Thanks to [João Moreno](https://github.com/joaomoreno))
