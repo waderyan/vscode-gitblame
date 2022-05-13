@@ -522,3 +522,33 @@ suite('issue #119 regressions', () => {
         )
     });
 });
+
+suite('Text Sanitizing', () => {
+    test('removes right-to-left override characters from text', () => {
+        useFakeTimers(1621014626000);
+        const exampleCommit: Commit = {
+            "author": {
+                "mail": "<vdavydov.dev@gmail.com>",
+                "name": "Vladimir Davydov\u202e",
+                "timestamp": "1423781950",
+                "date": new Date(1_423_781_950_000),
+                "tz": "-0800",
+            },
+            "committer": {
+                "mail": "<torvalds@linux-foundation.org>",
+                "name": "Linus Torvalds",
+                "timestamp": "1423796049",
+                "date": new Date(1_423_796_049_000),
+                "tz": "-0800",
+            },
+            "hash": "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce",
+            "summary": "list_lru: \u202eintroduce per-memcg lists",
+        };
+        const normalizedCommitInfoTokens = normalizeCommitInfoTokens(exampleCommit);
+
+        assert.strictEqual(
+            parseTokens('Blame ${author.name} (${commit.summary})', normalizedCommitInfoTokens),
+            'Blame Vladimir Davydov (list_lru: introduce per-memcg lists)',
+        )
+    })
+})
