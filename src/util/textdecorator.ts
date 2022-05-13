@@ -153,7 +153,7 @@ export const parseTokens = <T extends InfoTokens>(
         }
     }
 
-    return out;
+    return out.replace(/\u202e/g, '');
 }
 
 export const toTextView = (commit: Commit): string => parseTokens(
