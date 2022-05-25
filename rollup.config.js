@@ -12,6 +12,7 @@ export default {
         "vscode",
         "child_process",
         "fs",
+        "fs/promises",
         "url",
         "path",
     ],

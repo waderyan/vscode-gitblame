@@ -1,4 +1,2 @@
-webpack.config.js
-webpack.config.test.js
 out/**
-dist/bundle.js
+node_modules/**
