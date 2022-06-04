@@ -1,5 +1,8 @@
 # Change Log
 
+# 8.2.2 (June 04, 2022)
+* Bug: Errors get logged to console when directory is not using git [#124](https://github.com/Sertion/vscode-gitblame/issues/124) (Thanks to [Daniel Abromeit aka Abro](https://github.com/Abromeit))
+
 # 8.2.1 (May 25, 2022)
 * Fix: Updating dependencies
 * Fix: CHANGELOG.md now has correct release date for 8.2.0
