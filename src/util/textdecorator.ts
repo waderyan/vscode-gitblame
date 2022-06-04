@@ -38,7 +38,7 @@ export const normalizeCommitInfoTokens = (
 
     const ago = between(now, author.date);
     const cAgo = between(now, committer.date);
-    const shortness = (target: string, fallbackLength: string) => (length = ''): string => {
+    const shortness = (target: string, fallbackLength: string) => (length = ""): string => {
         return target.substr(0, parseInt(length || fallbackLength, 10));
     };
 
@@ -153,7 +153,7 @@ export const parseTokens = <T extends InfoTokens>(
         }
     }
 
-    return out.replace(/\u202e/g, '');
+    return out.replace(/\u202e/g, "");
 }
 
 export const toTextView = (commit: Commit): string => parseTokens(

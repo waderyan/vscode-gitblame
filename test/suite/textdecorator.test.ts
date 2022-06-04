@@ -134,7 +134,7 @@ suite("Token Parser", (): void => {
             if (value) {
                 return `${ value }-example`;
             } else {
-                return `-example`;
+                return "-example";
             }
         },
         "mixed.token": (): string => "mIxeD-ToKeN",
@@ -338,7 +338,7 @@ suite("Text Decorator with CommitInfoToken", (): void => {
     suiteSetup(() => {
         faketimer = useFakeTimers({
             now: 1_621_014_626_000,
-            toFake: ['Date'],
+            toFake: ["Date"],
             shouldAdvanceTime: false,
         });
     });
@@ -402,19 +402,19 @@ suite("Text Decorator with CommitInfoToken", (): void => {
     check("commit.hash_short,100|u", "60D3FD32A7A9DA4C8C93A9F89CFDA22A0B4C65CE");
 });
 
-suite('issue #119 regressions', () => {
+suite("issue #119 regressions", () => {
     let faketimer: SinonFakeTimers | undefined;
     suiteSetup(() => {
         faketimer = useFakeTimers({
             now: 1_621_014_626_000,
-            toFake: ['Date'],
+            toFake: ["Date"],
             shouldAdvanceTime: false,
         });
     });
     suiteTeardown(() => {
         faketimer?.restore();
     });
-    test('commit.summary before commit.hash_short', () => {
+    test("commit.summary before commit.hash_short", () => {
         const exampleCommit: Commit = {
             "author": {
                 "mail": "<vdavydov.dev@gmail.com>",
@@ -436,12 +436,12 @@ suite('issue #119 regressions', () => {
         const normalizedCommitInfoTokens = normalizeCommitInfoTokens(exampleCommit);
 
         assert.strictEqual(
-            parseTokens('${commit.summary} ${commit.hash_short}', normalizedCommitInfoTokens),
-            'list_lru: introduce per-memcg lists 60d3fd3',
+            parseTokens("${commit.summary} ${commit.hash_short}", normalizedCommitInfoTokens),
+            "list_lru: introduce per-memcg lists 60d3fd3",
         )
     });
 
-    test('commit.summary before shortened commit.hash_short', () => {
+    test("commit.summary before shortened commit.hash_short", () => {
         const exampleCommit: Commit = {
             "author": {
                 "mail": "<vdavydov.dev@gmail.com>",
@@ -463,12 +463,12 @@ suite('issue #119 regressions', () => {
         const normalizedCommitInfoTokens = normalizeCommitInfoTokens(exampleCommit);
 
         assert.strictEqual(
-            parseTokens('${commit.summary} ${commit.hash_short,7}', normalizedCommitInfoTokens),
-            'list_lru: introduce per-memcg lists 60d3fd3',
+            parseTokens("${commit.summary} ${commit.hash_short,7}", normalizedCommitInfoTokens),
+            "list_lru: introduce per-memcg lists 60d3fd3",
         )
     });
 
-    test('commit.summary before shortened commit.hash', () => {
+    test("commit.summary before shortened commit.hash", () => {
         const exampleCommit: Commit = {
             "author": {
                 "mail": "<vdavydov.dev@gmail.com>",
@@ -490,12 +490,12 @@ suite('issue #119 regressions', () => {
         const normalizedCommitInfoTokens = normalizeCommitInfoTokens(exampleCommit);
 
         assert.strictEqual(
-            parseTokens('${commit.summary} ${commit.hash,7}', normalizedCommitInfoTokens),
-            'list_lru: introduce per-memcg lists 60d3fd3',
+            parseTokens("${commit.summary} ${commit.hash,7}", normalizedCommitInfoTokens),
+            "list_lru: introduce per-memcg lists 60d3fd3",
         )
     });
 
-    test('commit.summary before shortened commit.summary', () => {
+    test("commit.summary before shortened commit.summary", () => {
         const exampleCommit: Commit = {
             "author": {
                 "mail": "<vdavydov.dev@gmail.com>",
@@ -517,14 +517,14 @@ suite('issue #119 regressions', () => {
         const normalizedCommitInfoTokens = normalizeCommitInfoTokens(exampleCommit);
 
         assert.strictEqual(
-            parseTokens('${commit.summary} ${commit.summary,7}', normalizedCommitInfoTokens),
-            'list_lru: introduce per-memcg lists list_lr',
+            parseTokens("${commit.summary} ${commit.summary,7}", normalizedCommitInfoTokens),
+            "list_lru: introduce per-memcg lists list_lr",
         )
     });
 });
 
-suite('Text Sanitizing', () => {
-    test('removes right-to-left override characters from text', () => {
+suite("Text Sanitizing", () => {
+    test("removes right-to-left override characters from text", () => {
         const exampleCommit: Commit = {
             "author": {
                 "mail": "<vdavydov.dev@gmail.com>",
@@ -546,8 +546,8 @@ suite('Text Sanitizing', () => {
         const normalizedCommitInfoTokens = normalizeCommitInfoTokens(exampleCommit);
 
         assert.strictEqual(
-            parseTokens('Blame ${author.name} (${commit.summary})', normalizedCommitInfoTokens),
-            'Blame Vladimir Davydov (list_lru: introduce per-memcg lists)',
+            parseTokens("Blame ${author.name} (${commit.summary})", normalizedCommitInfoTokens),
+            "Blame Vladimir Davydov (list_lru: introduce per-memcg lists)",
         )
     })
 })

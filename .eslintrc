@@ -62,6 +62,7 @@
                 "argsIgnorePattern": "^_"
             }
         ],
+        "quotes": ["error", "double"],
         "no-trailing-spaces": "error",
         "max-params": "error",
         "no-eq-null": "error",

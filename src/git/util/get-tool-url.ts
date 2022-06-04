@@ -37,27 +37,27 @@ const getDefaultToolUrl = (origin: string, commitInfo: Commit): Uri | undefined 
     }
 }
 
-const getPathIndex = (path: string, index?: string, splitOn = '/'): string => {
+const getPathIndex = (path: string, index?: string, splitOn = "/"): string => {
     const parts = path.split(splitOn).filter(a => !!a);
-    return parts[Number(index)] || 'invalid-index';
+    return parts[Number(index)] || "invalid-index";
 }
 
 const gitOriginHostname = ({ hostname }: URL): string | ((index?: string) => string) => {
     return (index?: string): string => {
-        if (index === '') {
+        if (index === "") {
             return hostname;
         }
 
-        return getPathIndex(hostname, index, '.');
+        return getPathIndex(hostname, index, ".");
     };
 }
 
 export const gitRemotePath = (remote: string): string | ((index?: string) => string) => {
     if (/^[a-z]+?@/.test(remote)) {
-        const [, path] = split(remote, ':');
-        return (index = ''): string => {
-            if (index === '') {
-                return '/' + path;
+        const [, path] = split(remote, ":");
+        return (index = ""): string => {
+            if (index === "") {
+                return "/" + path;
             }
 
             return getPathIndex(path, index);
@@ -65,15 +65,15 @@ export const gitRemotePath = (remote: string): string | ((index?: string) => str
     }
     try {
         const { pathname } = new URL(remote);
-        return (index = ''): string => {
-            if (index === '') {
+        return (index = ""): string => {
+            if (index === "") {
                 return pathname;
             }
 
             return getPathIndex(pathname, index);
         };
     } catch {
-        return () => 'no-remote-url'
+        return () => "no-remote-url"
     }
 }
 

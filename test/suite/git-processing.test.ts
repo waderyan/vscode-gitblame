@@ -10,10 +10,10 @@ import {
     processChunk,
 } from "../../src/git/util/stream-parsing";
 
-type CommitAuthorStringDate = Omit<CommitAuthor, 'date'> & {
+type CommitAuthorStringDate = Omit<CommitAuthor, "date"> & {
     date: string;
 }
-type CommitWithAutorStringDate = Omit<Commit, 'author' | 'committer'> & {
+type CommitWithAutorStringDate = Omit<Commit, "author" | "committer"> & {
     author: CommitAuthorStringDate;
     committer: CommitAuthorStringDate;
 }
@@ -31,7 +31,7 @@ function load(fileName: string, buffer: boolean): string | Buffer {
 function datesToString(convert: (Commit | Line)[]): (CommitWithAutorStringDate | Line)[] {
     const converted: (CommitWithAutorStringDate | Line)[] = [];
     for (const element of convert) {
-        if ('author' in element) {
+        if ("author" in element) {
             converted.push({
                 ...element,
                 author: {

@@ -12,7 +12,7 @@ export class StatusBarView {
     constructor() {
         this.createStatusBarItem();
         workspace.onDidChangeConfiguration(e => {
-            if (e.affectsConfiguration('gitblame')) {
+            if (e.affectsConfiguration("gitblame")) {
                 this.createStatusBarItem();
             }
         });
@@ -42,7 +42,7 @@ export class StatusBarView {
     }
 
     public activity(): void {
-        this.text('$(sync~spin) Waiting for git blame response', false);
+        this.text("$(sync~spin) Waiting for git blame response", false);
     }
 
     public dispose(): void {
