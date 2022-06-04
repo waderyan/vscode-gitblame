@@ -22,14 +22,14 @@ export class HeadWatch {
         const gitRoot = this.normalizeWindowsDriveLetter(resolve(dirname(filePath), relativeGitRoot));
         const watched = this.heads.has(gitRoot);
 
-        if (watched === true) {
+        if (watched === true || relativeGitRoot === "") {
             return;
         }
 
-        const repositoryRoot = resolve(gitRoot, '..');
+        const repositoryRoot = resolve(gitRoot, "..");
 
         this.heads.set(gitRoot, watch(
-            join(gitRoot, 'HEAD'),
+            join(gitRoot, "HEAD"),
             {
                 persistent: false,
             },
