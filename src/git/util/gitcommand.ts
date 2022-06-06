@@ -55,7 +55,7 @@ export const getGitFolder = async (
 export const isGitTracked = async (fileName: string): Promise<boolean> => !!await getGitFolder(fileName);
 
 export const blameProcess = (realpathFileName: string): ChildProcess => {
-    const args = ["blame", "--incremental", "--", realpathFileName];
+    const args = ["blame", "-C", "--incremental", "--", realpathFileName];
 
     if (getProperty("ignoreWhitespace")) {
         args.splice(1, 0, "-w");
