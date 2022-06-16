@@ -49,7 +49,9 @@ export class Blamer {
                 if (createdFile) {
                     this.fsWatchers.set(
                         fileName,
-                        watch(fileName, () => this.remove(fileName)),
+                        watch(fileName, () => {
+                            this.remove(fileName)
+                        }),
                     );
                 }
             });

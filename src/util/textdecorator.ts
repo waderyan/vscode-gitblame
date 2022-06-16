@@ -139,6 +139,10 @@ const modify = (value: string, modifier = ""): string => {
     return value;
 }
 
+const sanitizeToken = (token: string): string => {
+    return token.replace(/\u202e/g, "")
+}
+
 export const parseTokens = <T extends InfoTokens>(
     target: string,
     infoTokens: T,
@@ -153,7 +157,7 @@ export const parseTokens = <T extends InfoTokens>(
         }
     }
 
-    return out.replace(/\u202e/g, "");
+    return sanitizeToken(out);
 }
 
 export const toTextView = (commit: Commit): string => parseTokens(

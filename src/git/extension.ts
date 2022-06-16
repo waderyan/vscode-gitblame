@@ -182,6 +182,7 @@ export class Extension {
         if (!undercover) {
             this.view.activity();
         }
+
         this.headWatcher.addFile(editor.document.fileName);
         const line = await this.blame.getLine(editor.document.fileName, editor.selection.active.line);
 
