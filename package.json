@@ -34,7 +34,7 @@
     "package": "npx vsce package",
     "lint": "eslint --no-inline-config --ext .js,.ts ./src ./test",
     "pretest": "tsc --project tsconfig.test.json",
-    "test": "npm run test-build && node ./out/test/run-test.js"
+    "test": "npm run pretest && node ./out/test/run-test.js"
   },
   "devDependencies": {
     "@types/mocha": "^9.1.1",

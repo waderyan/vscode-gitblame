@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Code quality
+        run: npm run lint
+
+      - name: Run tests
+        uses: GabrielBB/xvfb-action@v1.6
+        with:
+          run: npm run test
