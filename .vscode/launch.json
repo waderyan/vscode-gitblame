@@ -10,7 +10,6 @@
 				"--disable-extensions",
 				"--extensionDevelopmentPath=${workspaceRoot}"
 			],
-			"stopOnEntry": false,
 			"sourceMaps": true,
 			"outFiles": [
 				"${workspaceRoot}/out/src/**/*.js"
@@ -27,12 +26,11 @@
 				"--extensionDevelopmentPath=${workspaceRoot}",
 				"--extensionTestsPath=${workspaceRoot}/out/test/suite"
 			],
-			"stopOnEntry": false,
 			"sourceMaps": true,
 			"outFiles": [
 				"${workspaceRoot}/out/src/**/*.js"
 			],
-			"preLaunchTask": "npm: test-build"
+			"preLaunchTask": "npm: pretest"
 		}
 	]
 }
