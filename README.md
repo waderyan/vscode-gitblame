@@ -145,7 +145,7 @@ Git Blame works very well with WSL but does not work with the web browser based 
 | `${time.ago}` | No | - | - | displays an estimation of how long ago the author committed (e.g. `10 hours ago`, `20 days ago`, `4 months ago`) |
 | `${time.c_ago}` | No | - | - | displays an estimation of how long ago the committer committed (e.g. `10 hours ago`, `20 days ago`, `4 months ago`) |
 
-## Hosekeeping
+## Housekeeping
  * [Planned Features](https://github.com/Sertion/vscode-gitblame/labels/Planned)
  * [Known Issues](https://github.com/Sertion/vscode-gitblame/issues)
 
