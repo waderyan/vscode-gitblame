@@ -102,11 +102,11 @@ function * commitFilter(
         return;
     }
 
-    const oldCommitInfo = registry.get(commitInfo.hash);
+    const oldCommitInfo = registry.get(commitInfo.hash) ?? commitInfo;
 
-    registry.set(commitInfo.hash, oldCommitInfo ?? commitInfo);
+    registry.set(commitInfo.hash, oldCommitInfo);
 
-    yield [oldCommitInfo ?? commitInfo, lines];
+    yield [oldCommitInfo, lines];
 }
 
 function * protoLine(): Generator<Line> {

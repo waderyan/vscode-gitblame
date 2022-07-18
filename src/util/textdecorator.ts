@@ -83,6 +83,26 @@ const createSubSectionOrEmpty = (target: string, endIndex: number) => (startInde
     return target.substring(startIndex + 1, lastIndex);
 }
 
+function createTokenReplaceGroup<T extends InfoTokens>(
+    infoTokens: T,
+    target: string,
+    index: number,
+): TokenReplaceGroup {
+    const endIndex = target.indexOf("}", index);
+    const indexOrEnd = createIndexOrEnd(target, index, endIndex);
+    const subSectionOrEmpty = createSubSectionOrEmpty(target, endIndex);
+
+    const parameterIndex = indexOrEnd(",");
+    const modifierIndex = indexOrEnd("|");
+    const functionName = target.substring(index, Math.min(parameterIndex, modifierIndex));
+
+    return [
+        infoTokens[functionName] ?? functionName,
+        subSectionOrEmpty(modifierIndex, endIndex),
+        subSectionOrEmpty(parameterIndex, modifierIndex),
+    ];
+}
+
 function * parse<T extends InfoTokens>(target: string, infoTokens: T): Generator<TokenReplaceGroup> {
     let lastSplit = 0;
     let startIndex = 0;
@@ -96,6 +116,8 @@ function * parse<T extends InfoTokens>(target: string, infoTokens: T): Generator
             startIndex = index - 1;
             yield [target.slice(lastSplit, startIndex)];
             lastSplit = startIndex;
+        } else if (mode === MODE.START) {
+            mode = MODE.OUT;
         } else if (mode === MODE.IN) {
             mode = MODE.OUT;
             const endIndex = target.indexOf("}", index);
@@ -103,22 +125,9 @@ function * parse<T extends InfoTokens>(target: string, infoTokens: T): Generator
                 break;
             }
 
-            const indexOrEnd = createIndexOrEnd(target, index, endIndex);
-            const subSectionOrEmpty = createSubSectionOrEmpty(target, endIndex);
-
-            const parameterIndex = indexOrEnd(",");
-            const modifierIndex = indexOrEnd("|");
-            const functionName = target.substring(index, Math.min(parameterIndex, modifierIndex));
-
-            yield [
-                infoTokens[functionName] ?? functionName,
-                subSectionOrEmpty(modifierIndex, endIndex),
-                subSectionOrEmpty(parameterIndex, modifierIndex),
-            ];
+            yield createTokenReplaceGroup(infoTokens, target, index);
 
             lastSplit = endIndex + 1;
-        } else if (mode === MODE.START) {
-            mode = MODE.OUT;
         }
     }
 

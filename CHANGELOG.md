@@ -1,5 +1,12 @@
 # Change Log
 
+# 9.0.0 (July xx, 2022)
+* Breaking change: Removed `gitblame.isWebPathPlural`. To recreate the old behavior add `.` to `gitblame.pluralWebPathSubstrings`.
+* Breaking change: Default status bar position is now to the right.
+* Fix: Updating the readme
+* Fix: The `${commit.hash}` token now takes a parameter just like `${commit.hash_short,length}` (This change was made some time ago, but now documented here!)
+* Fix: Updating dependencies
+
 # 8.2.3 (June 17, 2022)
 * Bug: Reduce the amount of `git` calls
 * Feature: Move to new build system with fewer dependencies

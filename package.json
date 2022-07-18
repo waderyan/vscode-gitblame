@@ -2,7 +2,7 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "8.2.3",
+  "version": "9.0.0",
   "publisher": "waderyan",
   "engines": {
     "vscode": "^1.68.0"
@@ -31,9 +31,9 @@
   "scripts": {
     "vscode:prepublish": "npm run build",
     "build": "node esbuild.mjs",
-    "test-build": "tsc --project tsconfig.test.json",
     "package": "npx vsce package",
     "lint": "eslint --no-inline-config --ext .js,.ts ./src ./test",
+    "pretest": "tsc --project tsconfig.test.json",
     "test": "npm run test-build && node ./out/test/run-test.js"
   },
   "devDependencies": {
@@ -45,10 +45,10 @@
     "@typescript-eslint/parser": "^5.26.0",
     "@vscode/test-electron": "^2.1.3",
     "esbuild": "^0.14.43",
-    "eslint": "^8.16.0",
+    "eslint": "^8.20.0",
     "mocha": "^10.0.0",
     "sinon": "^14.0.0",
-    "typescript": "^4.7.2"
+    "typescript": "^4.7.4"
   },
   "homepage": "https://github.com/Sertion/vscode-gitblame/blob/master/README.md",
   "bugs": {
@@ -95,7 +95,7 @@
         },
         "gitblame.statusBarMessageDisplayRight": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Display status bar message to the right"
         },
         "gitblame.statusBarMessageClickAction": {
@@ -112,7 +112,7 @@
         },
         "gitblame.statusBarMessageFormat": {
           "type": "string",
-          "default": "Blame ${author.name} ( ${time.ago} )",
+          "default": "Blame ${author.name} (${time.ago})",
           "description": "Customize the status bar message"
         },
         "gitblame.statusBarMessageNoCommit": {
@@ -140,9 +140,7 @@
           "markdownDescription": "Ignore whitespace changes when blaming (`-w` flag)"
         },
         "gitblame.isWebPathPlural": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "BitBucket uses _commits_ instead of _commit_ in their web interface. Turn this on if you want the View button to work for BitBucket."
+          "deprecationMessage": "This setting has been replaced by gitblame.pluralWebPathSubstrings"
         },
         "gitblame.pluralWebPathSubstrings": {
           "type": "array",
@@ -150,7 +148,7 @@
             "bitbucket",
             "atlassian"
           ],
-          "markdownDescription": "An array of substrings that, when present in the git origin URL, activates `gitblame.isWebPathPlural`"
+          "markdownDescription": "An array of substrings that, when present in the git origin URL, adds an extra _s_ to the url after _commit_ in `gitblame.commitUrl`'s default behavior"
         }
       }
     }
