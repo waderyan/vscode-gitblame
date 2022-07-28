@@ -6,7 +6,7 @@ Quick link to open the latest commit on the current line in the most popular onl
 
 ## How to use
 
-![Feature Usage](https://raw.githubusercontent.com/Sertion/vscode-gitblame/master/images/GitBlamePreview.gif)
+![Feature Usage](https://raw.githubusercontent.com/Sertion/vscode-gitblame/master/images/preview.png)
 
 Git blame adds git blame information to your vscode compatible view. See information about what commit last changed a line and how long ago it was. Click the message to see more information about the commit. It is possible to edit both of these information messages in the settings. There are multiple tokens avalible. These are described below.
 
