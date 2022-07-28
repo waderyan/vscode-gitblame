@@ -1,1276 +1,3577 @@
 [
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1568932927",
-            "date": "2019-09-19T22:42:07.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1568932927",
-            "date": "2019-09-19T22:42:07.000Z",
-            "tz": "+0000"
-        },
-        "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
-        "summary": "Increase precision of PDF layout dirty tracking"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 66,
+            "result": 66
+        }
     },
-    [
-        66,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        67,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        68,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        69,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        70,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        71,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        72,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        73,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        74,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        75,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        76,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        77,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        78,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        79,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1568932927",
-            "date": "2019-09-19T22:42:07.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1568932927",
-            "date": "2019-09-19T22:42:07.000Z",
-            "tz": "+0000"
-        },
-        "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
-        "summary": "Increase precision of PDF layout dirty tracking"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 67,
+            "result": 67
+        }
     },
-    [
-        119,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        120,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        121,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        122,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        123,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1568932927",
-            "date": "2019-09-19T22:42:07.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1568932927",
-            "date": "2019-09-19T22:42:07.000Z",
-            "tz": "+0000"
-        },
-        "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
-        "summary": "Increase precision of PDF layout dirty tracking"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 68,
+            "result": 68
+        }
     },
-    [
-        126,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        127,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        128,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        129,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        130,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        131,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        132,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        133,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
-    [
-        134,
-        "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1566519176",
-            "date": "2019-08-23T00:12:56.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1566519176",
-            "date": "2019-08-23T00:12:56.000Z",
-            "tz": "+0000"
-        },
-        "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
-        "summary": "Clarify page rectangles in DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 69,
+            "result": 69
+        }
     },
-    [
-        84,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1566519176",
-            "date": "2019-08-23T00:12:56.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1566519176",
-            "date": "2019-08-23T00:12:56.000Z",
-            "tz": "+0000"
-        },
-        "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
-        "summary": "Clarify page rectangles in DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 70,
+            "result": 70
+        }
     },
-    [
-        89,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        90,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        91,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        92,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        93,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        94,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        95,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        96,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1566519176",
-            "date": "2019-08-23T00:12:56.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1566519176",
-            "date": "2019-08-23T00:12:56.000Z",
-            "tz": "+0000"
-        },
-        "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
-        "summary": "Clarify page rectangles in DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 71,
+            "result": 71
+        }
     },
-    [
-        110,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        111,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        112,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        113,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        114,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        115,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        116,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        117,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
-    [
-        118,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1566519176",
-            "date": "2019-08-23T00:12:56.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1566519176",
-            "date": "2019-08-23T00:12:56.000Z",
-            "tz": "+0000"
-        },
-        "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
-        "summary": "Clarify page rectangles in DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 72,
+            "result": 72
+        }
     },
-    [
-        138,
-        "e4bd75222c6a9379a8e3e4aea5364934445d8bb1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565810396",
-            "date": "2019-08-14T19:19:56.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565810396",
-            "date": "2019-08-14T19:19:56.000Z",
-            "tz": "+0000"
-        },
-        "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
-        "summary": "Move page layout rectangles into DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 73,
+            "result": 73
+        }
     },
-    [
-        8,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565810396",
-            "date": "2019-08-14T19:19:56.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565810396",
-            "date": "2019-08-14T19:19:56.000Z",
-            "tz": "+0000"
-        },
-        "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
-        "summary": "Move page layout rectangles into DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 74,
+            "result": 74
+        }
     },
-    [
-        11,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565810396",
-            "date": "2019-08-14T19:19:56.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565810396",
-            "date": "2019-08-14T19:19:56.000Z",
-            "tz": "+0000"
-        },
-        "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
-        "summary": "Move page layout rectangles into DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 75,
+            "result": 75
+        }
     },
-    [
-        86,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
-    [
-        87,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
-    [
-        88,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565810396",
-            "date": "2019-08-14T19:19:56.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565810396",
-            "date": "2019-08-14T19:19:56.000Z",
-            "tz": "+0000"
-        },
-        "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
-        "summary": "Move page layout rectangles into DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 76,
+            "result": 76
+        }
     },
-    [
-        97,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
-    [
-        98,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
-    [
-        99,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
-    [
-        100,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
-    [
-        101,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
-    [
-        102,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
-    [
-        103,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
-    [
-        104,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
-    [
-        105,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
-    [
-        106,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
-    [
-        107,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565810396",
-            "date": "2019-08-14T19:19:56.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565810396",
-            "date": "2019-08-14T19:19:56.000Z",
-            "tz": "+0000"
-        },
-        "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
-        "summary": "Move page layout rectangles into DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 77,
+            "result": 77
+        }
     },
-    [
-        137,
-        "ff7ec676a7222317628ca23a1409ebaf691c52b9"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565208336",
-            "date": "2019-08-07T20:05:36.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565208336",
-            "date": "2019-08-07T20:05:36.000Z",
-            "tz": "+0000"
-        },
-        "hash": "9a62bf44b280fa0260b5c63676f488126997869b",
-        "summary": "Refactor default page orientation to an enum"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 78,
+            "result": 78
+        }
     },
-    [
-        13,
-        "9a62bf44b280fa0260b5c63676f488126997869b"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565208336",
-            "date": "2019-08-07T20:05:36.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565208336",
-            "date": "2019-08-07T20:05:36.000Z",
-            "tz": "+0000"
-        },
-        "hash": "9a62bf44b280fa0260b5c63676f488126997869b",
-        "summary": "Refactor default page orientation to an enum"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 79,
+            "result": 79
+        }
     },
-    [
-        38,
-        "9a62bf44b280fa0260b5c63676f488126997869b"
-    ],
-    [
-        39,
-        "9a62bf44b280fa0260b5c63676f488126997869b"
-    ],
-    [
-        40,
-        "9a62bf44b280fa0260b5c63676f488126997869b"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565208336",
-            "date": "2019-08-07T20:05:36.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565208336",
-            "date": "2019-08-07T20:05:36.000Z",
-            "tz": "+0000"
-        },
-        "hash": "9a62bf44b280fa0260b5c63676f488126997869b",
-        "summary": "Refactor default page orientation to an enum"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 119,
+            "result": 119
+        }
     },
-    [
-        49,
-        "9a62bf44b280fa0260b5c63676f488126997869b"
-    ],
     {
-        "author": {
-            "mail": "<chinsenj@google.com>",
-            "name": "Jeremy Chinsen",
-            "timestamp": "1565143134",
-            "date": "2019-08-07T01:58:54.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565143134",
-            "date": "2019-08-07T01:58:54.000Z",
-            "tz": "+0000"
-        },
-        "hash": "08beb48cb405bad33ba7ee38ec413456da70163e",
-        "summary": "Add Document::GetSingleViewLayout() and draw_utils::GetRectForSingleView()."
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 120,
+            "result": 120
+        }
     },
-    [
-        85,
-        "08beb48cb405bad33ba7ee38ec413456da70163e"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
-        },
-        "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
-        "summary": "Split options from chrome_pdf::DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 121,
+            "result": 121
+        }
     },
-    [
-        23,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        24,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        25,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
-        },
-        "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
-        "summary": "Split options from chrome_pdf::DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 122,
+            "result": 122
+        }
     },
-    [
-        28,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        29,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        30,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        31,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        32,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        33,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        34,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        35,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        36,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        37,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
-        },
-        "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
-        "summary": "Split options from chrome_pdf::DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 123,
+            "result": 123
+        }
     },
-    [
-        41,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        42,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        43,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        44,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        45,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        46,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        47,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        48,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
-        },
-        "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
-        "summary": "Split options from chrome_pdf::DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 126,
+            "result": 126
+        }
     },
-    [
-        50,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        51,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
-        },
-        "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
-        "summary": "Split options from chrome_pdf::DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 127,
+            "result": 127
+        }
     },
-    [
-        58,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        59,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
-        },
-        "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
-        "summary": "Split options from chrome_pdf::DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 128,
+            "result": 128
+        }
     },
-    [
-        63,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
-    [
-        64,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565119532",
-            "date": "2019-08-06T19:25:32.000Z",
-            "tz": "+0000"
-        },
-        "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
-        "summary": "Split options from chrome_pdf::DocumentLayout"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 129,
+            "result": 129
+        }
     },
-    [
-        124,
-        "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57"
-    ],
     {
-        "author": {
-            "mail": "<chinsenj@google.com>",
-            "name": "Jeremy Chinsen",
-            "timestamp": "1565052017",
-            "date": "2019-08-06T00:40:17.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565052017",
-            "date": "2019-08-06T00:40:17.000Z",
-            "tz": "+0000"
-        },
-        "hash": "d6fd27ce86e82f6f1b782e9398dbbb7343f883bd",
-        "summary": "Add DocumentLayout::GetTwoUpViewLayout() and PDFiumEngine::LoadPagesInTwoUpView()."
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 130,
+            "result": 130
+        }
     },
-    [
-        9,
-        "d6fd27ce86e82f6f1b782e9398dbbb7343f883bd"
-    ],
-    [
-        10,
-        "d6fd27ce86e82f6f1b782e9398dbbb7343f883bd"
-    ],
     {
-        "author": {
-            "mail": "<chinsenj@google.com>",
-            "name": "Jeremy Chinsen",
-            "timestamp": "1565052017",
-            "date": "2019-08-06T00:40:17.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565052017",
-            "date": "2019-08-06T00:40:17.000Z",
-            "tz": "+0000"
-        },
-        "hash": "d6fd27ce86e82f6f1b782e9398dbbb7343f883bd",
-        "summary": "Add DocumentLayout::GetTwoUpViewLayout() and PDFiumEngine::LoadPagesInTwoUpView()."
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 131,
+            "result": 131
+        }
     },
-    [
-        14,
-        "d6fd27ce86e82f6f1b782e9398dbbb7343f883bd"
-    ],
     {
-        "author": {
-            "mail": "<chinsenj@google.com>",
-            "name": "Jeremy Chinsen",
-            "timestamp": "1565052017",
-            "date": "2019-08-06T00:40:17.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565052017",
-            "date": "2019-08-06T00:40:17.000Z",
-            "tz": "+0000"
-        },
-        "hash": "d6fd27ce86e82f6f1b782e9398dbbb7343f883bd",
-        "summary": "Add DocumentLayout::GetTwoUpViewLayout() and PDFiumEngine::LoadPagesInTwoUpView()."
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 132,
+            "result": 132
+        }
     },
-    [
-        108,
-        "d6fd27ce86e82f6f1b782e9398dbbb7343f883bd"
-    ],
     {
-        "author": {
-            "mail": "<thestig@chromium.org>",
-            "name": "Lei Zhang",
-            "timestamp": "1565051283",
-            "date": "2019-08-06T00:28:03.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565051283",
-            "date": "2019-08-06T00:28:03.000Z",
-            "tz": "+0000"
-        },
-        "hash": "4906c103664937af53aba5d651626c5d5b003d52",
-        "summary": "Move document layout constants from PDFiumEngine to DocumentLayout."
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 133,
+            "result": 133
+        }
     },
-    [
-        12,
-        "4906c103664937af53aba5d651626c5d5b003d52"
-    ],
     {
-        "author": {
-            "mail": "<thestig@chromium.org>",
-            "name": "Lei Zhang",
-            "timestamp": "1565051283",
-            "date": "2019-08-06T00:28:03.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1568932927",
+                "date": "2019-09-19T22:42:07.000Z",
+                "tz": "+0000"
+            },
+            "hash": "6d326b9edbf4c2ee1c3ad155d16012acf3c0cc0c",
+            "summary": "Increase precision of PDF layout dirty tracking"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1565051283",
-            "date": "2019-08-06T00:28:03.000Z",
-            "tz": "+0000"
-        },
-        "hash": "4906c103664937af53aba5d651626c5d5b003d52",
-        "summary": "Move document layout constants from PDFiumEngine to DocumentLayout."
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 134,
+            "result": 134
+        }
     },
-    [
-        52,
-        "4906c103664937af53aba5d651626c5d5b003d52"
-    ],
-    [
-        53,
-        "4906c103664937af53aba5d651626c5d5b003d52"
-    ],
-    [
-        54,
-        "4906c103664937af53aba5d651626c5d5b003d52"
-    ],
-    [
-        55,
-        "4906c103664937af53aba5d651626c5d5b003d52"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
-        },
-        "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
-        "summary": "Split layout state from PDFiumEngine"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 77,
+            "result": 84
+        }
     },
-    [
-        1,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        2,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        3,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        4,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        5,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        6,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        7,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
-        },
-        "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
-        "summary": "Split layout state from PDFiumEngine"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 82,
+            "result": 89
+        }
     },
-    [
-        15,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        16,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        17,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        18,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        19,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        20,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        21,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        22,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
-        },
-        "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
-        "summary": "Split layout state from PDFiumEngine"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 83,
+            "result": 90
+        }
     },
-    [
-        26,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        27,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
-        },
-        "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
-        "summary": "Split layout state from PDFiumEngine"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 84,
+            "result": 91
+        }
     },
-    [
-        56,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        57,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
-        },
-        "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
-        "summary": "Split layout state from PDFiumEngine"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 85,
+            "result": 92
+        }
     },
-    [
-        60,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        61,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        62,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
-        },
-        "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
-        "summary": "Split layout state from PDFiumEngine"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 86,
+            "result": 93
+        }
     },
-    [
-        65,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
-        },
-        "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
-        "summary": "Split layout state from PDFiumEngine"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 87,
+            "result": 94
+        }
     },
-    [
-        80,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        81,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        82,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        83,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
-        },
-        "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
-        "summary": "Split layout state from PDFiumEngine"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 88,
+            "result": 95
+        }
     },
-    [
-        109,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
-        },
-        "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
-        "summary": "Split layout state from PDFiumEngine"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 89,
+            "result": 96
+        }
     },
-    [
-        125,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
-        },
-        "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
-        "summary": "Split layout state from PDFiumEngine"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 108,
+            "result": 110
+        }
     },
-    [
-        135,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        136,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
     {
-        "author": {
-            "mail": "<kmoon@chromium.org>",
-            "name": "K Moon",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
         },
-        "committer": {
-            "mail": "<commit-bot@chromium.org>",
-            "name": "Commit Bot",
-            "timestamp": "1564169270",
-            "date": "2019-07-26T19:27:50.000Z",
-            "tz": "+0000"
-        },
-        "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
-        "summary": "Split layout state from PDFiumEngine"
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 109,
+            "result": 111
+        }
     },
-    [
-        139,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        140,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        141,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        142,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ],
-    [
-        143,
-        "bd80ce77af4144b5f79957a499361b8f6f0f71e1"
-    ]
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 110,
+            "result": 112
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 111,
+            "result": 113
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 112,
+            "result": 114
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 113,
+            "result": 115
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 114,
+            "result": 116
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 115,
+            "result": 117
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 116,
+            "result": 118
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1566519176",
+                "date": "2019-08-23T00:12:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "e4bd75222c6a9379a8e3e4aea5364934445d8bb1",
+            "summary": "Clarify page rectangles in DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 122,
+            "result": 138
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 8,
+            "result": 8
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 11,
+            "result": 11
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 79,
+            "result": 86
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 80,
+            "result": 87
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 81,
+            "result": 88
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 83,
+            "result": 97
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 84,
+            "result": 98
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 85,
+            "result": 99
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 86,
+            "result": 100
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 87,
+            "result": 101
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 88,
+            "result": 102
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 89,
+            "result": 103
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 90,
+            "result": 104
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 91,
+            "result": 105
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 92,
+            "result": 106
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 93,
+            "result": 107
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565810396",
+                "date": "2019-08-14T19:19:56.000Z",
+                "tz": "+0000"
+            },
+            "hash": "ff7ec676a7222317628ca23a1409ebaf691c52b9",
+            "summary": "Move page layout rectangles into DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 105,
+            "result": 137
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565208336",
+                "date": "2019-08-07T20:05:36.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565208336",
+                "date": "2019-08-07T20:05:36.000Z",
+                "tz": "+0000"
+            },
+            "hash": "9a62bf44b280fa0260b5c63676f488126997869b",
+            "summary": "Refactor default page orientation to an enum"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 11,
+            "result": 13
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565208336",
+                "date": "2019-08-07T20:05:36.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565208336",
+                "date": "2019-08-07T20:05:36.000Z",
+                "tz": "+0000"
+            },
+            "hash": "9a62bf44b280fa0260b5c63676f488126997869b",
+            "summary": "Refactor default page orientation to an enum"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 36,
+            "result": 38
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565208336",
+                "date": "2019-08-07T20:05:36.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565208336",
+                "date": "2019-08-07T20:05:36.000Z",
+                "tz": "+0000"
+            },
+            "hash": "9a62bf44b280fa0260b5c63676f488126997869b",
+            "summary": "Refactor default page orientation to an enum"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 37,
+            "result": 39
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565208336",
+                "date": "2019-08-07T20:05:36.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565208336",
+                "date": "2019-08-07T20:05:36.000Z",
+                "tz": "+0000"
+            },
+            "hash": "9a62bf44b280fa0260b5c63676f488126997869b",
+            "summary": "Refactor default page orientation to an enum"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 38,
+            "result": 40
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565208336",
+                "date": "2019-08-07T20:05:36.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565208336",
+                "date": "2019-08-07T20:05:36.000Z",
+                "tz": "+0000"
+            },
+            "hash": "9a62bf44b280fa0260b5c63676f488126997869b",
+            "summary": "Refactor default page orientation to an enum"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 47,
+            "result": 49
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<chinsenj@google.com>",
+                "name": "Jeremy Chinsen",
+                "timestamp": "1565143134",
+                "date": "2019-08-07T01:58:54.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565143134",
+                "date": "2019-08-07T01:58:54.000Z",
+                "tz": "+0000"
+            },
+            "hash": "08beb48cb405bad33ba7ee38ec413456da70163e",
+            "summary": "Add Document::GetSingleViewLayout() and draw_utils::GetRectForSingleView()."
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 84,
+            "result": 85
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 20,
+            "result": 23
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 21,
+            "result": 24
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 22,
+            "result": 25
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 25,
+            "result": 28
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 26,
+            "result": 29
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 27,
+            "result": 30
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 28,
+            "result": 31
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 29,
+            "result": 32
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 30,
+            "result": 33
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 31,
+            "result": 34
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 32,
+            "result": 35
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 33,
+            "result": 36
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 34,
+            "result": 37
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 43,
+            "result": 41
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 44,
+            "result": 42
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 45,
+            "result": 43
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 46,
+            "result": 44
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 47,
+            "result": 45
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 48,
+            "result": 46
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 49,
+            "result": 47
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 50,
+            "result": 48
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 53,
+            "result": 50
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 54,
+            "result": 51
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 61,
+            "result": 58
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 62,
+            "result": 59
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 66,
+            "result": 63
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 67,
+            "result": 64
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565119532",
+                "date": "2019-08-06T19:25:32.000Z",
+                "tz": "+0000"
+            },
+            "hash": "eb9e000cfa6e1d9d407b3c5871cc7b617ba5fa57",
+            "summary": "Split options from chrome_pdf::DocumentLayout"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 93,
+            "result": 124
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<chinsenj@google.com>",
+                "name": "Jeremy Chinsen",
+                "timestamp": "1565052017",
+                "date": "2019-08-06T00:40:17.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565052017",
+                "date": "2019-08-06T00:40:17.000Z",
+                "tz": "+0000"
+            },
+            "hash": "d6fd27ce86e82f6f1b782e9398dbbb7343f883bd",
+            "summary": "Add DocumentLayout::GetTwoUpViewLayout() and PDFiumEngine::LoadPagesInTwoUpView()."
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 8,
+            "result": 9
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<chinsenj@google.com>",
+                "name": "Jeremy Chinsen",
+                "timestamp": "1565052017",
+                "date": "2019-08-06T00:40:17.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565052017",
+                "date": "2019-08-06T00:40:17.000Z",
+                "tz": "+0000"
+            },
+            "hash": "d6fd27ce86e82f6f1b782e9398dbbb7343f883bd",
+            "summary": "Add DocumentLayout::GetTwoUpViewLayout() and PDFiumEngine::LoadPagesInTwoUpView()."
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 9,
+            "result": 10
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<chinsenj@google.com>",
+                "name": "Jeremy Chinsen",
+                "timestamp": "1565052017",
+                "date": "2019-08-06T00:40:17.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565052017",
+                "date": "2019-08-06T00:40:17.000Z",
+                "tz": "+0000"
+            },
+            "hash": "d6fd27ce86e82f6f1b782e9398dbbb7343f883bd",
+            "summary": "Add DocumentLayout::GetTwoUpViewLayout() and PDFiumEngine::LoadPagesInTwoUpView()."
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 11,
+            "result": 14
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<chinsenj@google.com>",
+                "name": "Jeremy Chinsen",
+                "timestamp": "1565052017",
+                "date": "2019-08-06T00:40:17.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565052017",
+                "date": "2019-08-06T00:40:17.000Z",
+                "tz": "+0000"
+            },
+            "hash": "d6fd27ce86e82f6f1b782e9398dbbb7343f883bd",
+            "summary": "Add DocumentLayout::GetTwoUpViewLayout() and PDFiumEngine::LoadPagesInTwoUpView()."
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 59,
+            "result": 108
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<thestig@chromium.org>",
+                "name": "Lei Zhang",
+                "timestamp": "1565051283",
+                "date": "2019-08-06T00:28:03.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565051283",
+                "date": "2019-08-06T00:28:03.000Z",
+                "tz": "+0000"
+            },
+            "hash": "4906c103664937af53aba5d651626c5d5b003d52",
+            "summary": "Move document layout constants from PDFiumEngine to DocumentLayout."
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 8,
+            "result": 12
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<thestig@chromium.org>",
+                "name": "Lei Zhang",
+                "timestamp": "1565051283",
+                "date": "2019-08-06T00:28:03.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565051283",
+                "date": "2019-08-06T00:28:03.000Z",
+                "tz": "+0000"
+            },
+            "hash": "4906c103664937af53aba5d651626c5d5b003d52",
+            "summary": "Move document layout constants from PDFiumEngine to DocumentLayout."
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 21,
+            "result": 52
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<thestig@chromium.org>",
+                "name": "Lei Zhang",
+                "timestamp": "1565051283",
+                "date": "2019-08-06T00:28:03.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565051283",
+                "date": "2019-08-06T00:28:03.000Z",
+                "tz": "+0000"
+            },
+            "hash": "4906c103664937af53aba5d651626c5d5b003d52",
+            "summary": "Move document layout constants from PDFiumEngine to DocumentLayout."
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 22,
+            "result": 53
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<thestig@chromium.org>",
+                "name": "Lei Zhang",
+                "timestamp": "1565051283",
+                "date": "2019-08-06T00:28:03.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565051283",
+                "date": "2019-08-06T00:28:03.000Z",
+                "tz": "+0000"
+            },
+            "hash": "4906c103664937af53aba5d651626c5d5b003d52",
+            "summary": "Move document layout constants from PDFiumEngine to DocumentLayout."
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 23,
+            "result": 54
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<thestig@chromium.org>",
+                "name": "Lei Zhang",
+                "timestamp": "1565051283",
+                "date": "2019-08-06T00:28:03.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1565051283",
+                "date": "2019-08-06T00:28:03.000Z",
+                "tz": "+0000"
+            },
+            "hash": "4906c103664937af53aba5d651626c5d5b003d52",
+            "summary": "Move document layout constants from PDFiumEngine to DocumentLayout."
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 24,
+            "result": 55
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 1,
+            "result": 1
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 2,
+            "result": 2
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 3,
+            "result": 3
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 4,
+            "result": 4
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 5,
+            "result": 5
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 6,
+            "result": 6
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 7,
+            "result": 7
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 8,
+            "result": 15
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 9,
+            "result": 16
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 10,
+            "result": 17
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 11,
+            "result": 18
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 12,
+            "result": 19
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 13,
+            "result": 20
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 14,
+            "result": 21
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 15,
+            "result": 22
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 18,
+            "result": 26
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 19,
+            "result": 27
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 20,
+            "result": 56
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 21,
+            "result": 57
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 24,
+            "result": 60
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 25,
+            "result": 61
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 26,
+            "result": 62
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 38,
+            "result": 65
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 41,
+            "result": 80
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 42,
+            "result": 81
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 43,
+            "result": 82
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 44,
+            "result": 83
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 56,
+            "result": 109
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 63,
+            "result": 125
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 64,
+            "result": 135
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 65,
+            "result": 136
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 66,
+            "result": 139
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 67,
+            "result": 140
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 68,
+            "result": 141
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 69,
+            "result": 142
+        }
+    },
+    {
+        "commit": {
+            "author": {
+                "mail": "<kmoon@chromium.org>",
+                "name": "K Moon",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "committer": {
+                "mail": "<commit-bot@chromium.org>",
+                "name": "Commit Bot",
+                "timestamp": "1564169270",
+                "date": "2019-07-26T19:27:50.000Z",
+                "tz": "+0000"
+            },
+            "hash": "bd80ce77af4144b5f79957a499361b8f6f0f71e1",
+            "summary": "Split layout state from PDFiumEngine"
+        },
+        "filename": "pdf/document_layout.h",
+        "line": {
+            "source": 70,
+            "result": 143
+        }
+    }
 ]

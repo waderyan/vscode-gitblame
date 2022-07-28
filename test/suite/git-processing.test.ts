@@ -6,7 +6,7 @@ import {
     Commit,
     CommitAuthor,
     CommitRegistry,
-    Line,
+    LineAttatchedCommit,
     processChunk,
 } from "../../src/git/util/stream-parsing";
 
@@ -28,24 +28,23 @@ function load(fileName: string, buffer: boolean): string | Buffer {
         },
     );
 }
-function datesToString(convert: (Commit | Line)[]): (CommitWithAutorStringDate | Line)[] {
-    const converted: (CommitWithAutorStringDate | Line)[] = [];
+function datesToString(convert: LineAttatchedCommit[]): LineAttatchedCommit<CommitWithAutorStringDate>[] {
+    const converted: LineAttatchedCommit<CommitWithAutorStringDate>[] = [];
     for (const element of convert) {
-        if ("author" in element) {
-            converted.push({
-                ...element,
+        converted.push({
+            ...element,
+            commit: {
+                ...element.commit,
                 author: {
-                    ...element.author,
-                    date: element.author.date.toJSON(),
+                    ...element.commit.author,
+                    date: element.commit.author.date.toJSON(),
                 },
                 committer: {
-                    ...element.committer,
-                    date: element.committer.date.toJSON(),
+                    ...element.commit.committer,
+                    date: element.commit.committer.date.toJSON(),
                 },
-            });
-        } else {
-            converted.push(element);
-        }
+            },
+        });
     }
     return converted;
 }
@@ -56,32 +55,12 @@ suite("Chunk Processing", (): void => {
         const result = JSON.parse(load("git-stream-blame-incremental-result.json", false)) as string[];
 
         const registry: CommitRegistry = new Map;
-        const chunks: (Commit | Line)[] = [];
-        for (const [commit, lines] of processChunk(chunk, registry)) {
-            chunks.push(commit);
-            for (const line of lines) {
-                chunks.push(line);
-            }
-        }
+        const chunks = Array.from(processChunk(chunk, registry));
 
         assert.strictEqual(
             JSON.stringify(datesToString(chunks)),
             JSON.stringify(result),
         );
-    });
-
-    test("All lines should have known commits", (): void => {
-        const chunk = load("git-stream-blame-incremental.chunks", true);
-
-        const knownCommits: Record<string, Commit> = {};
-
-        const registry: CommitRegistry = new Map;
-        for (const [commit, lines] of processChunk(chunk, registry)) {
-            knownCommits[commit.hash] = commit;
-            for (const blame of lines) {
-                assert.ok(blame[1] in knownCommits);
-            }
-        }
     });
 });
 
@@ -92,14 +71,9 @@ suite("Processing Errors", (): void => {
 
         const registry: CommitRegistry = new Map;
 
-        const foundChunks: (Commit | Line)[] = [];
+        const foundChunks: LineAttatchedCommit[] = [];
         for (const chunk of chunks) {
-            for (const [commit, lines] of processChunk(Buffer.from(chunk, "utf-8"), registry)) {
-                foundChunks.push(commit);
-                for (const line of lines) {
-                    foundChunks.push(line);
-                }
-            }
+            foundChunks.push(...processChunk(Buffer.from(chunk, "utf-8"), registry));
         }
 
         assert.strictEqual(

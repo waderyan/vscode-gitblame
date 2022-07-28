@@ -10,7 +10,6 @@ export type PropertiesMap = {
     "statusBarMessageNoCommit": string;
     "statusBarPositionPriority": number | undefined;
     "pluralWebPathSubstrings": string[];
-    "statusBarMessageDisplayRight": boolean;
     "statusBarMessageClickAction": "Show info message" | "Open tool URL";
 }
 

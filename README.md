@@ -115,7 +115,7 @@ Git Blame works very well with WSL but does not work with the web browser based 
     <tr>
       <td><code>gitblame.statusBarPositionPriority</code></td>
       <td><code>number</code></td>
-      <td><code>undefined</code></td>
+      <td><code>500</code></td>
     </tr>
     <tr>
       <td colspan="3">

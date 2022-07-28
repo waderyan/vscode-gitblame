@@ -8,7 +8,7 @@ import {
     workspace,
 } from "vscode";
 
-import type { Commit } from "./util/stream-parsing";
+import type { LineAttatchedCommit } from "./util/stream-parsing";
 
 import { Document, validEditor } from "../util/editorvalidator";
 import { normalizeCommitInfoTokens, parseTokens } from "../util/textdecorator";
@@ -56,18 +56,18 @@ export class Extension {
     }
 
     public async showMessage(): Promise<void> {
-        const commit = await this.commit();
+        const lineAware = await this.commit();
 
-        if (!commit || isUncomitted(commit)) {
+        if (!lineAware || isUncomitted(lineAware.commit)) {
             this.view.set();
             return;
         }
 
         const message = parseTokens(
             getProperty("infoMessageFormat"),
-            normalizeCommitInfoTokens(commit),
+            normalizeCommitInfoTokens(lineAware.commit),
         );
-        const toolUrl = await getToolUrl(commit);
+        const toolUrl = await getToolUrl(lineAware);
         const action: ActionableMessageItem[] | undefined = toolUrl ? [{
             title: "View",
             action() {
@@ -75,23 +75,23 @@ export class Extension {
             },
         }] : undefined;
 
-        this.view.set(commit);
+        this.view.set(lineAware.commit);
 
         (await infoMessage(message, action))?.action();
     }
 
     public async copyHash(): Promise<void> {
-        const commit = await this.commit(true);
+        const lineAware = await this.commit(true);
 
-        if (commit && !isUncomitted(commit)) {
-            await env.clipboard.writeText(commit.hash);
+        if (lineAware && !isUncomitted(lineAware.commit)) {
+            await env.clipboard.writeText(lineAware.commit.hash);
             infoMessage("Copied hash");
         }
     }
 
     public async copyToolUrl(): Promise<void> {
-        const commit = await this.commit(true);
-        const toolUrl = await getToolUrl(commit);
+        const lineAware = await this.commit(true);
+        const toolUrl = await getToolUrl(lineAware);
 
         if (toolUrl) {
             await env.clipboard.writeText(toolUrl.toString());
@@ -160,17 +160,17 @@ export class Extension {
         this.headWatcher.addFile(textEditor.document.fileName);
 
         const before = getFilePosition(textEditor);
-        const commit = await this.blame.getLine(textEditor.document.fileName, textEditor.selection.active.line);
+        const lineAware = await this.blame.getLine(textEditor.document.fileName, textEditor.selection.active.line);
         const after = getFilePosition(textEditor);
 
         // Only update if we haven't moved since we started blaming
         // or if we no longer have focus on any file
         if (before === after || after === NO_FILE_OR_PLACE) {
-            this.view.set(commit);
+            this.view.set(lineAware?.commit);
         }
     }
 
-    private async commit(undercover = false): Promise<Commit | undefined> {
+    private async commit(undercover = false): Promise<LineAttatchedCommit | undefined> {
         const notBlame = () => errorMessage("Unable to blame current line");
         const editor = getActiveTextEditor();
 

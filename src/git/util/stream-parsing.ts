@@ -1,7 +1,5 @@
 import { split } from "../../util/split";
 
-const EMPTY_COMMIT_HASH = "E";
-
 export type CommitAuthor = {
     name: string;
     mail: string;
@@ -17,13 +15,23 @@ export type Commit = {
     summary: string;
 }
 
-export type Line = [number, string];
+export type FileAttatchedCommit<T = Commit> = {
+    commit: T;
+    filename: string;
+}
 
-export type ChunkyGenerator = [Commit, Generator<Line>];
+export type Line = {
+    source: number;
+    result: number;
+}
+
+export type LineAttatchedCommit<T = Commit> = FileAttatchedCommit<T> & {
+    line: Line;
+}
 
 export type CommitRegistry = Map<string, Commit>;
 
-const blankCommitInfo = (): Commit => ({
+const newCommitInfo = (hash: string): Commit => ({
     author: {
         mail: "",
         name: "",
@@ -38,8 +46,13 @@ const blankCommitInfo = (): Commit => ({
         date: new Date,
         tz: "",
     },
-    hash: EMPTY_COMMIT_HASH,
+    hash: hash,
     summary: "",
+});
+
+const newLocationAttatchedCommit = (commitInfo: Commit): FileAttatchedCommit => ({
+    commit: commitInfo,
+    filename: "",
 });
 
 function * splitChunk(chunk: Buffer): Generator<[string, string]> {
@@ -85,49 +98,87 @@ const processLine = (key: string, value: string, commitInfo: Commit): void => {
     }
 }
 
-function * processCoverage(hash: string, coverage: string): Generator<Line> {
-    const [, finalLine, lines] = coverage.split(" ").map(Number);
+function * processCoverage(coverage: string): Generator<Line> {
+    const [source, result, lines] = coverage.split(" ").map(Number);
 
     for (let i = 0; i < lines; i++) {
-        yield [finalLine + i, hash];
+        yield {
+            source: source + i,
+            result: result + i,
+        };
     }
 }
 
 function * commitFilter(
-    commitInfo: Commit,
-    lines: Generator<Line>,
+    fileAttatched: FileAttatchedCommit | undefined,
+    lines: Generator<Line> | undefined,
     registry: CommitRegistry,
-): Generator<ChunkyGenerator> {
-    if (commitInfo.hash === EMPTY_COMMIT_HASH) {
+): Generator<LineAttatchedCommit> {
+    if (fileAttatched === undefined || lines === undefined) {
         return;
     }
 
-    const oldCommitInfo = registry.get(commitInfo.hash) ?? commitInfo;
+    registry.set(fileAttatched.commit.hash, fileAttatched.commit);
 
-    registry.set(commitInfo.hash, oldCommitInfo);
-
-    yield [oldCommitInfo, lines];
+    for (const line of lines) {
+        yield {
+            ...fileAttatched,
+            line,
+        };
+    }
 }
 
-function * protoLine(): Generator<Line> {
-    // noop
-}
-
-export function * processChunk(dataChunk: Buffer, commitRegistry: CommitRegistry): Generator<ChunkyGenerator, void> {
-    let commitInfo = blankCommitInfo();
-    let coverageGenerator: Generator<Line> = protoLine();
+/**
+ * Here we process incremental git blame output. Two things are important to understand:
+ *   - Commit info blocks always start with hash/line-info and end with filename
+ *   - What it contains can change with future git versions
+ *
+ * @see https://github.com/git/git/blob/9d530dc/Documentation/git-blame.txt#L198
+ *
+ * @param dataChunk Chunk of `--incremental` git blame output
+ * @param commitRegistry Keeping track of previously encountered commit information
+ */
+export function * processChunk(
+    dataChunk: Buffer,
+    commitRegistry: CommitRegistry,
+): Generator<LineAttatchedCommit, void> {
+    let commitLocation: FileAttatchedCommit | undefined;
+    let coverageGenerator: Generator<Line> | undefined;
 
     for (const [key, value] of splitChunk(dataChunk)) {
         if (isCoverageLine(key, value)) {
-            yield * commitFilter(commitInfo, coverageGenerator, commitRegistry);
-            coverageGenerator = processCoverage(key, value);
+            commitLocation = newLocationAttatchedCommit(commitRegistry.get(key) ?? newCommitInfo(key));
+            coverageGenerator = processCoverage(value);
+        }
 
-            if (commitInfo.hash !== key) {
-                commitInfo = blankCommitInfo();
+        if (commitLocation) {
+            if (key === "filename") {
+                commitLocation.filename = value;
+                yield * commitFilter(commitLocation, coverageGenerator, commitRegistry);
+            } else {
+                processLine(key, value, commitLocation.commit);
             }
         }
-        processLine(key, value, commitInfo);
     }
 
-    yield * commitFilter(commitInfo, coverageGenerator, commitRegistry);
+    yield * commitFilter(commitLocation, coverageGenerator, commitRegistry);
+}
+
+export async function * processStdout(
+    data: AsyncIterable<Buffer> | null | undefined,
+): AsyncGenerator<LineAttatchedCommit, void> {
+    const commitRegistry: CommitRegistry = new Map;
+    for await (const chunk of data ?? []) {
+        yield * processChunk(chunk, commitRegistry);
+    }
+}
+
+export async function processStderr(
+    data: AsyncIterable<string> | null | undefined,
+): Promise<void> {
+    for await (const error of data ?? []) {
+        if (typeof error === "string") {
+            throw new Error(error);
+        }
+    }
 }

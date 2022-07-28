@@ -1,11 +1,12 @@
-import { ChunkyGenerator, Commit, CommitRegistry, processChunk } from "./util/stream-parsing";
+import { LineAttatchedCommit, processStderr, processStdout } from "./util/stream-parsing";
 
 import { Logger } from "../util/logger";
 import { ChildProcess } from "child_process";
 import { blameProcess } from "./util/gitcommand";
 import { realpath } from "fs/promises";
+import { relative } from "path";
 
-export type Blame = Map<number, Commit | undefined>;
+export type Blame = Map<number, LineAttatchedCommit | undefined>;
 
 export class File {
     public readonly store: Promise<Blame | undefined>;
@@ -22,35 +23,20 @@ export class File {
         this.killed = true;
     }
 
-    private async * run(realFileName: string): AsyncGenerator<ChunkyGenerator> {
+    private async * run(realFileName: string): AsyncGenerator<LineAttatchedCommit> {
         this.process = blameProcess(realFileName);
-        const commitRegistry: CommitRegistry = new Map;
 
-        for await (const chunk of this.process?.stdout ?? []) {
-            if (Buffer.isBuffer(chunk)) {
-                yield * processChunk(chunk, commitRegistry);
-            }
-        }
-
-        for await (const error of this.process?.stderr ?? []) {
-            if (typeof error === "string") {
-                throw new Error(error);
-            }
-        }
+        yield * processStdout(this.process?.stdout);
+        await processStderr(this.process?.stderr);
     }
 
     private async blame(fileName: string): Promise<Blame | undefined> {
         const blameInfo: Blame = new Map;
-        const registry = new Map<string, Commit>();
         const realpathFileName = await realpath(fileName);
 
         try {
-            for await (const [commit, lines] of this.run(realpathFileName)) {
-                registry.set(commit.hash, commit);
-
-                for (const [lineNumber, hash] of lines) {
-                    blameInfo.set(lineNumber, registry.get(hash));
-                }
+            for await (const lineAttatchedCommit of this.run(realpathFileName)) {
+                blameInfo.set(lineAttatchedCommit.line.result, lineAttatchedCommit);
             }
         } catch (err) {
             Logger.error(err);
@@ -59,10 +45,10 @@ export class File {
 
         // Don't return partial git blame info when terminating a blame
         if (!this.killed) {
-            if (fileName !== realpathFileName) {
-                Logger.write("info", `Blamed "${realpathFileName}" (resolved via symlink): ${registry.size} commits`);
+            if (relative(fileName, realpathFileName)) {
+                Logger.write("info", `Blamed "${realpathFileName}" (resolved via symlink from "${fileName}")`);
             } else {
-                Logger.write("info", `Blamed "${realpathFileName}": ${registry.size} commits`);
+                Logger.write("info", `Blamed "${realpathFileName}"`);
             }
             return blameInfo;
         }

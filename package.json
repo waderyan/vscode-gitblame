@@ -93,11 +93,6 @@
           "default": "${commit.summary}",
           "description": "Customize the info message"
         },
-        "gitblame.statusBarMessageDisplayRight": {
-          "type": "boolean",
-          "default": true,
-          "description": "Display status bar message to the right"
-        },
         "gitblame.statusBarMessageClickAction": {
           "type": "string",
           "default": "Show info message",
@@ -122,6 +117,7 @@
         },
         "gitblame.statusBarPositionPriority": {
           "type": "number",
+          "default": 500,
           "description": "Priority where the status bar view should be placed"
         },
         "gitblame.remoteName": {

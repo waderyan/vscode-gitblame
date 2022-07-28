@@ -2,8 +2,9 @@ import * as assert from "assert";
 import { match, stub } from "sinon";
 import { Uri } from "vscode";
 
+import type { LineAttatchedCommit } from "../../src/git/util/stream-parsing";
+
 import { generateUrlTokens } from "../../src/git/util/get-tool-url";
-import { Commit } from "../../src/git/util/stream-parsing";
 import * as execcommand from "../../src/util/execcommand";
 import * as getActive from "../../src/util/get-active";
 import * as property from "../../src/util/property";
@@ -12,23 +13,31 @@ suite("Generate URL Tokens", () => {
     const call = (func: string | ((index: string | undefined) => string | undefined), arg?: string) =>
         typeof func === "function" ? func(arg) : func;
 
-    const exampleCommit: Commit = {
-        "author": {
-            "mail": "<vdavydov.dev@gmail.com>",
-            "name": "Vladimir Davydov",
-            "timestamp": "1423781950",
-            "date": new Date(1423781950000),
-            "tz": "-0800",
+    const exampleCommit: LineAttatchedCommit =
+    {
+        commit: {
+            "author": {
+                "mail": "<vdavydov.dev@gmail.com>",
+                "name": "Vladimir Davydov",
+                "timestamp": "1423781950",
+                "date": new Date(1423781950000),
+                "tz": "-0800",
+            },
+            "committer": {
+                "mail": "<torvalds@linux-foundation.org>",
+                "name": "Linus Torvalds",
+                "timestamp": "1423796049",
+                "date": new Date(1423796049000),
+                "tz": "-0800",
+            },
+            "hash": "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce",
+            "summary": "list_lru: introduce per-memcg lists",
         },
-        "committer": {
-            "mail": "<torvalds@linux-foundation.org>",
-            "name": "Linus Torvalds",
-            "timestamp": "1423796049",
-            "date": new Date(1423796049000),
-            "tz": "-0800",
+        filename: "directory/example.file",
+        line: {
+            source: 10,
+            result: 100,
         },
-        "hash": "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce",
-        "summary": "list_lru: introduce per-memcg lists",
     };
     test("http:// origin", async () => {
         const activeEditorStub = stub(getActive, "getActiveTextEditor");
@@ -172,7 +181,7 @@ suite("Generate URL Tokens", () => {
         assert.strictEqual(call(tokens["project.name"]), "vscode-gitblame");
         assert.strictEqual(call(tokens["project.remote"]), "github.com/Sertion/vscode-gitblame");
         assert.strictEqual(call(tokens["file.path"]), "/fake.file");
-        assert.strictEqual(call(tokens["file.line"]), "22");
+        assert.strictEqual(call(tokens["file.line"]), "100");
     });
 
     test("ssh://git@git.company.com/project_x/test-repository.git origin", async () => {
@@ -222,6 +231,6 @@ suite("Generate URL Tokens", () => {
         assert.strictEqual(call(tokens["project.name"]), "test-repository");
         assert.strictEqual(call(tokens["project.remote"]), "git.company.com/project_x/test-repository");
         assert.strictEqual(call(tokens["file.path"]), "/fake.file");
-        assert.strictEqual(call(tokens["file.line"]), "9");
+        assert.strictEqual(call(tokens["file.line"]), "100");
     });
 });

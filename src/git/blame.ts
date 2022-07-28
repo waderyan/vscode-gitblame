@@ -1,6 +1,6 @@
 import { FSWatcher, promises, watch } from "fs";
 
-import type { Commit } from "./util/stream-parsing";
+import type { LineAttatchedCommit } from "./util/stream-parsing";
 
 import { Blame, File } from "./file";
 import { Logger } from "../util/logger";
@@ -14,7 +14,7 @@ export class Blamer {
         return this.get(fileName);
     }
 
-    public async getLine(fileName: string, lineNumber: number): Promise<Commit | undefined> {
+    public async getLine(fileName: string, lineNumber: number): Promise<LineAttatchedCommit | undefined> {
         const commitLineNumber = lineNumber + 1;
         const blameInfo = await this.get(fileName);
 
