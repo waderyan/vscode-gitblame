@@ -68,8 +68,9 @@ export const gitRemotePath = (remote: string): string | ((index?: string) => str
     }
 }
 
-const isToolUrlPlural = (origin: string): boolean => getProperty("pluralWebPathSubstrings")
-    .some(
+const isToolUrlPlural = (origin: string): boolean => (
+        getProperty("pluralWebPathSubstrings") ?? []
+    ).some(
         (substring) => origin.includes(substring),
     );
 
