@@ -21,109 +21,74 @@ Git Blame works very well with WSL but does not work with the web browser based 
 
 ## Configuration
 
-<table>
-  <thead>
-    <tr>
-      <th>Setting</th>
-      <th>Type</th>
-      <th>Default Value</th>
-    </tr>
-    <tr>
-      <th colspan="3">Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>gitblame.commitUrl</code></td>
-      <td><code>string</code></td>
-      <td><code>""</code></td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        <ul>
-          <li>Url where you can see the commit by hash</li>
-          <li>If set to an empty value it will try to guess the URL based on your remote origin. Can only support servers that don't require auth</li>
-          <li>Available tokens:
-            <ul>
-              <li><code>${hash}</code> - the commit hash</li>
-              <li><code>${file.path}</code> - the relative file path</li>
-              <li><code>${project.name}</code> - your project name (e.g. <code>https://github.com/user/<strong>project_name</strong>.git</code>)</li>
-              <li><code>${project.remote}</code> - the current default remote's URL with the
-              protocol, port-specifiers, and trailing <code>.git</code> stripped. (e.g.
-              <code>https://<strong>github.com/user/project_name</strong>.git</code>)</li>
-              <li><code>${gitorigin.hostname,n}</code> - the nth part of the git origin domain (e.g. if the git origin is <code>https://github.com/ckb-next/ckb-next.git</code> <code>${gitorigin.hostname,1}</code> will return <code>com</code>)</li>
-              <li><code>${gitorigin.path,n}</code> - the nth part of the git origin path (e.g. if the git origin is <code>https://github.com/ckb-next/ckb-next.git</code> <code>${gitorigin.path,1}</code> will return <code>ckb-next.git</code>)</li>
-            </ul>
-          </li>
-          <li><em>Example:</em> <code>https://github.com/Sertion/vscode-gitblame/commit/${hash}</code></li>
-          <li><em>Example:</em> <code>https://${project.remote}/+/${hash}</code></li>
-      </ul>
-    </tr>
-    <tr>
-      <td><code>gitblame.pluralWebPathSubstrings</code></td>
-      <td><code>string[]</code></td>
-      <td><code>["bitbucket", "atlassian"]</code></td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        <ul>
-          <li>An array of substrings that, when present in the git origin URL, replaces <em>commit</em> with <em>commits</em> in <code>gitblame.commitUrl</code>'s default behavior
-          <li>Will only impact <code>gitblame.commitUrl</code> when it is set to <code>""</code>
-          <li>Set the value as <code>["."]</code> to recreate the old <code>gitblame.isWebPathPlural</code>-setting
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td><code>gitblame.ignoreWhitespace</code></td>
-      <td><code>boolean</code></td>
-      <td><code>false</code></td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        Use the git blame <code>-w</code> flag
-      </td>
-    </tr>
-    <tr>
-      <td><code>gitblame.infoMessageFormat</code></td>
-      <td><code>string</code></td>
-      <td><code>"${commit.hash} ${commit.summary}"</code></td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        Message that appears when the <code>gitblame.quickInfo</code> command executes (when you click the status bar message). <a href="#message-tokens">Available tokens</a>.
-    </tr>
-    <tr>
-      <td><code>gitblame.statusBarMessageFormat</code></td>
-      <td><code>string</code></td>
-      <td><code>"Blame ${author.name} (${time.ago})"</code></td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        Message in the status bar about the current line's git blame commit. <a href="#message-tokens">Available tokens</a>.
-      </td>
-    </tr>
-    <tr>
-      <td><code>gitblame.statusBarMessageNoCommit</code></td>
-      <td><code>string</code></td>
-      <td><code>"Not Committed Yet"</code></td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        Message in the status bar about the current line when no commit can be found. <em>No available tokens</em>.
-      </td>
-    </tr>
-    <tr>
-      <td><code>gitblame.statusBarPositionPriority</code></td>
-      <td><code>number</code></td>
-      <td><code>500</code></td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        Priority where the status bar view should be placed. Higher value should be placed further to the left.
-      </td>
-    </tr>
-  </tbody>
-</table>
+### `gitblame.commitUrl`
+> Type: `string`
+
+> Default value: `"${tool.protocol}://${gitorigin.hostname}${gitorigin.port}${gitorigin.path}${tool.basepath}/${hash}"`
+
+Url where you can see the commit by hash
+
+If set to an empty value it will try to guess the URL based on your remote origin. Can only support servers that don't require auth.
+
+Available tokens:
+* `${hash}` - the commit hash
+* `${file.path}` - path to the final file
+* `${file.path.result}` - path to the final file
+* `${file.path.source}` - path to the original file
+* `${file.line}` - the line number of the line in the final file
+* `${file.line.result}` - the line number of the line in the final file
+* `${file.line.source}` - the line number of the line in the original file
+* `${project.name}` - your project name (e.g. `project_name` in `https://github.com/user/project_name.git`)
+* `${project.remote}` - the current default remote's URL with the protocol, port-specifiers, and trailing `.git` stripped. (e.g. `github.com/user/project_name` in `https://github.com/user/project_name.git`)
+* `${gitorigin.hostname}` - the git origin domain (e.g. `github.com` in `https://github.com/ckb-next/ckb-next.git`)
+* `${gitorigin.hostname,n}` - the nth part of the git origin domain (e.g. if the git origin is `https://github.com/ckb-next/ckb-next.git` `${gitorigin.hostname,1}` will return `com`)
+* `${gitorigin.path}` - the git origin path (e.g. `/ckb-next/ckb-next.git` in `https://github.com/ckb-next/ckb-next.git`)
+* `${gitorigin.path,n}` - the nth part of the git origin path (e.g. if the git origin is `https://github.com/ckb-next/ckb-next.git` `${gitorigin.path,1}` will return `ckb-next.git`)
+* `${gitorigin.port}` - the git origin port (if it uses http/https) including prefixed `:`
+* `${tool.protocol}` - `http:` or `https:`
+* `${tool.commitpath}` - `/commit/` or `/commits`
+
+### `gitblame.pluralWebPathSubstrings`
+> Type: `string[]`
+
+> Default value: `["bitbucket", "atlassian"]`
+
+An array of substrings that, when present in the git origin URL, replaces _commit_ with _commits_ in the `gitblame.commitUrl` token `tool.commitpath`. Set the value to something that matches anything to recreate the old `gitblame.isWebPathPlural`-setting.
+
+### `gitblame.ignoreWhitespace`
+> Type: `boolean`
+
+> Default value: `false`
+
+Use the git blame `-w` flag.
+
+### `gitblame.infoMessageFormat`
+> Type: `string`
+
+> Default value: `"${commit.hash} ${commit.summary}"`
+
+Message that appears when the <code>gitblame.quickInfo</code> command executes (when you click the status bar message).
+
+### `gitblame.statusBarMessageFormat`
+> Type: `string`
+
+> Default value: `"Blame ${author.name} (${time.ago})"`
+
+Message in the status bar about the current line's git blame commit. (Available tokens)[#message-tokens].
+
+### `gitblame.statusBarMessageNoCommit`
+> Type: `string`
+
+> Default value: `"Not Committed Yet"`
+
+Message in the status bar about the current line when no commit can be found. _No available tokens_.
+
+### `gitblame.statusBarPositionPriority`
+> Type: `number`
+
+> Default value: `500`
+
+Priority where the status bar view should be placed. Higher value should be placed further to the left.
 
 ### Message Tokens
 

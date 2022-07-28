@@ -1,11 +1,11 @@
 import { Uri } from "vscode";
 import { URL } from "url";
 
-import type { Commit, LineAttatchedCommit } from "./stream-parsing";
+import type { LineAttatchedCommit } from "./stream-parsing";
 
 import { isUrl } from "../../util/is-url";
 import { split } from "../../util/split";
-import { defaultWebPath } from "./default-web-path";
+import { originUrlToToolUrl } from "./origin-url-to-tool-url";
 import { getProperty } from "../../util/property";
 import { getActiveFileOrigin, getRelativePathOfActiveFile, getRemoteUrl } from "./gitcommand";
 import { projectNameFromOrigin } from "./project-name-from-origin";
@@ -21,16 +21,12 @@ export type ToolUrlTokens = {
     "gitorigin.hostname": string | ((index?: string) => string | undefined);
     "gitorigin.path": string | ((index?: string) => string | undefined);
     "file.path": string;
+    "file.path.result": string;
+    "file.path.source": string;
     "file.line": string;
+    "file.line.result": string;
+    "file.line.source": string;
 } & InfoTokens;
-
-const getDefaultToolUrl = (origin: string, {hash}: Commit): Uri | undefined => {
-    const attemptedURL = defaultWebPath(origin, hash);
-
-    if (attemptedURL) {
-        return Uri.parse(attemptedURL.toString(), true);
-    }
-}
 
 const getPathIndex = (path: string, index?: string, splitOn = "/"): string => {
     const parts = path.split(splitOn).filter(a => !!a);
@@ -72,27 +68,35 @@ export const gitRemotePath = (remote: string): string | ((index?: string) => str
     }
 }
 
-export const generateUrlTokens = async (lineAware: LineAttatchedCommit): Promise<[string, ToolUrlTokens]> => {
+const isToolUrlPlural = (origin: string): boolean => getProperty("pluralWebPathSubstrings")
+    .some(
+        (substring) => origin.includes(substring),
+    );
+
+export const generateUrlTokens = async (lineAware: LineAttatchedCommit): Promise<ToolUrlTokens> => {
     const remoteName = getProperty("remoteName");
 
     const origin = await getActiveFileOrigin(remoteName);
     const remoteUrl = stripGitRemoteUrl(await getRemoteUrl(remoteName));
-    const defaultPath = defaultWebPath(remoteUrl, "");
+    const tool = originUrlToToolUrl(remoteUrl);
     const filePath = await getRelativePathOfActiveFile();
 
-    return [origin, {
+    return {
         "hash": lineAware.commit.hash,
+        "tool.protocol": tool?.protocol ?? "https:",
+        "tool.commitpath": `/commit${isToolUrlPlural(remoteUrl) ? "s" : ""}/`,
         "project.name": projectNameFromOrigin(origin),
         "project.remote": remoteUrl,
-        "gitorigin.hostname": defaultPath ? gitOriginHostname(defaultPath) : "no-origin-url",
+        "gitorigin.hostname": tool ? gitOriginHostname(tool) : "no-origin-url",
         "gitorigin.path": gitRemotePath(stripGitSuffix(origin)),
+        "gitorigin.port": tool?.port ? `:${tool.port}` : "",
         "file.path": filePath,
         "file.path.result": filePath,
         "file.path.source": lineAware.filename,
         "file.line": lineAware.line.result.toString(),
         "file.line.result": lineAware.line.result.toString(),
         "file.line.source": lineAware.line.source.toString(),
-    }];
+    };
 }
 
 export const getToolUrl = async (commit?: LineAttatchedCommit): Promise<Uri | undefined> => {
@@ -100,15 +104,14 @@ export const getToolUrl = async (commit?: LineAttatchedCommit): Promise<Uri | un
         return;
     }
 
-    const [origin, tokens] = await generateUrlTokens(commit);
-
-    const parsedUrl = parseTokens(getProperty("commitUrl"), tokens);
+    const parsedUrl = parseTokens(
+        getProperty("commitUrl"),
+        await generateUrlTokens(commit),
+    );
 
     if (isUrl(parsedUrl)) {
         return Uri.parse(parsedUrl, true);
-    } else if (!parsedUrl && origin) {
-        return getDefaultToolUrl(origin, commit.commit);
-    } else if (origin) {
-        errorMessage(`Malformed gitblame.commitUrl: '${ parsedUrl }'`);
+    } else {
+        errorMessage(`Malformed gitblame.commitUrl: '${parsedUrl}' from '${getProperty("commitUrl")}'`);
     }
 }

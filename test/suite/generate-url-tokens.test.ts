@@ -67,13 +67,11 @@ suite("Generate URL Tokens", () => {
             .resolves("/fake.file");
         propertyStub.withArgs("remoteName").returns("origin");
 
-        const [origin, tokens] = await generateUrlTokens(exampleCommit);
+        const tokens = await generateUrlTokens(exampleCommit);
 
         activeEditorStub.restore();
         execcommandStub.restore();
         propertyStub.restore();
-
-        assert.strictEqual(origin, "https://github.com/Sertion/vscode-gitblame.git");
 
         assert.strictEqual(call(tokens["gitorigin.hostname"], ""), "github.com");
         assert.strictEqual(call(tokens["gitorigin.hostname"], "0"), "github");
@@ -115,13 +113,11 @@ suite("Generate URL Tokens", () => {
             .resolves("/fake.file");
         propertyStub.withArgs("remoteName").returns("origin");
 
-        const [origin, tokens] = await generateUrlTokens(exampleCommit);
+        const tokens = await generateUrlTokens(exampleCommit);
 
         activeEditorStub.restore();
         execcommandStub.restore();
         propertyStub.restore();
-
-        assert.strictEqual(origin, "git@github.com:Sertion/vscode-gitblame.git");
 
         assert.strictEqual(call(tokens["gitorigin.hostname"], ""), "github.com");
         assert.strictEqual(call(tokens["gitorigin.hostname"], "0"), "github");
@@ -163,13 +159,11 @@ suite("Generate URL Tokens", () => {
             .resolves("/fake.file");
         propertyStub.withArgs("remoteName").returns("origin");
 
-        const [origin, tokens] = await generateUrlTokens(exampleCommit);
+        const tokens = await generateUrlTokens(exampleCommit);
 
         activeEditorStub.restore();
         execcommandStub.restore();
         propertyStub.restore();
-
-        assert.strictEqual(origin, "ssh://git@github.com/Sertion/vscode-gitblame.git");
 
         assert.strictEqual(call(tokens["gitorigin.hostname"], ""), "github.com");
         assert.strictEqual(call(tokens["gitorigin.hostname"], "0"), "github");
@@ -212,13 +206,11 @@ suite("Generate URL Tokens", () => {
             .resolves("/fake.file");
         propertyStub.withArgs("remoteName").returns("origin");
 
-        const [origin, tokens] = await generateUrlTokens(exampleCommit);
+        const tokens = await generateUrlTokens(exampleCommit);
 
         activeEditorStub.restore();
         execcommandStub.restore();
         propertyStub.restore();
-
-        assert.strictEqual(origin, "ssh://git@git.company.com/project_x/test-repository.git");
 
         assert.strictEqual(call(tokens["gitorigin.hostname"], ""), "git.company.com");
         assert.strictEqual(call(tokens["gitorigin.hostname"], "0"), "git");

@@ -4,11 +4,14 @@
 * Breaking change: Removed `gitblame.isWebPathPlural`. Please use `gitblame.pluralWebPathSubstrings`.
 * Breaking change: Removed `gitblame.statusBarMessageDisplayRight`. Status bar position is now always to the right.
 * Feature: Apply `-C` option to git blame for more precise blaming in reorganized files [#125](https://github.com/Sertion/vscode-gitblame/issues/125) (Thanks to [Andy Li](https://github.com/Friendly-Robot))
+* Feature: `gitblame.commitUrl` has a real value as default and no longer gives special meaning to an empty value
 * Feature: Add new tokens to `gitblame.commitUrl`:
-  * `${file.path.result}` &mdash; path to the final file
-  * `${file.path.source}` &mdash; path to the original file
-  * `${file.line.result}` &mdash; the line number of the line in the final file
-  * `${file.line.source}` &mdash; the line number of the line in the original file
+  * `${file.path.result}` - path to the final file
+  * `${file.path.source}` - path to the original file
+  * `${file.line.result}` - the line number of the line in the final file
+  * `${file.line.source}` - the line number of the line in the original file
+  * `${tool.protocol}` - `http:` or `https:`
+  * `${tool.commitpath}` - `/commit/` or `/commits`
 * Feature: New preview image
 * Fix: Updating the readme
 * Fix: The `${commit.hash}` token now takes a parameter just like `${commit.hash_short,length}`

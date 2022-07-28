@@ -5,7 +5,6 @@ export type PropertiesMap = {
     "remoteName": string;
     "ignoreWhitespace": boolean;
     "infoMessageFormat": string;
-    "isWebPathPlural": boolean;
     "statusBarMessageFormat": string;
     "statusBarMessageNoCommit": string;
     "statusBarPositionPriority": number | undefined;
