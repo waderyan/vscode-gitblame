@@ -73,6 +73,11 @@ suite("Generate URL Tokens", () => {
         execcommandStub.restore();
         propertyStub.restore();
 
+        if (tokens === undefined) {
+            assert.notStrictEqual(tokens, undefined);
+            return;
+        }
+
         assert.strictEqual(call(tokens["gitorigin.hostname"], ""), "github.com");
         assert.strictEqual(call(tokens["gitorigin.hostname"], "0"), "github");
         assert.strictEqual(call(tokens["gitorigin.hostname"], "1"), "com");
@@ -119,6 +124,11 @@ suite("Generate URL Tokens", () => {
         execcommandStub.restore();
         propertyStub.restore();
 
+        if (tokens === undefined) {
+            assert.notStrictEqual(tokens, undefined);
+            return;
+        }
+
         assert.strictEqual(call(tokens["gitorigin.hostname"], ""), "github.com");
         assert.strictEqual(call(tokens["gitorigin.hostname"], "0"), "github");
         assert.strictEqual(call(tokens["gitorigin.hostname"], "1"), "com");
@@ -164,6 +174,11 @@ suite("Generate URL Tokens", () => {
         activeEditorStub.restore();
         execcommandStub.restore();
         propertyStub.restore();
+
+        if (tokens === undefined) {
+            assert.notStrictEqual(tokens, undefined);
+            return;
+        }
 
         assert.strictEqual(call(tokens["gitorigin.hostname"], ""), "github.com");
         assert.strictEqual(call(tokens["gitorigin.hostname"], "0"), "github");
@@ -212,6 +227,11 @@ suite("Generate URL Tokens", () => {
         execcommandStub.restore();
         propertyStub.restore();
 
+        if (tokens === undefined) {
+            assert.notStrictEqual(tokens, undefined);
+            return;
+        }
+
         assert.strictEqual(call(tokens["gitorigin.hostname"], ""), "git.company.com");
         assert.strictEqual(call(tokens["gitorigin.hostname"], "0"), "git");
         assert.strictEqual(call(tokens["gitorigin.hostname"], "1"), "company");
@@ -224,5 +244,42 @@ suite("Generate URL Tokens", () => {
         assert.strictEqual(call(tokens["project.remote"]), "git.company.com/project_x/test-repository");
         assert.strictEqual(call(tokens["file.path"]), "/fake.file");
         assert.strictEqual(call(tokens["file.line"]), "100");
+    });
+
+    test("local development (#128)", async () => {
+        const activeEditorStub = stub(getActive, "getActiveTextEditor");
+        const execcommandStub = stub(execcommand, "execute");
+        const propertyStub = stub(property, "getProperty");
+        activeEditorStub.returns({
+            document: {
+                isUntitled: false,
+                fileName: "/fake.file",
+                uri: Uri.parse("/fake.file"),
+            },
+            selection: {
+                active: {
+                    line: 9,
+                },
+            },
+        });
+        execcommandStub.withArgs(match.string, ["symbolic-ref", "-q", "--short", "HEAD"], match.object)
+            .resolves("master");
+        execcommandStub.withArgs(match.string, ["config", "branch.master.remote"], match.object)
+            .resolves("");
+        execcommandStub.withArgs(match.string, ["config", "remote.origin.url"], match.object)
+            .resolves("");
+        execcommandStub.withArgs(match.string, ["ls-remote", "--get-url", "origin"], match.object)
+            .resolves("origin");
+        execcommandStub.withArgs(match.string, ["ls-files", "--full-name", "--", "/fake.file"], match.object)
+            .resolves("/fake.file");
+        propertyStub.withArgs("remoteName").returns("origin");
+
+        const tokens = await generateUrlTokens(exampleCommit);
+
+        activeEditorStub.restore();
+        execcommandStub.restore();
+        propertyStub.restore();
+
+        assert.strictEqual(tokens, undefined);
     });
 });

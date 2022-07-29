@@ -13,6 +13,7 @@
   * `${tool.protocol}` - `http:` or `https:`
   * `${tool.commitpath}` - `/commit/` or `/commits`
 * Feature: New preview image
+* Bug: 'View' button leads to dead link when repo is fully local [#128](https://github.com/Sertion/vscode-gitblame/issues/128) (Thanks to [Milli Beckers](https://github.com/emilyjbeckers))
 * Fix: Updating the readme
 * Fix: The `${commit.hash}` token now takes a parameter just like `${commit.hash_short,length}`
 * Fix: Updating dependencies
