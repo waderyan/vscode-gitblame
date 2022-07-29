@@ -1,6 +1,6 @@
 # Change Log
 
-# 9.0.0 (July xx, 2022)
+# 9.0.0 (July 29, 2022)
 * Breaking change: Removed `gitblame.isWebPathPlural`. Please use `gitblame.pluralWebPathSubstrings`.
 * Breaking change: Removed `gitblame.statusBarMessageDisplayRight`. Status bar position is now always to the right.
 * Feature: Apply `-C` option to git blame for more precise blaming in reorganized files [#125](https://github.com/Sertion/vscode-gitblame/issues/125) (Thanks to [Andy Li](https://github.com/Friendly-Robot))
