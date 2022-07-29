@@ -74,10 +74,15 @@ const isToolUrlPlural = (origin: string): boolean => (
         (substring) => origin.includes(substring),
     );
 
-export const generateUrlTokens = async (lineAware: LineAttatchedCommit): Promise<ToolUrlTokens> => {
+export const generateUrlTokens = async (lineAware: LineAttatchedCommit): Promise<ToolUrlTokens | undefined> => {
     const remoteName = getProperty("remoteName");
 
     const origin = await getActiveFileOrigin(remoteName);
+
+    if (origin === remoteName) {
+        return;
+    }
+
     const remoteUrl = stripGitRemoteUrl(await getRemoteUrl(remoteName));
     const tool = originUrlToToolUrl(remoteUrl);
     const filePath = await getRelativePathOfActiveFile();
@@ -104,11 +109,13 @@ export const getToolUrl = async (commit?: LineAttatchedCommit): Promise<Uri | un
     if (!commit || isUncomitted(commit.commit)) {
         return;
     }
+    const tokens = await generateUrlTokens(commit)
 
-    const parsedUrl = parseTokens(
-        getProperty("commitUrl"),
-        await generateUrlTokens(commit),
-    );
+    if (tokens === undefined) {
+        return;
+    }
+
+    const parsedUrl = parseTokens(getProperty("commitUrl"), tokens);
 
     if (isUrl(parsedUrl)) {
         return Uri.parse(parsedUrl, true);
