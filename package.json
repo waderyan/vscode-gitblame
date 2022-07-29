@@ -127,7 +127,7 @@
         },
         "gitblame.commitUrl": {
           "type": "string",
-          "default": "${tool.protocol}//${gitorigin.hostname}${gitorigin.port}${gitorigin.path}${tool.basepath}${hash}",
+          "default": "${tool.protocol}//${gitorigin.hostname}${gitorigin.port}${gitorigin.path}${tool.commitpath}${hash}",
           "markdownDescription": "The link to an online tool to view a commit (use `${hash}` for the commit hash)."
         },
         "gitblame.ignoreWhitespace": {

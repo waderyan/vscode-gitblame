@@ -8,6 +8,7 @@ import { generateUrlTokens } from "../../src/git/util/get-tool-url";
 import * as execcommand from "../../src/util/execcommand";
 import * as getActive from "../../src/util/get-active";
 import * as property from "../../src/util/property";
+import { parseTokens } from "../../src/util/textdecorator";
 
 suite("Generate URL Tokens", () => {
     const call = (func: string | ((index: string | undefined) => string | undefined), arg?: string) =>
@@ -246,7 +247,7 @@ suite("Generate URL Tokens", () => {
         assert.strictEqual(call(tokens["file.line"]), "100");
     });
 
-    test("local development (#128)", async () => {
+    test("local development (#128 regression)", async () => {
         const activeEditorStub = stub(getActive, "getActiveTextEditor");
         const execcommandStub = stub(execcommand, "execute");
         const propertyStub = stub(property, "getProperty");
@@ -282,4 +283,84 @@ suite("Generate URL Tokens", () => {
 
         assert.strictEqual(tokens, undefined);
     });
+});
+
+suite("Use genrated URL tokens", () => {
+
+    const exampleCommit: LineAttatchedCommit =
+    {
+        commit: {
+            "author": {
+                "mail": "<vdavydov.dev@gmail.com>",
+                "name": "Vladimir Davydov",
+                "timestamp": "1423781950",
+                "date": new Date(1423781950000),
+                "tz": "-0800",
+            },
+            "committer": {
+                "mail": "<torvalds@linux-foundation.org>",
+                "name": "Linus Torvalds",
+                "timestamp": "1423796049",
+                "date": new Date(1423796049000),
+                "tz": "-0800",
+            },
+            "hash": "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce",
+            "summary": "list_lru: introduce per-memcg lists",
+        },
+        filename: "directory/example.file",
+        line: {
+            source: 10,
+            result: 100,
+        },
+    };
+
+    test("Default value", async () => {
+        const activeEditorStub = stub(getActive, "getActiveTextEditor");
+        const execcommandStub = stub(execcommand, "execute");
+        const propertyStub = stub(property, "getProperty");
+        activeEditorStub.returns({
+            document: {
+                isUntitled: false,
+                fileName: "/fake.file",
+                uri: Uri.parse("/fake.file"),
+            },
+            selection: {
+                active: {
+                    line: 9,
+                },
+            },
+        });
+        execcommandStub.withArgs(match.string, ["symbolic-ref", "-q", "--short", "HEAD"], match.object)
+            .resolves("master");
+        execcommandStub.withArgs(match.string, ["config", "branch.master.remote"], match.object)
+            .resolves("origin");
+        execcommandStub.withArgs(match.string, ["config", "remote.origin.url"], match.object)
+            .resolves("ssh://git@git.company.com/project_x/test-repository.git");
+        execcommandStub.withArgs(match.string, ["ls-remote", "--get-url", "origin"], match.object)
+            .resolves("ssh://git@git.company.com/project_x/test-repository.git");
+        execcommandStub.withArgs(match.string, ["ls-files", "--full-name", "--", "/fake.file"], match.object)
+            .resolves("/fake.file");
+        propertyStub.withArgs("remoteName").returns("origin");
+
+        const tokens = await generateUrlTokens(exampleCommit);
+
+        activeEditorStub.restore();
+        execcommandStub.restore();
+        propertyStub.restore();
+
+        if (tokens === undefined) {
+            assert.notStrictEqual(tokens, undefined);
+            return;
+        }
+
+        const parsedUrl = parseTokens(
+            "${tool.protocol}//${gitorigin.hostname}${gitorigin.port}${gitorigin.path}${tool.commitpath}${hash}",
+            tokens,
+        );
+
+        assert.strictEqual(
+            parsedUrl,
+            "https://git.company.com/project_x/test-repository/commit/60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce",
+        );
+    })
 });
