@@ -1,6 +1,10 @@
 # Change Log
 
-# 9.0.0 (July 29, 2022)
+## 9.0.1 (August 02, 2022)
+* Fix: CHANGELOG.md headers are of the wrong level and other fixes
+* Fix: Updating dependencies
+
+## 9.0.0 (July 29, 2022)
 * Breaking change: Removed `gitblame.isWebPathPlural`. Please use `gitblame.pluralWebPathSubstrings`.
 * Breaking change: Removed `gitblame.statusBarMessageDisplayRight`. Status bar position is now always to the right.
 * Feature: Apply `-C` option to git blame for more precise blaming in reorganized files [#125](https://github.com/Sertion/vscode-gitblame/issues/125) (Thanks to [Andy Li](https://github.com/Friendly-Robot))
@@ -18,27 +22,27 @@
 * Fix: The `${commit.hash}` token now takes a parameter just like `${commit.hash_short,length}`
 * Fix: Updating dependencies
 
-# 8.2.3 (June 17, 2022)
+## 8.2.3 (June 17, 2022)
 * Bug: Reduce the amount of `git` calls
 * Feature: Move to new build system with fewer dependencies
 * Fix: Updating dependencies
 
-# 8.2.2 (June 04, 2022)
+## 8.2.2 (June 04, 2022)
 * Bug: Errors get logged to console when directory is not using git [#124](https://github.com/Sertion/vscode-gitblame/issues/124) (Thanks to [Daniel Abromeit aka Abro](https://github.com/Abromeit))
 
-# 8.2.1 (May 25, 2022)
+## 8.2.1 (May 25, 2022)
 * Fix: Updating dependencies
 * Fix: CHANGELOG.md now has correct release date for 8.2.0
 * Fix: CHANGELOG.md link to contributor
 
-# 8.2.0 (May 13, 2022)
+## 8.2.0 (May 13, 2022)
 * Feature: Blame information as soon as it is avalible. This will allow some lines to show blame information while others still are waiting for `git blame`.
 * Feature: Allow blaming symlinked files [#121](https://github.com/Sertion/vscode-gitblame/pull/121) (Thanks to [Angel Fraga Parodi](https://github.com/angelfraga))
 * Bug: Blame info persistent over file change and file close [#115](https://github.com/Sertion/vscode-gitblame/issues/115) (Thanks to [Wenfang Du](https://github.com/wenfangdu) and [Viktor Stenqvist](https://github.com/Yottster))
 * Bug: commit.summary before commit.hash_short causes display bug [#119](https://github.com/Sertion/vscode-gitblame/issues/119) (Thanks to [Cathryne Linenweaver](https://github.com/Cathryne))
 * Bug: Remove right-to-left override characters from parsed text [#122](https://github.com/Sertion/vscode-gitblame/pull/122) (Thanks to [Chris Atkin](https://github.com/atkinchris))
 
-# 8.1.0 (July 16, 2021)
+## 8.1.0 (July 16, 2021)
 * Fix: Avoid reloading for settings change [#112](https://github.com/Sertion/vscode-gitblame/pull/112) (Thanks to [João Moreno](https://github.com/joaomoreno))
 
 ## 8.0.1 (July 16, 2021)
@@ -140,7 +144,7 @@
 * Fix: Updating readme
 * Fix: Updating dependencies
 
-## 3.0.1 (August 2, 2019)
+## 3.0.1 (August 02, 2019)
 * Bug: Removing depricated token from default value for `gitblame.infoMessageFormat` [#57](https://github.com/Sertion/vscode-gitblame/issues/57) (Thanks to [Kyngo](https://github.com/Kyngo))
 
 ## 3.0.0 (July 27, 2019)
@@ -161,7 +165,7 @@ The removal of the custom-token allows us to remove our dependency on moment. Th
 * Bug: Blaming a removed file crashes the extension [#54](https://github.com/Sertion/vscode-gitblame/pull/54) (Thanks to [dmitriismitnov](https://github.com/dmitriismitnov))
 * Fix: Updating dependencies
 
-## 2.8.0 (June 9, 2019)
+## 2.8.0 (June 09, 2019)
 * Feature: Auto detect Atlassian's BitBucket [#52](https://github.com/Sertion/vscode-gitblame/pull/52)
 * Feature: Now display _X years ago_ instead of massive amounts of months [#53](https://github.com/Sertion/vscode-gitblame/pull/53) (Thanks to [radar](https://github.com/radar))
 * Fix: Updating dependencies
@@ -188,7 +192,7 @@ There is a new setting called `gitblame.pluralWebPathSubstrings`. It is an array
 
 * Bug: Dot in username generates wrong repository URL [#48](https://github.com/Sertion/vscode-gitblame/pull/48) (Thanks to [bolduz](https://github.com/bolduz))
 
-## 2.6.0 (November 5, 2018)
+## 2.6.0 (November 05, 2018)
 
 * Feature: We can now parse a wider variety of git origin formats [#46](https://github.com/Sertion/vscode-gitblame/pull/46)
 * Feature: You can now use your project name in `vscode.commitUrl` [#46](https://github.com/Sertion/vscode-gitblame/pull/46)
@@ -210,16 +214,16 @@ There is a new setting called `gitblame.pluralWebPathSubstrings`. It is an array
 * Fix: Moved to strict TypeScript.
 * Fix: Updating dependencies
 
-## 2.4.4 (August 1, 2018)
+## 2.4.4 (August 01, 2018)
 
 * Fix: Updating dependencies
 
-## 2.4.3 (August 1, 2018)
+## 2.4.3 (August 01, 2018)
 
 * Bug: Showing unedited gitblame info template when running *Show quick Info* on unblameable line (Thanks to [BerndErnst](https://github.com/BerndErnst))
 * Bug: Using a map instead of an object for storing git blame file cache. Now we can blame files named `__proto__` etc.
 
-## 2.4.2 (April 5, 2018)
+## 2.4.2 (April 05, 2018)
 
 * Bug: Blame uses committer not author [#29](https://github.com/Sertion/vscode-gitblame/issues/29), [#32](https://github.com/Sertion/vscode-gitblame/issues/32), and [#33](https://github.com/Sertion/vscode-gitblame/issues/33) (Thanks to [HCoban](https://github.com/HCoban), [richardscarrott](https://github.com/richardscarrott), and [KenCoder](https://github.com/KenCoder))
 
