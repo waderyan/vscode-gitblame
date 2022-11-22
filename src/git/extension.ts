@@ -14,7 +14,7 @@ import {
 import type { LineAttatchedCommit } from "./util/stream-parsing";
 
 import { Document, validEditor } from "../util/editorvalidator";
-import { normalizeCommitInfoTokens, parseTokens } from "../util/textdecorator";
+import { normalizeCommitInfoTokens, parseTokens, toTextView } from "../util/textdecorator";
 import { StatusBarView } from "../view";
 import { Blamer } from "./blame";
 import { getProperty } from "../util/property";
@@ -176,19 +176,22 @@ export class Extension {
             this.view.set(lineAware?.commit);
 
             let editor = getActiveVscodeTextEditor();
-            if (editor) {
+            if (editor && lineAware?.commit) {
+
+                let decorationText = toTextView(lineAware.commit);
+                let margin = getProperty("inlineBlameMargin") ?? 2;
+                let decorationColor = getProperty("inlineBlameColor") ?? "#888987";
 
                 editor.setDecorations(decorationType, []);
-
                 editor.setDecorations(
                     decorationType,
                     [
                         {
                             renderOptions: {
-                                after:{
-                                    contentText: lineAware?.commit.summary,
-                                    margin: "0 0 0 2rem",
-                                    color: "#888987"
+                                after: {
+                                    contentText: decorationText,
+                                    margin: `0 0 0 ${margin}rem`,
+                                    color: decorationColor
                                 }
                             },
                             range: new Range(
@@ -196,7 +199,7 @@ export class Extension {
                                 new Position(editor.selection.active.line, 1024),
                             ),
                         }
-                   ]
+                    ]
                 );
             }
 

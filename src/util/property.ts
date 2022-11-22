@@ -10,6 +10,8 @@ export type PropertiesMap = {
     "statusBarPositionPriority": number | undefined;
     "pluralWebPathSubstrings": string[] | undefined;
     "statusBarMessageClickAction": "Show info message" | "Open tool URL";
+    "inlineBlameMargin": number | undefined;
+    "inlineBlameColor": string | undefined;
 }
 
 // getConfiguration has an unfortunate typing that does not

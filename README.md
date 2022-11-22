@@ -90,6 +90,20 @@ Message in the status bar about the current line when no commit can be found. _N
 
 Priority where the status bar view should be placed. Higher value should be placed further to the left.
 
+### `gitblame.inlineBlameMargin`
+> Type: `number`
+
+> Default value: `2`
+
+The amount of margin between line and inline blame view
+
+### `gitblame.inlineBlameColor`
+> Type: `string`
+
+> Default value: `#888987`
+
+The inline blame view text color (as CSS Rule)
+
 ### Message Tokens
 
 | Token | Function | Parameter | Default Value | Description |
