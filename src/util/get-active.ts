@@ -1,8 +1,9 @@
-import { window } from "vscode";
+import { TextEditor, window } from "vscode";
 
 import type { PartialTextEditor } from "./editorvalidator";
 
 export const getActiveTextEditor = (): PartialTextEditor | undefined => window.activeTextEditor;
+export const getActiveVscodeTextEditor = (): TextEditor | undefined => window.activeTextEditor;
 
 export const NO_FILE_OR_PLACE = "N:-1";
 

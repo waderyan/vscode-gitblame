@@ -3,7 +3,10 @@ import {
     Disposable,
     env,
     MessageItem,
+    Position,
+    Range,
     TextEditor,
+    TextEditorDecorationType,
     window,
     workspace,
 } from "vscode";
@@ -20,6 +23,7 @@ import { isUncomitted } from "./util/uncommitted";
 import { errorMessage, infoMessage } from "../util/message";
 import {
     getActiveTextEditor,
+    getActiveVscodeTextEditor,
     getFilePosition,
     NO_FILE_OR_PLACE,
 } from "../util/get-active";
@@ -28,6 +32,9 @@ import { HeadWatch } from "./head-watch";
 type ActionableMessageItem = MessageItem & {
     action: () => void;
 }
+
+const decorations = {};
+const decorationType: TextEditorDecorationType = window.createTextEditorDecorationType({});
 
 export class Extension {
     private readonly disposable: Disposable;
@@ -116,7 +123,7 @@ export class Extension {
             }
         }
 
-        this.headWatcher.onChange(({repositoryRoot}) => {
+        this.headWatcher.onChange(({ repositoryRoot }) => {
             this.blame.removeFromRepository(repositoryRoot);
         });
 
@@ -167,6 +174,32 @@ export class Extension {
         // or if we no longer have focus on any file
         if (before === after || after === NO_FILE_OR_PLACE) {
             this.view.set(lineAware?.commit);
+
+            let editor = getActiveVscodeTextEditor();
+            if (editor) {
+
+                editor.setDecorations(decorationType, []);
+
+                editor.setDecorations(
+                    decorationType,
+                    [
+                        {
+                            renderOptions: {
+                                after:{
+                                    contentText: lineAware?.commit.summary,
+                                    margin: "0 0 0 2rem",
+                                    color: "#888987"
+                                }
+                            },
+                            range: new Range(
+                                new Position(editor.selection.active.line, 1024),
+                                new Position(editor.selection.active.line, 1024),
+                            ),
+                        }
+                   ]
+                );
+            }
+
         }
     }
 
