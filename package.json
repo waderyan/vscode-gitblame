@@ -145,6 +145,11 @@
             "atlassian"
           ],
           "markdownDescription": "An array of substrings that, when present in the git origin URL, adds an extra _s_ to the url after _commit_ in `gitblame.commitUrl`'s default behavior"
+        },
+        "gitblame.inlineBlameMargin": {
+          "type": "number",
+          "default": 2,
+          "description": "The amount of margin between line and inline blame view"
         }
       }
     }

@@ -7,5 +7,7 @@
 	},
 	"typescript.tsdk": "./node_modules/typescript/lib",
 	"editor.insertSpaces": true,
-	"editor.tabSize": 4
+	"editor.tabSize": 4,
+	"javascript.validate.enable": true,
+	"editor.showUnused": true
 }
