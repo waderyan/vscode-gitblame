@@ -135,7 +135,7 @@
           "default": "Not Committed Yet",
           "description": "Customize the inline message"
         },
-        "gitblame.inlineBlameMargin": {
+        "gitblame.inlineMessageMargin": {
           "type": "number",
           "default": 2,
           "description": "The amount of margin between line and inline blame view"

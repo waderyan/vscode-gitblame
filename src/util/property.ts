@@ -13,7 +13,7 @@ export type PropertiesMap = {
     "inlineMessageFormat": string;
     "inlineMessageNoCommit": string;
     "inlineMessageEnabled": boolean;
-    "inlineBlameMargin": number;
+    "inlineMessageMargin": number;
 }
 
 // getConfiguration has an unfortunate typing that does not

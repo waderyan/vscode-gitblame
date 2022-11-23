@@ -51,7 +51,7 @@ export class StatusBarView {
         if (!getProperty("inlineMessageEnabled")) {
             return;
         }
-        const margin = getProperty("inlineBlameMargin");
+        const margin = getProperty("inlineMessageMargin");
         const decorationPosition = new Position(editor.selection.active.line, Number.MAX_SAFE_INTEGER);
 
         this.removeLineDecoration();

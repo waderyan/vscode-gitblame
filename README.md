@@ -111,7 +111,7 @@ Message on the current line when no commit can be found. _No available tokens_.
 
 To enable the inline git blame view. Shows blame information at the end of the current line if avalible.
 
-### `gitblame.inlineBlameMargin`
+### `gitblame.inlineMessageMargin`
 > Type: `number`
 
 > Default value: `2`

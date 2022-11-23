@@ -5,7 +5,7 @@
   * `gitblame.inlineMessageEnabled` to enable the feature
   * `gitblame.inlineMessageFormat` to configure the message format
   * `gitblame.inlineMessageNoCommit` to set the _no commit_ message
-  * `gitblame.inlineBlameMargin` to configure the distance between the end of the line and the blame info
+  * `gitblame.inlineMessageMargin` to configure the distance between the end of the line and the blame info
   * Use the same token as for `gitblame.statusBarMessageFormat`
 * Fix: Updating dependencies
 
