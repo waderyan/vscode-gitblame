@@ -203,8 +203,8 @@ export class Extension {
                                 new Position(textEditor.selection.active.line, this.decorationCharPosition),
                                 new Position(textEditor.selection.active.line, this.decorationCharPosition),
                             ),
-                        }
-                    ]
+                        },
+                    ],
                 );
             }
 

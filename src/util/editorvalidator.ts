@@ -3,7 +3,7 @@ import type {
     Position as FullPosition,
     Range,
     TextDocument,
-    TextEditorDecorationType
+    TextEditorDecorationType,
 } from "vscode";
 
 export type Document = Pick<TextDocument, "uri" | "isUntitled" | "fileName">;
