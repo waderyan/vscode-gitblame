@@ -1,4 +1,4 @@
-import { commands, Disposable, ExtensionContext, window } from "vscode";
+import { commands, Disposable, ExtensionContext } from "vscode";
 
 import { Extension } from "./git/extension";
 import { Logger } from "./util/logger";

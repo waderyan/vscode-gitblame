@@ -7,6 +7,7 @@ import {
     Range,
     TextEditor,
     TextEditorDecorationType,
+    ThemeColor,
     window,
     workspace,
 } from "vscode";
@@ -23,7 +24,6 @@ import { isUncomitted } from "./util/uncommitted";
 import { errorMessage, infoMessage } from "../util/message";
 import {
     getActiveTextEditor,
-    getActiveVscodeTextEditor,
     getFilePosition,
     NO_FILE_OR_PLACE,
 } from "../util/get-active";
@@ -33,14 +33,18 @@ type ActionableMessageItem = MessageItem & {
     action: () => void;
 }
 
-const decorations = {};
-const decorationType: TextEditorDecorationType = window.createTextEditorDecorationType({});
 
 export class Extension {
     private readonly disposable: Disposable;
     private readonly blame: Blamer;
     private readonly view: StatusBarView;
     private readonly headWatcher: HeadWatch;
+
+    /**
+     * decorationCharPosition set to 1024 because normally lines are not that big
+     */
+    private readonly decorationCharPosition: number = 1024;
+    private decorationType: TextEditorDecorationType = window.createTextEditorDecorationType({});
 
     constructor() {
         this.blame = new Blamer;
@@ -175,28 +179,29 @@ export class Extension {
         if (before === after || after === NO_FILE_OR_PLACE) {
             this.view.set(lineAware?.commit);
 
-            let editor = getActiveVscodeTextEditor();
-            if (editor && lineAware?.commit) {
-
+            if (lineAware?.commit) {
                 let decorationText = toTextView(lineAware.commit);
                 let margin = getProperty("inlineBlameMargin") ?? 2;
-                let decorationColor = getProperty("inlineBlameColor") ?? "#888987";
+                //let decorationColor = getProperty("inlineBlameColor") ?? "#888987";
 
-                editor.setDecorations(decorationType, []);
-                editor.setDecorations(
-                    decorationType,
+                //clear old decorations
+                textEditor.setDecorations?.(this.decorationType, []);
+                //add new decoration
+                textEditor.setDecorations?.(
+                    this.decorationType,
                     [
                         {
                             renderOptions: {
                                 after: {
                                     contentText: decorationText,
                                     margin: `0 0 0 ${margin}rem`,
-                                    color: decorationColor
+                                    color: new ThemeColor("gitblame.inlineBlameColor"),
+                                    //fontStyle: "italic"
                                 }
                             },
                             range: new Range(
-                                new Position(editor.selection.active.line, 1024),
-                                new Position(editor.selection.active.line, 1024),
+                                new Position(textEditor.selection.active.line, this.decorationCharPosition),
+                                new Position(textEditor.selection.active.line, this.decorationCharPosition),
                             ),
                         }
                     ]
