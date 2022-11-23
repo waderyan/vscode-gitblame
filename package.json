@@ -2,10 +2,10 @@
   "name": "gitblame",
   "displayName": "Git Blame",
   "description": "See git blame information in the status bar.",
-  "version": "9.0.1",
+  "version": "10.0.0",
   "publisher": "waderyan",
   "engines": {
-    "vscode": "^1.68.0"
+    "vscode": "^1.72.0"
   },
   "categories": [
     "Other"
@@ -37,18 +37,18 @@
     "test": "npm run pretest && node ./out/test/run-test.js"
   },
   "devDependencies": {
-    "@types/mocha": "^9.1.1",
+    "@types/mocha": "^10.0.0",
     "@types/node": "16.11.39",
     "@types/sinon": "^10.0.13",
-    "@types/vscode": "1.68",
-    "@typescript-eslint/eslint-plugin": "^5.32.0",
-    "@typescript-eslint/parser": "^5.32.0",
-    "@vscode/test-electron": "^2.1.5",
-    "esbuild": "^0.14.51",
-    "eslint": "^8.21.0",
-    "mocha": "^10.0.0",
-    "sinon": "^14.0.0",
-    "typescript": "^4.7.4"
+    "@types/vscode": "1.72",
+    "@typescript-eslint/eslint-plugin": "^5.44.0",
+    "@typescript-eslint/parser": "^5.44.0",
+    "@vscode/test-electron": "^2.2.0",
+    "esbuild": "^0.15.15",
+    "eslint": "^8.28.0",
+    "mocha": "^10.1.0",
+    "sinon": "^14.0.2",
+    "typescript": "^4.9.3"
   },
   "homepage": "https://github.com/Sertion/vscode-gitblame/blob/master/README.md",
   "bugs": {
@@ -120,6 +120,26 @@
           "default": 500,
           "description": "Priority where the status bar view should be placed"
         },
+        "gitblame.inlineMessageEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show blame information inline (next to the code)"
+        },
+        "gitblame.inlineMessageFormat": {
+          "type": "string",
+          "default": "Blame ${author.name} (${time.ago})",
+          "description": "Customize the inline message"
+        },
+        "gitblame.inlineMessageNoCommit": {
+          "type": "string",
+          "default": "Not Committed Yet",
+          "description": "Customize the inline message"
+        },
+        "gitblame.inlineBlameMargin": {
+          "type": "number",
+          "default": 2,
+          "description": "The amount of margin between line and inline blame view"
+        },
         "gitblame.remoteName": {
           "type": "string",
           "default": "origin",
@@ -145,11 +165,6 @@
             "atlassian"
           ],
           "markdownDescription": "An array of substrings that, when present in the git origin URL, adds an extra _s_ to the url after _commit_ in `gitblame.commitUrl`'s default behavior"
-        },
-        "gitblame.inlineBlameMargin": {
-          "type": "number",
-          "default": 2,
-          "description": "The amount of margin between line and inline blame view"
         }
       }
     }

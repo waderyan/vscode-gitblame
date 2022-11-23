@@ -90,6 +90,27 @@ Message in the status bar about the current line when no commit can be found. _N
 
 Priority where the status bar view should be placed. Higher value should be placed further to the left.
 
+### `gitblame.inlineMessageFormat`
+> Type: `string`
+
+> Default value: `"Blame ${author.name} (${time.ago})"`
+
+Message on the current line in the editor about the line's git blame commit. (Available tokens)[#message-tokens].
+
+### `gitblame.inlineMessageNoCommit`
+> Type: `string`
+
+> Default value: `"Not Committed Yet"`
+
+Message on the current line when no commit can be found. _No available tokens_.
+
+### `gitblame.inlineMessageEnabled`
+> Type: `boolean`
+
+> Default value: `false`
+
+To enable the inline git blame view. Shows blame information at the end of the current line if avalible.
+
 ### `gitblame.inlineBlameMargin`
 > Type: `number`
 

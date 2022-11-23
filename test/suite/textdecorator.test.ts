@@ -4,6 +4,7 @@ import { SinonFakeTimers, useFakeTimers } from "sinon";
 import { Commit } from "../../src/git/util/stream-parsing";
 import { between } from "../../src/util/ago";
 import {
+    InfoTokenNormalizedCommitInfo,
     InfoTokens,
     normalizeCommitInfoTokens,
     parseTokens,
@@ -335,12 +336,14 @@ suite("Token Parser", (): void => {
 
 suite("Text Decorator with CommitInfoToken", (): void => {
     let faketimer: SinonFakeTimers | undefined;
+    let normalizedCommitInfoTokens: InfoTokenNormalizedCommitInfo | undefined;
     suiteSetup(() => {
         faketimer = useFakeTimers({
             now: 1_621_014_626_000,
             toFake: ["Date"],
             shouldAdvanceTime: false,
         });
+        normalizedCommitInfoTokens = normalizeCommitInfoTokens(exampleCommit);
     });
     suiteTeardown(() => {
         faketimer?.restore();
@@ -363,12 +366,11 @@ suite("Text Decorator with CommitInfoToken", (): void => {
         "hash": "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce",
         "summary": "list_lru: introduce per-memcg lists",
     };
-    const normalizedCommitInfoTokens = normalizeCommitInfoTokens(exampleCommit);
     const check = (token: string, expect: string): void => {
         test(
             `Parse "\${${token}}"`,
             (): void => assert.strictEqual(
-                parseTokens(`\${${token}}`, normalizedCommitInfoTokens),
+                parseTokens(`\${${token}}`, normalizedCommitInfoTokens ?? {}),
                 expect,
             ),
         );
@@ -390,8 +392,8 @@ suite("Text Decorator with CommitInfoToken", (): void => {
     check("commit.hash", "60d3fd32a7a9da4c8c93a9f89cfda22a0b4c65ce");
     check("commit.hash_short", "60d3fd3");
 
-    check("time.ago", "7 years ago");
-    check("time.c_ago", "7 years ago");
+    check("time.ago", "6 years ago");
+    check("time.c_ago", "6 years ago");
 
     check("commit.summary,0", "");
     check("commit.summary,5", "list_");

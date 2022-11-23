@@ -1,16 +1,30 @@
-import { StatusBarAlignment, StatusBarItem, window, workspace } from "vscode";
+import {
+    Position,
+    Range,
+    StatusBarAlignment,
+    StatusBarItem,
+    TextEditorDecorationType,
+    ThemeColor,
+    window,
+    workspace,
+} from "vscode";
 
 import type { Commit } from "./git/util/stream-parsing";
 
 import { isUncomitted } from "./git/util/uncommitted";
+import { PartialTextEditor } from "./util/editorvalidator";
+import { getActiveTextEditor } from "./util/get-active";
 import { getProperty } from "./util/property";
-import { toTextView } from "./util/textdecorator";
+import { toInlineTextView, toStatusBarTextView } from "./util/textdecorator";
 
 export class StatusBarView {
-    private out!: StatusBarItem;
+    private statusBar: StatusBarItem;
+    private readonly decorationType: TextEditorDecorationType;
 
     constructor() {
-        this.createStatusBarItem();
+        this.decorationType = window.createTextEditorDecorationType({});
+
+        this.statusBar = this.createStatusBarItem();
         workspace.onDidChangeConfiguration(e => {
             if (e.affectsConfiguration("gitblame")) {
                 this.createStatusBarItem();
@@ -18,27 +32,71 @@ export class StatusBarView {
         });
     }
 
-    private createStatusBarItem(): void {
-        if (this.out) {
-            this.out.dispose();
+    private createStatusBarItem(): StatusBarItem {
+        if (this.statusBar) {
+            this.statusBar.dispose();
         }
 
-        this.out = window.createStatusBarItem(
+        const statusBar = window.createStatusBarItem(
             StatusBarAlignment.Right,
             getProperty("statusBarPositionPriority"),
         );
 
-        this.out.show();
+        statusBar.show();
+
+        return statusBar;
     }
 
-    public set(commit?: Commit): void {
+    private createLineDecoration(text: string, editor: PartialTextEditor): void {
+        if (!getProperty("inlineMessageEnabled")) {
+            return;
+        }
+        const margin = getProperty("inlineBlameMargin");
+        const decorationPosition = new Position(editor.selection.active.line, Number.MAX_SAFE_INTEGER);
+
+        this.removeLineDecoration();
+        // Add new decoration
+        editor.setDecorations?.(
+            this.decorationType,
+            [
+                {
+                    renderOptions: {
+                        after: {
+                            contentText: text,
+                            margin: `0 0 0 ${margin}rem`,
+                            color: new ThemeColor("editorCodeLens.foreground"),
+                        },
+                    },
+                    range: new Range(decorationPosition, decorationPosition),
+                },
+            ],
+        );
+    }
+
+    private removeLineDecoration(): void {
+        const editor = getActiveTextEditor();
+        editor?.setDecorations?.(this.decorationType, []);
+    }
+
+    public set(commit: Commit | undefined, editor: PartialTextEditor | undefined): void {
         if (!commit) {
-            this.text("", false);
+            this.clear();
         } else if (isUncomitted(commit)) {
             this.text(getProperty("statusBarMessageNoCommit"), false);
+            if (editor) {
+                this.createLineDecoration(getProperty("inlineMessageNoCommit"), editor);
+            }
         } else {
-            this.text(toTextView(commit), true);
+            this.text(toStatusBarTextView(commit), true);
+            if (editor) {
+                this.createLineDecoration(toInlineTextView(commit), editor);
+            }
         }
+    }
+
+    public clear(): void {
+        this.text("", false);
+        this.removeLineDecoration();
     }
 
     public activity(): void {
@@ -46,7 +104,8 @@ export class StatusBarView {
     }
 
     public dispose(): void {
-        this.out?.dispose();
+        this.statusBar?.dispose();
+        this.decorationType.dispose();
     }
 
     private command(): string {
@@ -60,8 +119,8 @@ export class StatusBarView {
     }
 
     private text(text: string, command: boolean): void {
-        this.out.text = "$(git-commit) " + text.trimEnd();
-        this.out.tooltip = `git blame${ command ? "" : " - No info about the current line" }`;
-        this.out.command = command ? this.command() : undefined;
+        this.statusBar.text = "$(git-commit) " + text.trimEnd();
+        this.statusBar.tooltip = `git blame${command ? "" : " - No info about the current line"}`;
+        this.statusBar.command = command ? this.command() : undefined;
     }
 }

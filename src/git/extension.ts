@@ -3,11 +3,7 @@ import {
     Disposable,
     env,
     MessageItem,
-    Position,
-    Range,
     TextEditor,
-    TextEditorDecorationType,
-    ThemeColor,
     window,
     workspace,
 } from "vscode";
@@ -15,7 +11,10 @@ import {
 import type { LineAttatchedCommit } from "./util/stream-parsing";
 
 import { Document, validEditor } from "../util/editorvalidator";
-import { normalizeCommitInfoTokens, parseTokens, toTextView } from "../util/textdecorator";
+import {
+    normalizeCommitInfoTokens,
+    parseTokens,
+} from "../util/textdecorator";
 import { StatusBarView } from "../view";
 import { Blamer } from "./blame";
 import { getProperty } from "../util/property";
@@ -39,12 +38,6 @@ export class Extension {
     private readonly view: StatusBarView;
     private readonly headWatcher: HeadWatch;
 
-    /**
-     * decorationCharPosition set to 1024 because normally lines are not that big
-     */
-    private readonly decorationCharPosition: number;
-    private readonly decorationType: TextEditorDecorationType;
-
     constructor() {
         this.blame = new Blamer;
         this.view = new StatusBarView;
@@ -52,8 +45,6 @@ export class Extension {
 
         this.disposable = this.setupListeners();
 
-        this.decorationCharPosition = 1024;
-        this.decorationType = window.createTextEditorDecorationType({});
         this.updateView();
     }
 
@@ -71,7 +62,7 @@ export class Extension {
         const lineAware = await this.commit();
 
         if (!lineAware || isUncomitted(lineAware.commit)) {
-            this.view.set();
+            this.view.clear();
             return;
         }
 
@@ -87,7 +78,7 @@ export class Extension {
             },
         }] : undefined;
 
-        this.view.set(lineAware.commit);
+        this.view.set(lineAware.commit, getActiveTextEditor());
 
         (await infoMessage(message, action))?.action();
     }
@@ -118,7 +109,6 @@ export class Extension {
         this.disposable.dispose();
         this.blame.dispose();
         this.headWatcher.dispose();
-        this.decorationType.dispose();
     }
 
     private setupListeners(): Disposable {
@@ -147,7 +137,7 @@ export class Extension {
                      */
                     changeTextEditorSelection(textEditor);
                 } else {
-                    this.view.set();
+                    this.view.clear();
                 }
             }),
             window.onDidChangeTextEditorSelection(({ textEditor }) => {
@@ -166,7 +156,7 @@ export class Extension {
         textEditor = getActiveTextEditor(),
     ): Promise<void> {
         if (!validEditor(textEditor)) {
-            this.view.set();
+            this.view.clear();
             return;
         }
         this.view.activity();
@@ -179,35 +169,7 @@ export class Extension {
         // Only update if we haven't moved since we started blaming
         // or if we no longer have focus on any file
         if (before === after || after === NO_FILE_OR_PLACE) {
-            this.view.set(lineAware?.commit);
-
-            if (lineAware?.commit) {
-                const decorationText = toTextView(lineAware.commit);
-                const margin = getProperty("inlineBlameMargin") ?? 2;
-
-                //clear old decorations
-                textEditor.setDecorations?.(this.decorationType, []);
-                //add new decoration
-                textEditor.setDecorations?.(
-                    this.decorationType,
-                    [
-                        {
-                            renderOptions: {
-                                after: {
-                                    contentText: decorationText,
-                                    margin: `0 0 0 ${margin}rem`,
-                                    color: new ThemeColor("editorCodeLens.foreground"),
-                                },
-                            },
-                            range: new Range(
-                                new Position(textEditor.selection.active.line, this.decorationCharPosition),
-                                new Position(textEditor.selection.active.line, this.decorationCharPosition),
-                            ),
-                        },
-                    ],
-                );
-            }
-
+            this.view.set(lineAware?.commit, textEditor);
         }
     }
 

@@ -81,7 +81,7 @@ const createSubSectionOrEmpty = (target: string, endIndex: number) => (startInde
     }
 
     return target.substring(startIndex + 1, lastIndex);
-}
+};
 
 function createTokenReplaceGroup<T extends InfoTokens>(
     infoTokens: T,
@@ -146,7 +146,7 @@ const modify = (value: string, modifier = ""): string => {
     }
 
     return value;
-}
+};
 
 const sanitizeToken = (token: string): string => {
     return token.replace(/\u202e/g, "")
@@ -167,9 +167,14 @@ export const parseTokens = <T extends InfoTokens>(
     }
 
     return sanitizeToken(out);
-}
+};
 
-export const toTextView = (commit: Commit): string => parseTokens(
+export const toStatusBarTextView = (commit: Commit): string => parseTokens(
     getProperty("statusBarMessageFormat"),
+    normalizeCommitInfoTokens(commit),
+);
+
+export const toInlineTextView = (commit: Commit): string => parseTokens(
+    getProperty("inlineMessageFormat"),
     normalizeCommitInfoTokens(commit),
 );

@@ -1,5 +1,15 @@
 # Change Log
 
+## 10.0.0 (November 23, 2022)
+* Feature: Inline view of gitblame [#94](https://github.com/Sertion/vscode-gitblame/issues/94). Thanks to [f4n0](https://github.com/f4n0) for the PR and [kramarz89](https://github.com/kramarz89) for the request!
+  * `gitblame.inlineMessageEnabled` to enable the feature
+  * `gitblame.inlineMessageFormat` to configure the message format
+  * `gitblame.inlineMessageNoCommit` to set the _no commit_ message
+  * `gitblame.inlineBlameMargin` to configure the distance between the end of the line and the blame info
+  * Use the same token as for `gitblame.statusBarMessageFormat`
+* Fix: Updating dependencies
+
+
 ## 9.0.1 (August 02, 2022)
 * Fix: CHANGELOG.md headers are of the wrong level and other fixes
 * Fix: Updating dependencies
