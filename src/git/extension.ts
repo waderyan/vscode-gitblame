@@ -33,7 +33,6 @@ type ActionableMessageItem = MessageItem & {
     action: () => void;
 }
 
-
 export class Extension {
     private readonly disposable: Disposable;
     private readonly blame: Blamer;
@@ -43,8 +42,8 @@ export class Extension {
     /**
      * decorationCharPosition set to 1024 because normally lines are not that big
      */
-    private readonly decorationCharPosition: number = 1024;
-    private decorationType: TextEditorDecorationType = window.createTextEditorDecorationType({});
+    private readonly decorationCharPosition: number;
+    private readonly decorationType: TextEditorDecorationType;
 
     constructor() {
         this.blame = new Blamer;
@@ -53,6 +52,8 @@ export class Extension {
 
         this.disposable = this.setupListeners();
 
+        this.decorationCharPosition = 1024;
+        this.decorationType = window.createTextEditorDecorationType({});
         this.updateView();
     }
 
@@ -117,6 +118,7 @@ export class Extension {
         this.disposable.dispose();
         this.blame.dispose();
         this.headWatcher.dispose();
+        this.decorationType.dispose();
     }
 
     private setupListeners(): Disposable {
@@ -180,9 +182,8 @@ export class Extension {
             this.view.set(lineAware?.commit);
 
             if (lineAware?.commit) {
-                let decorationText = toTextView(lineAware.commit);
-                let margin = getProperty("inlineBlameMargin") ?? 2;
-                //let decorationColor = getProperty("inlineBlameColor") ?? "#888987";
+                const decorationText = toTextView(lineAware.commit);
+                const margin = getProperty("inlineBlameMargin") ?? 2;
 
                 //clear old decorations
                 textEditor.setDecorations?.(this.decorationType, []);
@@ -195,9 +196,8 @@ export class Extension {
                                 after: {
                                     contentText: decorationText,
                                     margin: `0 0 0 ${margin}rem`,
-                                    color: new ThemeColor("gitblame.inlineBlameColor"),
-                                    //fontStyle: "italic"
-                                }
+                                    color: new ThemeColor("editorCodeLens.foreground"),
+                                },
                             },
                             range: new Range(
                                 new Position(textEditor.selection.active.line, this.decorationCharPosition),

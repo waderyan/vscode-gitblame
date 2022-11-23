@@ -152,17 +152,6 @@
           "description": "The amount of margin between line and inline blame view"
         }
       }
-    },
-    "colors": [
-      {
-        "id": "gitblame.inlineBlameColor",
-        "description": "The inline blame view text color (as CSS Rule)",
-        "defaults": {
-					"dark": "#99999994",
-					"light": "#99999959",
-					"highContrast": "#99999999"
-        }
-      }
-    ]
+    }
   }
 }
