@@ -118,13 +118,6 @@ To enable the inline git blame view. Shows blame information at the end of the c
 
 The amount of margin between line and inline blame view
 
-### `gitblame.inlineBlameColor`
-> Type: `string`
-
-> Default value: `#888987`
-
-The inline blame view text color (as CSS Rule)
-
 ### Message Tokens
 
 | Token | Function | Parameter | Default Value | Description |
