@@ -20,6 +20,5 @@ jobs:
         run: npm run lint
 
       - name: Run tests
-        uses: GabrielBB/xvfb-action@v1.6
         with:
           run: npm run test
