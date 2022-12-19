@@ -46,9 +46,9 @@ export class File {
         // Don't return partial git blame info when terminating a blame
         if (!this.killed) {
             if (relative(fileName, realpathFileName)) {
-                Logger.write("info", `Blamed "${realpathFileName}" (resolved via symlink from "${fileName}")`);
+                Logger.info(`Blamed "${realpathFileName}" (resolved via symlink from "${fileName}")`);
             } else {
-                Logger.write("info", `Blamed "${realpathFileName}"`);
+                Logger.info(`Blamed "${realpathFileName}"`);
             }
             return blameInfo;
         }

@@ -61,7 +61,7 @@ export const blameProcess = (realpathFileName: string): ChildProcess => {
         args.splice(1, 0, "-w");
     }
 
-    Logger.write("command", `${getGitCommand()} ${args.join(" ")}`);
+    Logger.info(`${getGitCommand()} ${args.join(" ")}`);
 
     return spawn(getGitCommand(), args, {
         cwd: dirname(realpathFileName),

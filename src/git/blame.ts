@@ -72,6 +72,6 @@ export class Blamer {
             // NOOP
         }
 
-        Logger.write("info", `Will not blame '${fileName}'. Outside the current workspace.`);
+        Logger.info(`Will not blame '${fileName}'. Outside the current workspace.`);
     }
 }

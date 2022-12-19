@@ -1,28 +1,27 @@
-import { OutputChannel, window } from "vscode";
+import { LogOutputChannel, window } from "vscode";
 
 export class Logger {
     private static instance?: Logger;
-    private readonly out: OutputChannel;
+    private readonly out: LogOutputChannel;
 
     public static getInstance(): Logger {
-        Logger.instance = Logger.instance ?? new Logger()
-        return Logger.instance;
+        return Logger.instance ??= new Logger();
     }
 
     private constructor() {
-        this.out = window.createOutputChannel("Git Blame");
+        this.out = window.createOutputChannel("Git Blame", {
+            log: true,
+        });
     }
 
     public static error(error: unknown): void {
         if (error instanceof Error) {
-            Logger.write("error", error.toString());
+            Logger.getInstance().out.error(error);
         }
     }
 
-    public static write(level: string, message: string): void {
-        Logger.getInstance().out.appendLine(
-            `[ ${(new Date).toTimeString().substr(0, 8)} | ${level} ] ${message.trim()}`,
-        );
+    public static info(info: string): void {
+        Logger.getInstance().out.info(info)
     }
 
     public dispose(): void {

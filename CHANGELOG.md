@@ -1,5 +1,10 @@
 # Change Log
 
+## 10.1.0 (December 19, 2022)
+* Feature: Now uses the new [LogOutputChannel](https://code.visualstudio.com/api/references/vscode-api#LogOutputChannel)
+* Fix: Removing unused setting from README.md. Thanks to [RAZINJ](https://github.com/razinj) for the [PR](https://github.com/Sertion/vscode-gitblame/pull/136)!
+* Fix: Updating dependencies
+
 ## 10.0.0 (November 23, 2022)
 * Feature: Inline view of gitblame [#94](https://github.com/Sertion/vscode-gitblame/issues/94). Thanks to [f4n0](https://github.com/f4n0) for the PR and [kramarz89](https://github.com/kramarz89) for the request!
   * `gitblame.inlineMessageEnabled` to enable the feature
