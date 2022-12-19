@@ -18,7 +18,7 @@ import { getProperty } from "./util/property";
 import { toInlineTextView, toStatusBarTextView } from "./util/textdecorator";
 
 export class StatusBarView {
-    private statusBar: StatusBarItem;
+    private readonly statusBar: StatusBarItem;
     private readonly decorationType: TextEditorDecorationType;
 
     constructor() {
