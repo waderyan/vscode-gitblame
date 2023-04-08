@@ -165,6 +165,11 @@
             "atlassian"
           ],
           "markdownDescription": "An array of substrings that, when present in the git origin URL, adds an extra _s_ to the url after _commit_ in `gitblame.commitUrl`'s default behavior"
+        },
+        "gitblame.delayBlame": {
+          "type": "number",
+          "default": 0,
+          "markdownDescription": "This setting adds a delay (in milliseconds) before the blame is displayed"
         }
       }
     }
