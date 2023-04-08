@@ -7,7 +7,7 @@ import { isUrl } from "../../util/is-url";
 import { split } from "../../util/split";
 import { originUrlToToolUrl } from "./origin-url-to-tool-url";
 import { getProperty } from "../../util/property";
-import { getActiveFileOrigin, getRelativePathOfActiveFile, getRemoteUrl } from "./gitcommand";
+import { getActiveFileOrigin, getDefaultBranch, getRelativePathOfActiveFile, getRemoteUrl } from "./gitcommand";
 import { projectNameFromOrigin } from "./project-name-from-origin";
 import { stripGitRemoteUrl, stripGitSuffix } from "./strip-git-remote-url";
 import { InfoTokens, parseTokens } from "../../util/textdecorator";
@@ -86,6 +86,7 @@ export const generateUrlTokens = async (lineAware: LineAttatchedCommit): Promise
     const remoteUrl = stripGitRemoteUrl(await getRemoteUrl(remoteName));
     const tool = originUrlToToolUrl(remoteUrl);
     const filePath = await getRelativePathOfActiveFile();
+    const defaultbranch = await getDefaultBranch(remoteName);
 
     return {
         "hash": lineAware.commit.hash,
@@ -93,6 +94,7 @@ export const generateUrlTokens = async (lineAware: LineAttatchedCommit): Promise
         "tool.commitpath": `/commit${isToolUrlPlural(remoteUrl) ? "s" : ""}/`,
         "project.name": projectNameFromOrigin(origin),
         "project.remote": remoteUrl,
+        "project.defaultbranch": defaultbranch,
         "gitorigin.hostname": tool ? gitOriginHostname(tool) : "no-origin-url",
         "gitorigin.path": gitRemotePath(stripGitSuffix(origin)),
         "gitorigin.port": tool?.port ? `:${tool.port}` : "",

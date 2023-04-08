@@ -66,6 +66,8 @@ suite("Generate URL Tokens", () => {
             .resolves("https://github.com/Sertion/vscode-gitblame.git");
         execcommandStub.withArgs(match.string, ["ls-files", "--full-name", "--", "/fake.file"], match.object)
             .resolves("/fake.file");
+        execcommandStub.withArgs(match.string, ["rev-parse", "--abbrev-ref", "origin/HEAD"], match.object)
+            .resolves("origin/main");
         propertyStub.withArgs("remoteName").returns("origin");
 
         const tokens = await generateUrlTokens(exampleCommit);
@@ -117,6 +119,8 @@ suite("Generate URL Tokens", () => {
             .resolves("git@github.com:Sertion/vscode-gitblame.git");
         execcommandStub.withArgs(match.string, ["ls-files", "--full-name", "--", "/fake.file"], match.object)
             .resolves("/fake.file");
+        execcommandStub.withArgs(match.string, ["rev-parse", "--abbrev-ref", "origin/HEAD"], match.object)
+            .resolves("origin/main");
         propertyStub.withArgs("remoteName").returns("origin");
 
         const tokens = await generateUrlTokens(exampleCommit);
@@ -168,6 +172,8 @@ suite("Generate URL Tokens", () => {
             .resolves("ssh://git@github.com/Sertion/vscode-gitblame.git");
         execcommandStub.withArgs(match.string, ["ls-files", "--full-name", "--", "/fake.file"], match.object)
             .resolves("/fake.file");
+        execcommandStub.withArgs(match.string, ["rev-parse", "--abbrev-ref", "origin/HEAD"], match.object)
+            .resolves("origin/main");
         propertyStub.withArgs("remoteName").returns("origin");
 
         const tokens = await generateUrlTokens(exampleCommit);
@@ -220,6 +226,8 @@ suite("Generate URL Tokens", () => {
             .resolves("ssh://git@git.company.com/project_x/test-repository.git");
         execcommandStub.withArgs(match.string, ["ls-files", "--full-name", "--", "/fake.file"], match.object)
             .resolves("/fake.file");
+        execcommandStub.withArgs(match.string, ["rev-parse", "--abbrev-ref", "origin/HEAD"], match.object)
+            .resolves("origin/main");
         propertyStub.withArgs("remoteName").returns("origin");
 
         const tokens = await generateUrlTokens(exampleCommit);
@@ -273,6 +281,8 @@ suite("Generate URL Tokens", () => {
             .resolves("origin");
         execcommandStub.withArgs(match.string, ["ls-files", "--full-name", "--", "/fake.file"], match.object)
             .resolves("/fake.file");
+        execcommandStub.withArgs(match.string, ["rev-parse", "--abbrev-ref", "origin/HEAD"], match.object)
+            .resolves("origin/main");
         propertyStub.withArgs("remoteName").returns("origin");
 
         const tokens = await generateUrlTokens(exampleCommit);
@@ -340,6 +350,8 @@ suite("Use genrated URL tokens", () => {
             .resolves("ssh://git@git.company.com/project_x/test-repository.git");
         execcommandStub.withArgs(match.string, ["ls-files", "--full-name", "--", "/fake.file"], match.object)
             .resolves("/fake.file");
+        execcommandStub.withArgs(match.string, ["rev-parse", "--abbrev-ref", "origin/HEAD"], match.object)
+            .resolves("origin/main");
         propertyStub.withArgs("remoteName").returns("origin");
 
         const tokens = await generateUrlTokens(exampleCommit);

@@ -1,5 +1,12 @@
 # Change Log
 
+## 10.2.0 (April 8, 2023)
+* Feature: Add a delay before blame is shown ([#139](https://github.com/Sertion/vscode-gitblame/issue/139)) [#141](https://github.com/Sertion/vscode-gitblame/pull/141). Thanks to [Ajith Aravind](https://github.com/aaravind100) for the PR and request!
+  * Set `gitblame.delayBlame` to add a timeout from when navigating to a line to when the blame information is shown
+* Feature:  Master or Main [#134](https://github.com/Sertion/vscode-gitblame/issue/134) (Thanks to [Pierre Hersant](https://github.com/elcortez))
+  * New token for `gitblame.commitUrl`: `${project.defaultbranch}` - The current projects default branch
+* Fix: Updating dependencies
+
 ## 10.1.0 (December 19, 2022)
 * Feature: Now uses the new [LogOutputChannel](https://code.visualstudio.com/api/references/vscode-api#LogOutputChannel)
 * Fix: Removing unused setting from README.md. Thanks to [RAZINJ](https://github.com/razinj) for the [PR](https://github.com/Sertion/vscode-gitblame/pull/136)!

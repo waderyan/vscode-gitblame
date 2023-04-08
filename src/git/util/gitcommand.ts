@@ -9,6 +9,7 @@ import { Logger } from "../../util/logger";
 import { execute } from "../../util/execcommand";
 import { GitExtension } from "../../../types/git";
 import { getActiveTextEditor } from "../../util/get-active";
+import { split } from "../../util/split";
 
 export const getGitCommand = (): string => {
     const vscodeGit = extensions.getExtension<GitExtension>("vscode.git");
@@ -77,4 +78,21 @@ export const getRelativePathOfActiveFile = async (): Promise<string> => {
 
     const { fileName } = activeEditor.document;
     return runGit(fileName, "ls-files", "--full-name", "--", fileName);
+}
+
+export const getDefaultBranch = async (remote: string): Promise<string> => {
+    const activeEditor = getActiveTextEditor();
+
+    if (!validEditor(activeEditor)) {
+        return "";
+    }
+
+    const rawRemoteDefaultBranch = await runGit(
+        activeEditor.document.fileName,
+        "rev-parse",
+        "--abbrev-ref",
+        `${remote}/HEAD`,
+    );
+
+    return split(rawRemoteDefaultBranch, "/")[1];
 }

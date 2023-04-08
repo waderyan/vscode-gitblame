@@ -165,7 +165,9 @@ export class Extension {
 
         const before = getFilePosition(textEditor);
         const lineAware = await this.blame.getLine(textEditor.document.fileName, textEditor.selection.active.line);
-        await new Promise((f) => setTimeout(f, delay));
+        if (delay > 0) {
+            await new Promise((f) => setTimeout(f, delay));
+        }
         const after = getFilePosition(textEditor);
 
         // Only update if we haven't moved since we started blaming
