@@ -14,6 +14,7 @@ export type PropertiesMap = {
     "inlineMessageNoCommit": string;
     "inlineMessageEnabled": boolean;
     "inlineMessageMargin": number;
+    "delayBlame": number;
 }
 
 // getConfiguration has an unfortunate typing that does not

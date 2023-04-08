@@ -118,6 +118,13 @@ To enable the inline git blame view. Shows blame information at the end of the c
 
 The amount of margin between line and inline blame view
 
+### `gitblame.delayBlame`
+> Type: `number`
+
+> Default value: `0`
+
+This setting adds a delay (in milliseconds) before the blame is displayed
+
 ### Message Tokens
 
 | Token | Function | Parameter | Default Value | Description |
