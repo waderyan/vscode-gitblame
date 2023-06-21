@@ -1,5 +1,12 @@
 # Change Log
 
+## 10.2.1 (June 21, 2023)
+* Bug: Inline message drawn on top of code when backspacing from EOL ([#142](https://github.com/Sertion/vscode-gitblame/issue/142)) Thanks to [Kim Alford](https://github.com/kgalford1)!
+* Fix: Hide blame decorator saving a file
+* Fix: Updated unclear error message
+* Fix: Added `${project.defaultbranch}` to the readme
+* Fix: Updating dependencies
+
 ## 10.2.0 (April 8, 2023)
 * Feature: Add a delay before blame is shown ([#139](https://github.com/Sertion/vscode-gitblame/issue/139)) [#141](https://github.com/Sertion/vscode-gitblame/pull/141). Thanks to [Ajith Aravind](https://github.com/aaravind100) for the PR and request!
   * Set `gitblame.delayBlame` to add a timeout from when navigating to a line to when the blame information is shown

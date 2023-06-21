@@ -38,6 +38,7 @@ Available tokens:
 * `${file.line}` - the line number of the line in the final file
 * `${file.line.result}` - the line number of the line in the final file
 * `${file.line.source}` - the line number of the line in the original file
+* `${project.defaultbranch}` - The current projects default branch
 * `${project.name}` - your project name (e.g. `project_name` in `https://github.com/user/project_name.git`)
 * `${project.remote}` - the current default remote's URL with the protocol, port-specifiers, and trailing `.git` stripped. (e.g. `github.com/user/project_name` in `https://github.com/user/project_name.git`)
 * `${gitorigin.hostname}` - the git origin domain (e.g. `github.com` in `https://github.com/ckb-next/ckb-next.git`)

@@ -1,9 +1,7 @@
 import type {
-    DecorationOptions,
     Position as FullPosition,
-    Range,
     TextDocument,
-    TextEditorDecorationType,
+    TextEditor,
 } from "vscode";
 
 export type Document = Pick<TextDocument, "uri" | "isUntitled" | "fileName">;
@@ -15,10 +13,7 @@ export type PartialTextEditor = {
     readonly document: Document;
     selection: PartialSelection;
 
-    setDecorations?(
-        decorationType: TextEditorDecorationType,
-        rangesOrOptions: readonly Range[] | readonly DecorationOptions[]
-    ): void;
+    setDecorations?: TextEditor["setDecorations"];
 }
 
 export const validEditor = (

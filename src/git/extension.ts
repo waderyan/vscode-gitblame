@@ -149,6 +149,12 @@ export class Extension {
             workspace.onDidCloseTextDocument((document: Document): void => {
                 this.blame.remove(document.fileName);
             }),
+            workspace.onDidChangeTextDocument(({ document }) => {
+                const textEditor = getActiveTextEditor();
+                if (textEditor?.document === document) {
+                    this.updateView(textEditor, 0);
+                }
+            }),
         );
     }
 
@@ -156,8 +162,8 @@ export class Extension {
         textEditor = getActiveTextEditor(),
         delay = getProperty("delayBlame"),
     ): Promise<void> {
+        this.view.clear();
         if (!validEditor(textEditor)) {
-            this.view.clear();
             return;
         }
         this.view.activity();
